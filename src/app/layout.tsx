@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 
 import { TRPCReactProvider } from "@/trpc/react";
 import { cn } from "@/lib/utils";
+import MyThemeProvider from "@/providers/theme";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -22,26 +23,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`font-sans ${inter.variable}`}>
-        <TRPCReactProvider>
-          <div className={"relative h-screen w-screen"}>
-            <div
-              className={cn(
-                "fixed inset-0 z-0 h-full w-full scale-125 blur-lg",
-                "pointer-events-none",
-              )}
-            >
-              {children}
-            </div>
+        <MyThemeProvider>
+          <TRPCReactProvider>
+            <div className={"relative h-screen w-screen"}>
+              <div
+                className={cn(
+                  "fixed inset-0 z-0 h-full w-full scale-125 blur-lg",
+                  "pointer-events-none",
+                )}
+              >
+                {children}
+              </div>
 
-            <div
-              className={"absolute inset-0 flex h-full w-full justify-center"}
-            >
-              <div className={"w-full max-w-screen-sm"}>{children}</div>
+              <div
+                className={"absolute inset-0 flex h-full w-full justify-center"}
+              >
+                <div className={"w-full max-w-screen-sm"}>{children}</div>
+              </div>
             </div>
-          </div>
-        </TRPCReactProvider>
+          </TRPCReactProvider>
+        </MyThemeProvider>
       </body>
     </html>
   );
