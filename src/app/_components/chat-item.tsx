@@ -3,15 +3,16 @@ import { BsThreeDots } from "react-icons/bs";
 import { IUser } from "@/ds/user";
 import { ChatType } from "@/ds/chat";
 import { cn } from "@/lib/utils";
-import Markdown, { Components } from "react-markdown";
+import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { RadioGroupIndicator } from "@radix-ui/react-radio-group";
 import { useState } from "react";
 import Assets from "@/app/_components/assets";
-import { PRIMARY_COLOR } from "@/app/_components/home";
+import { markdownComponents } from "@/lib/markdown";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { PRIMARY_COLOR } from "@/const";
 
 export interface IChatItem {
   user: IUser;
@@ -21,47 +22,15 @@ export interface IChatItem {
   }[];
 }
 
-const renderers: Partial<Components> = {
-  // 这个好像没用，直接预处理吧。。。
-  text: (props) => {
-    console.log({ text: props });
+export const Hot = ({ value }: { value: number }) => (
+  <div className={"text-primary flex items-center"} color={PRIMARY_COLOR}>
+    <div className={"h-4 w-4"}>
+      <Assets.FireFillIcon />
+    </div>
 
-    const { children } = props;
-    // Regular expression to match #xxx pattern
-    const hashtagPattern = /#(\w+)/g;
-    const parts = children?.split(hashtagPattern);
-
-    // Transform #xxx into link
-    return parts.map((part, index) => {
-      if (index % 2 === 1) {
-        // It's a hashtag
-        return (
-          <a key={index} href={`/tag/${part}`}>
-            {part}
-          </a>
-        );
-      }
-      return part;
-    });
-  },
-
-  a: ({ href, children }) => {
-    // console.log({ text });
-    return (
-      <a
-        href={href}
-        className={cn(
-          "text-primary",
-          (children as string).startsWith("#") ||
-            "underline underline-offset-4",
-        )}
-        target={"_blank"}
-      >
-        {children}
-      </a>
-    );
-  },
-};
+    {value}
+  </div>
+);
 
 export default function ChatItem({ user, segments }: IChatItem) {
   const [imageIndex, setImageIndex] = useState(`0`);
@@ -74,12 +43,13 @@ export default function ChatItem({ user, segments }: IChatItem) {
 
       <div className={"flex grow flex-col gap-2"}>
         <div className={"text-xs text-gray-400"}>{user.name}</div>
+
         {segments.map(({ type, content }, index) => (
           <div key={index}>
             {type === "text" && (
               <Markdown
                 remarkPlugins={[remarkGfm]}
-                components={renderers}
+                components={markdownComponents}
                 key={index}
                 className={cn(
                   "whitespace-pre-wrap ",
@@ -184,13 +154,8 @@ export default function ChatItem({ user, segments }: IChatItem) {
               >
                 <div className={"flex items-center justify-between"}>
                   <div>帮作品传播</div>
-                  <div
-                    className={"text-primary flex items-center"}
-                    color={PRIMARY_COLOR}
-                  >
-                    <Assets.FireFillIcon className={"scale-[70%]"} />
-                    {content.value}
-                  </div>
+
+                  <Hot value={content.value} />
                 </div>
 
                 <div className={"flex overflow-hidden rounded-lg"}>
@@ -216,6 +181,36 @@ export default function ChatItem({ user, segments }: IChatItem) {
                       <div>{content.datetime}发布</div>
                     </div>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {type === "goods-link" && (
+              <div className={"flex flex-col gap-2"}>
+                <div
+                  className={"flex justify-between rounded-lg bg-[#3D3847] p-2"}
+                >
+                  <div className={"flex items-center gap-2"}>
+                    <div className={"w-[80px] "}>
+                      <AspectRatio ratio={1}>
+                        <Image
+                          src={content.cover}
+                          alt={"cover"}
+                          fill
+                          className="rounded-md object-cover"
+                        />
+                      </AspectRatio>
+                    </div>
+
+                    <div className={"flex grow flex-col gap-2"}>
+                      <div>{content.title}</div>
+                      <Hot value={content.value} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={"text-muted-foreground text-xs"}>
+                  来自{content.source}
                 </div>
               </div>
             )}

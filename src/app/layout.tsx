@@ -5,6 +5,7 @@ import { Inter } from "next/font/google";
 import { TRPCReactProvider } from "@/trpc/react";
 import { cn } from "@/lib/utils";
 import MyThemeProvider from "@/providers/theme";
+import { bgModel } from "@/config";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -30,17 +31,22 @@ export default function RootLayout({
             <div className={"relative h-screen w-screen"}>
               <div
                 className={cn(
-                  "fixed inset-0 z-0 h-full w-full scale-125 blur-lg brightness-[15%]",
+                  "fixed inset-0 z-0 h-full w-full",
                   "pointer-events-none",
+                  bgModel === "mirror"
+                    ? "scale-125 blur-lg brightness-[15%]"
+                    : "bg-background",
                 )}
               >
-                {children}
+                {bgModel === "plain" ? null : children}
               </div>
 
               <div
                 className={"absolute inset-0 flex h-full w-full justify-center"}
               >
-                <div className={"w-full max-w-screen-sm"}>{children}</div>
+                <div className={"bg-muted w-full max-w-screen-sm"}>
+                  {children}
+                </div>
               </div>
             </div>
           </TRPCReactProvider>

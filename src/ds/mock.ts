@@ -170,4 +170,23 @@ export const sampleChatItems: IChatItem[] = [
       },
     ],
   },
+
+  {
+    user: userJiuguAI,
+    segments: [
+      {
+        type: "text",
+        content: "买这个",
+      },
+      {
+        type: "goods-link",
+        content: {
+          title: "1对1深度咨询",
+          value: 800,
+          cover: sampleImageItems[0],
+          source: "火值兑换商城",
+        },
+      },
+    ],
+  },
 ];

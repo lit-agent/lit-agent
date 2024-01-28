@@ -1,34 +1,17 @@
 "use client";
 
-import Image from "next/image";
-import { cn } from "@/lib/utils";
-
-import { useSystem } from "@/hooks/use-system";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import Assets from "./assets";
-
-export const navs = [
-  { Icon: Assets.Menu1Icon, alt: "1" },
-  { Icon: Assets.FireFillIcon, alt: "2" },
-  { Icon: Assets.Menu3Icon, alt: "3" },
-];
-
-export const tasks = [
-  { name: "在途任务", cnt: 6, hasReminder: true },
-  { name: "完成的任务", cnt: 11 },
-  { name: "失败的任务", cnt: 11 },
-];
+import { tasks } from "@/ds/system";
+import { PRIMARY_COLOR } from "@/const";
+import { BottomNavbar } from "@/app/_components/navbar";
 
 export const Dot = () => {
   return <div className={"h-3 w-3 rounded-full bg-red-600"}></div>;
 };
 
-export const PRIMARY_COLOR = "hsla(17, 100%, 64%, 1)";
-
 export default function HomePage() {
-  const { nav, setNav } = useSystem();
-
   return (
     <main className="flex min-h-screen flex-col items-center justify-center text-white">
       <div
@@ -54,7 +37,7 @@ export default function HomePage() {
 
           <div className={"flex items-center gap-4"}>
             <div className={"text-3xl font-medium"}>4224.23</div>
-            <Assets.FileFillIcon color={PRIMARY_COLOR} />
+            <Assets.FireFillIcon color={PRIMARY_COLOR} />
           </div>
 
           <div className={"flex items-center gap-4"}>
@@ -103,7 +86,7 @@ export default function HomePage() {
 
             <div className={"flex items-center gap-2"}>
               <div className={"text-lg font-medium"}>423.15</div>
-              <Assets.FileFillIcon color={PRIMARY_COLOR} />
+              <Assets.FireFillIcon color={PRIMARY_COLOR} />
             </div>
 
             <div className={"absolute right-4 top-2"}>
@@ -132,22 +115,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div
-        id={"nav"}
-        className={"flex w-full shrink-0 justify-evenly bg-black p-4 sm:p-8"}
-      >
-        {navs.map(({ Icon, alt }, index) => (
-          <div
-            key={index}
-            className={cn(
-              "rounded-[16px] p-2",
-              index === nav && "bg-orange-500",
-            )}
-          >
-            <Icon key={index} />
-          </div>
-        ))}
-      </div>
+      <BottomNavbar />
     </main>
   );
 }
