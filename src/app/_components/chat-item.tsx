@@ -14,6 +14,7 @@ import { markdownComponents } from "@/lib/markdown";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { PRIMARY_COLOR } from "@/const";
 import { Badge } from "@/components/ui/badge";
+import { BloggerContainer } from "@/containers/blogger";
 
 export interface IChatItem {
   user: IUser;
@@ -35,12 +36,21 @@ export const Hot = ({ value }: { value: number }) => (
 
 export default function ChatItem({ user, segments }: IChatItem) {
   const [imageIndex, setImageIndex] = useState(`0`);
+  const User = () => (
+    <Avatar className={"h-8 w-8"}>
+      <AvatarImage src={user.avatar} />
+    </Avatar>
+  );
 
   return (
-    <div className={"relative flex gap-2"}>
-      <Avatar className={"h-8 w-8"}>
-        <AvatarImage src={user.avatar} />
-      </Avatar>
+    <div className={"relative flex gap-2 "}>
+      {user.type === "user" ? (
+        <User />
+      ) : (
+        <BloggerContainer className={"flex items-start"}>
+          <User />
+        </BloggerContainer>
+      )}
 
       <div className={"flex grow flex-col gap-2"}>
         <div className={"flex items-center gap-1 text-xs text-gray-400"}>
