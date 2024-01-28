@@ -30,7 +30,7 @@ export default function RootLayout({
             <div className={"relative h-screen w-screen"}>
               <div
                 className={cn(
-                  "fixed inset-0 z-0 h-full w-full scale-125 blur-lg",
+                  "fixed inset-0 z-0 h-full w-full scale-125 blur-lg brightness-[15%]",
                   "pointer-events-none",
                 )}
               >

@@ -1,0 +1,231 @@
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { BsThreeDots } from "react-icons/bs";
+import { IUser } from "@/ds/user";
+import { ChatType } from "@/ds/chat";
+import { cn } from "@/lib/utils";
+import Markdown, { Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { RadioGroupIndicator } from "@radix-ui/react-radio-group";
+import { useState } from "react";
+import Assets from "@/app/_components/assets";
+import { PRIMARY_COLOR } from "@/app/_components/home";
+
+export interface IChatItem {
+  user: IUser;
+  segments: {
+    type: ChatType;
+    content: any;
+  }[];
+}
+
+const renderers: Partial<Components> = {
+  // 这个好像没用，直接预处理吧。。。
+  text: (props) => {
+    console.log({ text: props });
+
+    const { children } = props;
+    // Regular expression to match #xxx pattern
+    const hashtagPattern = /#(\w+)/g;
+    const parts = children?.split(hashtagPattern);
+
+    // Transform #xxx into link
+    return parts.map((part, index) => {
+      if (index % 2 === 1) {
+        // It's a hashtag
+        return (
+          <a key={index} href={`/tag/${part}`}>
+            {part}
+          </a>
+        );
+      }
+      return part;
+    });
+  },
+
+  a: ({ href, children }) => {
+    // console.log({ text });
+    return (
+      <a
+        href={href}
+        className={cn(
+          "text-primary",
+          (children as string).startsWith("#") ||
+            "underline underline-offset-4",
+        )}
+        target={"_blank"}
+      >
+        {children}
+      </a>
+    );
+  },
+};
+
+export default function ChatItem({ user, segments }: IChatItem) {
+  const [imageIndex, setImageIndex] = useState(`0`);
+
+  return (
+    <div className={"relative flex gap-2"}>
+      <Avatar className={"h-8 w-8"}>
+        <AvatarImage src={user.avatar} />
+      </Avatar>
+
+      <div className={"flex grow flex-col gap-2"}>
+        <div className={"text-xs text-gray-400"}>{user.name}</div>
+        {segments.map(({ type, content }, index) => (
+          <div key={index}>
+            {type === "text" && (
+              <Markdown
+                remarkPlugins={[remarkGfm]}
+                components={renderers}
+                key={index}
+                className={cn(
+                  "whitespace-pre-wrap ",
+                  user.type === "user" && "text-primary",
+                )}
+              >
+                {content.replace(
+                  /(#\S+)/g,
+                  (match, tag) => `[${tag}](/tag/${tag})`,
+                )}
+              </Markdown>
+            )}
+
+            {type === "group-link" && (
+              <div
+                className={"flex flex-col gap-1 rounded-lg bg-[#3D3847] p-3"}
+              >
+                <div className={"flex items-center justify-between"}>
+                  <div className={"flex items-center gap-1"}>
+                    <Assets.NotificationIcon />
+                    邀你加入限时群聊
+                  </div>
+                  <Assets.ArrowRightIcon />
+                </div>
+
+                <div className={"flex items-center justify-between"}>
+                  <div className={"flex -space-x-4"}>
+                    {content.members
+                      .slice(0, 6)
+                      .map((user: IUser, index: number) => (
+                        <Avatar key={index}>
+                          <AvatarImage src={user.avatar} />
+                        </Avatar>
+                      ))}
+                  </div>
+
+                  <div>{content.members.length}人已加入</div>
+                </div>
+              </div>
+            )}
+
+            {type === "image-choices" && (
+              <div className={"flex flex-col gap-2"}>
+                <RadioGroup
+                  className={"flex gap-2"}
+                  value={imageIndex}
+                  onValueChange={setImageIndex}
+                >
+                  {(content.images as string[]).map((image, index) => (
+                    <div
+                      className={cn(
+                        "flex flex-col items-center gap-2",
+                        `${index}` !== imageIndex && "brightness-50",
+                      )}
+                      key={index}
+                    >
+                      <Image
+                        src={image}
+                        alt={image}
+                        key={index}
+                        width={160}
+                        height={240}
+                      />
+                      <RadioGroupItem value={`${index}`} />
+                    </div>
+                  ))}
+                </RadioGroup>
+
+                <Button>已提交</Button>
+              </div>
+            )}
+
+            {type === "text-choices" && (
+              <div className={"flex w-full flex-col gap-2"}>
+                <RadioGroup
+                  className={"flex flex-col gap-2"}
+                  value={imageIndex}
+                  onValueChange={setImageIndex}
+                >
+                  {(content as string[]).map((text, index) => (
+                    <div
+                      className={cn(
+                        "flex items-center gap-2",
+                        `${index}` !== imageIndex && "brightness-50",
+                      )}
+                      key={index}
+                    >
+                      <RadioGroupItem value={`${index}`} />
+
+                      <div>{text}</div>
+                    </div>
+                  ))}
+                </RadioGroup>
+
+                <Button>已提交</Button>
+              </div>
+            )}
+
+            {type === "task" && (
+              <div
+                className={"flex flex-col gap-2 rounded-lg bg-[#3D3847] p-3"}
+              >
+                <div className={"flex items-center justify-between"}>
+                  <div>帮作品传播</div>
+                  <div
+                    className={"text-primary flex items-center"}
+                    color={PRIMARY_COLOR}
+                  >
+                    <Assets.FireFillIcon className={"scale-[70%]"} />
+                    {content.value}
+                  </div>
+                </div>
+
+                <div className={"flex overflow-hidden rounded-lg"}>
+                  <Image
+                    src={Assets.CoverImage.src}
+                    alt={"cover"}
+                    width={120}
+                    height={160}
+                    className={"shrink-0"}
+                  />
+                  <div
+                    className={
+                      "flex grow flex-col justify-between bg-[#2A2434] p-3"
+                    }
+                  >
+                    <div>{content.title}</div>
+
+                    <div className={"flex justify-between"}>
+                      <div className={"flex items-center gap-1"}>
+                        <Assets.WechatMPIcon />
+                        视频号
+                      </div>
+                      <div>{content.datetime}发布</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {user.type === "assistant" && (
+        <BsThreeDots className={cn("text-muted-foreground absolute right-2")} />
+      )}
+    </div>
+  );
+}

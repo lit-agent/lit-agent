@@ -2,22 +2,16 @@
 
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import Menu1Icon from "../../../public/menu-l.svg";
-import FileFillIcon from "../../../public/menu-fire-fill.svg";
-import Menu3Icon from "../../../public/menu-r.svg";
-import RingIcon from "../../../public/ring.svg";
-import AwardFillIcon from "../../../public/award-fill.svg";
-import ArrowUpIcon from "../../../public/arrow-up-s-fill 2.svg";
-import DirectBoxSendIcon from "../../../public/directbox-send.svg";
-import BrandImage from "../../../public/brand.svg";
+
 import { useSystem } from "@/hooks/use-system";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import Assets from "./assets";
 
 export const navs = [
-  { Icon: Menu1Icon, alt: "1" },
-  { Icon: FileFillIcon, alt: "2" },
-  { Icon: Menu3Icon, alt: "3" },
+  { Icon: Assets.Menu1Icon, alt: "1" },
+  { Icon: Assets.FireFillIcon, alt: "2" },
+  { Icon: Assets.Menu3Icon, alt: "3" },
 ];
 
 export const tasks = [
@@ -30,7 +24,7 @@ export const Dot = () => {
   return <div className={"h-3 w-3 rounded-full bg-red-600"}></div>;
 };
 
-export const ColorPrimary = "hsla(17, 100%, 64%, 1)";
+export const PRIMARY_COLOR = "hsla(17, 100%, 64%, 1)";
 
 export default function HomePage() {
   const { nav, setNav } = useSystem();
@@ -43,7 +37,7 @@ export default function HomePage() {
         }
       >
         <div id={"ring"} className={"ml-auto rounded-full bg-white p-2"}>
-          <RingIcon />
+          <Assets.RingIcon />
         </div>
 
         <div
@@ -60,7 +54,7 @@ export default function HomePage() {
 
           <div className={"flex items-center gap-4"}>
             <div className={"text-3xl font-medium"}>4224.23</div>
-            <FileFillIcon color={ColorPrimary} />
+            <Assets.FileFillIcon color={PRIMARY_COLOR} />
           </div>
 
           <div className={"flex items-center gap-4"}>
@@ -70,7 +64,7 @@ export default function HomePage() {
           </div>
 
           <div className={"absolute right-2 top-0"}>
-            <BrandImage />
+            <Assets.BrandImage />
           </div>
         </div>
 
@@ -84,8 +78,8 @@ export default function HomePage() {
               <div className={"mr-2 text-xs font-thin text-gray-950"}>
                 世界排名
               </div>
-              <AwardFillIcon />
-              <ArrowUpIcon />
+              <Assets.AwardFillIcon />
+              <Assets.ArrowUpIcon />
               <div>5</div>
             </div>
 
@@ -101,7 +95,7 @@ export default function HomePage() {
             }
           >
             <div className={"flex items-center gap-2 "}>
-              <DirectBoxSendIcon />
+              <Assets.DirectBoxSendIcon />
               <div className={"text-xs font-thin text-gray-950"}>
                 本期空投池
               </div>
@@ -109,7 +103,7 @@ export default function HomePage() {
 
             <div className={"flex items-center gap-2"}>
               <div className={"text-lg font-medium"}>423.15</div>
-              <FileFillIcon color={ColorPrimary} />
+              <Assets.FileFillIcon color={PRIMARY_COLOR} />
             </div>
 
             <div className={"absolute right-4 top-2"}>
