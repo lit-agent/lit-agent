@@ -9,6 +9,13 @@ import { BottomNavbar } from "@/app/_components/navbar";
 import { Input } from "@/components/ui/input";
 import { IoMenuOutline } from "react-icons/io5";
 import { cn } from "@/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { PopoverClose } from "@radix-ui/react-popover";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function ChatPage() {
   return (
@@ -40,11 +47,18 @@ export default function ChatPage() {
             "focus-visible:ring-offset-0",
           )}
         />
-        <IoMenuOutline
-          className={
-            "absolute bottom-0 right-5 top-0 my-auto h-6 w-6 text-gray-400"
-          }
-        />
+
+        <Sheet>
+          <SheetTrigger
+            className={
+              "absolute bottom-0 right-5 top-0 my-auto h-6 w-6 text-gray-400"
+            }
+          >
+            <IoMenuOutline />
+          </SheetTrigger>
+
+          <SheetContent side={"bottom"}>hello</SheetContent>
+        </Sheet>
       </div>
 
       <BottomNavbar />

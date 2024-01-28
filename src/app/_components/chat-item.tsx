@@ -13,6 +13,7 @@ import Assets from "@/app/_components/assets";
 import { markdownComponents } from "@/lib/markdown";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { PRIMARY_COLOR } from "@/const";
+import { Badge } from "@/components/ui/badge";
 
 export interface IChatItem {
   user: IUser;
@@ -42,7 +43,16 @@ export default function ChatItem({ user, segments }: IChatItem) {
       </Avatar>
 
       <div className={"flex grow flex-col gap-2"}>
-        <div className={"text-xs text-gray-400"}>{user.name}</div>
+        <div className={"flex items-center gap-1 text-xs text-gray-400"}>
+          {user.name}
+          {user.type === "blogger" && (
+            <Badge
+              className={"rounded-sm bg-green-800 px-1 py-0 text-gray-200"}
+            >
+              博主
+            </Badge>
+          )}
+        </div>
 
         {segments.map(({ type, content }, index) => (
           <div key={index}>
