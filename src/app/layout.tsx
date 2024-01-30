@@ -6,6 +6,7 @@ import { TRPCReactProvider } from "@/trpc/react";
 import { cn } from "@/lib/utils";
 import MyThemeProvider from "@/providers/theme";
 import { bgModel } from "@/config";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -24,34 +25,38 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`font-sans ${inter.variable}`}>
-        <MyThemeProvider>
-          <TRPCReactProvider>
-            <div className={"relative h-screen w-screen"}>
-              <div
-                className={cn(
-                  "fixed inset-0 z-0 h-full w-full",
-                  "pointer-events-none",
-                  bgModel === "mirror"
-                    ? "scale-125 blur-lg brightness-[15%]"
-                    : "bg-background",
-                )}
-              >
-                {bgModel === "plain" ? null : children}
-              </div>
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body className={`font-sans ${inter.variable}`}>
+          <MyThemeProvider>
+            <TRPCReactProvider>
+              <div className={"relative h-screen w-screen"}>
+                <div
+                  className={cn(
+                    "fixed inset-0 z-0 h-full w-full",
+                    "pointer-events-none",
+                    bgModel === "mirror"
+                      ? "scale-125 blur-lg brightness-[15%]"
+                      : "bg-background",
+                  )}
+                >
+                  {bgModel === "plain" ? null : children}
+                </div>
 
-              <div
-                className={"absolute inset-0 flex h-full w-full justify-center"}
-              >
-                <div className={"bg-muted w-full max-w-screen-sm"}>
-                  {children}
+                <div
+                  className={
+                    "absolute inset-0 flex h-full w-full justify-center"
+                  }
+                >
+                  <div className={"bg-muted w-full max-w-screen-sm"}>
+                    {children}
+                  </div>
                 </div>
               </div>
-            </div>
-          </TRPCReactProvider>
-        </MyThemeProvider>
-      </body>
-    </html>
+            </TRPCReactProvider>
+          </MyThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
