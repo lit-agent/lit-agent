@@ -44,13 +44,14 @@ export const sendSms = async ({ phone }) => {
   };
 
   try {
+    console.log("-- sending sms: ", { phone, code });
     await db.account.upsert({
       create: { phone, code },
       update: { phone, code },
       where: { phone },
     });
 
-    const res = client.SendSms(params);
+    const res = await client.SendSms(params);
     console.log("-- res: ", res);
     return res;
   } catch (e) {

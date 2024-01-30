@@ -11,12 +11,14 @@ import { IoMenuOutline } from "react-icons/io5";
 import { cn } from "@/lib/utils";
 import { BloggerContainer } from "@/containers/blogger";
 import { UserButton } from "@clerk/nextjs";
+import { guidanceItems } from "@/const";
+import { useState } from "react";
 
 export default function ChatPage() {
+  const [guidanceStep, setGuidanceStep] = useState(5);
+
   return (
     <div className={"flex h-full flex-col"}>
-      <UserButton afterSignOutUrl="/" />
-
       <BloggerContainer>
         <div
           id={"header"}
@@ -33,9 +35,12 @@ export default function ChatPage() {
       </BloggerContainer>
 
       <div className={"flex grow flex-col gap-4 overflow-auto p-4"}>
-        {sampleChatItems.map((chatItem, index) => (
-          <ChatItem {...chatItem} key={index} />
-        ))}
+        {
+          // sampleChatItems
+          guidanceItems.slice(0, guidanceStep).map((chatItem, index) => (
+            <ChatItem {...chatItem} key={index} />
+          ))
+        }
       </div>
 
       <div className={"relative px-4 py-1"}>

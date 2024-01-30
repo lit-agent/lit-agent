@@ -26,6 +26,7 @@ import { sendSms, validateSms } from "@/app/api/account/route";
 import { toast } from "sonner";
 import { useUser } from "@/hooks/use-user";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function GuidancePage() {
   // 1. Define your form.
@@ -49,18 +50,6 @@ export default function GuidancePage() {
 
   const { setUser } = useUser();
 
-  // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-    const user = await validateSms(values);
-    if (!user) return toast.error("手机号码或者验证码无效！");
-
-    setUser(user);
-    return toast.success("验证成功！");
-  }
-
   const [sendingSms, setSendingSms] = useState(false);
   const onRequestingVerifyCode = async (event) => {
     event.preventDefault(); // 防止触发form的验证
@@ -78,6 +67,29 @@ export default function GuidancePage() {
 
     setSendingSms(false);
   };
+
+  const router = useRouter();
+  const [submitting, setSubmitting] = useState(false);
+  // 2. Define a submit handler.
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    console.log(values);
+    setSubmitting(true);
+
+    const user = await validateSms(values);
+    if (!user) {
+      setSubmitting(false);
+      toast.error("手机号码或者验证码无效！");
+      return;
+    }
+
+    setUser(user);
+
+    void router.push("/chat");
+    toast.success("验证成功！");
+    setSubmitting(false);
+  }
 
   return (
     <div className={"flex flex-col items-center h-full bg-[#2A2435]"}>
@@ -162,7 +174,8 @@ export default function GuidancePage() {
                     !watch("phone") ||
                     !watch("code") ||
                     !!errors.phone ||
-                    !!errors.code
+                    !!errors.code ||
+                    submitting
                   }
                 >
                   注册/登录

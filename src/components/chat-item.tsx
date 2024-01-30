@@ -15,6 +15,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { PRIMARY_COLOR } from "@/const";
 import { Badge } from "@/components/ui/badge";
 import { BloggerContainer } from "@/containers/blogger";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export interface IChatItem {
   user: IUser;
@@ -36,11 +37,16 @@ export const Hot = ({ value }: { value: number }) => (
 
 export default function ChatItem({ user, segments }: IChatItem) {
   const [imageIndex, setImageIndex] = useState(`0`);
+  const [checks, setChecks] = useState<number[]>([]);
+  const [submitted, setSubmitted] = useState(false);
+
   const User = () => (
     <Avatar className={"h-8 w-8"}>
       <AvatarImage src={user.avatar} />
     </Avatar>
   );
+
+  console.log("-- segments: ", segments);
 
   return (
     <div className={"relative flex gap-2 "}>
@@ -81,6 +87,49 @@ export default function ChatItem({ user, segments }: IChatItem) {
                   (match, tag) => `[${tag}](/tag/${tag})`,
                 )}
               </Markdown>
+            )}
+
+            {type === "text-choices" && (
+              <div className={"flex w-full flex-col gap-2"}>
+                {(content.choices as string[]).map((text, index) => (
+                  <div
+                    className={cn(
+                      "flex items-center gap-2",
+                      !checks.includes(index) && "brightness-50",
+                    )}
+                    key={index}
+                  >
+                    <Checkbox
+                      value={`${index}`}
+                      checked={checks.includes(index)}
+                      disabled={submitted}
+                      onCheckedChange={(checked) => {
+                        console.log("-- content: ", content);
+
+                        const newChecks = !content.multiple
+                          ? // 单选
+                            [index]
+                          : // 多选
+                            checked
+                            ? [...checks, index]
+                            : checks.filter((c) => c !== index);
+                        console.log("-- newChecks: ", newChecks);
+
+                        setChecks(newChecks);
+                      }}
+                    />
+
+                    <div>{text}</div>
+                  </div>
+                ))}
+
+                <Button
+                  onClick={() => setSubmitted(true)}
+                  disabled={submitted || !checks.length}
+                >
+                  {submitted ? "已" : checks.length ? "" : "待"}提交
+                </Button>
+              </div>
             )}
 
             {type === "group-link" && (
@@ -134,32 +183,6 @@ export default function ChatItem({ user, segments }: IChatItem) {
                         height={240}
                       />
                       <RadioGroupItem value={`${index}`} />
-                    </div>
-                  ))}
-                </RadioGroup>
-
-                <Button>已提交</Button>
-              </div>
-            )}
-
-            {type === "text-choices" && (
-              <div className={"flex w-full flex-col gap-2"}>
-                <RadioGroup
-                  className={"flex flex-col gap-2"}
-                  value={imageIndex}
-                  onValueChange={setImageIndex}
-                >
-                  {(content as string[]).map((text, index) => (
-                    <div
-                      className={cn(
-                        "flex items-center gap-2",
-                        `${index}` !== imageIndex && "brightness-50",
-                      )}
-                      key={index}
-                    >
-                      <RadioGroupItem value={`${index}`} />
-
-                      <div>{text}</div>
                     </div>
                   ))}
                 </RadioGroup>
