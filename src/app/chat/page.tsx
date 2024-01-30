@@ -11,16 +11,10 @@ import { IoMenuOutline } from "react-icons/io5";
 import { cn } from "@/lib/utils";
 import { BloggerContainer } from "@/containers/blogger";
 import { UserButton } from "@clerk/nextjs";
-import { Button } from "@/components/ui/button";
-import { smsAction } from "@/app/api/account/route";
 
 export default function ChatPage() {
   return (
     <div className={"flex h-full flex-col"}>
-      <form action={smsAction}>
-        <Button type={"submit"}>Send SMS</Button>
-      </form>
-
       <UserButton afterSignOutUrl="/" />
 
       <BloggerContainer>

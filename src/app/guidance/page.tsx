@@ -23,6 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import "react-phone-number-input/style.css";
 import { isValidPhoneNumber } from "react-phone-number-input";
+import { smsAction } from "@/app/api/account/route";
 
 export default function GuidancePage() {
   // 1. Define your form.
@@ -32,6 +33,7 @@ export default function GuidancePage() {
   });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    mode: "onChange", // ref: https://github.com/orgs/react-hook-form/discussions/9252#discussioncomment-3926048
     defaultValues: {
       phone: "",
       code: "",
@@ -50,9 +52,14 @@ export default function GuidancePage() {
     console.log(values);
   }
 
-  const onRequestingVerifyCode = () => {
+  const onRequestingVerifyCode = async (event) => {
+    event.preventDefault(); // 防止触发form的验证
+
     const phone = watch("phone");
     console.log("-- phone: ", phone);
+
+    const res = await smsAction({ phone });
+    console.log("-- res: ", res);
   };
 
   return (
@@ -116,7 +123,7 @@ export default function GuidancePage() {
                         </FormControl>
                         <Button
                           onClick={onRequestingVerifyCode}
-                          disabled={!!errors.phone}
+                          disabled={!watch("phone") || !!errors.phone}
                         >
                           获取验证码
                         </Button>
@@ -129,7 +136,16 @@ export default function GuidancePage() {
                   )}
                 />
 
-                <Button type="submit" className={"w-full"}>
+                <Button
+                  type="submit"
+                  className={"w-full"}
+                  disabled={
+                    !watch("phone") ||
+                    !watch("code") ||
+                    !!errors.phone ||
+                    !!errors.code
+                  }
+                >
                   注册/登录
                 </Button>
               </form>

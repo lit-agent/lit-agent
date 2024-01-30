@@ -27,20 +27,23 @@ const client = new SmsClient({
   },
 });
 
-export const smsAction = async (formData: FormData) => {
+export const smsAction = async ({ phone }) => {
+  const code = Math.random().toString().slice(2, 8);
+
   const params = {
-    PhoneNumberSet: ["17766091857"],
+    PhoneNumberSet: [phone],
     SmsSdkAppId: "1400518792",
     SignName: "邢健的个人博客",
     TemplateId: "2064119",
-    TemplateParamSet: ["123456", "10"],
+    TemplateParamSet: [code, "10"],
   };
-  client.SendSms(params).then(
-    (data) => {
-      console.log(data);
-    },
-    (err) => {
-      console.error("error", err);
-    },
-  );
+
+  try {
+    const res = client.SendSms(params);
+    console.log("-- res: ", res);
+    return res;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
 };
