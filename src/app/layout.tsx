@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import MyThemeProvider from "@/providers/theme";
 import { bgModel } from "@/config";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -30,6 +31,8 @@ export default function RootLayout({
         <body className={`font-sans ${inter.variable}`}>
           <MyThemeProvider>
             <TRPCReactProvider>
+              <Toaster richColors position={"top-right"} />
+
               <div className={"relative h-screen w-screen"}>
                 <div
                   className={cn(

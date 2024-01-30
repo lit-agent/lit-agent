@@ -46,6 +46,7 @@
     "react-phone-number-input": "^3.3.9",
     "remark-gfm": "^4.0.0",
     "server-only": "^0.0.1",
+    "sonner": "^1.4.0",
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",

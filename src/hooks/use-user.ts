@@ -1,0 +1,10 @@
+import { createBearStore } from "@/lib/create-bear-store";
+import { User } from "@prisma/client";
+
+const useUserBear = createBearStore<User | null>()("user", null, true);
+
+export const useUser = () => {
+  return {
+    ...useUserBear(),
+  };
+};

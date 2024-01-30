@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 
 import { z } from "zod";
-import { PHONE_REGEX } from "@/const";
+import { PHONE_REGEX, SMS_EXPIRE_MINUTES } from "@/const";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -22,8 +22,10 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import "react-phone-number-input/style.css";
-import { isValidPhoneNumber } from "react-phone-number-input";
-import { smsAction } from "@/app/api/account/route";
+import { sendSms, validateSms } from "@/app/api/account/route";
+import { toast } from "sonner";
+import { useUser } from "@/hooks/use-user";
+import { useState } from "react";
 
 export default function GuidancePage() {
   // 1. Define your form.
@@ -45,21 +47,36 @@ export default function GuidancePage() {
     formState: { errors },
   } = form;
 
+  const { setUser } = useUser();
+
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
+    const user = await validateSms(values);
+    if (!user) return toast.error("手机号码或者验证码无效！");
+
+    setUser(user);
+    return toast.success("验证成功！");
   }
 
+  const [sendingSms, setSendingSms] = useState(false);
   const onRequestingVerifyCode = async (event) => {
     event.preventDefault(); // 防止触发form的验证
+    setSendingSms(true);
 
     const phone = watch("phone");
     console.log("-- phone: ", phone);
 
-    const res = await smsAction({ phone });
+    const res = await sendSms({ phone });
     console.log("-- res: ", res);
+
+    const msg = res?.SendStatusSet![0]!.Code;
+    if (msg === "Ok") toast.success("验证码发送状态！");
+    else toast.error(`验证码发送失败，原因：${msg}`);
+
+    setSendingSms(false);
   };
 
   return (
@@ -123,13 +140,15 @@ export default function GuidancePage() {
                         </FormControl>
                         <Button
                           onClick={onRequestingVerifyCode}
-                          disabled={!watch("phone") || !!errors.phone}
+                          disabled={
+                            !watch("phone") || !!errors.phone || sendingSms
+                          }
                         >
                           获取验证码
                         </Button>
                       </div>
                       <FormDescription>
-                        一次性验证码，十分钟内有效
+                        一次性验证码，{SMS_EXPIRE_MINUTES}分钟内有效
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

@@ -2,6 +2,8 @@
 
 import { env } from "@/env";
 import * as tencentcloud from "tencentcloud-sdk-nodejs-sms";
+import { db } from "@/server/db";
+import { SMS_EXPIRE_MINUTES } from "@/const";
 
 const SmsClient = tencentcloud.sms.v20210111.Client;
 
@@ -27,7 +29,10 @@ const client = new SmsClient({
   },
 });
 
-export const smsAction = async ({ phone }) => {
+export const sendSms = async ({ phone }) => {
+  // user 表已经存在
+  if (await db.user.findFirst({ where: { id: phone } })) return null;
+
   const code = Math.random().toString().slice(2, 8);
 
   const params = {
@@ -39,6 +44,12 @@ export const smsAction = async ({ phone }) => {
   };
 
   try {
+    await db.account.upsert({
+      create: { phone, code },
+      update: { phone, code },
+      where: { phone },
+    });
+
     const res = client.SendSms(params);
     console.log("-- res: ", res);
     return res;
@@ -46,4 +57,31 @@ export const smsAction = async ({ phone }) => {
     console.error(e);
     return null;
   }
+};
+
+export const validateSms = async ({
+  phone,
+  code,
+}: {
+  phone: string;
+  code: string;
+}) => {
+  const data = await db.account.findFirst({ where: { phone, code } });
+  console.log("-- data: ", data);
+
+  // 不存在
+  if (!data) return null;
+
+  // 过期
+  if (+new Date() - +data.updatedAt > SMS_EXPIRE_MINUTES * 60 * 1000)
+    return null;
+
+  // user 表已经存在
+  if (await db.user.findFirst({ where: { id: phone } })) return null;
+
+  // 创建
+  const user = await db.user.create({ data: { id: phone, phone } });
+  console.log("-- user: ", user);
+
+  return user;
 };
