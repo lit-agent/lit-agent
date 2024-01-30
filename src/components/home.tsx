@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import Assets from "./assets";
 import { tasks } from "@/ds/system";
 import { PRIMARY_COLOR } from "@/const";
-import { BottomNavbar } from "@/app/_components/navbar";
+import { BottomNavbar } from "@/components/navbar";
 
 export const Dot = () => {
   return <div className={"h-3 w-3 rounded-full bg-red-600"}></div>;

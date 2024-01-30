@@ -1,4 +1,4 @@
-import Assets from "@/app/_components/assets";
+import Assets from "@/components/assets";
 
 export const navs = [
   { Icon: Assets.Menu1Icon, alt: "1" },

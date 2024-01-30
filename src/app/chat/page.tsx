@@ -3,9 +3,9 @@
 import JiuguImage from "../../../public/user-jiugu.png";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import ArrowDownIcon from "@/../public/arrow-drop-down-line.svg";
-import ChatItem from "@/app/_components/chat-item";
+import ChatItem from "@/components/chat-item";
 import { sampleChatItems } from "@/ds/mock";
-import { BottomNavbar } from "@/app/_components/navbar";
+import { BottomNavbar } from "@/components/navbar";
 import { Input } from "@/components/ui/input";
 import { IoMenuOutline } from "react-icons/io5";
 import { cn } from "@/lib/utils";
@@ -18,7 +18,7 @@ export default function ChatPage() {
   return (
     <div className={"flex h-full flex-col"}>
       <form action={smsAction}>
-        <Button type={"submit"}>Call SMS</Button>
+        <Button type={"submit"}>Send SMS</Button>
       </form>
 
       <UserButton afterSignOutUrl="/" />

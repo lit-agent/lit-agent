@@ -9,7 +9,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useState } from "react";
-import Assets from "@/app/_components/assets";
+import Assets from "@/components/assets";
 import { markdownComponents } from "@/lib/markdown";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { PRIMARY_COLOR } from "@/const";
@@ -180,7 +180,7 @@ export default function ChatItem({ user, segments }: IChatItem) {
 
                 <div className={"flex overflow-hidden rounded-lg"}>
                   <Image
-                    src={Assets.CoverImage.src}
+                    src={Assets.CoverSmImage.src}
                     alt={"cover"}
                     width={120}
                     height={160}

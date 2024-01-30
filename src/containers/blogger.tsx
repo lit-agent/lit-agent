@@ -3,10 +3,38 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { userJiugu } from "@/ds/mock";
 import Image from "next/image";
-import Assets from "@/app/_components/assets";
+import Assets from "@/components/assets";
 import { Button } from "@/components/ui/button";
 import { TbMessageChatbot } from "react-icons/tb";
 import { cn } from "@/lib/utils";
+
+export const GiuguProfile = () => {
+  return (
+    <div className={"flex flex-col items-center gap-2 "}>
+      <div className={"relative"}>
+        <Avatar className={"h-14 w-14"}>
+          <AvatarImage src={userJiugu.avatar} />
+        </Avatar>
+        <div
+          className={
+            "absolute bottom-[3px] right-[3px] h-3 w-3 rounded-full border border-white bg-green-700"
+          }
+        />
+      </div>
+
+      <div className={"text-2xl font-semibold"}>{userJiugu.name}</div>
+
+      <div>全网粉丝 62.2w</div>
+
+      <Image
+        src={Assets.MediaaImage.src}
+        alt={"medias"}
+        width={120}
+        height={30}
+      />
+    </div>
+  );
+};
 
 export const BloggerContainer = ({
   children,
@@ -18,29 +46,7 @@ export const BloggerContainer = ({
 
       <SheetContent side={"bottom"}>
         <div className={"flex flex-col gap-12 p-8"}>
-          <div className={"flex flex-col items-center gap-2"}>
-            <div className={"relative -mt-[80px]"}>
-              <Avatar className={"h-14 w-14"}>
-                <AvatarImage src={userJiugu.avatar} />
-              </Avatar>
-              <div
-                className={
-                  "absolute bottom-[3px] right-[3px] h-3 w-3 rounded-full border border-white bg-green-700"
-                }
-              />
-            </div>
-
-            <div className={"text-2xl font-semibold"}>{userJiugu.name}</div>
-
-            <div>全网粉丝 62.2w</div>
-
-            <Image
-              src={Assets.MediaaImage.src}
-              alt={"medias"}
-              width={120}
-              height={30}
-            />
-          </div>
+          <GiuguProfile />
 
           <div className={"flex flex-col gap-2"}>
             <Button

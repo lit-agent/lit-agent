@@ -1,5 +1,5 @@
 import { IUser } from "@/ds/user";
-import { IChatItem } from "@/app/_components/chat-item";
+import { IChatItem } from "@/components/chat-item";
 
 export const userJiuguAI: IUser = {
   name: "玖姑的AI助理",
