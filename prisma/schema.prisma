@@ -71,7 +71,6 @@ model User {
   messages Message[]
 
   issuedProducts   Product[] @relation(name: "issue")
-  redeemedProducts Product[] @relation(name: "redeem")
   favoriteProducts Product[] @relation(name: "favor")
   tobuyProducts    Product[] @relation("tobuy")
   boughtProducts   Product[] @relation("bought")
@@ -166,12 +165,11 @@ model Product {
   updatedAt DateTime @updatedAt
 
   // 1. 发行 2. 兑换 3. 收藏 4. 购物车 5. 已买
-  issuer    User   @relation(fields: [issuerId], references: [id], name: "issue") // 发行者（唯一）
-  issuerId  String
-  redeemers User[] @relation(name: "redeem") // 兑换者（多个用户）
-  favors    User[] @relation(name: "favor")
-  tobuyers  User[] @relation("tobuy")
-  buyers    User[] @relation("bought")
+  issuer   User   @relation(fields: [issuerId], references: [id], name: "issue") // 发行者（唯一）
+  issuerId String
+  favors   User[] @relation(name: "favor")
+  tobuyers User[] @relation("tobuy")
+  buyers   User[] @relation("bought")
 
   images      String[]
   title       String

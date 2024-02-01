@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRightIcon, StarIcon } from "lucide-react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { MyMarkdown } from "@/containers/markdown";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Separator } from "@/components/ui/separator";
 
 const Card = ({ children }: PropsWithChildren) => (
   <div className={"m-2 bg-[#2A2435]"}>
@@ -17,7 +19,7 @@ const Card = ({ children }: PropsWithChildren) => (
 );
 
 export default function ProductPage() {
-  const { data: products = [] } = api.product.list.useQuery({});
+  const { data: products = [] } = api.product.list.useQuery();
 
   console.log("-- products: ", products);
 
@@ -27,36 +29,51 @@ export default function ProductPage() {
   return (
     <div className={"flex flex-col"}>
       <div className={"grow overflow-auto"}>
-        <Image src={product.images[0] ?? "/product-1.png"} alt={""} />
+        <AspectRatio ratio={3 / 2} className={"w-full"}>
+          <Image
+            src={product.images[0] ?? "/product-1.png"}
+            alt={"cover"}
+            fill
+          />
+        </AspectRatio>
 
         <Card>
-          <div>
-            <span className={"text-primary"} color={PRIMARY_COLOR}>
-              <Assets.FireFillIcon />
-              {product.price}
-            </span>
+          <div className={"flex flex-col gap-2"}>
+            <div className={"flex items-center gap-2"}>
+              <div
+                className={"text-primary flex items-baseline"}
+                color={PRIMARY_COLOR}
+              >
+                <Assets.FireFillIcon className={"w-5 h-5"} />
+                <span className={"text-2xl"}>{product.price}</span>
+              </div>
 
-            <span className={"text-gray-800"}>或</span>
+              <span className={"text-gray-400 text-xs"}>或</span>
 
-            <span className={"text-gray-600"}>¥{product.price / 10}</span>
+              <span className={"text-gray-300 text-lg"}>
+                ¥ {product.price / 10}
+              </span>
+            </div>
+
+            <div className={"text-2xl font-medium"}>{product.title}</div>
+
+            <div className={"flex items-center gap-2"}>
+              {product.isOnsite && (
+                <Badge className={"text-yellow-500"}>线下赴约</Badge>
+              )}
+              {product.isSelfOperating && (
+                <Badge className={"text-green-500"}>玖姑自营</Badge>
+              )}
+            </div>
+
+            <Separator orientation={"horizontal"} className={"bg-gray-600"} />
+
+            <div className={"flex items-center"}>
+              <span> {product.buyers.length} 人兑换</span>
+
+              <ArrowRightIcon className={"ml-auto"} />
+            </div>
           </div>
-
-          <div>{product.title}</div>
-
-          <div>
-            {product.isOnsite && (
-              <Badge className={"text-yellow-500"}>线下赴约</Badge>
-            )}
-            {product.isSelfOperating && (
-              <Badge className={"text-green-500"}>玖姑自营</Badge>
-            )}
-          </div>
-
-          <div className={"flex items-center"}>
-            {product.redeemers.length} 人兑换
-          </div>
-
-          <ArrowRightIcon className={"ml-auto"} />
         </Card>
 
         <Card>
@@ -64,13 +81,16 @@ export default function ProductPage() {
             {product.isReturnable ? "可退换" : "不可退换"}
             <span className={"mx-2"}>·</span>
             {product.isReservationRequired ? "需要预约" : "无须预约"}
-            {product.surplus > 10 ? (
-              <span className={"text-gray-500"}>库存充足</span>
-            ) : product.surplus > 0 ? (
-              <span className={"text-yellow-500"}>库存紧张</span>
-            ) : (
-              <span className={"text-red-500"}>暂无库存</span>
-            )}
+
+            <span className={"ml-auto"}>
+              {product.surplus > 10 ? (
+                <span className={"text-gray-500"}>库存充足</span>
+              ) : product.surplus > 0 ? (
+                <span className={"text-yellow-500"}>库存紧张</span>
+              ) : (
+                <span className={"text-red-500"}>暂无库存</span>
+              )}
+            </span>
           </div>
         </Card>
 
