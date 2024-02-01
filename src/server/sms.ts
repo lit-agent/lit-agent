@@ -2,7 +2,7 @@ import * as tencentcloud from "tencentcloud-sdk-nodejs-sms";
 import * as process from "process";
 import { getTimeS } from "../lib/datetime";
 import { SMS_EXPIRE_MINUTES } from "@/const";
-import { db } from "@/server/db";
+import { prisma } from "@/server/db";
 
 const SmsClient = tencentcloud.sms.v20210111.Client;
 
@@ -45,10 +45,10 @@ export const sendSms = async ({ phone }: { phone: string }) => {
 
   try {
     console.log("-- sending sms: ", { phone, code });
-    const user = await db.user.findUnique({ where: { phone } });
+    const user = await prisma.user.findUnique({ where: { phone } });
     if (!user) {
       // 新建 user 和 account
-      await db.user.create({
+      await prisma.user.create({
         data: {
           name: phone,
           phone,
@@ -66,7 +66,7 @@ export const sendSms = async ({ phone }: { phone: string }) => {
       });
     } else {
       // 只更新 account
-      await db.account.update({
+      await prisma.account.update({
         where: {
           provider_providerAccountId: {
             provider: "sms",
@@ -96,7 +96,7 @@ export const validateSms = async ({
   phone: string;
   code: string;
 }) => {
-  const account = await db.account.findUnique({
+  const account = await prisma.account.findUnique({
     where: {
       provider_providerAccountId: {
         provider: "sms",
@@ -121,7 +121,7 @@ export const validateSms = async ({
   let user;
   if (!account.user) {
     //   创建用户
-    user = await db.user.create({
+    user = await prisma.user.create({
       data: {
         name: phone,
         phone,
@@ -141,7 +141,7 @@ export const validateSms = async ({
       },
     });
   } else {
-    user = await db.user.update({
+    user = await prisma.user.update({
       where: { id: account.user.id },
       data: {
         status: "online",

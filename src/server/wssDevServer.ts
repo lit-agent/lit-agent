@@ -1,7 +1,7 @@
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
 import { WebSocketServer } from "ws";
 import { appRouter } from "./api/routers";
-import { createServerContext } from "@/trpc/server";
+import { createContext } from "@/server/context";
 
 const wss = new WebSocketServer({
   port: 3001,
@@ -9,7 +9,7 @@ const wss = new WebSocketServer({
 const handler = applyWSSHandler({
   wss,
   router: appRouter,
-  createContext: createServerContext,
+  createContext,
 });
 
 wss.on("connection", (ws) => {

@@ -1,19 +1,14 @@
 "use client";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
-  TRPCLink,
   createWSClient,
-  loggerLink,
-  unstable_httpBatchStreamLink,
-  wsLink,
   httpBatchLink,
+  loggerLink,
+  TRPCLink,
+  wsLink,
 } from "@trpc/client";
-import { createTRPCReact } from "@trpc/react-query";
-import { useState } from "react";
 
 import { type AppRouter } from "@/server/api/routers";
-import { getUrl, transformer } from "./shared";
 import { NextPageContext } from "next";
 import { env } from "@/env";
 import { createTRPCNext } from "@trpc/next";
@@ -80,33 +75,3 @@ export const api = createTRPCNext<AppRouter>({
    */
   ssr: true,
 });
-
-const apiReact = createTRPCReact<AppRouter>();
-
-export function TRPCReactProvider(props: { children: React.ReactNode }) {
-  const [queryClient] = useState(() => new QueryClient());
-
-  const [trpcClient] = useState(() =>
-    apiReact.createClient({
-      transformer,
-      links: [
-        loggerLink({
-          enabled: (op) =>
-            process.env.NODE_ENV === "development" ||
-            (op.direction === "down" && op.result instanceof Error),
-        }),
-        unstable_httpBatchStreamLink({
-          url: getUrl(),
-        }),
-      ],
-    }),
-  );
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <apiReact.Provider client={trpcClient} queryClient={queryClient}>
-        {props.children}
-      </apiReact.Provider>
-    </QueryClientProvider>
-  );
-}

@@ -1,3 +1,4 @@
+"use client";
 import { signIn, useSession } from "next-auth/react";
 import { useRef, useState } from "react";
 import { api } from "@/trpc/react";
@@ -25,7 +26,7 @@ export function AddMessageForm({
       console.log("-- focusing");
       // ref: focus() not working in JavaScript issue [Solved] | bobbyhadz, https://bobbyhadz.com/blog/focus-not-working-in-javascript
       setTimeout(() => {
-        refInput.current!.focus({ preventScroll: true });
+        refInput.current?.focus({ preventScroll: true });
       }, 0);
     } catch (e) {
       console.error(e);

@@ -1,16 +1,15 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import {
-  getServerSession,
   type DefaultSession,
+  getServerSession,
   type NextAuthOptions,
 } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
-
-import { env } from "@/env";
-import { db } from "@/server/db";
+import { prisma } from "@/server/db";
 
 import CredentialsProvider from "next-auth/providers/credentials";
+import DiscordProvider from "next-auth/providers/discord";
 import { validateSms } from "@/server/sms";
+import { env } from "@/env";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -59,7 +58,7 @@ export const authOptions: NextAuthOptions = {
      * @param user
      */
     session: async ({ session, user }) => {
-      const userInDB = await db.user.findUnique({
+      const userInDB = await prisma.user.findUnique({
         where: {
           phone: session.user.name!,
         },
@@ -76,14 +75,9 @@ export const authOptions: NextAuthOptions = {
 
       return newSession;
     },
-
-    // redirect: (params) => {
-    //   console.log("-- redirect: ", params);
-    //   return "/";
-    // },
   },
 
-  adapter: PrismaAdapter(db),
+  adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
       id: "sms",
@@ -96,6 +90,7 @@ export const authOptions: NextAuthOptions = {
         },
         code: { label: "Verification Code", type: "text" },
       },
+
       authorize: async (credentials) => {
         // Here you should verify the phone number and the code
         // For example, check against a database where you stored the code
@@ -111,8 +106,8 @@ export const authOptions: NextAuthOptions = {
     }),
 
     // DiscordProvider({
-    //   clientId: env.DISCORD_CLIENT_ID,
-    //   clientSecret: env.DISCORD_CLIENT_SECRET,
+    //   clientId: env.DISCORD_CLIENT_ID!,
+    //   clientSecret: env.DISCORD_CLIENT_SECRET!,
     // }),
     /**
      * ...add more providers here.

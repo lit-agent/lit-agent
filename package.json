@@ -9,7 +9,9 @@
     "db:studio": "prisma studio",
     "db:migrate-dev": "prisma migrate dev",
     "db:migrate": "prisma migrate deploy",
-    "dev": "yarn db:migrate-dev && next dev",
+    "-dev:wss": "cross-env PORT=3001 tsx watch src/server/wssDevServer.ts --tsconfig tsconfig.server.json ",
+    "dev:next": "next dev",
+    "dev": "yarn db:migrate-dev && run-p dev:*",
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start"

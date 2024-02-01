@@ -2,14 +2,12 @@ import "@/styles/globals.css";
 
 import { Inter } from "next/font/google";
 
-import { TRPCReactProvider } from "@/trpc/react";
 import { cn } from "@/lib/utils";
 import MyThemeProvider from "@/providers/theme";
 import { bgModel } from "@/config";
 import { Toaster } from "sonner";
-import { SessionProvider } from "next-auth/react";
-import { getServerSession } from "next-auth";
-import { authOptions, getServerAuthSession } from "@/server/auth";
+import MySessionProvider from "@/providers/session";
+import { TRPCReactProvider } from "@/providers/trpc";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,13 +25,11 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerAuthSession();
-
   return (
-    <SessionProvider session={session}>
-      <html lang="en" suppressHydrationWarning>
-        <body className={`font-sans ${inter.variable}`}>
-          <MyThemeProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`font-sans ${inter.variable}`}>
+        <MyThemeProvider>
+          <MySessionProvider>
             <TRPCReactProvider>
               <Toaster richColors position={"top-right"} />
 
@@ -61,9 +57,9 @@ export default async function RootLayout({
                 </div>
               </div>
             </TRPCReactProvider>
-          </MyThemeProvider>
-        </body>
-      </html>
-    </SessionProvider>
+          </MySessionProvider>
+        </MyThemeProvider>
+      </body>
+    </html>
   );
 }

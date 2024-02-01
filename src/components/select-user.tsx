@@ -15,7 +15,7 @@ export const SelectUser = () => {
   const { data: users = [] } = api.user.list.useQuery();
   const { targetUser = userJiugu, setTargetUser } = useUser();
 
-  console.log("-- target user: ", targetUser);
+  // console.log("-- target user: ", targetUser);
 
   return (
     <Select
