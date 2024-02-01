@@ -6,8 +6,10 @@ import { TRPCReactProvider } from "@/trpc/react";
 import { cn } from "@/lib/utils";
 import MyThemeProvider from "@/providers/theme";
 import { bgModel } from "@/config";
-import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
+import { SessionProvider } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { authOptions, getServerAuthSession } from "@/server/auth";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,13 +22,15 @@ export const metadata = {
   icons: [{ rel: "Icon", url: "/favicon.ico" }],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getServerAuthSession();
+
   return (
-    <ClerkProvider>
+    <SessionProvider session={session}>
       <html lang="en" suppressHydrationWarning>
         <body className={`font-sans ${inter.variable}`}>
           <MyThemeProvider>
@@ -60,6 +64,6 @@ export default function RootLayout({
           </MyThemeProvider>
         </body>
       </html>
-    </ClerkProvider>
+    </SessionProvider>
   );
 }

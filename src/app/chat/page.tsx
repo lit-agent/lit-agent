@@ -8,9 +8,85 @@ import { cn } from "@/lib/utils";
 import { BloggerContainer } from "@/containers/blogger";
 import { useUser } from "@/hooks/use-user";
 import { SelectUser } from "@/components/select-user";
+import { api } from "@/trpc/react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useSession } from "next-auth/react";
+import { AddMessageForm } from "@/components/add-message-form";
 
 export default function ChatPage() {
-  const { user } = useUser();
+  const postsQuery = api.post.infinite.useInfiniteQuery(
+    {},
+    {
+      getNextPageParam: (d) => d.nextCursor,
+    },
+  );
+  const utils = api.useUtils();
+  const { hasNextPage, isFetchingNextPage, fetchNextPage } = postsQuery;
+
+  // list of messages that are rendered
+  const [messages, setMessages] = useState(() => {
+    const msgs = postsQuery.data?.pages.map((page) => page.items).flat();
+    return msgs;
+  });
+  type Post = NonNullable<typeof messages>[number];
+  const { data: session } = useSession();
+  const userName = session?.user?.name;
+  const scrollTargetRef = useRef<HTMLDivElement>(null);
+
+  // fn to add and dedupe new messages onto state
+  const addMessages = useCallback((incoming?: Post[]) => {
+    setMessages((current) => {
+      const map: Record<Post["id"], Post> = {};
+      for (const msg of current ?? []) {
+        map[msg.id] = msg;
+      }
+      for (const msg of incoming ?? []) {
+        map[msg.id] = msg;
+      }
+      return Object.values(map).sort(
+        (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
+      );
+    });
+  }, []);
+
+  // when new data from `useInfiniteQuery`, merge with current state
+  useEffect(() => {
+    const msgs = postsQuery.data?.pages.map((page) => page.items).flat();
+    addMessages(msgs);
+  }, [postsQuery.data?.pages, addMessages]);
+
+  const scrollToBottomOfList = useCallback(() => {
+    if (scrollTargetRef.current == null) {
+      return;
+    }
+
+    scrollTargetRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+    });
+  }, [scrollTargetRef]);
+  useEffect(() => {
+    scrollToBottomOfList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  // subscribe to new posts and add
+  api.post.onAdd.useSubscription(undefined, {
+    onData(post) {
+      addMessages([post]);
+    },
+    onError(err) {
+      console.error("Subscription error:", err);
+      // we might have missed a message - invalidate cache
+      utils.post.infinite.invalidate();
+    },
+  });
+
+  const [currentlyTyping, setCurrentlyTyping] = useState<string[]>([]);
+  api.post.whoIsTyping.useSubscription(undefined, {
+    onData(data) {
+      setCurrentlyTyping(data);
+    },
+  });
 
   return (
     <div className={"flex h-full flex-col"}>
@@ -26,6 +102,8 @@ export default function ChatPage() {
       </div>
 
       <div className={"relative px-4 py-1"}>
+        <AddMessageForm onMessagePost={() => scrollToBottomOfList()} />
+
         <Input
           className={cn(
             "bg-[#463F4F] ",

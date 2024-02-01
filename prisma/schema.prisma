@@ -76,23 +76,6 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-enum PosterSource {
-  RAW
-  GITHUB
-}
-
-model Post {
-  id     String       @id @default(uuid())
-  name   String
-  text   String
-  source PosterSource @default(RAW)
-
-  // To return `Date`s intact through the API we need to add data transformers
-  // https://trpc.io/docs/v11/data-transformers
-  createdAt DateTime @unique @default(now())
-  updatedAt DateTime @unique @default(now())
-}
-
 enum UserType {
   user
   assistant
@@ -142,4 +125,22 @@ model Message {
   // todo: keep message even user/room deleted
   user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
   room Room? @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}
+
+/// --- post
+enum PosterSource {
+  RAW
+  GITHUB
+}
+
+model Post {
+  id     String       @id @default(uuid())
+  name   String
+  text   String
+  source PosterSource @default(RAW)
+
+  // To return `Date`s intact through the API we need to add data transformers
+  // https://trpc.io/docs/v11/data-transformers
+  createdAt DateTime @unique @default(now())
+  updatedAt DateTime @unique @default(now())
 }
