@@ -2,23 +2,30 @@
 
 import JiuguImage from "../../../public/user-jiugu.png";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import ArrowDownIcon from "@/../public/arrow-drop-down-line.svg";
 import ChatItem from "@/components/chat-item";
 import { BottomNavbar } from "@/components/navbar";
 import { Input } from "@/components/ui/input";
 import { IoMenuOutline } from "react-icons/io5";
 import { cn } from "@/lib/utils";
 import { BloggerContainer } from "@/containers/blogger";
-import { useState } from "react";
-import { guidanceItems } from "@/config";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+} from "@/components/ui/select";
+import { useUser } from "@/hooks/use-user";
+import { api } from "@/trpc/react";
 
 export default function ChatPage() {
-  const [guidanceStep, setGuidanceStep] = useState(5);
+  const { user } = useUser();
+  const { data: users = [] } = api.user.list.useQuery();
 
   return (
     <div className={"flex h-full flex-col"}>
-      <BloggerContainer>
-        <div
+      <Select>
+        <SelectTrigger
           id={"header"}
           className={"flex items-center justify-center gap-1 p-2"}
         >
@@ -27,15 +34,35 @@ export default function ChatPage() {
           </Avatar>
 
           <div>玖姑</div>
+        </SelectTrigger>
 
-          <ArrowDownIcon />
-        </div>
-      </BloggerContainer>
+        <SelectContent>
+          <SelectGroup>
+            {users.map((item, index) => (
+              <SelectItem value={`${index}`} key={index}>
+                <div className={"flex items-center gap-2"}>
+                  <div
+                    className={cn(
+                      "w-2 h-2 rounded-full",
+                      item.status === "online" && "bg-green-500",
+                      item.status === "offline" && "bg-gray-500",
+                      item.status === "busy" && "bg-yellow-500",
+                    )}
+                  />
+                  <div>
+                    {item.id}({item.phone})
+                  </div>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
 
       <div className={"flex grow flex-col gap-4 overflow-auto p-4"}>
         {
           // sampleChatItems
-          guidanceItems.slice(0, guidanceStep).map((chatItem, index) => (
+          [].map((chatItem, index) => (
             <ChatItem {...chatItem} key={index} />
           ))
         }

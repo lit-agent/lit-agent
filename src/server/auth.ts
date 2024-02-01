@@ -77,10 +77,10 @@ export const authOptions: NextAuthOptions = {
       return newSession;
     },
 
-    redirect: (params) => {
-      console.log("-- redirect: ", params);
-      return "/";
-    },
+    // redirect: (params) => {
+    //   console.log("-- redirect: ", params);
+    //   return "/";
+    // },
   },
 
   adapter: PrismaAdapter(db),
