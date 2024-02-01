@@ -22,16 +22,21 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import "react-phone-number-input/style.css";
-import { sendSms, validateSms } from "@/app/api/account/route";
+import { sendSms, validateSms } from "@/server/sms";
 import { toast } from "sonner";
 import { useUser } from "@/hooks/use-user";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { api } from "@/trpc/react";
+import { signIn } from "next-auth/react";
 
 export default function GuidancePage() {
   // 1. Define your form.
   const formSchema = z.object({
-    phone: z.string().regex(PHONE_REGEX, "请输入有效的手机号码！"),
+    phone: z
+      .string()
+      .regex(PHONE_REGEX, "请输入有效的手机号码！")
+      .default("17766091857"),
     code: z.string().regex(/\d{6}/, "请输入有效的验证码！"),
   });
   const form = useForm<z.infer<typeof formSchema>>({
@@ -48,9 +53,9 @@ export default function GuidancePage() {
     formState: { errors },
   } = form;
 
-  const { setUser } = useUser();
-
   const [sendingSms, setSendingSms] = useState(false);
+  const sendSms = api.sms.send.useMutation();
+  const router = useRouter();
   const onRequestingVerifyCode = async (event) => {
     event.preventDefault(); // 防止触发form的验证
     setSendingSms(true);
@@ -58,37 +63,44 @@ export default function GuidancePage() {
     const phone = watch("phone");
     console.log("-- phone: ", phone);
 
-    const res = await sendSms({ phone });
+    const res = await sendSms.mutateAsync({ phone });
     console.log("-- res: ", res);
 
     const msg = res?.SendStatusSet![0]!.Code;
-    if (msg === "Ok") toast.success("验证码发送状态！");
-    else toast.error(`验证码发送失败，原因：${msg}`);
+    if (msg === "Ok") {
+      toast.success("验证码发送状态！");
+      void router.push("/validation");
+      // void location.replace("/validation");
+    } else toast.error(`验证码发送失败，原因：${msg}`);
 
     setSendingSms(false);
   };
 
-  const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+
+  async function onSubmit() {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
     setSubmitting(true);
 
-    const user = await validateSms(values);
-    if (!user) {
-      setSubmitting(false);
-      toast.error("手机号码或者验证码无效！");
-      return;
-    }
+    const phone = watch("phone");
+    const code = watch("code");
+    const res = await signIn("sms", {
+      phone,
+      code,
+      redirect: false,
+      // callbackUrl: '/', // 感谢: https://github.com/sidebase/nuxt-auth/issues/469#issuecomment-1661909912
+    });
+    console.log("-- res: ", res);
 
-    setUser(user);
-
-    void router.push("/chat");
-    toast.success("验证成功！");
     setSubmitting(false);
+    if (!res) return;
+    if (res.ok) {
+      toast.success("登录成功！");
+      // void router.push('/'); // 这个不行
+      void location.replace("/validation"); // 这个可以，ref: https://stackoverflow.com/a/77209617
+    } else toast.error(res.error);
   }
 
   return (
@@ -119,10 +131,7 @@ export default function GuidancePage() {
 
           <SheetContent side={"bottom"}>
             <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-8"
-              >
+              <div className="space-y-8">
                 <FormField
                   control={form.control}
                   name="phone"
@@ -168,7 +177,7 @@ export default function GuidancePage() {
                 />
 
                 <Button
-                  type="submit"
+                  onClick={onSubmit}
                   className={"w-full"}
                   disabled={
                     !watch("phone") ||
@@ -180,7 +189,7 @@ export default function GuidancePage() {
                 >
                   注册/登录
                 </Button>
-              </form>
+              </div>
             </Form>
           </SheetContent>
         </Sheet>

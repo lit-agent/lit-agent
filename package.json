@@ -7,7 +7,9 @@
     "build": "next build",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "dev": "next dev",
+    "db:migrate-dev": "prisma migrate dev",
+    "db:migrate": "prisma migrate deploy",
+    "dev": "yarn db:migrate-dev && next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start"
@@ -24,6 +26,7 @@
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-radio-group": "^1.1.3",
+    "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-slot": "^1.0.2",
     "@t3-oss/env-nextjs": "^0.7.1",
     "@tanstack/react-query": "^4.36.1",

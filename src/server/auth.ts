@@ -9,6 +9,9 @@ import DiscordProvider from "next-auth/providers/discord";
 import { env } from "@/env";
 import { db } from "@/server/db";
 
+import CredentialsProvider from "next-auth/providers/credentials";
+import { validateSms } from "@/server/sms";
+
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -36,17 +39,51 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+  pages: {
+    signIn: "/intro",
+  },
+
+  session: {
+    strategy: "jwt",
+    maxAge: 7 * 24 * 60 * 60, // 一周
+  },
+
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    // session: ({ session, user }) => ({
+    //   ...session,
+    //   user: {
+    //     ...session.user,
+    //     id: user.id,
+    //   },
+    // }),
   },
   adapter: PrismaAdapter(db),
   providers: [
+    CredentialsProvider({
+      id: "sms",
+      name: "sms",
+      credentials: {
+        phone: {
+          label: "Phone Number",
+          type: "text",
+          placeholder: "+123456789",
+        },
+        code: { label: "Verification Code", type: "text" },
+      },
+      authorize: async (credentials) => {
+        // Here you should verify the phone number and the code
+        // For example, check against a database where you stored the code
+        if (!credentials) throw new Error("验证信息为空");
+
+        const { phone, code } = credentials;
+        const result = await validateSms({ phone, code });
+        if (!result) throw new Error("Phone number or code is incorrect");
+
+        console.log("-- login success: ", result);
+        return result;
+      },
+    }),
+
     // DiscordProvider({
     //   clientId: env.DISCORD_CLIENT_ID,
     //   clientSecret: env.DISCORD_CLIENT_SECRET,

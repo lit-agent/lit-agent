@@ -46,7 +46,7 @@ export default function ChatItem({ user, segments }: IChatItem) {
     </Avatar>
   );
 
-  console.log("-- segments: ", segments);
+  // console.log("-- segments: ", segments);
 
   return (
     <div className={"relative flex gap-2 "}>
@@ -123,12 +123,14 @@ export default function ChatItem({ user, segments }: IChatItem) {
                   </div>
                 ))}
 
-                <Button
-                  onClick={() => setSubmitted(true)}
-                  disabled={submitted || !checks.length}
-                >
-                  {submitted ? "已" : checks.length ? "" : "待"}提交
-                </Button>
+                {content.withCTA && (
+                  <Button
+                    onClick={() => setSubmitted(true)}
+                    disabled={submitted || !checks.length}
+                  >
+                    {submitted ? "已" : checks.length ? "" : "待"}提交
+                  </Button>
+                )}
               </div>
             )}
 

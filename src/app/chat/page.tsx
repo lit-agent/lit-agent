@@ -4,15 +4,13 @@ import JiuguImage from "../../../public/user-jiugu.png";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import ArrowDownIcon from "@/../public/arrow-drop-down-line.svg";
 import ChatItem from "@/components/chat-item";
-import { sampleChatItems } from "@/ds/mock";
 import { BottomNavbar } from "@/components/navbar";
 import { Input } from "@/components/ui/input";
 import { IoMenuOutline } from "react-icons/io5";
 import { cn } from "@/lib/utils";
 import { BloggerContainer } from "@/containers/blogger";
-import { UserButton } from "@clerk/nextjs";
-import { guidanceItems } from "@/const";
 import { useState } from "react";
+import { guidanceItems } from "@/config";
 
 export default function ChatPage() {
   const [guidanceStep, setGuidanceStep] = useState(5);
