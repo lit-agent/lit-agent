@@ -70,6 +70,13 @@
 }
  
 @layer base {
+
+  main {
+    height: 100vh;
+    /*height: -webkit-fill-available;*/
+    height: var(--app-height);
+  }
+  
   * {
     @apply border-border;
   }
