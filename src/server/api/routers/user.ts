@@ -3,6 +3,12 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { z } from "zod";
 
 export const userRouter = createTRPCRouter({
+  fetch: publicProcedure
+    .input(z.object({ phone: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.prisma.user.findUnique({ where: input });
+    }),
+
   get: publicProcedure
     .input(
       z.object({
@@ -10,11 +16,11 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      return ctx.db.user.findFirst({ where: { id: input.uid } });
+      return ctx.prisma.user.findFirst({ where: { id: input.uid } });
     }),
 
   list: publicProcedure.query(async ({ ctx, input }) => {
-    return ctx.db.user.findMany({});
+    return ctx.prisma.user.findMany({});
   }),
 
   validate: protectedProcedure
@@ -35,21 +41,21 @@ export const userRouter = createTRPCRouter({
       });
       const uid = ctx.session.user.id;
       if (result) {
-        const userInfo = await ctx.db.user.findFirst({
+        const userInfo = await ctx.prisma.user.findFirst({
           where: { id: uid },
           select: { validated: true },
         });
         if (!userInfo?.validated) {
           const roomId = `${uid}-jiugu`;
           console.log("-- transaction: ", { uid });
-          await ctx.db.user.update({
+          await ctx.prisma.user.update({
             where: { id: uid },
             data: { validated: true },
           });
-          ctx.db.$transaction([
-            ctx.db.room.create({ data: { id: roomId } }),
+          ctx.prisma.$transaction([
+            ctx.prisma.room.create({ data: { id: roomId } }),
 
-            ctx.db.message.createMany({
+            ctx.prisma.message.createMany({
               data: [
                 {
                   userId: JIUGU_AI_ID,

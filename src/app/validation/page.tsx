@@ -14,7 +14,7 @@ import {
   SelectTrigger,
 } from "src/components/ui/select";
 import { Button } from "../../components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useUser } from "../../hooks/use-user";
 import { useRouter } from "next/navigation";
@@ -42,6 +42,8 @@ export default function ValidationPage() {
   const validate = api.user.validate.useMutation();
 
   const router = useRouter();
+
+  console.log("-- validation user: ", user);
 
   return (
     <div className={"flex h-full flex-col"}>

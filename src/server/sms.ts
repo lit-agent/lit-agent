@@ -149,6 +149,14 @@ export const validateSms = async ({
     });
   }
 
+  // 确保房间
+  const roomId = `${user.id}-jiugu`;
+  await prisma.room.upsert({
+    where: { id: roomId },
+    create: { id: roomId },
+    update: {},
+  });
+
   console.log("-- user: ", user);
 
   return user;

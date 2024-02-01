@@ -8,7 +8,7 @@ export function AddMessageForm({
 }: {
   onMessagePost: () => void;
 }) {
-  const addPost = api.post.add.useMutation();
+  const addPost = api.send.add.useMutation();
   const { data: session } = useSession();
   const [message, setMessage] = useState("");
   const [enterToPostMessage, setEnterToPostMessage] = useState(true);
@@ -34,7 +34,7 @@ export function AddMessageForm({
     }
   }
 
-  const isTyping = api.post.isTyping.useMutation();
+  const isTyping = api.send.isTyping.useMutation();
 
   const userName = session?.user?.name;
   if (!userName) {

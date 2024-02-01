@@ -6,6 +6,8 @@ await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
 const config = {
+  reactStrictMode: false,
+
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/i,

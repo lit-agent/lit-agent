@@ -76,9 +76,10 @@ export default function GuidancePage() {
     setSendingSms(false);
   };
 
+  const fetchUser = api.user.fetch.useMutation();
+
   const [submitting, setSubmitting] = useState(false);
   // 2. Define a submit handler.
-
   async function onSubmit() {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
@@ -99,8 +100,10 @@ export default function GuidancePage() {
     if (res.ok) {
       toast.success("登录成功！");
 
-      // void router.push('/'); // 这个不行
-      void location.replace("/validation"); // 这个可以，ref: https://stackoverflow.com/a/77209617
+      // todo: directly got validated info from signIn
+      const user = await fetchUser.mutateAsync({ phone });
+      // void router.push('/'); // todo: why 这个不行
+      void location.replace(user?.validated ? "/chat" : "/validation"); // 这个可以，ref: https://stackoverflow.com/a/77209617
     } else toast.error(res.error);
   }
 

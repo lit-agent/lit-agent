@@ -1,7 +1,7 @@
 import { createBearStore } from "@/lib/create-bear-store";
 import { User } from "@prisma/client";
+import { useSession } from "next-auth/react";
 
-const useUserBear = createBearStore<User | null>()("user", null, true);
 const useTargetUserBear = createBearStore<User | null>()(
   "targetUser",
   null,
@@ -9,8 +9,9 @@ const useTargetUserBear = createBearStore<User | null>()(
 );
 
 export const useUser = () => {
+  const session = useSession();
   return {
-    ...useUserBear(),
+    user: session.data?.user,
     ...useTargetUserBear(),
   };
 };

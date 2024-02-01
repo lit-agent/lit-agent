@@ -56,11 +56,11 @@ export const roomRouter = createTRPCRouter({
     }),
 
   findMany: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.db.room.findMany({ include: { users: true } });
+    return await ctx.prisma.room.findMany({ include: { users: true } });
   }),
 
   findOne: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
-    const room = await ctx.db.room.findUnique({
+    const room = await ctx.prisma.room.findUnique({
       where: { id: input },
       include: { users: true },
     });
@@ -70,7 +70,7 @@ export const roomRouter = createTRPCRouter({
   onSendMessage: publicProcedure.subscription(({ ctx }) => {
     return observable<MessageOutputType>((emit) => {
       const onMessage = async (message: MessageType) => {
-        const users = await ctx.db.user.findMany();
+        const users = await ctx.prisma.user.findMany();
         // emit data to client
         emit.next({ message, users });
       };
@@ -86,7 +86,7 @@ export const roomRouter = createTRPCRouter({
   onEnterRoom: publicProcedure.subscription(({ ctx }) => {
     return observable<UserType[]>((emit) => {
       const onMessage = async (data: { roomId: string }) => {
-        const users = await ctx.db.user.findMany({
+        const users = await ctx.prisma.user.findMany({
           where: { roomId: data.roomId },
         });
         // emit data to client
