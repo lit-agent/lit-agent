@@ -2,6 +2,7 @@ import { postRouter } from "@/server/api/routers/post";
 import { createTRPCRouter } from "@/server/api/trpc";
 import { smsRouter } from "@/server/api/routers/sms";
 import { userRouter } from "@/server/api/routers/user";
+import { roomRouter } from "@/server/api/routers/room";
 
 /**
  * This is the primary router for your server.
@@ -9,8 +10,10 @@ import { userRouter } from "@/server/api/routers/user";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  user: userRouter,
   sms: smsRouter,
+
+  user: userRouter,
+  room: roomRouter,
   post: postRouter,
 });
 

@@ -49,14 +49,34 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
-    // session: ({ session, user }) => ({
-    //   ...session,
-    //   user: {
-    //     ...session.user,
-    //     id: user.id,
-    //   },
-    // }),
+    /**
+     *  参考：https://stackoverflow.com/a/77018015
+     *   session: {
+     *     user: { name: '17766091857', email: null, image: null },
+     *     expires: '2024-02-08T07:38:45.489Z'
+     *   },
+     * @param session
+     * @param user
+     */
+    session: async ({ session, user }) => {
+      const userInDB = await db.user.findUnique({
+        where: {
+          phone: session.user.name!,
+        },
+      });
+      const newSession = {
+        ...session,
+        user: {
+          ...session.user,
+          id: userInDB?.id,
+        },
+      };
+      console.log("-- session callback: ", { session, user, newSession });
+
+      return newSession;
+    },
   },
+
   adapter: PrismaAdapter(db),
   providers: [
     CredentialsProvider({
@@ -76,11 +96,11 @@ export const authOptions: NextAuthOptions = {
         if (!credentials) throw new Error("验证信息为空");
 
         const { phone, code } = credentials;
-        const result = await validateSms({ phone, code });
-        if (!result) throw new Error("Phone number or code is incorrect");
+        const user = await validateSms({ phone, code });
+        if (!user) throw new Error("Phone number or code is incorrect");
 
-        console.log("-- login success: ", result);
-        return result;
+        console.log("-- login success: ", user);
+        return user;
       },
     }),
 

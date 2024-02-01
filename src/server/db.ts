@@ -14,3 +14,17 @@ export const db =
   });
 
 if (env.NODE_ENV !== "production") globalForPrisma.prisma = db;
+
+const init = async () => {
+  if (!(await db.user.findFirst({ where: { id: "jiugu-ai" } }))) {
+    console.log("⏰ init user");
+    await db.user.create({
+      data: {
+        id: "jiuku-ai",
+      },
+    });
+    console.log("✅ init user");
+  }
+};
+
+void init();

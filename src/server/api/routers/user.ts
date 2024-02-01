@@ -1,5 +1,5 @@
 import { JIUGU_AI_ID } from "@/const";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { z } from "zod";
 
 export const userRouter = createTRPCRouter({
@@ -17,18 +17,23 @@ export const userRouter = createTRPCRouter({
     return ctx.db.user.findMany({});
   }),
 
-  validate: publicProcedure
+  validate: protectedProcedure
     .input(
       z.object({
-        uid: z.string(),
         answer: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { uid, answer } = input;
+      const { answer } = input;
       const target = '{"q1":[0,1,2],"q2":[2],"q3":[2],"q4":[0]}';
       const result = answer === target;
-      console.log("-- validate: ", { answer, target, result });
+      console.log("-- validate: ", {
+        session: ctx.session,
+        answer,
+        target,
+        result,
+      });
+      const uid = ctx.session.user.id;
       if (result) {
         const userInfo = await ctx.db.user.findFirst({
           where: { id: uid },

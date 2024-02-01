@@ -48,6 +48,7 @@ export const guidanceItems: IChatItem[] = [
   },
 
   {
+    id: "q1",
     user: userJiuguAI,
     segments: [
       {
@@ -67,6 +68,7 @@ export const guidanceItems: IChatItem[] = [
   },
 
   {
+    id: "q2",
     user: userJiuguAI,
     segments: [
       {
@@ -84,6 +86,7 @@ export const guidanceItems: IChatItem[] = [
     ],
   },
   {
+    id: "q3",
     user: userJiuguAI,
     segments: [
       {
@@ -101,6 +104,7 @@ export const guidanceItems: IChatItem[] = [
     ],
   },
   {
+    id: "q4",
     user: userJiuguAI,
     segments: [
       {

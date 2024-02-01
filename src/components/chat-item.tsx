@@ -1,23 +1,27 @@
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "src/components/ui/avatar";
 import { BsThreeDots } from "react-icons/bs";
-import { IUser } from "@/ds/user";
-import { ChatType } from "@/ds/chat";
-import { cn } from "@/lib/utils";
+import { IUser } from "src/ds/user";
+import { ChatType } from "src/ds/chat";
+import { cn } from "src/lib/utils";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Button } from "src/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "src/components/ui/radio-group";
 import { useState } from "react";
-import Assets from "@/components/assets";
-import { markdownComponents } from "@/lib/markdown";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { PRIMARY_COLOR } from "@/const";
-import { Badge } from "@/components/ui/badge";
-import { BloggerContainer } from "@/containers/blogger";
-import { Checkbox } from "@/components/ui/checkbox";
+import Assets from "src/components/assets";
+import { markdownComponents } from "src/components/markdown";
+import { AspectRatio } from "src/components/ui/aspect-ratio";
+import { PRIMARY_COLOR } from "src/const";
+import { Badge } from "src/components/ui/badge";
+import { BloggerContainer } from "src/containers/blogger";
+import { Checkbox } from "src/components/ui/checkbox";
+import { useValidation } from "../hooks/use-validation";
+import { User } from "@prisma/client";
+import { api } from "@/trpc/react";
 
 export interface IChatItem {
+  id?: string;
   user: IUser;
   segments: {
     type: ChatType;
@@ -35,18 +39,21 @@ export const Hot = ({ value }: { value: number }) => (
   </div>
 );
 
-export default function ChatItem({ user, segments }: IChatItem) {
+export default function ChatItem({ user, segments, id }: IChatItem) {
   const [imageIndex, setImageIndex] = useState(`0`);
   const [checks, setChecks] = useState<number[]>([]);
   const [submitted, setSubmitted] = useState(false);
+  const { setAnswer, answer } = useValidation();
 
   const User = () => (
     <Avatar className={"h-8 w-8"}>
-      <AvatarImage src={user.avatar} />
+      <AvatarImage src={user.avatar!} />
     </Avatar>
   );
 
   // console.log("-- segments: ", segments);
+
+  const sendMessage = api.room.sendMessage.useMutation();
 
   return (
     <div className={"relative flex gap-2 "}>
@@ -72,6 +79,8 @@ export default function ChatItem({ user, segments }: IChatItem) {
 
         {segments.map(({ type, content }, index) => (
           <div key={index}>
+            {type === "children" && content}
+
             {type === "text" && (
               <Markdown
                 remarkPlugins={[remarkGfm]}
@@ -104,17 +113,18 @@ export default function ChatItem({ user, segments }: IChatItem) {
                       checked={checks.includes(index)}
                       disabled={submitted}
                       onCheckedChange={(checked) => {
-                        console.log("-- content: ", content);
+                        // console.log("-- content: ", content);
 
                         const newChecks = !content.multiple
                           ? // 单选
                             [index]
                           : // 多选
                             checked
-                            ? [...checks, index]
+                            ? [...checks, index].sort()
                             : checks.filter((c) => c !== index);
-                        console.log("-- newChecks: ", newChecks);
 
+                        // console.log("-- newChecks: ", newChecks);
+                        setAnswer({ ...answer, [id as string]: newChecks });
                         setChecks(newChecks);
                       }}
                     />
@@ -123,14 +133,24 @@ export default function ChatItem({ user, segments }: IChatItem) {
                   </div>
                 ))}
 
-                {content.withCTA && (
-                  <Button
-                    onClick={() => setSubmitted(true)}
-                    disabled={submitted || !checks.length}
-                  >
-                    {submitted ? "已" : checks.length ? "" : "待"}提交
-                  </Button>
-                )}
+                {
+                  // 使用 Call To Action 按钮
+                  content.withCTA && !submitted && (
+                    <Button
+                      onClick={() => {
+                        setSubmitted(true);
+                        sendMessage.mutate({
+                          text: "submitted",
+                          roomId: "default",
+                          userId: user.id!,
+                        });
+                      }}
+                      disabled={submitted || !checks.length}
+                    >
+                      {checks.length ? "" : "待"}提交
+                    </Button>
+                  )
+                }
               </div>
             )}
 
@@ -152,7 +172,7 @@ export default function ChatItem({ user, segments }: IChatItem) {
                       .slice(0, 6)
                       .map((user: IUser, index: number) => (
                         <Avatar key={index}>
-                          <AvatarImage src={user.avatar} />
+                          <AvatarImage src={user.avatar!} />
                         </Avatar>
                       ))}
                   </div>

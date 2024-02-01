@@ -95,7 +95,6 @@ export default function ValidationPage() {
               setValidating(true);
               console.log("-- answer: ", JSON.stringify(answer));
               const result = await validate.mutateAsync({
-                uid: user!.id,
                 answer: JSON.stringify(answer),
               });
               console.log("-- result: ", result);
