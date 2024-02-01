@@ -1,4 +1,4 @@
-import { Avatar, AvatarImage } from "src/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "src/components/ui/avatar";
 import { BsThreeDots } from "react-icons/bs";
 import { IUser } from "src/ds/user";
 import { ChatType } from "src/ds/chat";
@@ -48,6 +48,9 @@ export default function ChatItem({ user, segments, id }: IChatItem) {
   const User = () => (
     <Avatar className={"h-8 w-8"}>
       <AvatarImage src={user.image!} />
+      <AvatarFallback className={"bg-gray-600"}>
+        {(user.name ?? user.id)[0]}
+      </AvatarFallback>
     </Avatar>
   );
 

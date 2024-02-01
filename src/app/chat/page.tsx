@@ -32,8 +32,12 @@ export default function ChatPage() {
       <div className={"flex grow flex-col gap-4 overflow-auto p-4"}>
         {
           // sampleChatItems
-          messages.map((chatItem, index) => (
-            <ChatItem {...chatItem} key={index} />
+          messages.map((message, index) => (
+            <ChatItem
+              user={message.user!}
+              segments={[{ type: "text", content: message.text }]}
+              key={index}
+            />
           ))
         }
       </div>
