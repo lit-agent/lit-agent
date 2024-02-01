@@ -114,7 +114,7 @@ export default function GuidancePage() {
         alt={"cover"}
         width={640}
         height={800}
-        className={"h-2/3 bg-gradient-to-b from-blue-500"}
+        className={"h-[60%] bg-gradient-to-b from-blue-500"}
       />
 
       <div className={"-mt-[30px]"}>

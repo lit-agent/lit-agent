@@ -5,7 +5,7 @@
 import type { Post } from "@prisma/client";
 import { observable } from "@trpc/server/observable";
 import { EventEmitter } from "events";
-import { prisma as prisma } from "../../db";
+import { prisma as prisma } from "../db";
 import { z } from "zod";
 import {
   protectedProcedure as authedProcedure,

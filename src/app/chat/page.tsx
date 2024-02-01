@@ -22,8 +22,8 @@ export default function ChatPage() {
   // todo: group-level room
   const roomId = DEFAULT_ROOM_ID; // targetUser. user ? `${user?.id}-jiugu` : undefined;
   const [messages, setMessages] = useState<ClientMessage[]>([]);
-  const fetchMessages = api.messaege.fetch.useMutation();
-  const sendMessage = api.messaege.send.useMutation();
+  const fetchMessages = api.message.fetch.useMutation();
+  const sendMessage = api.message.send.useMutation();
 
   useEffect(() => {
     if (!roomId) return;

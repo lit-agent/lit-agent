@@ -6,6 +6,8 @@ import Assets from "./assets";
 import { tasks } from "@/ds/system";
 import { PRIMARY_COLOR } from "@/const";
 import { BottomNavbar } from "@/components/navbar";
+import Image from "next/image";
+import { ArrowUpIcon } from "lucide-react";
 
 export const Dot = () => {
   return <div className={"h-3 w-3 rounded-full bg-red-600"}></div>;
@@ -47,7 +49,12 @@ export default function HomePage() {
           </div>
 
           <div className={"absolute right-2 top-0"}>
-            <Assets.BrandImage />
+            <Image
+              src={Assets.BrandImage}
+              alt={"brand"}
+              width={120}
+              height={120}
+            />
           </div>
         </div>
 
@@ -62,7 +69,7 @@ export default function HomePage() {
                 世界排名
               </div>
               <Assets.AwardFillIcon />
-              <Assets.ArrowUpIcon />
+              <ArrowUpIcon />
               <div>5</div>
             </div>
 

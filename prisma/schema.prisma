@@ -58,14 +58,23 @@ model User {
 
   image  String?
   status UserStatus @default(offline)
-  roomId String?
   type   UserType   @default(user)
 
-  room     Room?        @relation(fields: [roomId], references: [id])
+  balance Int @default(0)
+
+  room   Room?   @relation(fields: [roomId], references: [id])
+  roomId String?
+
   accounts Account[]
   sessions Session[]
   actions  UserAction[]
   messages Message[]
+
+  issuedProducts   Product[] @relation(name: "issue")
+  redeemedProducts Product[] @relation(name: "redeem")
+  favoriteProducts Product[] @relation(name: "favor")
+  tobuyProducts    Product[] @relation("tobuy")
+  boughtProducts   Product[] @relation("bought")
 }
 
 model VerificationToken {
@@ -121,10 +130,16 @@ model Message {
   text   String?
   userId String?
   roomId String?
+  type   MessageType @default(room)
 
   // todo: keep message even user/room deleted
   user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
   room Room? @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}
+
+enum MessageType {
+  room
+  product
 }
 
 /// --- post
@@ -143,4 +158,30 @@ model Post {
   // https://trpc.io/docs/v11/data-transformers
   createdAt DateTime @unique @default(now())
   updatedAt DateTime @unique @default(now())
+}
+
+model Product {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 1. 发行 2. 兑换 3. 收藏 4. 购物车 5. 已买
+  issuer    User   @relation(fields: [issuerId], references: [id], name: "issue") // 发行者（唯一）
+  issuerId  String
+  redeemers User[] @relation(name: "redeem") // 兑换者（多个用户）
+  favors    User[] @relation(name: "favor")
+  tobuyers  User[] @relation("tobuy")
+  buyers    User[] @relation("bought")
+
+  images      String[]
+  title       String
+  description String // 博主的留言
+  detail      String // markdown
+
+  price                 Int // 火值
+  isOnsite              Boolean? // 是否线下运营
+  isSelfOperating       Boolean? // 是否自营
+  isReturnable          Boolean? // 是否可退换
+  isReservationRequired Boolean? // 是否需要预约
+  surplus               Int // 库存
 }

@@ -1,5 +1,5 @@
 import { createTRPCNext } from "@trpc/next";
-import { AppRouter } from "@/server/api/routers";
+import { AppRouter } from "src/server/routers";
 import {
   createWSClient,
   httpBatchLink,

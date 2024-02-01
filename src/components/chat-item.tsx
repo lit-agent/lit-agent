@@ -10,7 +10,6 @@ import { Button } from "src/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "src/components/ui/radio-group";
 import { useState } from "react";
 import Assets from "src/components/assets";
-import { markdownComponents } from "src/components/markdown";
 import { AspectRatio } from "src/components/ui/aspect-ratio";
 import { PRIMARY_COLOR } from "src/const";
 import { Badge } from "src/components/ui/badge";
@@ -19,6 +18,8 @@ import { Checkbox } from "src/components/ui/checkbox";
 import { useValidation } from "../hooks/use-validation";
 import { User } from "@prisma/client";
 import { api } from "@/trpc/react";
+import { markdownComponents, MyMarkdown } from "@/containers/markdown";
+import { ArrowRightIcon } from "lucide-react";
 
 export interface IChatItem {
   id?: string;
@@ -84,22 +85,7 @@ export default function ChatItem({ user, segments, id }: IChatItem) {
           <div key={index}>
             {type === "children" && content}
 
-            {type === "text" && (
-              <Markdown
-                remarkPlugins={[remarkGfm]}
-                components={markdownComponents}
-                key={index}
-                className={cn(
-                  "whitespace-pre-wrap ",
-                  user.type === "user" && "text-primary",
-                )}
-              >
-                {content.replace(
-                  /(#\S+)/g,
-                  (match, tag) => `[${tag}](/tag/${tag})`,
-                )}
-              </Markdown>
-            )}
+            {type === "text" && <MyMarkdown>{content}</MyMarkdown>}
 
             {type === "text-choices" && (
               <div className={"flex w-full flex-col gap-2"}>
@@ -166,7 +152,7 @@ export default function ChatItem({ user, segments, id }: IChatItem) {
                     <Assets.NotificationIcon />
                     邀你加入限时群聊
                   </div>
-                  <Assets.ArrowRightIcon />
+                  <ArrowRightIcon />
                 </div>
 
                 <div className={"flex items-center justify-between"}>

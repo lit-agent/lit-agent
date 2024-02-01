@@ -1,0 +1,129 @@
+"use client";
+
+import { api } from "@/trpc/react";
+import Image from "next/image";
+import { PropsWithChildren } from "react";
+import Assets from "@/components/assets";
+import { PRIMARY_COLOR } from "@/const";
+import { Badge } from "@/components/ui/badge";
+import { ArrowRightIcon, StarIcon } from "lucide-react";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { MyMarkdown } from "@/containers/markdown";
+
+const Card = ({ children }: PropsWithChildren) => (
+  <div className={"m-2 bg-[#2A2435]"}>
+    <div className={"rounded p-2 bg-[#3D3847]"}>{children}</div>
+  </div>
+);
+
+export default function ProductPage() {
+  const { data: products = [] } = api.product.list.useQuery({});
+
+  console.log("-- products: ", products);
+
+  const product = products[0];
+  if (!product) return "商品不存在！";
+
+  return (
+    <div className={"flex flex-col"}>
+      <div className={"grow overflow-auto"}>
+        <Image src={product.images[0] ?? "/product-1.png"} alt={""} />
+
+        <Card>
+          <div>
+            <span className={"text-primary"} color={PRIMARY_COLOR}>
+              <Assets.FireFillIcon />
+              {product.price}
+            </span>
+
+            <span className={"text-gray-800"}>或</span>
+
+            <span className={"text-gray-600"}>¥{product.price / 10}</span>
+          </div>
+
+          <div>{product.title}</div>
+
+          <div>
+            {product.isOnsite && (
+              <Badge className={"text-yellow-500"}>线下赴约</Badge>
+            )}
+            {product.isSelfOperating && (
+              <Badge className={"text-green-500"}>玖姑自营</Badge>
+            )}
+          </div>
+
+          <div className={"flex items-center"}>
+            {product.redeemers.length} 人兑换
+          </div>
+
+          <ArrowRightIcon className={"ml-auto"} />
+        </Card>
+
+        <Card>
+          <div className={"flex items-center"}>
+            {product.isReturnable ? "可退换" : "不可退换"}
+            <span className={"mx-2"}>·</span>
+            {product.isReservationRequired ? "需要预约" : "无须预约"}
+            {product.surplus > 10 ? (
+              <span className={"text-gray-500"}>库存充足</span>
+            ) : product.surplus > 0 ? (
+              <span className={"text-yellow-500"}>库存紧张</span>
+            ) : (
+              <span className={"text-red-500"}>暂无库存</span>
+            )}
+          </div>
+        </Card>
+
+        <Card>
+          <div className={"flex gap-2 items-start"}>
+            <Avatar>
+              <AvatarImage src={product.issuer.image!} />
+            </Avatar>
+
+            <div>
+              <div className={"font-medium"}>{product.issuer.name}</div>
+              <div>{product.description}</div>
+            </div>
+          </div>
+        </Card>
+
+        <Card>
+          <div className={"flex items-center text-lg"}>商品详情</div>
+
+          <MyMarkdown>{product.detail}</MyMarkdown>
+        </Card>
+      </div>
+
+      <div className={"shrink-0 flex items-center justify-between"}>
+        <div>
+          <Avatar className={"w-6 h-6"}>
+            <AvatarImage src={product.issuer.image!} />
+          </Avatar>
+          咨询
+        </div>
+
+        <div>
+          <StarIcon className={"w-6 h-6"} />
+          收藏
+        </div>
+
+        <div className={"grid grid-cols-2"}>
+          <div className={"flex items-center bg-[#4D3130] text-[#FF854F]"}>
+            <div>¥{product.price / 10}</div>
+            <div>现金购买</div>
+          </div>
+
+          <div className={"flex items-center bg-[#FF854F] text-white"}>
+            <div className={"flex items-center gap-1"}>
+              <span className={"w-4 h-4"}>
+                <Assets.FireFillIcon />
+              </span>
+              {product.price}
+            </div>
+            <div>火值兑换</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

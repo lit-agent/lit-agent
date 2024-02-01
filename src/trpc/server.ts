@@ -10,7 +10,7 @@ import { observable } from "@trpc/server/observable";
 import { type TRPCErrorResponse } from "@trpc/server/rpc";
 import { headers } from "next/headers";
 
-import { appRouter, type AppRouter } from "@/server/api/routers";
+import { appRouter, type AppRouter } from "src/server/routers";
 import { transformer } from "./shared";
 import { createTRPCContext } from "@/server/context";
 

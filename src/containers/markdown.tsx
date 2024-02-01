@@ -1,5 +1,18 @@
-import { Components } from "react-markdown";
+import Markdown, { Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
+
+export const MyMarkdown = ({ children }: { children: string }) => {
+  return (
+    <Markdown
+      remarkPlugins={[remarkGfm]}
+      components={markdownComponents}
+      className={cn("whitespace-pre-wrap ")}
+    >
+      {children.replace(/(#\S+)/g, (match, tag) => `[${tag}](/tag/${tag})`)}
+    </Markdown>
+  );
+};
 
 export const markdownComponents: Partial<Components> = {
   // 这个好像没用，直接预处理吧。。。
