@@ -98,6 +98,7 @@ export default function GuidancePage() {
     if (!res) return;
     if (res.ok) {
       toast.success("登录成功！");
+
       // void router.push('/'); // 这个不行
       void location.replace("/validation"); // 这个可以，ref: https://stackoverflow.com/a/77209617
     } else toast.error(res.error);

@@ -69,11 +69,17 @@ export const authOptions: NextAuthOptions = {
         user: {
           ...session.user,
           id: userInDB?.id,
+          validated: userInDB?.validated,
         },
       };
       console.log("-- session callback: ", { session, user, newSession });
 
       return newSession;
+    },
+
+    redirect: (params) => {
+      console.log("-- redirect: ", params);
+      return "/";
     },
   },
 

@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 import { env } from "@/env";
+import { JIUGU_AI_ID } from "@/const";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -16,11 +17,11 @@ export const db =
 if (env.NODE_ENV !== "production") globalForPrisma.prisma = db;
 
 const init = async () => {
-  if (!(await db.user.findFirst({ where: { id: "jiugu-ai" } }))) {
+  if (!(await db.user.findFirst({ where: { id: JIUGU_AI_ID } }))) {
     console.log("⏰ init user");
     await db.user.create({
       data: {
-        id: "jiuku-ai",
+        id: JIUGU_AI_ID,
       },
     });
     console.log("✅ init user");
