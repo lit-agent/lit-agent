@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 import { env } from "@/env";
-import { JIUGU_AI_ID } from "@/const";
+import { DEFAULT_ROOM_ID, JIUGU_AI_ID } from "@/const";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -17,15 +17,22 @@ export const prisma =
 if (env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 const init = async () => {
-  if (!(await prisma.user.findFirst({ where: { id: JIUGU_AI_ID } }))) {
-    console.log("⏰ init user");
-    await prisma.user.create({
-      data: {
-        id: JIUGU_AI_ID,
-      },
-    });
-    console.log("✅ init user");
-  }
+  console.log("⏰ initializing database...");
+  await prisma.$transaction([
+    prisma.user.upsert({
+      where: { id: JIUGU_AI_ID },
+      create: { id: JIUGU_AI_ID },
+      update: {},
+    }),
+
+    prisma.room.upsert({
+      where: { id: DEFAULT_ROOM_ID },
+      create: { id: DEFAULT_ROOM_ID },
+      update: {},
+    }),
+  ]);
+
+  console.log("✅ initialized database.");
 };
 
 void init();

@@ -11,13 +11,16 @@ import { SelectUser } from "@/components/select-user";
 import { api } from "@/trpc/react";
 import { useEffect, useRef, useState } from "react";
 import { ClientMessage } from "@/ds/user";
+import { pusherClient } from "@/lib/pusher";
+import { DEFAULT_ROOM_ID } from "@/const";
 
 export default function ChatPage() {
   const refInput = useRef<HTMLInputElement>(null);
-  const { user } = useUser();
+  const { user, targetUser } = useUser();
   console.log("-- user: ", user);
 
-  const roomId = user ? `${user?.id}-jiugu` : undefined;
+  // todo: group-level room
+  const roomId = DEFAULT_ROOM_ID; // targetUser. user ? `${user?.id}-jiugu` : undefined;
   const [messages, setMessages] = useState<ClientMessage[]>([]);
   const fetchMessages = api.messaege.fetch.useMutation();
   const sendMessage = api.messaege.send.useMutation();
@@ -27,9 +30,48 @@ export default function ChatPage() {
     fetchMessages
       .mutateAsync({ roomId })
       .then((messages) => setMessages(messages));
+
+    pusherClient.subscribe(roomId);
+    pusherClient.bind("user:sendMessage", (message: ClientMessage) => {
+      setMessages((messages) => [...messages, message]);
+    });
+
+    return () => {
+      pusherClient.unsubscribe(roomId);
+      pusherClient.unbind("user:sendMessage");
+    };
   }, [roomId]);
 
+  const submitMessage = () => {
+    if (!refInput.current) return;
+
+    const text = refInput.current.value;
+    if (!text) return;
+
+    console.log("-- sending: ", { text });
+
+    sendMessage.mutate({ roomId, text });
+
+    // todo: 思考要不要做上屏优化
+    // setMessages([
+    //   ...messages,
+    //   {
+    //     user: {
+    //       id: user!.id,
+    //       name: user?.name ?? "",
+    //       image: user?.image ?? "",
+    //       type: "user",
+    //     },
+    //     text,
+    //     updatedAt: new Date(),
+    //   },
+    // ]);
+    refInput.current.value = "";
+  };
+
   console.log(`-- messages: `, messages);
+
+  useEffect(() => {}, [roomId]);
 
   return (
     <div className={"flex h-full flex-col"}>
@@ -57,30 +99,8 @@ export default function ChatPage() {
             "focus-visible:ring-offset-0",
           )}
           onKeyDown={(event) => {
-            if (!refInput.current || !roomId) return;
-
-            const text = refInput.current.value;
-
             if (event.key === "Enter" && !event.nativeEvent.isComposing) {
-              console.log("-- sending: ", refInput.current.value);
-
-              sendMessage.mutate({ roomId, text });
-
-              // todo: better mock
-              setMessages([
-                ...messages,
-                {
-                  user: {
-                    id: user!.id,
-                    name: user?.name ?? "",
-                    image: user?.image ?? "",
-                    type: "user",
-                  },
-                  text,
-                  updatedAt: new Date(),
-                },
-              ]);
-              refInput.current.value = "";
+              submitMessage();
             }
           }}
         />

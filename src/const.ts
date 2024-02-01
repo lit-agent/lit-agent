@@ -7,3 +7,4 @@ export const PHONE_REGEX = new RegExp(
 export const SMS_EXPIRE_MINUTES = 10;
 
 export const JIUGU_AI_ID = "jiugu-ai";
+export const DEFAULT_ROOM_ID = "jiugu";

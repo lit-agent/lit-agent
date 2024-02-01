@@ -1,5 +1,6 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { z } from "zod";
+import { pusherServer } from "@/lib/pusher";
 
 export const messageRouter = createTRPCRouter({
   fetch: protectedProcedure
@@ -45,8 +46,14 @@ export const messageRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       // todo: socket
-      return ctx.prisma.message.create({
+
+      const message = await ctx.prisma.message.create({
         data: { ...input, userId: ctx.user.id },
+        include: { user: true },
       });
+
+      void pusherServer.trigger(input.roomId, "user:sendMessage", message);
+
+      return message;
     }),
 });
