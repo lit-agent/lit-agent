@@ -3,25 +3,25 @@ import { IChatItem } from "@/components/chat-item";
 
 export const userJiuguAI: IUser = {
   name: "玖姑的AI助理",
-  avatar: "/user-jiugu.png",
+  image: "/user-jiugu.png",
   type: "assistant",
 };
 
 export const userJiugu: IUser = {
   name: "玖姑",
-  avatar: "/user-jiugu.png",
+  image: "/user-jiugu.png",
   type: "blogger",
 };
 
 export const userHading: IUser = {
   name: "哈丁",
-  avatar: "/user-hading.png",
+  image: "/user-hading.png",
   type: "user",
 };
 
 export const userSample: IUser = {
   name: "demo",
-  avatar: "/user-sample-1.png",
+  image: "/user-sample-1.png",
   type: "user",
 };
 

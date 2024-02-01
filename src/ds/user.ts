@@ -1,5 +1,3 @@
-export interface IUser {
-  name: string;
-  avatar: string;
-  type: "user" | "assistant" | "blogger";
-}
+import { User } from "@prisma/client";
+
+export type IUser = User;

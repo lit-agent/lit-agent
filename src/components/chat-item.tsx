@@ -47,7 +47,7 @@ export default function ChatItem({ user, segments, id }: IChatItem) {
 
   const User = () => (
     <Avatar className={"h-8 w-8"}>
-      <AvatarImage src={user.avatar!} />
+      <AvatarImage src={user.image!} />
     </Avatar>
   );
 
@@ -172,7 +172,7 @@ export default function ChatItem({ user, segments, id }: IChatItem) {
                       .slice(0, 6)
                       .map((user: IUser, index: number) => (
                         <Avatar key={index}>
-                          <AvatarImage src={user.avatar!} />
+                          <AvatarImage src={user.image!} />
                         </Avatar>
                       ))}
                   </div>
