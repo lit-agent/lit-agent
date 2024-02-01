@@ -16,6 +16,7 @@ export const SelectUser = () => {
   const { targetUser = userJiugu, setTargetUser } = useUser();
 
   // console.log("-- target user: ", targetUser);
+  const { user } = useUser();
 
   return (
     <Select
@@ -23,8 +24,14 @@ export const SelectUser = () => {
     >
       <SelectTrigger
         id={"header"}
-        className={"flex items-center justify-center gap-1 p-2"}
+        className={"flex items-center justify-center gap-1 p-2 relative"}
       >
+        <div
+          className={"absolute left-0 top-1/2 -translate-y-1/2 text-red-500"}
+        >
+          [{user?.phone}]
+        </div>
+
         <Avatar className={"h-5 w-5"}>
           <AvatarImage src={targetUser?.image ?? undefined} />
           <AvatarFallback>
