@@ -9,4 +9,5 @@ export type ChatType =
   | "sheet"
   | "goods-link"
   | "small-task"
-  | "expiring-group-link";
+  | "expiring-group-link"
+  | "children";

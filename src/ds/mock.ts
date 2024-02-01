@@ -1,25 +1,29 @@
-import { IUser } from "@/ds/user";
+import { ClientUser } from "@/ds/user";
 import { IChatItem } from "@/components/chat-item";
 
-export const userJiuguAI: IUser = {
+export const userJiuguAI: ClientUser = {
+  id: "jiugu-ai",
   name: "玖姑的AI助理",
   image: "/user-jiugu.png",
   type: "assistant",
 };
 
-export const userJiugu: IUser = {
+export const userJiugu: ClientUser = {
+  id: "jiugu",
   name: "玖姑",
   image: "/user-jiugu.png",
   type: "blogger",
 };
 
-export const userHading: IUser = {
+export const userHading: ClientUser = {
+  id: "hading",
   name: "哈丁",
   image: "/user-hading.png",
   type: "user",
 };
 
-export const userSample: IUser = {
+export const userSample: ClientUser = {
+  id: "demo",
   name: "demo",
   image: "/user-sample-1.png",
   type: "user",

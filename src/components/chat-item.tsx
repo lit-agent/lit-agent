@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "src/components/ui/avatar";
 import { BsThreeDots } from "react-icons/bs";
-import { IUser } from "src/ds/user";
+import { ClientUser } from "src/ds/user";
 import { ChatType } from "src/ds/chat";
 import { cn } from "src/lib/utils";
 import Markdown from "react-markdown";
@@ -22,7 +22,7 @@ import { api } from "@/trpc/react";
 
 export interface IChatItem {
   id?: string;
-  user: IUser;
+  user: ClientUser;
   segments: {
     type: ChatType;
     content: any;
@@ -173,7 +173,7 @@ export default function ChatItem({ user, segments, id }: IChatItem) {
                   <div className={"flex -space-x-4"}>
                     {content.members
                       .slice(0, 6)
-                      .map((user: IUser, index: number) => (
+                      .map((user: ClientUser, index: number) => (
                         <Avatar key={index}>
                           <AvatarImage src={user.image!} />
                         </Avatar>

@@ -9,7 +9,8 @@ import { BloggerContainer } from "@/containers/blogger";
 import { useUser } from "@/hooks/use-user";
 import { SelectUser } from "@/components/select-user";
 import { api } from "@/trpc/react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ClientMessage } from "@/ds/user";
 
 export default function ChatPage() {
   const refInput = useRef<HTMLInputElement>(null);
@@ -17,13 +18,18 @@ export default function ChatPage() {
   console.log("-- user: ", user);
 
   const roomId = user ? `${user?.id}-jiugu` : undefined;
-  const { data: messages = [] } = api.messaege.list.useQuery(
-    { roomId },
-    { enabled: !!user },
-  );
-  console.log(`-- messages: `, messages);
-
+  const [messages, setMessages] = useState<ClientMessage[]>([]);
+  const fetchMessages = api.messaege.fetch.useMutation();
   const sendMessage = api.messaege.send.useMutation();
+
+  useEffect(() => {
+    if (!roomId) return;
+    fetchMessages
+      .mutateAsync({ roomId })
+      .then((messages) => setMessages(messages));
+  }, [roomId]);
+
+  console.log(`-- messages: `, messages);
 
   return (
     <div className={"flex h-full flex-col"}>
@@ -57,7 +63,23 @@ export default function ChatPage() {
 
             if (event.key === "Enter" && !event.nativeEvent.isComposing) {
               console.log("-- sending: ", refInput.current.value);
+
               sendMessage.mutate({ roomId, text });
+
+              // todo: better mock
+              setMessages([
+                ...messages,
+                {
+                  user: {
+                    id: user!.id,
+                    name: user?.name ?? "",
+                    image: user?.image ?? "",
+                    type: "user",
+                  },
+                  text,
+                  updatedAt: new Date(),
+                },
+              ]);
               refInput.current.value = "";
             }
           }}
