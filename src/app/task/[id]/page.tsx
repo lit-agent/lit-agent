@@ -27,7 +27,7 @@ export default function ProductPage() {
 
   if (!task) return "商品不存在！";
 
-  const surplus = task.total - task.buyers.length;
+  const surplus = task.total - task.finishedUsers.length;
 
   return (
     <div className={"flex flex-col"}>
@@ -68,7 +68,7 @@ export default function ProductPage() {
             <Separator orientation={"horizontal"} className={"bg-gray-600"} />
 
             <div className={"flex items-center"}>
-              <span> {task.buyers.length} 人兑换</span>
+              <span> {task.finishedUsers.length} 人兑换</span>
 
               <ArrowRightIcon className={"ml-auto"} />
             </div>

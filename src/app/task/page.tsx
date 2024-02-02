@@ -1,3 +1,5 @@
+"use client";
+
 import { RiFireFill } from "react-icons/ri";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { userHading } from "@/ds/mock";
@@ -19,7 +21,7 @@ export default function TaskPage() {
     capital: 1093,
     ranking: 355,
     // todo: 需要更好的数据结构
-    buyers: Array(132).fill(userHading),
+    finishedUsers: Array(132).fill(userHading),
   };
 
   const { data: tasks = [] } = api.task.list.useQuery({});
@@ -59,11 +61,13 @@ export default function TaskPage() {
           }
         >
           期满后
-          <span className={"text-primary mx-1"}>{data.buyers.length}</span>
+          <span className={"text-primary mx-1"}>
+            {data.finishedUsers.length}
+          </span>
           人平分奖励 <ChevronRightIcon size={12} className={"ml-1"} />
         </div>
 
-        <AvatarComp users={data.buyers} />
+        <AvatarComp users={data.finishedUsers} />
 
         <div
           className={

@@ -1,6 +1,8 @@
+"use client";
+
 import { useUser } from "@/hooks/use-user";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { $Enums, Prisma } from ".prisma/client";
+import { $Enums } from ".prisma/client";
 import Image from "next/image";
 import { ChevronRightIcon, SearchIcon } from "lucide-react";
 import { RiFireFill } from "react-icons/ri";
