@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useUser } from "@/hooks/use-user";
-import { DEFAULT_ROOM_ID } from "@/const";
 import { ClientMessage } from "@/ds/user";
 import { api } from "@/trpc/react";
 import { pusherClient } from "@/lib/pusher";
@@ -12,7 +11,6 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { BloggerContainer } from "@/containers/blogger";
 import { IoMenuOutline } from "react-icons/io5";
-import { BottomNavbar } from "@/components/navbar";
 
 export default function ChatPage({
   roomId,

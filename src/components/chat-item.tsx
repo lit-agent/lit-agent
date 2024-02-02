@@ -3,8 +3,6 @@ import { BsThreeDots } from "react-icons/bs";
 import { ClientUser } from "src/ds/user";
 import { ChatType } from "src/ds/chat";
 import { cn } from "src/lib/utils";
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import Image from "next/image";
 import { Button } from "src/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "src/components/ui/radio-group";
@@ -18,7 +16,7 @@ import { Checkbox } from "src/components/ui/checkbox";
 import { useValidation } from "../hooks/use-validation";
 import { User } from "@prisma/client";
 import { api } from "@/trpc/react";
-import { markdownComponents, MyMarkdown } from "@/containers/markdown";
+import { MyMarkdown } from "@/containers/markdown";
 import { ArrowRightIcon } from "lucide-react";
 
 export interface IChatItem {
@@ -33,7 +31,7 @@ export interface IChatItem {
 export const Hot = ({ value }: { value: number }) => (
   <div className={"text-primary flex items-center"} color={PRIMARY_COLOR}>
     <div className={"h-4 w-4"}>
-      <Assets.Firecon />
+      <Assets.FireIcon />
     </div>
 
     {value}
@@ -131,7 +129,7 @@ export default function ChatItem({ user, segments, id }: IChatItem) {
                         sendMessage.mutate({
                           text: "submitted",
                           roomId: "default",
-                          userId: user.id!,
+                          senderId: user.id!,
                         });
                       }}
                       disabled={submitted || !checks.length}

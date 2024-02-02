@@ -64,7 +64,7 @@ export const postRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       const { name } = ctx.user;
-      const post = await prisma.send.create({
+      const post = await prisma.post.create({
         data: {
           ...input,
           name,
@@ -114,7 +114,7 @@ export const postRouter = router({
       const take = input.take ?? 10;
       const cursor = input.cursor;
 
-      const page = await prisma.send.findMany({
+      const page = await prisma.post.findMany({
         orderBy: {
           createdAt: "desc",
         },

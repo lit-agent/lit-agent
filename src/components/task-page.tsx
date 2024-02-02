@@ -8,22 +8,6 @@ import { useUser } from "@/hooks/use-user";
 import Link from "next/link";
 import { Label } from "./ui/label";
 import { api } from "@/trpc/react";
-import { Prisma } from ".prisma/client";
-import TaskGetPayload = Prisma.TaskGetPayload;
-import TaskFindManyArgs = Prisma.TaskFindManyArgs;
-
-const taskArgs: TaskFindManyArgs = {
-  include: {
-    buyers: true,
-    issuer: true,
-    room: {
-      include: {
-        users: true,
-        messages: true,
-      },
-    },
-  },
-};
 
 export default function TaskPage() {
   const userNew = userHading;
@@ -38,7 +22,7 @@ export default function TaskPage() {
     buyers: Array(132).fill(userHading),
   };
 
-  const { data: tasks = [] } = api.task.list.useQuery(taskArgs);
+  const { data: tasks = [] } = api.task.list.useQuery({});
 
   console.log("-- tasks: ", tasks);
 
@@ -55,7 +39,11 @@ export default function TaskPage() {
 
         <div
           className="radial-progress text-primary "
-          style={{ "--value": 70, "--size": "10rem" }}
+          style={{
+            /* @ts-ignore */
+            "--size": "10rem",
+            "--value": 70,
+          }}
           role="progressbar"
         >
           <div className={"flex items-center flex-col"}>
@@ -100,43 +88,29 @@ export default function TaskPage() {
           <ChevronDownIcon />
         </div>
       </div>
-      {
-        // todo: type hint in the context
-        (
-          tasks as TaskGetPayload<{
-            include: {
-              room: {
-                include: {
-                  users: true;
-                  messages: true;
-                };
-              };
-            };
-          }>[]
-        ).map((task, index) => (
-          <Link
-            href={`/room/${task.room.id}`}
-            key={index}
-            className={
-              "rounded bg-[#373041] flex items-center justify-between p-3 my-2"
-            }
-          >
-            <div className={"flex flex-col gap-2"}>
-              <div className={"flex items-center gap-2"}>
-                <div className={"w-2 h-2 bg-green-500 rounded-full"} />
-                <AvatarComp users={task.room.users} />
-                {task.room.users.length} 人
-              </div>
-
-              <div className={"text-gray-500 text-sm"}>
-                {task.room.messages.length
-                  ? task.room.messages[0]!.text
-                  : "这个群还没有发送任何消息"}
-              </div>
+      {tasks.map((task, index) => (
+        <Link
+          href={`/room/${task.room.id}`}
+          key={index}
+          className={
+            "rounded bg-[#373041] flex items-center justify-between p-3 my-2"
+          }
+        >
+          <div className={"flex flex-col gap-2"}>
+            <div className={"flex items-center gap-2"}>
+              <div className={"w-2 h-2 bg-green-500 rounded-full"} />
+              <AvatarComp users={task.room.users} />
+              {task.room.users.length} 人
             </div>
-          </Link>
-        ))
-      }
+
+            <div className={"text-gray-500 text-sm"}>
+              {task.room.messages.length
+                ? task.room.messages[0]!.text
+                : "这个群还没有发送任何消息"}
+            </div>
+          </div>
+        </Link>
+      ))}
     </div>
   );
 }

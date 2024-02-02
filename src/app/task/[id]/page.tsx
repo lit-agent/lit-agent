@@ -19,9 +19,7 @@ const Card = ({ children }: PropsWithChildren) => (
 );
 
 export default function ProductPage() {
-  const { data: tasks = [] } = api.task.list.useQuery({
-    include: { buyers: true, issuer: true },
-  });
+  const { data: tasks = [] } = api.task.list.useQuery({});
 
   console.log("-- products: ", tasks);
 

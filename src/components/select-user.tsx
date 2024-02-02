@@ -16,10 +16,9 @@ import { useRouter } from "next/navigation";
 export const SelectUser = ({ withBack }: { withBack?: boolean }) => {
   const { data: users = [] } = api.user.list.useQuery();
   const { targetUser = userJiugu, setTargetUser } = useUser();
+  const router = useRouter();
 
   // console.log("-- target user: ", targetUser);
-  const { user } = useUser();
-  const router = useRouter();
 
   return (
     <Select
@@ -50,7 +49,7 @@ export const SelectUser = ({ withBack }: { withBack?: boolean }) => {
             </AvatarFallback>
           </Avatar>
 
-          <div>{targetUser?.name ?? targetUser?.phone ?? targetUser?.id}</div>
+          <div>{targetUser?.name ?? targetUser?.id}</div>
         </SelectTrigger>
       </div>
 

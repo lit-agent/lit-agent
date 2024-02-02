@@ -1,18 +1,20 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
-import Assets from "@/components/assets";
 import { useState } from "react";
 import { AppTab, AppTabComp } from "@/components/app-tab";
-import ChatPage from "@/components/chat-page";
-import TaskPage from "@/components/task-page";
+import { useUser } from "@/hooks/use-user";
+import Assets from "@/components/assets";
 import HomePage from "@/components/home";
+import TaskPage from "@/components/task-page";
+import ChatPage from "@/components/chat-page";
 
 export default function Home() {
   // noStore();
 
   const [tab, setTab] = useState<AppTab>(AppTab.fire);
-  console.log("-- tab: ", tab);
+  const { user } = useUser();
+  console.log("-- tab: ", { tab, user });
 
   return (
     <Tabs
@@ -21,7 +23,7 @@ export default function Home() {
       onValueChange={(value) => setTab(value as AppTab)}
     >
       <TabsContent value={AppTab.chat} className={"grow overflow-auto m-0"}>
-        <ChatPage />
+        {user ? <ChatPage roomId={`${user.id}-jiugu`} /> : "请登录后再试！"}
       </TabsContent>
 
       <TabsContent value={AppTab.fire} className={"grow overflow-auto m-0"}>

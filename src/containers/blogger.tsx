@@ -13,7 +13,7 @@ export const GiuguProfile = () => {
     <div className={"flex flex-col items-center gap-2 "}>
       <div className={"relative"}>
         <Avatar className={"h-14 w-14"}>
-          <AvatarImage src={userJiugu.image} />
+          <AvatarImage src={userJiugu.image!} />
         </Avatar>
         <div
           className={

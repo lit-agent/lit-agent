@@ -8,7 +8,14 @@ export const taskRouter = createTRPCRouter({
   list: publicProcedure
     .input(TaskFindManyArgsSchema)
     .query(({ ctx, input }) => {
-      return ctx.prisma.task.findMany(input);
+      return ctx.prisma.task.findMany({
+        ...input,
+        include: {
+          buyers: true,
+          issuer: true,
+          room: { include: { users: true, messages: true } },
+        },
+      });
     }),
 
   create: protectedProcedure

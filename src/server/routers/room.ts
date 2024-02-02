@@ -9,7 +9,7 @@ const message = Prisma.validator<Prisma.MessageArgs>()({
   select: {
     id: true,
     roomId: true,
-    userId: true,
+    senderId: true,
     text: true,
     createdAt: true,
   },
@@ -36,7 +36,7 @@ export const ee = new EventEmitter();
 export const roomRouter = createTRPCRouter({
   sendMessage: publicProcedure
     .input(
-      z.object({ text: z.string(), userId: z.string(), roomId: z.string() }),
+      z.object({ text: z.string(), senderId: z.string(), roomId: z.string() }),
     )
     .mutation(({ ctx, input }) => {
       const message: MessageType = {
@@ -86,7 +86,9 @@ export const roomRouter = createTRPCRouter({
     return observable<UserType[]>((emit) => {
       const onMessage = async (data: { roomId: string }) => {
         const users = await ctx.prisma.user.findMany({
-          where: { roomId: data.roomId },
+          where: {
+            // roomId: data.roomId
+          },
         });
         // emit data to client
         emit.next(users);
