@@ -48,8 +48,8 @@ export const messageRouter = createTRPCRouter({
       // todo: socket
 
       const message = await ctx.prisma.message.create({
-        data: { ...input, userId: ctx.user.id },
-        include: { user: true },
+        data: { ...input, senderId: ctx.user.id },
+        include: { sender: true },
       });
 
       void pusherServer.trigger(input.roomId, "user:sendMessage", message);

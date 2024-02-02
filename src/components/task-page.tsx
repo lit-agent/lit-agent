@@ -114,7 +114,8 @@ export default function TaskPage() {
             };
           }>[]
         ).map((task, index) => (
-          <div
+          <Link
+            href={`/room/${task.room.id}`}
             key={index}
             className={
               "rounded bg-[#373041] flex items-center justify-between p-3 my-2"
@@ -133,7 +134,7 @@ export default function TaskPage() {
                   : "这个群还没有发送任何消息"}
               </div>
             </div>
-          </div>
+          </Link>
         ))
       }
     </div>

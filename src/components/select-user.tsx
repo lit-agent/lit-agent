@@ -10,37 +10,49 @@ import {
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { ChevronLeftIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-export const SelectUser = () => {
+export const SelectUser = ({ withBack }: { withBack?: boolean }) => {
   const { data: users = [] } = api.user.list.useQuery();
   const { targetUser = userJiugu, setTargetUser } = useUser();
 
   // console.log("-- target user: ", targetUser);
   const { user } = useUser();
+  const router = useRouter();
 
   return (
     <Select
       onValueChange={(v) => setTargetUser(users.find((u) => u.id === v)!)}
     >
-      <SelectTrigger
-        id={"header"}
-        className={"flex items-center justify-center gap-1 p-2 relative"}
-      >
-        <div
-          className={"absolute left-0 top-1/2 -translate-y-1/2 text-red-500"}
+      <div className={"relative w-full flex justify-center "}>
+        {withBack && (
+          <ChevronLeftIcon
+            className={
+              "absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded hover:bg-gray-800 p-1 transition-all"
+            }
+            onClick={(event) => {
+              router.back();
+            }}
+          />
+        )}
+
+        <SelectTrigger
+          id={"header"}
+          className={
+            "flex items-center justify-center gap-1 p-2 border-none focus:ring-0 focus:ring-offset-0 rounded-none"
+          }
         >
-          [{user?.phone}]
-        </div>
+          <Avatar className={"h-5 w-5"}>
+            <AvatarImage src={targetUser?.image ?? undefined} />
+            <AvatarFallback>
+              {(targetUser?.name ?? targetUser?.id ?? "U")[0]}
+            </AvatarFallback>
+          </Avatar>
 
-        <Avatar className={"h-5 w-5"}>
-          <AvatarImage src={targetUser?.image ?? undefined} />
-          <AvatarFallback>
-            {(targetUser?.name ?? targetUser?.id ?? "U")[0]}
-          </AvatarFallback>
-        </Avatar>
-
-        <div>{targetUser?.name ?? targetUser?.phone ?? targetUser?.id}</div>
-      </SelectTrigger>
+          <div>{targetUser?.name ?? targetUser?.phone ?? targetUser?.id}</div>
+        </SelectTrigger>
+      </div>
 
       <SelectContent>
         <SelectGroup>

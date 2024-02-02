@@ -34,7 +34,7 @@ export type ClientUser = UserGetPayload<ClientUserSelector>;
 
 export type ClientMessage = MessageGetPayload<{
   select: {
-    user: ClientUserSelector;
+    sender: ClientUserSelector;
     updatedAt: true;
     text: true;
   };

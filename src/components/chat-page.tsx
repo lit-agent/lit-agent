@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { useUser } from "@/hooks/use-user";
 import { DEFAULT_ROOM_ID } from "@/const";
@@ -12,19 +14,24 @@ import { BloggerContainer } from "@/containers/blogger";
 import { IoMenuOutline } from "react-icons/io5";
 import { BottomNavbar } from "@/components/navbar";
 
-export default function ChatPage() {
+export default function ChatPage({
+  roomId,
+  withBack,
+}: {
+  roomId: string;
+  withBack?: boolean;
+}) {
   const refInput = useRef<HTMLInputElement>(null);
   const { user, targetUser } = useUser();
   console.log("-- user: ", user);
 
-  // todo: group-level room
-  const roomId = DEFAULT_ROOM_ID; // targetUser. user ? `${user?.id}-jiugu` : undefined;
   const [messages, setMessages] = useState<ClientMessage[]>([]);
   const fetchMessages = api.message.fetch.useMutation();
   const sendMessage = api.message.send.useMutation();
 
   useEffect(() => {
     if (!roomId) return;
+
     fetchMessages
       .mutateAsync({ roomId })
       .then((messages) => setMessages(messages));
@@ -48,22 +55,9 @@ export default function ChatPage() {
 
     console.log("-- sending: ", { text });
 
+    // todo: 思考要不要做上屏优化
     sendMessage.mutate({ roomId, text });
 
-    // todo: 思考要不要做上屏优化
-    // setMessages([
-    //   ...messages,
-    //   {
-    //     user: {
-    //       id: user!.id,
-    //       name: user?.name ?? "",
-    //       image: user?.image ?? "",
-    //       type: "user",
-    //     },
-    //     text,
-    //     updatedAt: new Date(),
-    //   },
-    // ]);
     refInput.current.value = "";
   };
 
@@ -73,14 +67,14 @@ export default function ChatPage() {
 
   return (
     <div className={"flex h-full flex-col overflow-hidden"}>
-      <SelectUser />
+      <SelectUser withBack={withBack} />
 
       <div className={"flex grow flex-col gap-4 overflow-auto p-4"}>
         {
           // sampleChatItems
           messages.map((message, index) => (
             <ChatItem
-              user={message.user!}
+              user={message.sender!}
               segments={[{ type: "text", content: message.text }]}
               key={index}
             />
