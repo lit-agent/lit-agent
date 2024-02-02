@@ -22,7 +22,7 @@ export const RoomScalarFieldEnumSchema = z.enum(['id','name']);
 
 export const SessionScalarFieldEnumSchema = z.enum(['id','sessionToken','userId','expires']);
 
-export const TaskScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','issuerId','images','title','description','detail','price','isOnsite','isSelfOperating','isReturnable','isReservationRequired','surplus','roomId']);
+export const TaskScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','issuerId','images','title','description','detail','price','isOnsite','isSelfOperating','isReturnable','isReservationRequired','total','roomId']);
 
 export const UserScalarFieldEnumSchema = z.enum(['id','createdAt','updatedAt','name','validated','email','emailVerified','phone','phoneVerified','image','status','type','balance']);
 
@@ -151,7 +151,7 @@ export const TaskSchema = z.object({
   isSelfOperating: z.boolean().nullable(),
   isReturnable: z.boolean().nullable(),
   isReservationRequired: z.boolean().nullable(),
-  surplus: z.number().int(),
+  total: z.number().int(),
   roomId: z.string(),
 })
 
@@ -368,7 +368,7 @@ export const TaskSelectSchema: z.ZodType<Prisma.TaskSelect> = z.object({
   isSelfOperating: z.boolean().optional(),
   isReturnable: z.boolean().optional(),
   isReservationRequired: z.boolean().optional(),
-  surplus: z.boolean().optional(),
+  total: z.boolean().optional(),
   roomId: z.boolean().optional(),
   issuer: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
   favors: z.union([z.boolean(),z.lazy(() => UserFindManyArgsSchema)]).optional(),
@@ -878,7 +878,7 @@ export const TaskWhereInputSchema: z.ZodType<Prisma.TaskWhereInput> = z.object({
   isSelfOperating: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
   isReturnable: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
   isReservationRequired: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
-  surplus: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  total: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   roomId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   issuer: z.union([ z.lazy(() => UserRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional(),
   favors: z.lazy(() => UserListRelationFilterSchema).optional(),
@@ -901,7 +901,7 @@ export const TaskOrderByWithRelationInputSchema: z.ZodType<Prisma.TaskOrderByWit
   isSelfOperating: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   isReturnable: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   isReservationRequired: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  surplus: z.lazy(() => SortOrderSchema).optional(),
+  total: z.lazy(() => SortOrderSchema).optional(),
   roomId: z.lazy(() => SortOrderSchema).optional(),
   issuer: z.lazy(() => UserOrderByWithRelationInputSchema).optional(),
   favors: z.lazy(() => UserOrderByRelationAggregateInputSchema).optional(),
@@ -940,7 +940,7 @@ export const TaskWhereUniqueInputSchema: z.ZodType<Prisma.TaskWhereUniqueInput> 
   isSelfOperating: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
   isReturnable: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
   isReservationRequired: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
-  surplus: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  total: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   issuer: z.union([ z.lazy(() => UserRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional(),
   favors: z.lazy(() => UserListRelationFilterSchema).optional(),
   tobuyers: z.lazy(() => UserListRelationFilterSchema).optional(),
@@ -962,7 +962,7 @@ export const TaskOrderByWithAggregationInputSchema: z.ZodType<Prisma.TaskOrderBy
   isSelfOperating: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   isReturnable: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   isReservationRequired: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  surplus: z.lazy(() => SortOrderSchema).optional(),
+  total: z.lazy(() => SortOrderSchema).optional(),
   roomId: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => TaskCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => TaskAvgOrderByAggregateInputSchema).optional(),
@@ -988,7 +988,7 @@ export const TaskScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.TaskScal
   isSelfOperating: z.union([ z.lazy(() => BoolNullableWithAggregatesFilterSchema),z.boolean() ]).optional().nullable(),
   isReturnable: z.union([ z.lazy(() => BoolNullableWithAggregatesFilterSchema),z.boolean() ]).optional().nullable(),
   isReservationRequired: z.union([ z.lazy(() => BoolNullableWithAggregatesFilterSchema),z.boolean() ]).optional().nullable(),
-  surplus: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  total: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   roomId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
 }).strict();
 
@@ -1599,7 +1599,7 @@ export const TaskCreateInputSchema: z.ZodType<Prisma.TaskCreateInput> = z.object
   isSelfOperating: z.boolean().optional().nullable(),
   isReturnable: z.boolean().optional().nullable(),
   isReservationRequired: z.boolean().optional().nullable(),
-  surplus: z.number().int(),
+  total: z.number().int(),
   issuer: z.lazy(() => UserCreateNestedOneWithoutIssuedTasksInputSchema),
   favors: z.lazy(() => UserCreateNestedManyWithoutFavoriteTasksInputSchema).optional(),
   tobuyers: z.lazy(() => UserCreateNestedManyWithoutTobuyTasksInputSchema).optional(),
@@ -1621,7 +1621,7 @@ export const TaskUncheckedCreateInputSchema: z.ZodType<Prisma.TaskUncheckedCreat
   isSelfOperating: z.boolean().optional().nullable(),
   isReturnable: z.boolean().optional().nullable(),
   isReservationRequired: z.boolean().optional().nullable(),
-  surplus: z.number().int(),
+  total: z.number().int(),
   roomId: z.string(),
   favors: z.lazy(() => UserUncheckedCreateNestedManyWithoutFavoriteTasksInputSchema).optional(),
   tobuyers: z.lazy(() => UserUncheckedCreateNestedManyWithoutTobuyTasksInputSchema).optional(),
@@ -1641,7 +1641,7 @@ export const TaskUpdateInputSchema: z.ZodType<Prisma.TaskUpdateInput> = z.object
   isSelfOperating: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReturnable: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReservationRequired: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  surplus: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  total: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   issuer: z.lazy(() => UserUpdateOneRequiredWithoutIssuedTasksNestedInputSchema).optional(),
   favors: z.lazy(() => UserUpdateManyWithoutFavoriteTasksNestedInputSchema).optional(),
   tobuyers: z.lazy(() => UserUpdateManyWithoutTobuyTasksNestedInputSchema).optional(),
@@ -1663,7 +1663,7 @@ export const TaskUncheckedUpdateInputSchema: z.ZodType<Prisma.TaskUncheckedUpdat
   isSelfOperating: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReturnable: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReservationRequired: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  surplus: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  total: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   roomId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   favors: z.lazy(() => UserUncheckedUpdateManyWithoutFavoriteTasksNestedInputSchema).optional(),
   tobuyers: z.lazy(() => UserUncheckedUpdateManyWithoutTobuyTasksNestedInputSchema).optional(),
@@ -1684,7 +1684,7 @@ export const TaskCreateManyInputSchema: z.ZodType<Prisma.TaskCreateManyInput> = 
   isSelfOperating: z.boolean().optional().nullable(),
   isReturnable: z.boolean().optional().nullable(),
   isReservationRequired: z.boolean().optional().nullable(),
-  surplus: z.number().int(),
+  total: z.number().int(),
   roomId: z.string()
 }).strict();
 
@@ -1701,7 +1701,7 @@ export const TaskUpdateManyMutationInputSchema: z.ZodType<Prisma.TaskUpdateManyM
   isSelfOperating: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReturnable: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReservationRequired: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  surplus: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  total: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const TaskUncheckedUpdateManyInputSchema: z.ZodType<Prisma.TaskUncheckedUpdateManyInput> = z.object({
@@ -1718,7 +1718,7 @@ export const TaskUncheckedUpdateManyInputSchema: z.ZodType<Prisma.TaskUncheckedU
   isSelfOperating: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReturnable: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReservationRequired: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  surplus: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  total: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   roomId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -2332,13 +2332,13 @@ export const TaskCountOrderByAggregateInputSchema: z.ZodType<Prisma.TaskCountOrd
   isSelfOperating: z.lazy(() => SortOrderSchema).optional(),
   isReturnable: z.lazy(() => SortOrderSchema).optional(),
   isReservationRequired: z.lazy(() => SortOrderSchema).optional(),
-  surplus: z.lazy(() => SortOrderSchema).optional(),
+  total: z.lazy(() => SortOrderSchema).optional(),
   roomId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const TaskAvgOrderByAggregateInputSchema: z.ZodType<Prisma.TaskAvgOrderByAggregateInput> = z.object({
   price: z.lazy(() => SortOrderSchema).optional(),
-  surplus: z.lazy(() => SortOrderSchema).optional()
+  total: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const TaskMaxOrderByAggregateInputSchema: z.ZodType<Prisma.TaskMaxOrderByAggregateInput> = z.object({
@@ -2354,7 +2354,7 @@ export const TaskMaxOrderByAggregateInputSchema: z.ZodType<Prisma.TaskMaxOrderBy
   isSelfOperating: z.lazy(() => SortOrderSchema).optional(),
   isReturnable: z.lazy(() => SortOrderSchema).optional(),
   isReservationRequired: z.lazy(() => SortOrderSchema).optional(),
-  surplus: z.lazy(() => SortOrderSchema).optional(),
+  total: z.lazy(() => SortOrderSchema).optional(),
   roomId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -2371,13 +2371,13 @@ export const TaskMinOrderByAggregateInputSchema: z.ZodType<Prisma.TaskMinOrderBy
   isSelfOperating: z.lazy(() => SortOrderSchema).optional(),
   isReturnable: z.lazy(() => SortOrderSchema).optional(),
   isReservationRequired: z.lazy(() => SortOrderSchema).optional(),
-  surplus: z.lazy(() => SortOrderSchema).optional(),
+  total: z.lazy(() => SortOrderSchema).optional(),
   roomId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const TaskSumOrderByAggregateInputSchema: z.ZodType<Prisma.TaskSumOrderByAggregateInput> = z.object({
   price: z.lazy(() => SortOrderSchema).optional(),
-  surplus: z.lazy(() => SortOrderSchema).optional()
+  total: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const IntWithAggregatesFilterSchema: z.ZodType<Prisma.IntWithAggregatesFilter> = z.object({
@@ -4008,7 +4008,7 @@ export const TaskCreateWithoutRoomInputSchema: z.ZodType<Prisma.TaskCreateWithou
   isSelfOperating: z.boolean().optional().nullable(),
   isReturnable: z.boolean().optional().nullable(),
   isReservationRequired: z.boolean().optional().nullable(),
-  surplus: z.number().int(),
+  total: z.number().int(),
   issuer: z.lazy(() => UserCreateNestedOneWithoutIssuedTasksInputSchema),
   favors: z.lazy(() => UserCreateNestedManyWithoutFavoriteTasksInputSchema).optional(),
   tobuyers: z.lazy(() => UserCreateNestedManyWithoutTobuyTasksInputSchema).optional(),
@@ -4029,7 +4029,7 @@ export const TaskUncheckedCreateWithoutRoomInputSchema: z.ZodType<Prisma.TaskUnc
   isSelfOperating: z.boolean().optional().nullable(),
   isReturnable: z.boolean().optional().nullable(),
   isReservationRequired: z.boolean().optional().nullable(),
-  surplus: z.number().int(),
+  total: z.number().int(),
   favors: z.lazy(() => UserUncheckedCreateNestedManyWithoutFavoriteTasksInputSchema).optional(),
   tobuyers: z.lazy(() => UserUncheckedCreateNestedManyWithoutTobuyTasksInputSchema).optional(),
   buyers: z.lazy(() => UserUncheckedCreateNestedManyWithoutBoughtTasksInputSchema).optional()
@@ -4127,7 +4127,7 @@ export const TaskUpdateWithoutRoomInputSchema: z.ZodType<Prisma.TaskUpdateWithou
   isSelfOperating: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReturnable: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReservationRequired: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  surplus: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  total: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   issuer: z.lazy(() => UserUpdateOneRequiredWithoutIssuedTasksNestedInputSchema).optional(),
   favors: z.lazy(() => UserUpdateManyWithoutFavoriteTasksNestedInputSchema).optional(),
   tobuyers: z.lazy(() => UserUpdateManyWithoutTobuyTasksNestedInputSchema).optional(),
@@ -4148,7 +4148,7 @@ export const TaskUncheckedUpdateWithoutRoomInputSchema: z.ZodType<Prisma.TaskUnc
   isSelfOperating: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReturnable: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReservationRequired: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  surplus: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  total: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   favors: z.lazy(() => UserUncheckedUpdateManyWithoutFavoriteTasksNestedInputSchema).optional(),
   tobuyers: z.lazy(() => UserUncheckedUpdateManyWithoutTobuyTasksNestedInputSchema).optional(),
   buyers: z.lazy(() => UserUncheckedUpdateManyWithoutBoughtTasksNestedInputSchema).optional()
@@ -4773,7 +4773,7 @@ export const TaskCreateWithoutIssuerInputSchema: z.ZodType<Prisma.TaskCreateWith
   isSelfOperating: z.boolean().optional().nullable(),
   isReturnable: z.boolean().optional().nullable(),
   isReservationRequired: z.boolean().optional().nullable(),
-  surplus: z.number().int(),
+  total: z.number().int(),
   favors: z.lazy(() => UserCreateNestedManyWithoutFavoriteTasksInputSchema).optional(),
   tobuyers: z.lazy(() => UserCreateNestedManyWithoutTobuyTasksInputSchema).optional(),
   buyers: z.lazy(() => UserCreateNestedManyWithoutBoughtTasksInputSchema).optional(),
@@ -4793,7 +4793,7 @@ export const TaskUncheckedCreateWithoutIssuerInputSchema: z.ZodType<Prisma.TaskU
   isSelfOperating: z.boolean().optional().nullable(),
   isReturnable: z.boolean().optional().nullable(),
   isReservationRequired: z.boolean().optional().nullable(),
-  surplus: z.number().int(),
+  total: z.number().int(),
   roomId: z.string(),
   favors: z.lazy(() => UserUncheckedCreateNestedManyWithoutFavoriteTasksInputSchema).optional(),
   tobuyers: z.lazy(() => UserUncheckedCreateNestedManyWithoutTobuyTasksInputSchema).optional(),
@@ -4823,7 +4823,7 @@ export const TaskCreateWithoutFavorsInputSchema: z.ZodType<Prisma.TaskCreateWith
   isSelfOperating: z.boolean().optional().nullable(),
   isReturnable: z.boolean().optional().nullable(),
   isReservationRequired: z.boolean().optional().nullable(),
-  surplus: z.number().int(),
+  total: z.number().int(),
   issuer: z.lazy(() => UserCreateNestedOneWithoutIssuedTasksInputSchema),
   tobuyers: z.lazy(() => UserCreateNestedManyWithoutTobuyTasksInputSchema).optional(),
   buyers: z.lazy(() => UserCreateNestedManyWithoutBoughtTasksInputSchema).optional(),
@@ -4844,7 +4844,7 @@ export const TaskUncheckedCreateWithoutFavorsInputSchema: z.ZodType<Prisma.TaskU
   isSelfOperating: z.boolean().optional().nullable(),
   isReturnable: z.boolean().optional().nullable(),
   isReservationRequired: z.boolean().optional().nullable(),
-  surplus: z.number().int(),
+  total: z.number().int(),
   roomId: z.string(),
   tobuyers: z.lazy(() => UserUncheckedCreateNestedManyWithoutTobuyTasksInputSchema).optional(),
   buyers: z.lazy(() => UserUncheckedCreateNestedManyWithoutBoughtTasksInputSchema).optional()
@@ -4868,7 +4868,7 @@ export const TaskCreateWithoutTobuyersInputSchema: z.ZodType<Prisma.TaskCreateWi
   isSelfOperating: z.boolean().optional().nullable(),
   isReturnable: z.boolean().optional().nullable(),
   isReservationRequired: z.boolean().optional().nullable(),
-  surplus: z.number().int(),
+  total: z.number().int(),
   issuer: z.lazy(() => UserCreateNestedOneWithoutIssuedTasksInputSchema),
   favors: z.lazy(() => UserCreateNestedManyWithoutFavoriteTasksInputSchema).optional(),
   buyers: z.lazy(() => UserCreateNestedManyWithoutBoughtTasksInputSchema).optional(),
@@ -4889,7 +4889,7 @@ export const TaskUncheckedCreateWithoutTobuyersInputSchema: z.ZodType<Prisma.Tas
   isSelfOperating: z.boolean().optional().nullable(),
   isReturnable: z.boolean().optional().nullable(),
   isReservationRequired: z.boolean().optional().nullable(),
-  surplus: z.number().int(),
+  total: z.number().int(),
   roomId: z.string(),
   favors: z.lazy(() => UserUncheckedCreateNestedManyWithoutFavoriteTasksInputSchema).optional(),
   buyers: z.lazy(() => UserUncheckedCreateNestedManyWithoutBoughtTasksInputSchema).optional()
@@ -4913,7 +4913,7 @@ export const TaskCreateWithoutBuyersInputSchema: z.ZodType<Prisma.TaskCreateWith
   isSelfOperating: z.boolean().optional().nullable(),
   isReturnable: z.boolean().optional().nullable(),
   isReservationRequired: z.boolean().optional().nullable(),
-  surplus: z.number().int(),
+  total: z.number().int(),
   issuer: z.lazy(() => UserCreateNestedOneWithoutIssuedTasksInputSchema),
   favors: z.lazy(() => UserCreateNestedManyWithoutFavoriteTasksInputSchema).optional(),
   tobuyers: z.lazy(() => UserCreateNestedManyWithoutTobuyTasksInputSchema).optional(),
@@ -4934,7 +4934,7 @@ export const TaskUncheckedCreateWithoutBuyersInputSchema: z.ZodType<Prisma.TaskU
   isSelfOperating: z.boolean().optional().nullable(),
   isReturnable: z.boolean().optional().nullable(),
   isReservationRequired: z.boolean().optional().nullable(),
-  surplus: z.number().int(),
+  total: z.number().int(),
   roomId: z.string(),
   favors: z.lazy(() => UserUncheckedCreateNestedManyWithoutFavoriteTasksInputSchema).optional(),
   tobuyers: z.lazy(() => UserUncheckedCreateNestedManyWithoutTobuyTasksInputSchema).optional()
@@ -5106,7 +5106,7 @@ export const TaskScalarWhereInputSchema: z.ZodType<Prisma.TaskScalarWhereInput> 
   isSelfOperating: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
   isReturnable: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
   isReservationRequired: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
-  surplus: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  total: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   roomId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
 }).strict();
 
@@ -5607,7 +5607,7 @@ export const TaskCreateManyIssuerInputSchema: z.ZodType<Prisma.TaskCreateManyIss
   isSelfOperating: z.boolean().optional().nullable(),
   isReturnable: z.boolean().optional().nullable(),
   isReservationRequired: z.boolean().optional().nullable(),
-  surplus: z.number().int(),
+  total: z.number().int(),
   roomId: z.string()
 }).strict();
 
@@ -5751,7 +5751,7 @@ export const TaskUpdateWithoutIssuerInputSchema: z.ZodType<Prisma.TaskUpdateWith
   isSelfOperating: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReturnable: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReservationRequired: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  surplus: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  total: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   favors: z.lazy(() => UserUpdateManyWithoutFavoriteTasksNestedInputSchema).optional(),
   tobuyers: z.lazy(() => UserUpdateManyWithoutTobuyTasksNestedInputSchema).optional(),
   buyers: z.lazy(() => UserUpdateManyWithoutBoughtTasksNestedInputSchema).optional(),
@@ -5771,7 +5771,7 @@ export const TaskUncheckedUpdateWithoutIssuerInputSchema: z.ZodType<Prisma.TaskU
   isSelfOperating: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReturnable: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReservationRequired: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  surplus: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  total: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   roomId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   favors: z.lazy(() => UserUncheckedUpdateManyWithoutFavoriteTasksNestedInputSchema).optional(),
   tobuyers: z.lazy(() => UserUncheckedUpdateManyWithoutTobuyTasksNestedInputSchema).optional(),
@@ -5791,7 +5791,7 @@ export const TaskUncheckedUpdateManyWithoutIssuerInputSchema: z.ZodType<Prisma.T
   isSelfOperating: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReturnable: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReservationRequired: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  surplus: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  total: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   roomId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -5808,7 +5808,7 @@ export const TaskUpdateWithoutFavorsInputSchema: z.ZodType<Prisma.TaskUpdateWith
   isSelfOperating: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReturnable: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReservationRequired: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  surplus: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  total: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   issuer: z.lazy(() => UserUpdateOneRequiredWithoutIssuedTasksNestedInputSchema).optional(),
   tobuyers: z.lazy(() => UserUpdateManyWithoutTobuyTasksNestedInputSchema).optional(),
   buyers: z.lazy(() => UserUpdateManyWithoutBoughtTasksNestedInputSchema).optional(),
@@ -5829,7 +5829,7 @@ export const TaskUncheckedUpdateWithoutFavorsInputSchema: z.ZodType<Prisma.TaskU
   isSelfOperating: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReturnable: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReservationRequired: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  surplus: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  total: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   roomId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   tobuyers: z.lazy(() => UserUncheckedUpdateManyWithoutTobuyTasksNestedInputSchema).optional(),
   buyers: z.lazy(() => UserUncheckedUpdateManyWithoutBoughtTasksNestedInputSchema).optional()
@@ -5849,7 +5849,7 @@ export const TaskUncheckedUpdateManyWithoutFavorsInputSchema: z.ZodType<Prisma.T
   isSelfOperating: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReturnable: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReservationRequired: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  surplus: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  total: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   roomId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -5866,7 +5866,7 @@ export const TaskUpdateWithoutTobuyersInputSchema: z.ZodType<Prisma.TaskUpdateWi
   isSelfOperating: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReturnable: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReservationRequired: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  surplus: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  total: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   issuer: z.lazy(() => UserUpdateOneRequiredWithoutIssuedTasksNestedInputSchema).optional(),
   favors: z.lazy(() => UserUpdateManyWithoutFavoriteTasksNestedInputSchema).optional(),
   buyers: z.lazy(() => UserUpdateManyWithoutBoughtTasksNestedInputSchema).optional(),
@@ -5887,7 +5887,7 @@ export const TaskUncheckedUpdateWithoutTobuyersInputSchema: z.ZodType<Prisma.Tas
   isSelfOperating: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReturnable: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReservationRequired: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  surplus: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  total: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   roomId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   favors: z.lazy(() => UserUncheckedUpdateManyWithoutFavoriteTasksNestedInputSchema).optional(),
   buyers: z.lazy(() => UserUncheckedUpdateManyWithoutBoughtTasksNestedInputSchema).optional()
@@ -5907,7 +5907,7 @@ export const TaskUncheckedUpdateManyWithoutTobuyersInputSchema: z.ZodType<Prisma
   isSelfOperating: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReturnable: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReservationRequired: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  surplus: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  total: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   roomId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
@@ -5924,7 +5924,7 @@ export const TaskUpdateWithoutBuyersInputSchema: z.ZodType<Prisma.TaskUpdateWith
   isSelfOperating: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReturnable: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReservationRequired: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  surplus: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  total: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   issuer: z.lazy(() => UserUpdateOneRequiredWithoutIssuedTasksNestedInputSchema).optional(),
   favors: z.lazy(() => UserUpdateManyWithoutFavoriteTasksNestedInputSchema).optional(),
   tobuyers: z.lazy(() => UserUpdateManyWithoutTobuyTasksNestedInputSchema).optional(),
@@ -5945,7 +5945,7 @@ export const TaskUncheckedUpdateWithoutBuyersInputSchema: z.ZodType<Prisma.TaskU
   isSelfOperating: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReturnable: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReservationRequired: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  surplus: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  total: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   roomId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   favors: z.lazy(() => UserUncheckedUpdateManyWithoutFavoriteTasksNestedInputSchema).optional(),
   tobuyers: z.lazy(() => UserUncheckedUpdateManyWithoutTobuyTasksNestedInputSchema).optional()
@@ -5965,7 +5965,7 @@ export const TaskUncheckedUpdateManyWithoutBuyersInputSchema: z.ZodType<Prisma.T
   isSelfOperating: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReturnable: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isReservationRequired: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  surplus: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  total: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   roomId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 

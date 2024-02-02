@@ -123,7 +123,7 @@ export const validateSms = async ({
     //   创建用户
     user = await prisma.user.create({
       data: {
-        name: phone,
+        name: "",
         phone,
         phoneVerified: new Date(),
         status: "online",

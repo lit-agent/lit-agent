@@ -31,7 +31,7 @@ const formSchema = z.object({
   isSelfOperating: z.boolean(),
   isReturnable: z.boolean(),
   isReservationRequired: z.boolean(),
-  surplus: z.number(),
+  total: z.number(),
 });
 
 export default function CreateTaskPage() {
@@ -48,7 +48,7 @@ export default function CreateTaskPage() {
       isReservationRequired: true,
       isSelfOperating: true,
       price: 100,
-      surplus: 10,
+      total: 10,
     },
   });
 
@@ -134,7 +134,7 @@ export default function CreateTaskPage() {
 
           <FormField
             control={form.control}
-            name="surplus"
+            name="total"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>库存</FormLabel>

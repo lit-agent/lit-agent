@@ -23,6 +23,7 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
+      name?: string;
       validated?: boolean;
       phone?: string;
       type: UserType;
@@ -73,6 +74,7 @@ export const authOptions: NextAuthOptions = {
         user: {
           ...session.user,
           id: userInDB?.id,
+          name: userInDB?.name,
           phone: userInDB?.phone,
           validated: userInDB?.validated,
           type: userInDB?.type,

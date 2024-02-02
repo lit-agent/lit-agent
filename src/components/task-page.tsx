@@ -10,6 +10,20 @@ import { Label } from "./ui/label";
 import { api } from "@/trpc/react";
 import { Prisma } from ".prisma/client";
 import TaskGetPayload = Prisma.TaskGetPayload;
+import TaskFindManyArgs = Prisma.TaskFindManyArgs;
+
+const taskArgs: TaskFindManyArgs = {
+  include: {
+    buyers: true,
+    issuer: true,
+    room: {
+      include: {
+        users: true,
+        messages: true,
+      },
+    },
+  },
+};
 
 export default function TaskPage() {
   const userNew = userHading;
@@ -24,23 +38,12 @@ export default function TaskPage() {
     buyers: Array(132).fill(userHading),
   };
 
-  const { data: tasks = [] } = api.task.list.useQuery({
-    include: {
-      buyers: true,
-      issuer: true,
-      room: {
-        include: {
-          users: true,
-          messages: true,
-        },
-      },
-    },
-  });
+  const { data: tasks = [] } = api.task.list.useQuery(taskArgs);
 
   console.log("-- tasks: ", tasks);
 
   return (
-    <div className={"bg-[#282232] h-full p-2"}>
+    <div className={"bg-[#282232] p-2"}>
       <div className={"flex flex-col items-center gap-4 p-4"}>
         <div className={"flex items-center gap-1 text-xs"}>
           <Avatar className={"w-4 h-4"}>
@@ -90,7 +93,6 @@ export default function TaskPage() {
           </Link>
         )}
       </div>
-
       <div className={"flex items-center justify-between"}>
         <Label className={"text-xl text-white"}>限时群聊</Label>
         <div className={"flex items-center text-gray-500"}>
@@ -98,21 +100,42 @@ export default function TaskPage() {
           <ChevronDownIcon />
         </div>
       </div>
+      {
+        // todo: type hint in the context
+        (
+          tasks as TaskGetPayload<{
+            include: {
+              room: {
+                include: {
+                  users: true;
+                  messages: true;
+                };
+              };
+            };
+          }>[]
+        ).map((task, index) => (
+          <div
+            key={index}
+            className={
+              "rounded bg-[#373041] flex items-center justify-between p-3 my-2"
+            }
+          >
+            <div className={"flex flex-col gap-2"}>
+              <div className={"flex items-center gap-2"}>
+                <div className={"w-2 h-2 bg-green-500 rounded-full"} />
+                <AvatarComp users={task.room.users} />
+                {task.room.users.length} 人
+              </div>
 
-      {tasks.map((task, index) => (
-        <div
-          key={index}
-          className={"rounded bg-[#373041] flex items-center justify-between"}
-        >
-          <div>
-            <div className="indicator">
-              <span className="indicator-item indicator-middle indicator-start badge badge-secondary"></span>
-              <AvatarComp users={task.room.users} />
-              {task.room.users.length} 人
+              <div className={"text-gray-500 text-sm"}>
+                {task.room.messages.length
+                  ? task.room.messages[0]!.text
+                  : "这个群还没有发送任何消息"}
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))
+      }
     </div>
   );
 }

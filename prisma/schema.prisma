@@ -109,7 +109,8 @@ model Task {
   isSelfOperating       Boolean? // 是否自营
   isReturnable          Boolean? // 是否可退换
   isReservationRequired Boolean? // 是否需要预约
-  surplus               Int // 库存
+  // total - buyers.length = 库存
+  total                 Int
 
   // 一个产品必有room，但有room不一定有product
   room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)

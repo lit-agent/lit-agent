@@ -55,27 +55,6 @@ CREATE TABLE "Post" (
 );
 
 -- CreateTable
-CREATE TABLE "Product" (
-    "id" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "issuerId" TEXT NOT NULL,
-    "images" TEXT[],
-    "title" TEXT NOT NULL,
-    "description" TEXT NOT NULL,
-    "detail" TEXT NOT NULL,
-    "price" INTEGER NOT NULL,
-    "isOnsite" BOOLEAN,
-    "isSelfOperating" BOOLEAN,
-    "isReturnable" BOOLEAN,
-    "isReservationRequired" BOOLEAN,
-    "surplus" INTEGER NOT NULL,
-    "roomId" TEXT NOT NULL,
-
-    CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Room" (
     "id" TEXT NOT NULL,
     "name" TEXT,
@@ -94,6 +73,28 @@ CREATE TABLE "Session" (
 );
 
 -- CreateTable
+CREATE TABLE "Task" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "issuerId" TEXT NOT NULL,
+    "images" TEXT[],
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "detail" TEXT NOT NULL,
+    "price" INTEGER NOT NULL,
+    "isOnsite" BOOLEAN,
+    "isSelfOperating" BOOLEAN,
+    "isReturnable" BOOLEAN,
+    "isReservationRequired" BOOLEAN,
+    "total" INTEGER NOT NULL,
+    "sold" INTEGER NOT NULL DEFAULT 0,
+    "roomId" TEXT NOT NULL,
+
+    CONSTRAINT "Task_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -108,7 +109,6 @@ CREATE TABLE "User" (
     "status" "UserStatus" NOT NULL DEFAULT 'offline',
     "type" "UserType" NOT NULL DEFAULT 'user',
     "balance" INTEGER NOT NULL DEFAULT 0,
-    "roomId" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -128,6 +128,12 @@ CREATE TABLE "UserAction" (
     "type" "UserActionType" NOT NULL,
 
     CONSTRAINT "UserAction_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "_RoomToUser" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL
 );
 
 -- CreateTable
@@ -158,13 +164,13 @@ CREATE UNIQUE INDEX "Post_createdAt_key" ON "Post"("createdAt");
 CREATE UNIQUE INDEX "Post_updatedAt_key" ON "Post"("updatedAt");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Product_roomId_key" ON "Product"("roomId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Room_name_key" ON "Room"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Task_roomId_key" ON "Task"("roomId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
@@ -177,6 +183,12 @@ CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token"
 
 -- CreateIndex
 CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_RoomToUser_AB_unique" ON "_RoomToUser"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_RoomToUser_B_index" ON "_RoomToUser"("B");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_favor_AB_unique" ON "_favor"("A", "B");
@@ -206,34 +218,37 @@ ALTER TABLE "Message" ADD CONSTRAINT "Message_senderId_fkey" FOREIGN KEY ("sende
 ALTER TABLE "Message" ADD CONSTRAINT "Message_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Product" ADD CONSTRAINT "Product_issuerId_fkey" FOREIGN KEY ("issuerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Product" ADD CONSTRAINT "Product_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "User" ADD CONSTRAINT "User_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Task" ADD CONSTRAINT "Task_issuerId_fkey" FOREIGN KEY ("issuerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Task" ADD CONSTRAINT "Task_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "UserAction" ADD CONSTRAINT "UserAction_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_favor" ADD CONSTRAINT "_favor_A_fkey" FOREIGN KEY ("A") REFERENCES "Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_RoomToUser" ADD CONSTRAINT "_RoomToUser_A_fkey" FOREIGN KEY ("A") REFERENCES "Room"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_RoomToUser" ADD CONSTRAINT "_RoomToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_favor" ADD CONSTRAINT "_favor_A_fkey" FOREIGN KEY ("A") REFERENCES "Task"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_favor" ADD CONSTRAINT "_favor_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_tobuy" ADD CONSTRAINT "_tobuy_A_fkey" FOREIGN KEY ("A") REFERENCES "Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_tobuy" ADD CONSTRAINT "_tobuy_A_fkey" FOREIGN KEY ("A") REFERENCES "Task"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_tobuy" ADD CONSTRAINT "_tobuy_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_bought" ADD CONSTRAINT "_bought_A_fkey" FOREIGN KEY ("A") REFERENCES "Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_bought" ADD CONSTRAINT "_bought_A_fkey" FOREIGN KEY ("A") REFERENCES "Task"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_bought" ADD CONSTRAINT "_bought_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

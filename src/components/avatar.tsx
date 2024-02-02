@@ -37,7 +37,7 @@ export default function AvatarComp({
           )}
         >
           <AvatarImage src={user.image ?? undefined} />
-          <AvatarFallback>{user.name![0]}</AvatarFallback>
+          <AvatarFallback>{(user.name ?? "U")[0]}</AvatarFallback>
         </Avatar>
       ))}
 

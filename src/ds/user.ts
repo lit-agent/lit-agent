@@ -3,6 +3,8 @@ import MessageDefaultArgs = Prisma.MessageDefaultArgs;
 import validator = Prisma.validator;
 import UserGetPayload = Prisma.UserGetPayload;
 import MessageGetPayload = Prisma.MessageGetPayload;
+import TaskGetPayload = Prisma.TaskGetPayload;
+import TaskDefaultArgs = Prisma.TaskDefaultArgs;
 
 // ref: https://www.prisma.io/docs/orm/prisma-client/type-safety/operating-against-partial-structures-of-model-types
 export const clientUser = validator<MessageDefaultArgs>()({
@@ -37,3 +39,7 @@ export type ClientMessage = MessageGetPayload<{
     text: true;
   };
 }>;
+
+export const clientTask = validator<TaskDefaultArgs>()({
+  include: {},
+});

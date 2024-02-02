@@ -26,7 +26,10 @@ export default function ProductPage() {
   console.log("-- products: ", tasks);
 
   const task = tasks[0];
+
   if (!task) return "商品不存在！";
+
+  const surplus = task.total - task.buyers.length;
 
   return (
     <div className={"flex flex-col"}>
@@ -81,9 +84,9 @@ export default function ProductPage() {
             {task.isReservationRequired ? "需要预约" : "无须预约"}
 
             <span className={"ml-auto"}>
-              {task.surplus > 10 ? (
+              {surplus > 10 ? (
                 <span className={"text-gray-500"}>库存充足</span>
-              ) : task.surplus > 0 ? (
+              ) : surplus > 0 ? (
                 <span className={"text-yellow-500"}>库存紧张</span>
               ) : (
                 <span className={"text-red-500"}>暂无库存</span>

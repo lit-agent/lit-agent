@@ -58,7 +58,7 @@ export const userRouter = createTRPCRouter({
             ctx.prisma.message.createMany({
               data: [
                 {
-                  userId: JIUGU_AI_ID,
+                  senderId: JIUGU_AI_ID,
                   roomId,
                   text: "Hello！我是你的玖姑助手，恭喜你获得火伴身份，以及我们赠送的10火值，你可以在xxx查看你的火值数额，并在xxx进行兑换！",
                 },
