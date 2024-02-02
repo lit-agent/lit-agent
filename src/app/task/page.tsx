@@ -6,7 +6,7 @@ import AvatarComp from "@/components/avatar";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/use-user";
 import Link from "next/link";
-import { Label } from "./ui/label";
+import { Label } from "../../components/ui/label";
 import { api } from "@/trpc/react";
 
 export default function TaskPage() {
@@ -81,6 +81,7 @@ export default function TaskPage() {
           </Link>
         )}
       </div>
+
       <div className={"flex items-center justify-between"}>
         <Label className={"text-xl text-white"}>限时群聊</Label>
         <div className={"flex items-center text-gray-500"}>
@@ -88,6 +89,7 @@ export default function TaskPage() {
           <ChevronDownIcon />
         </div>
       </div>
+
       {tasks.map((task, index) => (
         <Link
           href={`/room/${task.room.id}`}

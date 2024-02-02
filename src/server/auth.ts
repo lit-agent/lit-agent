@@ -7,12 +7,20 @@ import {
 import { prisma } from "@/server/db";
 
 import CredentialsProvider from "next-auth/providers/credentials";
-import DiscordProvider from "next-auth/providers/discord";
 import { validateSms } from "@/server/sms";
-import { env } from "@/env";
-import { $Enums } from ".prisma/client";
+import { Prisma } from ".prisma/client";
+import UserGetPayload = Prisma.UserGetPayload;
+import validator = Prisma.validator;
+import UserDefaultArgs = Prisma.UserDefaultArgs;
 
-import UserType = $Enums.UserType;
+const userSlice = validator<UserDefaultArgs>()({
+  include: {
+    honors: true,
+    todoTasks: true,
+    finishedTasks: true,
+  },
+});
+
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -21,15 +29,7 @@ import UserType = $Enums.UserType;
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: {
-      id: string;
-      name?: string;
-      validated?: boolean;
-      phone?: string;
-      type: UserType;
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
+    user: DefaultSession["user"] & UserGetPayload<typeof userSlice>;
   }
 
   // interface User {
@@ -68,16 +68,13 @@ export const authOptions: NextAuthOptions = {
         where: {
           phone: session.user.name!,
         },
+        ...userSlice,
       });
       const newSession = {
         ...session,
         user: {
           ...session.user,
-          id: userInDB?.id,
-          name: userInDB?.name,
-          phone: userInDB?.phone,
-          validated: userInDB?.validated,
-          type: userInDB?.type,
+          ...userInDB,
         },
       };
       console.log("-- session callback: ", { session, user, newSession });

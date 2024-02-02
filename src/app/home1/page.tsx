@@ -2,7 +2,7 @@
 
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import Assets from "./assets";
+import Assets from "../../components/assets";
 import { tasks } from "@/ds/system";
 import { PRIMARY_COLOR } from "@/const";
 import { BottomNavbar } from "@/components/navbar";
@@ -11,13 +11,9 @@ import { ArrowUpIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
 
-export const Dot = () => {
-  return <div className={"h-3 w-3 rounded-full bg-red-600"}></div>;
-};
-
-export default function HomePage() {
+export default function Home1Page() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center text-white">
+    <div className="flex min-h-screen flex-col items-center justify-center text-white">
       <div
         className={
           "bg-background flex w-full grow flex-col gap-6 overflow-auto p-6 sm:p-8"
@@ -124,6 +120,10 @@ export default function HomePage() {
           ))}
         </div>
       </div>
-    </main>
+    </div>
   );
 }
+
+const Dot = () => {
+  return <div className={"h-3 w-3 rounded-full bg-red-600"}></div>;
+};

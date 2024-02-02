@@ -5,9 +5,9 @@ import { useState } from "react";
 import { AppTab, AppTabComp } from "@/components/app-tab";
 import { useUser } from "@/hooks/use-user";
 import Assets from "@/components/assets";
-import HomePage from "@/components/home";
-import TaskPage from "@/components/task-page";
+import TaskPage from "@/app/task/page";
 import ChatPage from "@/components/chat-page";
+import HomePage from "./home/page";
 
 export default function Home() {
   // noStore();
@@ -34,20 +34,26 @@ export default function Home() {
         <HomePage />
       </TabsContent>
 
-      <TabsList className="shrink-0 grid grid-cols-3 p-2 bg-black h-fit">
-        <AppTabComp tab={tab} value={AppTab.chat}>
-          <Assets.Menu1Icon />
-        </AppTabComp>
-
-        <AppTabComp tab={tab} value={AppTab.fire}>
-          {/*<RiFireFill className={"scale-150"} />*/}
-          <Assets.FireIcon className={"scale-150"} />
-        </AppTabComp>
-
-        <AppTabComp tab={tab} value={AppTab.shop}>
-          <Assets.Menu3Icon />
-        </AppTabComp>
-      </TabsList>
+      <NavBars tab={tab} />
     </Tabs>
   );
 }
+
+const NavBars = ({ tab }: { tab: AppTab }) => {
+  return (
+    <TabsList className="shrink-0 grid grid-cols-3 p-2 bg-black h-fit">
+      <AppTabComp tab={tab} value={AppTab.chat}>
+        <Assets.Menu1Icon />
+      </AppTabComp>
+
+      <AppTabComp tab={tab} value={AppTab.fire}>
+        {/*<RiFireFill className={"scale-150"} />*/}
+        <Assets.FireIcon className={"scale-150"} />
+      </AppTabComp>
+
+      <AppTabComp tab={tab} value={AppTab.shop}>
+        <Assets.Menu3Icon />
+      </AppTabComp>
+    </TabsList>
+  );
+};

@@ -11,7 +11,8 @@ export const taskRouter = createTRPCRouter({
       return ctx.prisma.task.findMany({
         ...input,
         include: {
-          buyers: true,
+          todoUsers: true,
+          finishedUsers: true,
           issuer: true,
           room: { include: { users: true, messages: true } },
         },

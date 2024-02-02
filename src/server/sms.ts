@@ -45,13 +45,18 @@ export const sendSms = async ({ phone }: { phone: string }) => {
 
   try {
     console.log("-- sending sms: ", { phone, code });
-    const user = await prisma.user.findUnique({ where: { phone } });
+    const user = await prisma.user.findUnique({
+      where: { phone },
+      include: { honors: true },
+    });
     if (!user) {
       // 新建 user 和 account
       await prisma.user.create({
         data: {
           name: phone,
           phone,
+
+          // 创建平台级的账号，todo: 未来应该是继续account创建或者更新user
           accounts: {
             create: {
               provider: "sms",
@@ -145,6 +150,26 @@ export const validateSms = async ({
       where: { id: account.user.id },
       data: {
         status: "online",
+      },
+    });
+  }
+
+  // 确保徽章
+  // honors 一开始没有
+  if (!user.honors?.length) {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        honors: {
+          connectOrCreate: {
+            where: {
+              id: "NewUser",
+            },
+            create: {
+              id: "NewUser",
+            },
+          },
+        },
       },
     });
   }

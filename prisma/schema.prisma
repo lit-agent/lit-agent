@@ -42,6 +42,15 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+model Honor {
+  id        HonorType @id
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
 model Message {
   // todo: keep message even user/room deleted
   id        String   @id @default(cuid())
@@ -93,11 +102,11 @@ model Task {
   updatedAt DateTime @updatedAt
 
   // 1. 发行 2. 兑换 3. 收藏 4. 购物车 5. 已买
-  issuer   User   @relation(fields: [issuerId], references: [id], name: "issue") // 发行者（唯一）
-  issuerId String
-  favors   User[] @relation(name: "favor")
-  tobuyers User[] @relation("tobuy")
-  buyers   User[] @relation("bought")
+  issuer        User   @relation(fields: [issuerId], references: [id], name: "issue") // 发行者（唯一）
+  issuerId      String
+  favoredUsers  User[] @relation("favor")
+  todoUsers     User[] @relation("todo")
+  finishedUsers User[] @relation("finished")
 
   images      String[]
   title       String
@@ -133,7 +142,8 @@ model User {
   status UserStatus @default(offline)
   type   UserType   @default(user)
 
-  balance Int @default(0)
+  currentBalance Int @default(0)
+  historyBalance Int @default(0)
 
   room Room[]
 
@@ -142,10 +152,12 @@ model User {
   actions  UserAction[]
   messages Message[]
 
-  issuedTasks   Task[] @relation(name: "issue")
-  favoriteTasks Task[] @relation(name: "favor")
-  tobuyTasks    Task[] @relation("tobuy")
-  boughtTasks   Task[] @relation("bought")
+  issuedTasks   Task[] @relation("issue")
+  favoriteTasks Task[] @relation("favor")
+  todoTasks     Task[] @relation("todo")
+  finishedTasks Task[] @relation("finished")
+
+  honors Honor[]
 }
 
 model VerificationToken {
@@ -157,6 +169,18 @@ model VerificationToken {
 }
 
 /// [Enums] 
+
+enum HonorType {
+  NewUser
+
+  NewTask
+
+  GoodFriend
+  HotFriend
+
+  GoodFriendEver
+  HotFriendEver
+}
 
 //【测试socket用】post
 enum PosterSource {
