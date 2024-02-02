@@ -5,7 +5,8 @@ import Assets from "@/components/assets";
 import { useState } from "react";
 import { AppTab, AppTabComp } from "@/components/app-tab";
 import ChatPage from "@/components/chat-page";
-import FirePage from "@/components/fire-page";
+import TaskPage from "@/components/task-page";
+import HomePage from "@/components/home";
 
 export default function Home() {
   // noStore();
@@ -15,7 +16,7 @@ export default function Home() {
 
   return (
     <Tabs
-      className={"h-full overflow-hidden flex flex-col bg-cyan-500"}
+      className={"h-full overflow-hidden flex flex-col"}
       value={tab}
       onValueChange={(value) => setTab(value as AppTab)}
     >
@@ -24,11 +25,11 @@ export default function Home() {
       </TabsContent>
 
       <TabsContent value={AppTab.fire} className={"grow overflow-auto m-0"}>
-        <FirePage />
+        <TaskPage />
       </TabsContent>
 
       <TabsContent value={AppTab.shop} className={"grow overflow-auto m-0"}>
-        shop
+        <HomePage />
       </TabsContent>
 
       <TabsList className="shrink-0 grid grid-cols-3 p-2 bg-black h-fit">

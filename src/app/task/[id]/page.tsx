@@ -19,22 +19,20 @@ const Card = ({ children }: PropsWithChildren) => (
 );
 
 export default function ProductPage() {
-  const { data: products = [] } = api.product.list.useQuery();
+  const { data: tasks = [] } = api.task.list.useQuery({
+    include: { buyers: true, issuer: true },
+  });
 
-  console.log("-- products: ", products);
+  console.log("-- products: ", tasks);
 
-  const product = products[0];
-  if (!product) return "商品不存在！";
+  const task = tasks[0];
+  if (!task) return "商品不存在！";
 
   return (
     <div className={"flex flex-col"}>
       <div className={"grow overflow-auto"}>
         <AspectRatio ratio={3 / 2} className={"w-full"}>
-          <Image
-            src={product.images[0] ?? "/product-1.png"}
-            alt={"cover"}
-            fill
-          />
+          <Image src={task.images[0] ?? "/product-1.png"} alt={"cover"} fill />
         </AspectRatio>
 
         <Card>
@@ -44,24 +42,24 @@ export default function ProductPage() {
                 className={"text-primary flex items-baseline"}
                 color={PRIMARY_COLOR}
               >
-                <Assets.FirIcon className={"w-5 h-5"} />
-                <span className={"text-2xl"}>{product.price}</span>
+                <Assets.FireIcon className={"w-5 h-5"} />
+                <span className={"text-2xl"}>{task.price}</span>
               </div>
 
               <span className={"text-gray-400 text-xs"}>或</span>
 
               <span className={"text-gray-300 text-lg"}>
-                ¥ {product.price / 10}
+                ¥ {task.price / 10}
               </span>
             </div>
 
-            <div className={"text-2xl font-medium"}>{product.title}</div>
+            <div className={"text-2xl font-medium"}>{task.title}</div>
 
             <div className={"flex items-center gap-2"}>
-              {product.isOnsite && (
+              {task.isOnsite && (
                 <Badge className={"text-yellow-500"}>线下赴约</Badge>
               )}
-              {product.isSelfOperating && (
+              {task.isSelfOperating && (
                 <Badge className={"text-green-500"}>玖姑自营</Badge>
               )}
             </div>
@@ -69,7 +67,7 @@ export default function ProductPage() {
             <Separator orientation={"horizontal"} className={"bg-gray-600"} />
 
             <div className={"flex items-center"}>
-              <span> {product.buyers.length} 人兑换</span>
+              <span> {task.buyers.length} 人兑换</span>
 
               <ArrowRightIcon className={"ml-auto"} />
             </div>
@@ -78,14 +76,14 @@ export default function ProductPage() {
 
         <Card>
           <div className={"flex items-center"}>
-            {product.isReturnable ? "可退换" : "不可退换"}
+            {task.isReturnable ? "可退换" : "不可退换"}
             <span className={"mx-2"}>·</span>
-            {product.isReservationRequired ? "需要预约" : "无须预约"}
+            {task.isReservationRequired ? "需要预约" : "无须预约"}
 
             <span className={"ml-auto"}>
-              {product.surplus > 10 ? (
+              {task.surplus > 10 ? (
                 <span className={"text-gray-500"}>库存充足</span>
-              ) : product.surplus > 0 ? (
+              ) : task.surplus > 0 ? (
                 <span className={"text-yellow-500"}>库存紧张</span>
               ) : (
                 <span className={"text-red-500"}>暂无库存</span>
@@ -97,12 +95,12 @@ export default function ProductPage() {
         <Card>
           <div className={"flex gap-2 items-start"}>
             <Avatar>
-              <AvatarImage src={product.issuer.image!} />
+              <AvatarImage src={task.issuer.image!} />
             </Avatar>
 
             <div>
-              <div className={"font-medium"}>{product.issuer.name}</div>
-              <div>{product.description}</div>
+              <div className={"font-medium"}>{task.issuer.name}</div>
+              <div>{task.description}</div>
             </div>
           </div>
         </Card>
@@ -110,14 +108,14 @@ export default function ProductPage() {
         <Card>
           <div className={"flex items-center text-lg"}>商品详情</div>
 
-          <MyMarkdown>{product.detail}</MyMarkdown>
+          <MyMarkdown>{task.detail}</MyMarkdown>
         </Card>
       </div>
 
       <div className={"shrink-0 flex items-center justify-between"}>
         <div>
           <Avatar className={"w-6 h-6"}>
-            <AvatarImage src={product.issuer.image!} />
+            <AvatarImage src={task.issuer.image!} />
           </Avatar>
           咨询
         </div>
@@ -129,16 +127,16 @@ export default function ProductPage() {
 
         <div className={"grid grid-cols-2"}>
           <div className={"flex items-center bg-[#4D3130] text-[#FF854F]"}>
-            <div>¥{product.price / 10}</div>
+            <div>¥{task.price / 10}</div>
             <div>现金购买</div>
           </div>
 
           <div className={"flex items-center bg-[#FF854F] text-white"}>
             <div className={"flex items-center gap-1"}>
               <span className={"w-4 h-4"}>
-                <Assets.Firecon />
+                <Assets.FireIcon />
               </span>
-              {product.price}
+              {task.price}
             </div>
             <div>火值兑换</div>
           </div>

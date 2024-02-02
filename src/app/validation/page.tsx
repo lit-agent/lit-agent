@@ -103,15 +103,16 @@ export default function ValidationPage() {
 
               if (!result) {
                 toast.error("你不算姑的friend哦，想加入再去刷刷姑的视频吧……");
+                // 在错误的时候重新允许validate，正确的时候会直接飞走
+                setValidating(false);
               } else {
                 toast.success(
                   "你果然是姑的friend，恭喜你获得火伴身份！",
                   // todo: 更友好的显示
                   // "以及我们赠送的10火值，你可以在xxx查看你的火值数额，并在xxx进行兑换。"
                 );
-                void router.push("/chat");
+                void router.push("/");
               }
-              setValidating(false);
             }}
           >
             提交

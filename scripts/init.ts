@@ -16,7 +16,7 @@ const init = async () => {
       update: {},
     }),
 
-    prisma.product.upsert({
+    prisma.task.upsert({
       where: { id: "default" },
       create: {
         issuerId: JIUGU_AI_ID,

@@ -8,6 +8,8 @@ import { PRIMARY_COLOR } from "@/const";
 import { BottomNavbar } from "@/components/navbar";
 import Image from "next/image";
 import { ArrowUpIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { signOut } from "next-auth/react";
 
 export const Dot = () => {
   return <div className={"h-3 w-3 rounded-full bg-red-600"}></div>;
@@ -21,8 +23,9 @@ export default function HomePage() {
           "bg-background flex w-full grow flex-col gap-6 overflow-auto p-6 sm:p-8"
         }
       >
-        <div id={"ring"} className={"ml-auto rounded-full bg-white p-2"}>
-          <Assets.RingIcon />
+        <div className={"w-full flex items-center justify-between"}>
+          <Button onClick={() => signOut()}>退出登录</Button>
+          <Assets.RingIcon className={"ml-auto rounded-full bg-white"} />
         </div>
 
         <div
@@ -39,7 +42,7 @@ export default function HomePage() {
 
           <div className={"flex items-center gap-4"}>
             <div className={"text-3xl font-medium"}>4224.23</div>
-            <Assets.Firecon color={PRIMARY_COLOR} />
+            <Assets.FireIcon color={PRIMARY_COLOR} className={"w-6 h-6"} />
           </div>
 
           <div className={"flex items-center gap-4"}>
@@ -93,7 +96,7 @@ export default function HomePage() {
 
             <div className={"flex items-center gap-2"}>
               <div className={"text-lg font-medium"}>423.15</div>
-              <Assets.Firecon color={PRIMARY_COLOR} />
+              <Assets.FireIcon color={PRIMARY_COLOR} className={"w-4 h-4"} />
             </div>
 
             <div className={"absolute right-4 top-2"}>
@@ -121,8 +124,6 @@ export default function HomePage() {
           ))}
         </div>
       </div>
-
-      <BottomNavbar />
     </main>
   );
 }

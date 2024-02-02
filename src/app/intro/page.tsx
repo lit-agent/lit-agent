@@ -103,7 +103,7 @@ export default function GuidancePage() {
       // todo: directly got validated info from signIn
       const user = await fetchUser.mutateAsync({ phone });
       // void router.push('/'); // todo: why 这个不行
-      void location.replace(user?.validated ? "/chat" : "/validation"); // 这个可以，ref: https://stackoverflow.com/a/77209617
+      void location.replace(user?.validated ? "/" : "/validation"); // 这个可以，ref: https://stackoverflow.com/a/77209617
     } else toast.error(res.error);
   }
 

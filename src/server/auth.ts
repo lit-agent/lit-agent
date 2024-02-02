@@ -10,7 +10,9 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import DiscordProvider from "next-auth/providers/discord";
 import { validateSms } from "@/server/sms";
 import { env } from "@/env";
+import { $Enums } from ".prisma/client";
 
+import UserType = $Enums.UserType;
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -23,6 +25,7 @@ declare module "next-auth" {
       id: string;
       validated?: boolean;
       phone?: string;
+      type: UserType;
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
@@ -72,6 +75,7 @@ export const authOptions: NextAuthOptions = {
           id: userInDB?.id,
           phone: userInDB?.phone,
           validated: userInDB?.validated,
+          type: userInDB?.type,
         },
       };
       console.log("-- session callback: ", { session, user, newSession });

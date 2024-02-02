@@ -14,6 +14,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+generator zod {
+  provider = "zod-prisma-types"
+}
+
+/// [Models] 
+
 model Account {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -36,115 +42,20 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model User {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  name          String?
-  validated     Boolean?  @default(false) // 是否通过验证
-  email         String?   @unique
-  emailVerified DateTime?
-  phone         String?   @unique
-  phoneVerified DateTime?
-
-  image  String?
-  status UserStatus @default(offline)
-  type   UserType   @default(user)
-
-  balance Int @default(0)
-
-  room   Room?   @relation(fields: [roomId], references: [id])
-  roomId String?
-
-  accounts Account[]
-  sessions Session[]
-  actions  UserAction[]
-  messages Message[]
-
-  issuedProducts   Product[] @relation(name: "issue")
-  favoriteProducts Product[] @relation(name: "favor")
-  tobuyProducts    Product[] @relation("tobuy")
-  boughtProducts   Product[] @relation("bought")
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-}
-
-enum UserType {
-  user
-  assistant
-  blogger
-}
-
-model UserAction {
-  id        String   @id @default(cuid())
-  createdAt DateTime @updatedAt
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
-
-  type UserActionType
-}
-
-enum UserStatus {
-  online
-  busy
-  offline
-}
-
-enum UserActionType {
-  activate
-  deactivate
-
-  online
-  offline // 不可靠
-}
-
-model Room {
-  id       String    @id @default(cuid())
-  name     String?   @unique
-  users    User[]
-  messages Message[]
-}
-
 model Message {
+  // todo: keep message even user/room deleted
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  text   String?
-  userId String?
-  roomId String?
-  type   MessageType @default(room)
+  text String?
 
-  // todo: keep message even user/room deleted
-  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-  room Room? @relation(fields: [roomId], references: [id], onDelete: Cascade)
-}
+  sender   User?   @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  senderId String?
 
-enum MessageType {
-  room
-  product
-}
-
-/// --- post
-enum PosterSource {
-  RAW
-  GITHUB
+  // 任何消息都必然有room，否则是通知
+  room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId String
 }
 
 model Post {
@@ -159,7 +70,24 @@ model Post {
   updatedAt DateTime @unique @default(now())
 }
 
-model Product {
+model Room {
+  id       String    @id @default(cuid())
+  name     String?   @unique
+  users    User[]
+  messages Message[]
+
+  task Task?
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Task {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -182,4 +110,85 @@ model Product {
   isReturnable          Boolean? // 是否可退换
   isReservationRequired Boolean? // 是否需要预约
   surplus               Int // 库存
+
+  // 一个产品必有room，但有room不一定有product
+  room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId String @unique
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name          String?
+  validated     Boolean?  @default(false) // 是否通过验证
+  email         String?   @unique
+  emailVerified DateTime?
+  phone         String?   @unique
+  phoneVerified DateTime?
+
+  image  String?
+  status UserStatus @default(offline)
+  type   UserType   @default(user)
+
+  balance Int @default(0)
+
+  room Room[]
+
+  accounts Account[]
+  sessions Session[]
+  actions  UserAction[]
+  messages Message[]
+
+  issuedTasks   Task[] @relation(name: "issue")
+  favoriteTasks Task[] @relation(name: "favor")
+  tobuyTasks    Task[] @relation("tobuy")
+  boughtTasks   Task[] @relation("bought")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+/// [Enums] 
+
+//【测试socket用】post
+enum PosterSource {
+  RAW
+  GITHUB
+}
+
+model UserAction {
+  id        String   @id @default(cuid())
+  createdAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  type UserActionType
+}
+
+enum UserActionType {
+  activate
+  deactivate
+
+  online
+  offline // 不可靠
+}
+
+enum UserStatus {
+  online
+  busy
+  offline
+}
+
+enum UserType {
+  user
+  assistant
+  blogger
 }

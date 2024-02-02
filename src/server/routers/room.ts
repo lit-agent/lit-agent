@@ -17,7 +17,6 @@ const message = Prisma.validator<Prisma.MessageArgs>()({
 const user = Prisma.validator<Prisma.UserArgs>()({
   select: {
     id: true,
-    roomId: true,
     name: true,
   },
 });
