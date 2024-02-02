@@ -1,18 +1,16 @@
-"use client";
-
+import { useEffect, useRef, useState } from "react";
+import { useUser } from "@/hooks/use-user";
+import { DEFAULT_ROOM_ID } from "@/const";
+import { ClientMessage } from "@/ds/user";
+import { api } from "@/trpc/react";
+import { pusherClient } from "@/lib/pusher";
+import { SelectUser } from "@/components/select-user";
 import ChatItem from "@/components/chat-item";
-import { BottomNavbar } from "@/components/navbar";
 import { Input } from "@/components/ui/input";
-import { IoMenuOutline } from "react-icons/io5";
 import { cn } from "@/lib/utils";
 import { BloggerContainer } from "@/containers/blogger";
-import { useUser } from "@/hooks/use-user";
-import { SelectUser } from "@/components/select-user";
-import { api } from "@/trpc/react";
-import { useEffect, useRef, useState } from "react";
-import { ClientMessage } from "@/ds/user";
-import { pusherClient } from "@/lib/pusher";
-import { DEFAULT_ROOM_ID } from "@/const";
+import { IoMenuOutline } from "react-icons/io5";
+import { BottomNavbar } from "@/components/navbar";
 
 export default function ChatPage() {
   const refInput = useRef<HTMLInputElement>(null);
@@ -74,7 +72,7 @@ export default function ChatPage() {
   useEffect(() => {}, [roomId]);
 
   return (
-    <div className={"flex h-full flex-col"}>
+    <div className={"flex h-full flex-col overflow-hidden"}>
       <SelectUser />
 
       <div className={"flex grow flex-col gap-4 overflow-auto p-4"}>
@@ -113,8 +111,6 @@ export default function ChatPage() {
           <IoMenuOutline />
         </BloggerContainer>
       </div>
-
-      <BottomNavbar />
     </div>
   );
 }

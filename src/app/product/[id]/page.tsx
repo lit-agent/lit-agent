@@ -44,7 +44,7 @@ export default function ProductPage() {
                 className={"text-primary flex items-baseline"}
                 color={PRIMARY_COLOR}
               >
-                <Assets.FireFillIcon className={"w-5 h-5"} />
+                <Assets.Firecon className={"w-5 h-5"} />
                 <span className={"text-2xl"}>{product.price}</span>
               </div>
 
@@ -136,7 +136,7 @@ export default function ProductPage() {
           <div className={"flex items-center bg-[#FF854F] text-white"}>
             <div className={"flex items-center gap-1"}>
               <span className={"w-4 h-4"}>
-                <Assets.FireFillIcon />
+                <Assets.Firecon />
               </span>
               {product.price}
             </div>

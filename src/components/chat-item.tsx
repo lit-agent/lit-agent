@@ -33,7 +33,7 @@ export interface IChatItem {
 export const Hot = ({ value }: { value: number }) => (
   <div className={"text-primary flex items-center"} color={PRIMARY_COLOR}>
     <div className={"h-4 w-4"}>
-      <Assets.FireFillIcon />
+      <Assets.Firecon />
     </div>
 
     {value}

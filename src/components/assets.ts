@@ -1,5 +1,5 @@
 import Menu1Icon from "../../public/menu-l.svg";
-import FireFillIcon from "../../public/menu-fire-fill.svg";
+import FireIcon from "../../public/fire.svg";
 import Menu3Icon from "../../public/menu-r.svg";
 import RingIcon from "../../public/ring.svg";
 import AwardFillIcon from "../../public/award-fill.svg";
@@ -15,7 +15,7 @@ import MediaaImage from "../../public/medias.png";
 
 const Assets = {
   Menu1Icon,
-  FireFillIcon,
+  FireIcon: FireIcon,
   Menu3Icon,
   RingIcon,
   AwardFillIcon,

@@ -2,7 +2,7 @@ import Assets from "@/components/assets";
 
 export const navs = [
   { Icon: Assets.Menu1Icon, alt: "1" },
-  { Icon: Assets.FireFillIcon, alt: "2" },
+  { Icon: Assets.FireIcon, alt: "2" },
   { Icon: Assets.Menu3Icon, alt: "3" },
 ];
 

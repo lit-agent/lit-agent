@@ -39,7 +39,7 @@ export default function HomePage() {
 
           <div className={"flex items-center gap-4"}>
             <div className={"text-3xl font-medium"}>4224.23</div>
-            <Assets.FireFillIcon color={PRIMARY_COLOR} />
+            <Assets.Firecon color={PRIMARY_COLOR} />
           </div>
 
           <div className={"flex items-center gap-4"}>
@@ -93,7 +93,7 @@ export default function HomePage() {
 
             <div className={"flex items-center gap-2"}>
               <div className={"text-lg font-medium"}>423.15</div>
-              <Assets.FireFillIcon color={PRIMARY_COLOR} />
+              <Assets.Firecon color={PRIMARY_COLOR} />
             </div>
 
             <div className={"absolute right-4 top-2"}>
