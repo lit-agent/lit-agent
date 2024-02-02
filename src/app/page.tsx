@@ -5,28 +5,29 @@ import Assets from "@/components/assets";
 import { useState } from "react";
 import { AppTab, AppTabComp } from "@/components/app-tab";
 import ChatPage from "@/components/chat-page";
+import FirePage from "@/components/fire-page";
 
 export default function Home() {
   // noStore();
 
-  const [tab, setTab] = useState<AppTab>(AppTab.chat);
+  const [tab, setTab] = useState<AppTab>(AppTab.fire);
   console.log("-- tab: ", tab);
 
   return (
     <Tabs
-      className={"h-full overflow-hidden flex flex-col"}
+      className={"h-full overflow-hidden flex flex-col bg-cyan-500"}
       value={tab}
       onValueChange={(value) => setTab(value as AppTab)}
     >
-      <TabsContent value={AppTab.chat} className={"grow overflow-auto"}>
+      <TabsContent value={AppTab.chat} className={"grow overflow-auto m-0"}>
         <ChatPage />
       </TabsContent>
 
-      <TabsContent value={AppTab.fire} className={"grow overflow-auto"}>
-        fire
+      <TabsContent value={AppTab.fire} className={"grow overflow-auto m-0"}>
+        <FirePage />
       </TabsContent>
 
-      <TabsContent value={AppTab.shop} className={"grow overflow-auto"}>
+      <TabsContent value={AppTab.shop} className={"grow overflow-auto m-0"}>
         shop
       </TabsContent>
 

@@ -44,7 +44,7 @@ export default function ProductPage() {
                 className={"text-primary flex items-baseline"}
                 color={PRIMARY_COLOR}
               >
-                <Assets.Firecon className={"w-5 h-5"} />
+                <Assets.FirIcon className={"w-5 h-5"} />
                 <span className={"text-2xl"}>{product.price}</span>
               </div>
 
