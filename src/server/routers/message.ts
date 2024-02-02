@@ -15,7 +15,7 @@ export const messageRouter = createTRPCRouter({
       return ctx.prisma.message.findMany({
         where: { roomId: input.roomId },
         include: { sender: true },
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: "asc" },
         //   todo: infinite
       });
     }),
@@ -32,7 +32,7 @@ export const messageRouter = createTRPCRouter({
       return ctx.prisma.message.findMany({
         where: { roomId: input.roomId },
         include: { sender: true },
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: "asc" },
         //   todo: infinite
       });
     }),

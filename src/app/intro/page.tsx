@@ -68,7 +68,7 @@ export default function GuidancePage() {
 
     const msg = res?.SendStatusSet![0]!.Code;
     if (msg === "Ok") {
-      toast.success("验证码发送状态！");
+      toast.success("验证码已发送！");
       void router.push("/validation");
       // void location.replace("/validation");
     } else toast.error(`验证码发送失败，原因：${msg}`);
