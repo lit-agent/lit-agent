@@ -8,6 +8,8 @@ await import("./src/env.js");
 const config = {
   reactStrictMode: false,
 
+  distDir: process.env.DIST ?? ".next",
+
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/i,

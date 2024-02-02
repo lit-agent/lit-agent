@@ -14,7 +14,8 @@
     "dev": "yarn db:migrate-dev && run-p dev:*",
     "postinstall": "prisma generate",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "update": "DIST=.next-tmp && git stash && git pull -f && yarn && DIST=$DIST yarn build && rm -rf .next && mv $DIST .next"
   },
   "dependencies": {
     "@clerk/nextjs": "^4.29.5",
