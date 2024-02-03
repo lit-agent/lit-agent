@@ -78,12 +78,6 @@ export default function TaskPage() {
           <span className={"text-gray-300 mx-1"}>{data.ranking}</span>
           <ChevronRightIcon size={12} className={"ml-1"} />
         </div>
-
-        {user?.type === "blogger" && (
-          <Link href={"/task/create"}>
-            <Button>创建新的任务</Button>
-          </Link>
-        )}
       </div>
 
       <div className={"flex items-center justify-between"}>
