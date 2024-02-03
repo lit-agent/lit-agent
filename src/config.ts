@@ -121,15 +121,4 @@ export const guidanceItems: IChatItem[] = [
       },
     ],
   },
-
-  {
-    user: userJiuguAI,
-    segments: [
-      {
-        type: "text",
-        content:
-          "你果然是姑的friend，恭喜你获得火伴身份，以及我们赠送的10火值，你可以在xxx查看你的火值数额，并在xxx进行兑换。",
-      },
-    ],
-  },
 ];

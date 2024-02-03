@@ -95,16 +95,19 @@ export default function GuidancePage() {
     });
     console.log("-- res: ", res);
 
-    setSubmitting(false);
-    if (!res) return;
-    if (res.ok) {
+    if (res?.ok) {
       toast.success("登录成功！");
 
       // todo: directly got validated info from signIn
       const user = await fetchUser.mutateAsync({ phone });
       // void router.push('/'); // todo: why 这个不行
       void location.replace(user?.validated ? "/" : "/validation"); // 这个可以，ref: https://stackoverflow.com/a/77209617
-    } else toast.error(res.error);
+      return;
+    }
+
+    // 仅在不成功的时候重新允许提交
+    setSubmitting(false);
+    toast.error(res?.error ?? "没有返回");
   }
 
   return (

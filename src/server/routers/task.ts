@@ -1,6 +1,7 @@
 import {
   TaskCreateArgsSchema,
   TaskFindManyArgsSchema,
+  TaskUncheckedCreateInputSchema,
 } from "prisma/generated/zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
@@ -11,17 +12,22 @@ export const taskRouter = createTRPCRouter({
       return ctx.prisma.task.findMany({
         ...input,
         include: {
-          todoUsers: true,
-          finishedUsers: true,
-          issuer: true,
-          room: { include: { users: true, messages: true } },
+          users: true,
         },
       });
     }),
 
   create: protectedProcedure
-    .input(TaskCreateArgsSchema)
+    .input(TaskUncheckedCreateInputSchema)
     .mutation(async ({ ctx, input }) => {
-      return ctx.prisma.task.create(input);
+      return await ctx.prisma.$transaction(async (db) => {
+        const task = await db.task.create({ data: input });
+        console.log("-- create task: ", task);
+        const userTask = await db.userTask.create({
+          data: { userId: ctx.user.id, taskId: task.id, action: "on" },
+        });
+        console.log("-- create user-task: ", userTask);
+        return userTask;
+      });
     }),
 });

@@ -29,7 +29,7 @@ export default function TaskPage() {
   console.log("-- tasks: ", tasks);
 
   return (
-    <div className={"bg-[#282232] p-2"}>
+    <div className={"bg-[#282232] p-2 min-h-full"}>
       <div className={"flex flex-col items-center gap-4 p-4"}>
         <div className={"flex items-center gap-1 text-xs"}>
           <Avatar className={"w-4 h-4"}>

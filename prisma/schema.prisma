@@ -18,7 +18,7 @@ generator zod {
   provider = "zod-prisma-types"
 }
 
-/// [Models] 
+/// Ascii Order
 
 model Account {
   id        String   @id @default(cuid())
@@ -49,6 +49,18 @@ model Honor {
 
   user   User   @relation(fields: [userId], references: [id])
   userId String
+}
+
+enum HonorType {
+  NewUser
+
+  NewTask
+
+  GoodFriend
+  HotFriend
+
+  GoodFriendEver
+  HotFriendEver
 }
 
 model Message {
@@ -84,8 +96,6 @@ model Room {
   name     String?   @unique
   users    User[]
   messages Message[]
-
-  task Task?
 }
 
 model Session {
@@ -96,34 +106,35 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model Task {
+enum PosterSource {
+  RAW
+  GITHUB
+}
+
+model Product {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // 1. 发行 2. 兑换 3. 收藏 4. 购物车 5. 已买
-  issuer        User   @relation(fields: [issuerId], references: [id], name: "issue") // 发行者（唯一）
-  issuerId      String
-  favoredUsers  User[] @relation("favor")
-  todoUsers     User[] @relation("todo")
-  finishedUsers User[] @relation("finished")
+  users User[]
 
   images      String[]
   title       String
   description String // 博主的留言
   detail      String // markdown
 
-  price                 Int // 火值
+  price Int // 火值
+  // total - buyers.length = 库存
+  total Int
+
   isOnsite              Boolean? // 是否线下运营
   isSelfOperating       Boolean? // 是否自营
   isReturnable          Boolean? // 是否可退换
   isReservationRequired Boolean? // 是否需要预约
-  // total - buyers.length = 库存
-  total                 Int
 
-  // 一个产品必有room，但有room不一定有product
-  room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  roomId String @unique
+  userProductBills   UserProductBill[]
+  userProductActions UserProductAction[]
 }
 
 model User {
@@ -151,41 +162,14 @@ model User {
   sessions Session[]
   actions  UserAction[]
   messages Message[]
+  honors   Honor[]
 
-  issuedTasks   Task[] @relation("issue")
-  favoriteTasks Task[] @relation("favor")
-  todoTasks     Task[] @relation("todo")
-  finishedTasks Task[] @relation("finished")
+  products           Product[]
+  userProductActions UserProductAction[]
+  userProductBills   UserProductBill[]
 
-  honors Honor[]
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-}
-
-/// [Enums] 
-
-enum HonorType {
-  NewUser
-
-  NewTask
-
-  GoodFriend
-  HotFriend
-
-  GoodFriendEver
-  HotFriendEver
-}
-
-//【测试socket用】post
-enum PosterSource {
-  RAW
-  GITHUB
+  tasks     Task[]
+  userTasks UserTask[]
 }
 
 model UserAction {
@@ -206,14 +190,128 @@ enum UserActionType {
   offline // 不可靠
 }
 
+// user-product 是一对多，但bill是一对一
+model UserProductBill {
+  id        String   @id @default(cuid())
+  createdAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+}
+
+model UserProductAction {
+  id        String   @id @default(cuid())
+  createdAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  actionType UserProductActionType
+}
+
+enum UserProductActionType {
+  // 卖家
+  on // 上架
+  off // 下架
+  pause // 暂停
+  resume // 继续
+
+  // 买家
+  favor
+  unfavor
+  clickCashBuy
+  clickVirtualBuy
+  buy
+  cancelBuy
+}
+
 enum UserStatus {
   online
   busy
   offline
 }
 
+// user 和 task 是 一对一
+model UserTask {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  task   Task   @relation(fields: [taskId], references: [id])
+  taskId String
+
+  action UserTaskActionType
+  status UserTaskStatus
+}
+
+enum UserTaskStatus {
+  // producer
+  on
+  off
+  paused
+
+  //   consumer
+  goon
+  finished
+  cancelled
+}
+
+enum UserTaskActionType {
+  on
+  off
+  pause
+  continue
+
+  comment
+  modifyComment
+  deleteComment
+  favorComment
+  replyComment
+
+  favorTask
+  unfavorTAsk
+}
+
 enum UserType {
   user
   assistant
   blogger
+}
+
+model Task {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users     User[]
+  userTasks UserTask[]
+
+  type    TaskType
+  content String // 根据task-type进行解析
+  value   Int // 每个任务价值多少火币
+  ddl     DateTime // 任务有截止时间
+}
+
+enum TaskType {
+  broadcast // 帮作品传播
+  textChoices
+  imageChoices
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }

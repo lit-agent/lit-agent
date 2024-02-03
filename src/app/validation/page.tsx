@@ -14,7 +14,7 @@ import {
   SelectTrigger,
 } from "src/components/ui/select";
 import { Button } from "../../components/ui/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useUser } from "../../hooks/use-user";
 import { useRouter } from "next/navigation";
@@ -22,12 +22,6 @@ import { api } from "@/trpc/react";
 import { useValidation } from "@/hooks/use-validation";
 
 import { guidanceItems } from "@/config";
-
-enum ValidationResult {
-  unknown,
-  ok,
-  failed,
-}
 
 export default function ValidationPage() {
   const { user } = useUser();
@@ -131,4 +125,10 @@ export default function ValidationPage() {
       </div>
     </div>
   );
+}
+
+enum ValidationResult {
+  unknown,
+  ok,
+  failed,
 }

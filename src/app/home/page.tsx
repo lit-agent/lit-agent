@@ -69,9 +69,9 @@ export default function HomePage() {
 
         <HalfCard
           a={"当前任务"}
-          b={user.todoTasks.length}
+          b={user.userTasks.filter((task) => task.status === "goon").length}
           c={"已完成"}
-          d={user.finishedTasks.length}
+          d={user.userTasks.filter((task) => task.status === "finished").length}
           side={"R"}
         />
       </div>
@@ -99,11 +99,13 @@ export default function HomePage() {
       </div>
 
       <div className={"columns-2 gap-2"}>
-        {user.finishedTasks.map((task, index) => (
-          <div className={"rounded w-full"} key={index}>
-            task: {task.id}
-          </div>
-        ))}
+        {user.userTasks
+          .filter((task) => task.status === "goon")
+          .map((task, index) => (
+            <div className={"rounded w-full"} key={index}>
+              task: {task.id}
+            </div>
+          ))}
       </div>
     </div>
   );
