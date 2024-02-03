@@ -24,9 +24,9 @@ export default function TaskPage() {
     finishedUsers: Array(132).fill(userHading),
   };
 
-  const { data: tasks = [] } = api.task.list.useQuery({});
+  console.log("-- user: ", user);
 
-  console.log("-- tasks: ", tasks);
+  if (!user) return "not logined";
 
   return (
     <div className={"bg-[#282232] p-2 min-h-full"}>
@@ -88,7 +88,7 @@ export default function TaskPage() {
         </div>
       </div>
 
-      {tasks.map((task, index) => (
+      {user.toTasks.map((task, index) => (
         <Link
           href={`/room/${task.room.id}`}
           key={index}

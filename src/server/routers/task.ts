@@ -1,5 +1,5 @@
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { TaskFromUncheckedCreateInputSchema } from "../../../prisma/generated/zod";
+import { TaskFromUncheckedCreateInputSchema } from "prisma/generated/zod";
 
 export const taskRouter = createTRPCRouter({
   create: protectedProcedure

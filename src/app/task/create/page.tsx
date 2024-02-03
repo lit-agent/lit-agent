@@ -28,19 +28,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import TaskType = $Enums.TaskType;
 import moment from "moment";
 import { Input } from "@/components/ui/input";
+import TaskType = $Enums.TaskType;
 import { TaskFromUncheckedCreateInputSchema } from "../../../../prisma/generated/zod";
+import { useState } from "react";
 
-const createTaskFormSchema = TaskFromUncheckedCreateInputSchema;
+const formSchema = TaskFromUncheckedCreateInputSchema;
 
 export default function CreateTaskPage() {
   const { user } = useUser();
+  if (!user) return "loading";
+  return <CreateTaskWithUserPage userId={user.id} />;
+}
 
+const CreateTaskWithUserPage = ({ userId }: { userId: string }) => {
   // 1. Define your form.
-  const form = useForm<z.infer<typeof createTaskFormSchema>>({
-    resolver: zodResolver(createTaskFormSchema),
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       type: TaskType.broadcast,
       title: "test - " + moment().format(),
@@ -49,17 +54,16 @@ export default function CreateTaskPage() {
       startTime: new Date(),
       endTime: moment().add(1, "days").toDate(),
       status: "on",
-      fromUserId: user.id,
+      fromUserId: userId,
     },
   });
 
   const createTask = api.task.create.useMutation();
+  const [submitting, setSubmitting] = useState(false);
 
   // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof createTaskFormSchema>) {
-    console.log("-- submit: ", { values, user });
-    if (!user) return;
-
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    setSubmitting(true);
     createTask
       .mutateAsync(values)
       .then((res) => {
@@ -68,11 +72,14 @@ export default function CreateTaskPage() {
       .catch((e) => {
         console.error(e);
         toast.error("创建失败");
+      })
+      .finally(() => {
+        setSubmitting(false);
       });
   }
 
   return (
-    <div className={"flex flex-col p-8 bg-black"}>
+    <div className={"min-h-full flex flex-col p-8 bg-black"}>
       <Label className={"my-8 text-xl"}>创建任务</Label>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -83,14 +90,18 @@ export default function CreateTaskPage() {
               <FormItem>
                 <FormLabel>任务类型</FormLabel>
                 <FormControl>
-                  <Select>
-                    <SelectTrigger className="wfull">
+                  <Select
+                    // 不能用 ...field，因为 select 不支持ref
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder="选择任务类型" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>基础类型</SelectLabel>
-                        {Object.keys(TaskType).map((k, index) => (
+                        {Object.values(TaskType).map((k, index) => (
                           <SelectItem key={index} value={k}>
                             {k}
                           </SelectItem>
@@ -142,7 +153,13 @@ export default function CreateTaskPage() {
               <FormItem>
                 <FormLabel>火币价值</FormLabel>
                 <FormControl>
-                  <Input type={"number"} {...field} />
+                  <Input
+                    type={"number"}
+                    {...field}
+                    onChange={(event) => {
+                      field.onChange(Math.floor(event.currentTarget.value));
+                    }}
+                  />
                 </FormControl>
 
                 <FormMessage />
@@ -196,11 +213,11 @@ export default function CreateTaskPage() {
             )}
           />
 
-          <Button type="submit" className={"w-full"}>
+          <Button type="submit" disabled={submitting} className={"w-full"}>
             提交
           </Button>
         </form>
       </Form>
     </div>
   );
-}
+};

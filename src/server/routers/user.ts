@@ -1,4 +1,3 @@
-import { JIUGU_AI_ID } from "@/const";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { z } from "zod";
 
@@ -46,25 +45,10 @@ export const userRouter = createTRPCRouter({
           select: { validated: true },
         });
         if (!userInfo?.validated) {
-          const roomId = `${uid}-jiugu`;
-          console.log("-- transaction: ", { uid });
           await ctx.prisma.user.update({
             where: { id: uid },
             data: { validated: true },
           });
-          ctx.prisma.$transaction([
-            ctx.prisma.room.create({ data: { id: roomId } }),
-
-            ctx.prisma.message.createMany({
-              data: [
-                {
-                  senderId: JIUGU_AI_ID,
-                  roomId,
-                  text: "Hello！我是你的玖姑助手，恭喜你获得火伴身份，以及我们赠送的10火值，你可以在xxx查看你的火值数额，并在xxx进行兑换！",
-                },
-              ],
-            }),
-          ]);
         }
       }
       return result;
