@@ -59,7 +59,7 @@ model Bill {
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
-  product   Product @relation(fields: [productId], references: [id])
+  product   ProductFrom @relation(fields: [productId], references: [id])
   productId String
 
   // userActions UserAction[]
@@ -124,14 +124,14 @@ enum PosterSource {
 }
 
 // 博主发布的产品
-model Product {
+model ProductFrom {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  producer   User          @relation("produce-product", fields: [producerId], references: [id])
-  producerId String
-  consumers  UserProduct[] @relation("consume-product")
+  fromUser   User        @relation(fields: [fromUserId], references: [id])
+  fromUserId String
+  toUsers    ProductTo[]
 
   images      String[]
   title       String
@@ -150,8 +150,27 @@ model Product {
   bills Bill[]
 }
 
+// 消费者与博主开发的产品之间的关系
+model ProductTo {
+  id        String   @id @default(cuid())
+  createdAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt
+
+  fromUser   ProductFrom @relation(fields: [fromUserId], references: [id])
+  fromUserId String
+
+  toUser   User   @relation(fields: [toUserId], references: [id])
+  toUserId String
+
+  isFavored Boolean @default(false)
+  inCar     Int     @default(0)
+  bought    Int     @default(0)
+
+  // userActions UserAction[]
+}
+
 // 博主发布的产品
-model Task {
+model TaskFrom {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -162,9 +181,9 @@ model Task {
   value   Int // 每个任务价值多少火币
   ddl     DateTime // 任务有截止时间
 
-  producer      User       @relation("produce-task", fields: [producerId], references: [id])
-  producerId    String
-  consumerTasks UserTask[] @relation("consume-task")
+  fromUser   User     @relation(fields: [fromUserId], references: [id])
+  fromUserId String
+  toUsers    TaskTo[]
 
   status TaskStatus
 }
@@ -175,6 +194,29 @@ enum TaskStatus {
   pause
   cancelled
   finished
+}
+
+// 消费者与博主发布的任务之间的关系
+model TaskTo {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  task   TaskFrom @relation(fields: [taskId], references: [id])
+  taskId String
+
+  status TaskToStatus
+
+  // actions UserAction[]
+}
+
+enum TaskToStatus {
+  goon
+  finished
+  cancelled
 }
 
 enum TaskType {
@@ -232,13 +274,13 @@ model User {
   messages Message[]
 
   // tasks
-  producedTasks Task[]     @relation("produce-task")
-  consumedTasks UserTask[] @relation("consume-task")
+  fromTasks TaskFrom[]
+  toTasks   TaskTo[]
 
   // products
-  producedProducts Product[]     @relation("produce-product")
-  consumedProducts UserProduct[] @relation("consume-product")
-  bills            Bill[]
+  fromProducts ProductFrom[]
+  toProducts   ProductTo[]
+  bills        Bill[]
 
   // actions  UserAction[]
 }
@@ -290,52 +332,10 @@ enum UserActionType {
   payByFire
 }
 
-// 消费者与博主开发的产品之间的关系
-model UserProduct {
-  id        String   @id @default(cuid())
-  createdAt DateTime @updatedAt
-  updatedAt DateTime @updatedAt
-
-  product   Product @relation("consume-product", fields: [productId], references: [id])
-  productId String
-
-  consumer   User   @relation("consume-product", fields: [consumerId], references: [id])
-  consumerId String
-
-  isFavored Boolean @default(false)
-  inCar     Int     @default(0)
-  bought    Int     @default(0)
-
-  // userActions UserAction[]
-}
-
 enum UserStatus {
   online
   busy
   offline
-}
-
-// 消费者与博主发布的任务之间的关系
-model UserTask {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user   User   @relation("consume-task", fields: [userId], references: [id])
-  userId String
-
-  task   Task   @relation("consume-task", fields: [taskId], references: [id])
-  taskId String
-
-  status UserTaskStatus
-
-  // actions UserAction[]
-}
-
-enum UserTaskStatus {
-  goon
-  finished
-  cancelled
 }
 
 enum UserType {
