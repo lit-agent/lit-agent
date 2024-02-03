@@ -1,4 +1,4 @@
-import ChatPage from "@/components/chat-page";
+import ChatPage from "@/app/chat/page";
 
 export default function RoomPage({
   params,
@@ -7,5 +7,5 @@ export default function RoomPage({
     id: string;
   };
 }) {
-  return <ChatPage roomId={params.id} withBack />;
+  return <ChatPage params={{ roomId: params.id, withBack: true }} />;
 }

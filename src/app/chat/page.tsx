@@ -11,13 +11,16 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { BloggerContainer } from "@/containers/blogger";
 import { IoMenuOutline } from "react-icons/io5";
+import { SocketEventType } from "@/ds/event";
+import { MessageType } from "@prisma/client";
 
 export default function ChatPage({
-  roomId,
-  withBack,
+  params: { roomId, withBack },
 }: {
-  roomId: string;
-  withBack?: boolean;
+  params: {
+    roomId: string;
+    withBack?: boolean;
+  };
 }) {
   const refInput = useRef<HTMLInputElement>(null);
   const { user, targetUser } = useUser();
@@ -35,18 +38,18 @@ export default function ChatPage({
       .then((messages) => setMessages(messages));
 
     pusherClient.subscribe(roomId);
-    pusherClient.bind("user:sendMessage", (message: ClientMessage) => {
+    pusherClient.bind(SocketEventType.NewTask, (message: ClientMessage) => {
       setMessages((messages) => [...messages, message]);
     });
 
     return () => {
       pusherClient.unsubscribe(roomId);
-      pusherClient.unbind("user:sendMessage");
+      pusherClient.unbind(SocketEventType.NewTask);
     };
   }, [roomId]);
 
   const submitMessage = () => {
-    if (!refInput.current) return;
+    if (!refInput.current || !user) return;
 
     const text = refInput.current.value;
     if (!text) return;
@@ -54,7 +57,20 @@ export default function ChatPage({
     console.log("-- sending: ", { text });
 
     // todo: 思考要不要做上屏优化
-    sendMessage.mutate({ roomId, text });
+    sendMessage.mutate({
+      toUsers: {
+        connect: {
+          id: roomId,
+        },
+      },
+      fromUser: {
+        connect: {
+          id: user.id,
+        },
+      },
+      text,
+      type: MessageType.Plain,
+    });
 
     refInput.current.value = "";
   };
@@ -72,7 +88,7 @@ export default function ChatPage({
           // sampleChatItems
           messages.map((message, index) => (
             <ChatItem
-              user={message.sender!}
+              user={message.fromUser}
               segments={[{ type: "text", content: message.text }]}
               key={index}
             />

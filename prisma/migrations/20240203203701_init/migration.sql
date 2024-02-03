@@ -2,10 +2,16 @@
 CREATE TYPE "HonorType" AS ENUM ('NewUser', 'NewTask', 'GoodFriend', 'HotFriend', 'GoodFriendEver', 'HotFriendEver');
 
 -- CreateEnum
+CREATE TYPE "MessageType" AS ENUM ('Plain', 'NewTask');
+
+-- CreateEnum
 CREATE TYPE "PosterSource" AS ENUM ('RAW', 'GITHUB');
 
 -- CreateEnum
 CREATE TYPE "TaskStatus" AS ENUM ('wait', 'on', 'pause', 'cancelled', 'finished');
+
+-- CreateEnum
+CREATE TYPE "TaskToStatus" AS ENUM ('goon', 'finished', 'cancelled');
 
 -- CreateEnum
 CREATE TYPE "TaskType" AS ENUM ('broadcast', 'textChoices', 'imageChoices');
@@ -17,10 +23,27 @@ CREATE TYPE "UserActionType" AS ENUM ('activate', 'deactivate', 'online', 'offli
 CREATE TYPE "UserStatus" AS ENUM ('online', 'busy', 'offline');
 
 -- CreateEnum
-CREATE TYPE "UserTaskStatus" AS ENUM ('goon', 'finished', 'cancelled');
-
--- CreateEnum
 CREATE TYPE "UserType" AS ENUM ('user', 'assistant', 'blogger');
+
+-- CreateTable
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "emailVerified" TIMESTAMP(3),
+    "phoneVerified" TIMESTAMP(3),
+    "validated" BOOLEAN DEFAULT false,
+    "name" TEXT,
+    "email" TEXT,
+    "phone" TEXT,
+    "image" TEXT,
+    "status" "UserStatus" NOT NULL DEFAULT 'offline',
+    "type" "UserType" NOT NULL DEFAULT 'user',
+    "currentBalance" INTEGER NOT NULL DEFAULT 0,
+    "historyBalance" INTEGER NOT NULL DEFAULT 0,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "Account" (
@@ -69,8 +92,10 @@ CREATE TABLE "Message" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "text" TEXT,
-    "senderId" TEXT,
-    "roomId" TEXT NOT NULL,
+    "fromUserId" TEXT,
+    "roomId" TEXT,
+    "type" "MessageType" NOT NULL DEFAULT 'Plain',
+    "taskId" TEXT,
 
     CONSTRAINT "Message_pkey" PRIMARY KEY ("id")
 );
@@ -88,11 +113,11 @@ CREATE TABLE "Post" (
 );
 
 -- CreateTable
-CREATE TABLE "Product" (
+CREATE TABLE "ProductFrom" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "producerId" TEXT NOT NULL,
+    "fromUserId" TEXT NOT NULL,
     "images" TEXT[],
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -104,11 +129,25 @@ CREATE TABLE "Product" (
     "isReturnable" BOOLEAN,
     "isReservationRequired" BOOLEAN,
 
-    CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "ProductFrom_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Task" (
+CREATE TABLE "ProductTo" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "fromUserId" TEXT NOT NULL,
+    "toUserId" TEXT NOT NULL,
+    "isFavored" BOOLEAN NOT NULL DEFAULT false,
+    "inCar" INTEGER NOT NULL DEFAULT 0,
+    "bought" INTEGER NOT NULL DEFAULT 0,
+
+    CONSTRAINT "ProductTo_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "TaskFrom" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -116,11 +155,25 @@ CREATE TABLE "Task" (
     "title" TEXT NOT NULL,
     "content" TEXT NOT NULL,
     "value" INTEGER NOT NULL,
-    "ddl" TIMESTAMP(3) NOT NULL,
-    "producerId" TEXT NOT NULL,
+    "startTime" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "endTime" TIMESTAMP(3) NOT NULL,
+    "fromUserId" TEXT NOT NULL,
     "status" "TaskStatus" NOT NULL,
+    "messageId" TEXT NOT NULL,
 
-    CONSTRAINT "Task_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "TaskFrom_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "TaskTo" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "userId" TEXT NOT NULL,
+    "taskId" TEXT NOT NULL,
+    "status" "TaskToStatus" NOT NULL,
+
+    CONSTRAINT "TaskTo_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -142,52 +195,6 @@ CREATE TABLE "Session" (
 );
 
 -- CreateTable
-CREATE TABLE "User" (
-    "id" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "emailVerified" TIMESTAMP(3),
-    "phoneVerified" TIMESTAMP(3),
-    "validated" BOOLEAN DEFAULT false,
-    "name" TEXT,
-    "email" TEXT,
-    "phone" TEXT,
-    "image" TEXT,
-    "status" "UserStatus" NOT NULL DEFAULT 'offline',
-    "type" "UserType" NOT NULL DEFAULT 'user',
-    "currentBalance" INTEGER NOT NULL DEFAULT 0,
-    "historyBalance" INTEGER NOT NULL DEFAULT 0,
-
-    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "UserProduct" (
-    "id" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "productId" TEXT NOT NULL,
-    "consumerId" TEXT NOT NULL,
-    "isFavored" BOOLEAN NOT NULL DEFAULT false,
-    "inCar" INTEGER NOT NULL DEFAULT 0,
-    "bought" INTEGER NOT NULL DEFAULT 0,
-
-    CONSTRAINT "UserProduct_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "UserTask" (
-    "id" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "userId" TEXT NOT NULL,
-    "taskId" TEXT NOT NULL,
-    "status" "UserTaskStatus" NOT NULL,
-
-    CONSTRAINT "UserTask_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "VerificationToken" (
     "identifier" TEXT NOT NULL,
     "token" TEXT NOT NULL,
@@ -195,10 +202,22 @@ CREATE TABLE "VerificationToken" (
 );
 
 -- CreateTable
+CREATE TABLE "_to" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL
+);
+
+-- CreateTable
 CREATE TABLE "_RoomToUser" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_phone_key" ON "User"("phone");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provider", "providerAccountId");
@@ -210,22 +229,25 @@ CREATE UNIQUE INDEX "Post_createdAt_key" ON "Post"("createdAt");
 CREATE UNIQUE INDEX "Post_updatedAt_key" ON "Post"("updatedAt");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "TaskFrom_messageId_key" ON "TaskFrom"("messageId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Room_name_key" ON "Room"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
-
--- CreateIndex
-CREATE UNIQUE INDEX "User_phone_key" ON "User"("phone");
-
--- CreateIndex
 CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_to_AB_unique" ON "_to"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_to_B_index" ON "_to"("B");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_RoomToUser_AB_unique" ON "_RoomToUser"("A", "B");
@@ -240,37 +262,46 @@ ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Bill" ADD CONSTRAINT "Bill_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Bill" ADD CONSTRAINT "Bill_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Bill" ADD CONSTRAINT "Bill_productId_fkey" FOREIGN KEY ("productId") REFERENCES "ProductFrom"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Honor" ADD CONSTRAINT "Honor_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Message" ADD CONSTRAINT "Message_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Message" ADD CONSTRAINT "Message_fromUserId_fkey" FOREIGN KEY ("fromUserId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Message" ADD CONSTRAINT "Message_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Product" ADD CONSTRAINT "Product_producerId_fkey" FOREIGN KEY ("producerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ProductFrom" ADD CONSTRAINT "ProductFrom_fromUserId_fkey" FOREIGN KEY ("fromUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Task" ADD CONSTRAINT "Task_producerId_fkey" FOREIGN KEY ("producerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ProductTo" ADD CONSTRAINT "ProductTo_fromUserId_fkey" FOREIGN KEY ("fromUserId") REFERENCES "ProductFrom"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ProductTo" ADD CONSTRAINT "ProductTo_toUserId_fkey" FOREIGN KEY ("toUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TaskFrom" ADD CONSTRAINT "TaskFrom_fromUserId_fkey" FOREIGN KEY ("fromUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TaskFrom" ADD CONSTRAINT "TaskFrom_messageId_fkey" FOREIGN KEY ("messageId") REFERENCES "Message"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TaskTo" ADD CONSTRAINT "TaskTo_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TaskTo" ADD CONSTRAINT "TaskTo_taskId_fkey" FOREIGN KEY ("taskId") REFERENCES "TaskFrom"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserProduct" ADD CONSTRAINT "UserProduct_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "_to" ADD CONSTRAINT "_to_A_fkey" FOREIGN KEY ("A") REFERENCES "Message"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserProduct" ADD CONSTRAINT "UserProduct_consumerId_fkey" FOREIGN KEY ("consumerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "UserTask" ADD CONSTRAINT "UserTask_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "UserTask" ADD CONSTRAINT "UserTask_taskId_fkey" FOREIGN KEY ("taskId") REFERENCES "Task"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "_to" ADD CONSTRAINT "_to_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_RoomToUser" ADD CONSTRAINT "_RoomToUser_A_fkey" FOREIGN KEY ("A") REFERENCES "Room"("id") ON DELETE CASCADE ON UPDATE CASCADE;

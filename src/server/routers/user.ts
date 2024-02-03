@@ -2,6 +2,12 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { z } from "zod";
 
 export const userRouter = createTRPCRouter({
+  getUserFromPhone: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      return ctx.prisma.user.findUnique({ where: { phone: input } });
+    }),
+
   fetch: publicProcedure
     .input(z.object({ phone: z.string() }))
     .mutation(async ({ ctx, input }) => {

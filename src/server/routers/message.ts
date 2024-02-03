@@ -1,58 +1,46 @@
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { z } from "zod";
-import { pusherServer } from "@/lib/pusher";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { sendTaskMessageSlice } from "@/ds/user";
+import {
+  MessageCreateInputSchema,
+  MessageUncheckedCreateInputSchema,
+  MessageWhereInputSchema,
+} from "../../../prisma/generated/zod";
 
 export const messageRouter = createTRPCRouter({
   fetch: protectedProcedure
-    .input(
-      z.object({
-        roomId: z.string().optional(),
-      }),
-    )
+    .input(MessageWhereInputSchema)
     .mutation(async ({ ctx, input }) => {
-      if (!input.roomId) return [];
-
       return ctx.prisma.message.findMany({
-        where: { roomId: input.roomId },
-        include: { sender: true },
+        where: input,
         orderBy: { createdAt: "asc" },
+        ...sendTaskMessageSlice,
         //   todo: infinite
       });
     }),
 
   list: protectedProcedure
-    .input(
-      z.object({
-        roomId: z.string().optional(),
-      }),
-    )
+    .input(MessageWhereInputSchema)
     .query(async ({ ctx, input }) => {
-      if (!input.roomId) return [];
-
       return ctx.prisma.message.findMany({
-        where: { roomId: input.roomId },
-        include: { sender: true },
+        where: input,
         orderBy: { createdAt: "asc" },
+        ...sendTaskMessageSlice,
         //   todo: infinite
       });
     }),
 
   send: protectedProcedure
-    .input(
-      z.object({
-        roomId: z.string(),
-        text: z.string(),
-      }),
-    )
+    .input(MessageCreateInputSchema)
     .mutation(async ({ ctx, input }) => {
       // todo: socket
 
       const message = await ctx.prisma.message.create({
-        data: { ...input, senderId: ctx.user.id },
-        include: { sender: true },
+        data: input,
+        ...sendTaskMessageSlice,
       });
 
-      void pusherServer.trigger(input.roomId, "user:sendMessage", message);
+      // todo
+      // void pusherServer.trigger(input.roomId, "user:sendMessage", message);
 
       return message;
     }),

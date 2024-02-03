@@ -3,6 +3,7 @@ import * as process from "process";
 import { getTimeS } from "../lib/datetime";
 import { SMS_EXPIRE_MINUTES } from "@/const";
 import { prisma } from "@/server/db";
+import { signOut } from "next-auth/react";
 
 const SmsClient = tencentcloud.sms.v20210111.Client;
 
@@ -114,14 +115,16 @@ export const validateSms = async ({
   });
   console.log("-- account: ", account);
 
-  // 不存在
-  if (!account) return null;
-
-  // 过期
-  if (getTimeS() > account.expires_at!) return null;
-
-  // 错误
-  if (account.access_token !== code) return null;
+  if (
+    // 不存在
+    !account ||
+    // 过期
+    getTimeS() > account.expires_at! ||
+    // 错误
+    account.access_token !== code
+  ) {
+    return null;
+  }
 
   let user;
   if (!account.user) {

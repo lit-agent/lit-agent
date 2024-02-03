@@ -57,8 +57,9 @@ model User {
   honors Honor[]
 
   // chat
-  rooms    Room[]
-  messages Message[]
+  rooms            Room[]
+  sentMessages     Message[] @relation("from")
+  receivedMessages Message[] @relation("to")
 
   // tasks
   fromTasks TaskFrom[]
@@ -143,12 +144,24 @@ model Message {
 
   text String?
 
-  sender   User?   @relation(fields: [senderId], references: [id], onDelete: Cascade)
-  senderId String?
+  fromUser   User   @relation("from", fields: [fromUserId], references: [id], onDelete: Cascade)
+  fromUserId String
+
+  toUsers User[] @relation("to")
 
   // 任何消息都必然有room，否则是通知
-  room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  roomId String
+  room   Room?   @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId String?
+
+  type MessageType @default(Plain)
+
+  task   TaskFrom?
+  taskId String?
+}
+
+enum MessageType {
+  Plain
+  NewTask
 }
 
 // for test
@@ -233,7 +246,9 @@ model TaskFrom {
   fromUserId String
   toUsers    TaskTo[]
 
-  status TaskStatus
+  status    TaskStatus
+  message   Message    @relation(fields: [messageId], references: [id])
+  messageId String     @unique
 }
 
 enum TaskStatus {

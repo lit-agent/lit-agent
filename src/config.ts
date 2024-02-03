@@ -2,6 +2,8 @@ import { BgModel } from "@/ds/system";
 import { IChatItem } from "@/components/chat-item";
 import { userJiugu, userJiuguAI } from "@/ds/mock";
 
+export const bloggerPhone = "17766091857";
+
 export const bgModel: BgModel = "plain";
 
 export const guidanceItems: IChatItem[] = [

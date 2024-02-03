@@ -12,6 +12,7 @@ import { Prisma } from ".prisma/client";
 import UserGetPayload = Prisma.UserGetPayload;
 import validator = Prisma.validator;
 import UserDefaultArgs = Prisma.UserDefaultArgs;
+import { signOut } from "next-auth/react";
 
 const userSlice = validator<UserDefaultArgs>()({
   include: {
@@ -61,6 +62,10 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
+    jwt: (props) => {
+      console.log("-- jwt: ", props);
+      return props;
+    },
     /**
      *  参考：https://stackoverflow.com/a/77018015
      *   session: {
@@ -70,23 +75,32 @@ export const authOptions: NextAuthOptions = {
      * @param session
      * @param user
      */
-    session: async ({ session, user }) => {
-      const userInDB = await prisma.user.findUnique({
-        where: {
-          phone: session.user.name!,
-        },
-        ...userSlice,
-      });
-      const newSession = {
-        ...session,
-        user: {
-          ...session.user,
-          ...userInDB,
-        },
-      };
-      console.log("-- session callback: ", { session, user, newSession });
+    session: async ({ session, user, token }) => {
+      const phone = session.user.phone;
+      if (phone) {
+        const userInDB = await prisma.user.findUnique({
+          where: {
+            phone,
+          },
+          ...userSlice,
+        });
+        console.log("-- userInDB: ", userInDB);
 
-      return newSession;
+        if (userInDB) {
+          const newSession = {
+            ...session,
+            user: {
+              ...session.user,
+              ...userInDB,
+            },
+          };
+          console.log("-- session callback: ", { session, user, newSession });
+          return newSession;
+        }
+      }
+
+      token.expiresIn = new Date();
+      return session;
     },
   },
 
@@ -105,6 +119,7 @@ export const authOptions: NextAuthOptions = {
       },
 
       authorize: async (credentials) => {
+        console.log("-- authorize");
         // Here you should verify the phone number and the code
         // For example, check against a database where you stored the code
         if (!credentials) throw new Error("验证信息为空");

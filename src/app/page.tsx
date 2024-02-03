@@ -6,20 +6,26 @@ import { AppTab, AppTabComp } from "@/components/app-tab";
 import { useUser } from "@/hooks/use-user";
 import Assets from "@/components/assets";
 import TaskPage from "@/app/task/page";
-import ChatPage from "@/components/chat-page";
+import ChatPage from "@/app/chat/page";
 import HomePage from "./home/page";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Link from "next/link";
 import { Label } from "@/components/ui/label";
+import { api } from "@/trpc/react";
+import { bloggerPhone } from "@/config";
 
 export default function Home() {
   // noStore();
 
   const [tab, setTab] = useState<AppTab>(AppTab.fire);
   const { user } = useUser();
-  console.log("-- tab: ", { tab, user });
+  const { data: blogger } = api.user.getUserFromPhone.useQuery(bloggerPhone);
+
+  console.log("-- Home: ", { tab, user, blogger });
+
+  if (!blogger) return "no blogger";
 
   return (
     <Tabs
@@ -29,7 +35,11 @@ export default function Home() {
     >
       <div className={"grow relative"}>
         <TabsContent value={AppTab.chat} className={"h-full m-0"}>
-          {user ? <ChatPage roomId={`${user.id}-jiugu`} /> : "请登录后再试！"}
+          {user ? (
+            <ChatPage params={{ roomId: blogger.id }} />
+          ) : (
+            "请登录后再试！"
+          )}
         </TabsContent>
 
         <TabsContent value={AppTab.fire} className={"h-full m-0"}>
