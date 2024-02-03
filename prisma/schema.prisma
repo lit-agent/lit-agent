@@ -22,10 +22,57 @@ generator zod {
 
 /// 业务建表逻辑：
 /// 1. 账号：VerificationToken --> Account --> User --> Session
-/// 2. 博主 --> 博主发布的任务 <-- 用户执行的任务 <-- 用户
-/// 3. 博主 --> 博主发布的产品 <-- 用户收藏/下单的产品 <-- 用户
+/// 2. 博主 --> 博主发布的任务 --- 用户关注的任务 --- 用户
+/// 3. 博主 --> 博主发布的产品 --- 用户关注的产品 --- 用户
+/// 4. 博主 --> 博主发布的产品 --> 用户的订单 <-- 用户
 
 /// todo: user action
+
+/// most important
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // auth
+  accounts      Account[]
+  sessions      Session[]
+  emailVerified DateTime?
+  phoneVerified DateTime?
+  validated     Boolean?  @default(false) // 是否通过验证
+
+  // basic info
+  name   String?
+  email  String?    @unique
+  phone  String?    @unique
+  image  String?
+  status UserStatus @default(offline)
+  type   UserType   @default(user)
+
+  // balance
+  currentBalance Int @default(0)
+  historyBalance Int @default(0)
+
+  // platform
+  honors Honor[]
+
+  // chat
+  rooms    Room[]
+  messages Message[]
+
+  // tasks
+  fromTasks TaskFrom[]
+  toTasks   TaskTo[]
+
+  // products
+  fromProducts ProductFrom[]
+  toProducts   ProductTo[]
+  bills        Bill[]
+
+  // actions  UserAction[]
+}
+
+/// other
 
 // for auth
 model Account {
@@ -175,11 +222,12 @@ model TaskFrom {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  type    TaskType
-  title   String
-  content String // 根据task-type进行解析
-  value   Int // 每个任务价值多少火币
-  ddl     DateTime // 任务有截止时间
+  type      TaskType
+  title     String
+  content   String // 根据task-type进行解析
+  value     Int // 每个任务价值多少火币
+  startTime DateTime @default(now())
+  endTime   DateTime
 
   fromUser   User     @relation(fields: [fromUserId], references: [id])
   fromUserId String
@@ -240,49 +288,6 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model User {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // auth
-  accounts      Account[]
-  sessions      Session[]
-  emailVerified DateTime?
-  phoneVerified DateTime?
-  validated     Boolean?  @default(false) // 是否通过验证
-
-  // basic info
-  name   String?
-  email  String?    @unique
-  phone  String?    @unique
-  image  String?
-  status UserStatus @default(offline)
-  type   UserType   @default(user)
-
-  // balance
-  currentBalance Int @default(0)
-  historyBalance Int @default(0)
-
-  // platform
-  honors Honor[]
-
-  // chat
-  room     Room[]
-  messages Message[]
-
-  // tasks
-  fromTasks TaskFrom[]
-  toTasks   TaskTo[]
-
-  // products
-  fromProducts ProductFrom[]
-  toProducts   ProductTo[]
-  bills        Bill[]
-
-  // actions  UserAction[]
 }
 
 // model UserAction {

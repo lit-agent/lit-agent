@@ -31,33 +31,32 @@ import {
 import TaskType = $Enums.TaskType;
 import moment from "moment";
 import { Input } from "@/components/ui/input";
+import { TaskFromUncheckedCreateInputSchema } from "../../../../prisma/generated/zod";
 
-const formSchema = z.object({
-  type: z.nativeEnum(TaskType),
-  title: z.string(),
-  content: z.string(),
-  value: z.number(),
-  ddl: z.date(),
-});
+const createTaskFormSchema = TaskFromUncheckedCreateInputSchema;
 
 export default function CreateTaskPage() {
+  const { user } = useUser();
+
   // 1. Define your form.
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof createTaskFormSchema>>({
+    resolver: zodResolver(createTaskFormSchema),
     defaultValues: {
       type: TaskType.broadcast,
       title: "test - " + moment().format(),
       content: "test content",
       value: 10,
-      ddl: moment().add(1, "days").toDate(),
+      startTime: new Date(),
+      endTime: moment().add(1, "days").toDate(),
+      status: "on",
+      fromUserId: user.id,
     },
   });
 
-  const { user } = useUser();
   const createTask = api.task.create.useMutation();
 
   // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof createTaskFormSchema>) {
     console.log("-- submit: ", { values, user });
     if (!user) return;
 
@@ -153,7 +152,30 @@ export default function CreateTaskPage() {
 
           <FormField
             control={form.control}
-            name="ddl"
+            name="startTime"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>开始时间</FormLabel>
+                <FormControl>
+                  <Input
+                    type={"datetime-local"}
+                    value={moment(field.value).format("YYYY-MM-DDThh:mm:ss")}
+                    onChange={(event) => {
+                      // console.log("-- onChange: ", event.currentTarget.value);
+                      field.onChange(
+                        moment(event.currentTarget.value).toDate(),
+                      );
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="endTime"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>截止时间</FormLabel>
@@ -169,7 +191,6 @@ export default function CreateTaskPage() {
                     }}
                   />
                 </FormControl>
-
                 <FormMessage />
               </FormItem>
             )}

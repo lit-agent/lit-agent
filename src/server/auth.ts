@@ -16,21 +16,15 @@ import UserDefaultArgs = Prisma.UserDefaultArgs;
 const userSlice = validator<UserDefaultArgs>()({
   include: {
     honors: true,
-    userTasks: {
-      include: {
-        task: true,
-      },
-    },
-    userProductActions: {
-      include: {
-        product: true,
-      },
-    },
-    userProductBills: {
-      include: {
-        product: true,
-      },
-    },
+
+    rooms: true,
+
+    fromTasks: true,
+    toTasks: true,
+
+    fromProducts: true,
+    toProducts: true,
+    bills: true,
   },
 });
 
