@@ -23,8 +23,12 @@ export const taskRouter = createTRPCRouter({
       return await ctx.prisma.$transaction(async (db) => {
         const task = await db.task.create({ data: input });
         console.log("-- create task: ", task);
-        const userTask = await db.userTask.create({
-          data: { userId: ctx.user.id, taskId: task.id, action: "on" },
+        const userTask = await db.user_Task.create({
+          data: {
+            userId: ctx.user.id,
+            taskId: task.id,
+            status: "on",
+          },
         });
         console.log("-- create user-task: ", userTask);
         return userTask;

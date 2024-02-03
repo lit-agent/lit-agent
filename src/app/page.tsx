@@ -9,7 +9,7 @@ import TaskPage from "@/app/task/page";
 import ChatPage from "@/components/chat-page";
 import HomePage from "./home/page";
 import { Button } from "@/components/ui/button";
-import { PlusCircleIcon, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Link from "next/link";
 import { Label } from "@/components/ui/label";

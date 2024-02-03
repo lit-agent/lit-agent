@@ -29,11 +29,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import TaskType = $Enums.TaskType;
+import moment from "moment";
+import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
   type: z.nativeEnum(TaskType),
+  title: z.string(),
   content: z.string(),
   value: z.number(),
+  ddl: z.date(),
 });
 
 export default function CreateTaskPage() {
@@ -42,8 +46,10 @@ export default function CreateTaskPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       type: TaskType.broadcast,
-      content: "",
+      title: "test - " + moment().format(),
+      content: "test content",
       value: 10,
+      ddl: moment().add(1, "days").toDate(),
     },
   });
 
@@ -65,7 +71,7 @@ export default function CreateTaskPage() {
         toast.error("创建失败");
       });
   }
-  u;
+
   return (
     <div className={"flex flex-col p-8 bg-black"}>
       <Label className={"my-8 text-xl"}>创建任务</Label>
@@ -102,12 +108,66 @@ export default function CreateTaskPage() {
 
           <FormField
             control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>任务标题</FormLabel>
+                <FormControl>
+                  <Textarea {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name="content"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>任务内容</FormLabel>
                 <FormControl>
                   <Textarea {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="value"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>火币价值</FormLabel>
+                <FormControl>
+                  <Input type={"number"} {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="ddl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>截止时间</FormLabel>
+                <FormControl>
+                  <Input
+                    type={"datetime-local"}
+                    value={moment(field.value).format("YYYY-MM-DDThh:mm:ss")}
+                    onChange={(event) => {
+                      // console.log("-- onChange: ", event.currentTarget.value);
+                      field.onChange(
+                        moment(event.currentTarget.value).toDate(),
+                      );
+                    }}
+                  />
                 </FormControl>
 
                 <FormMessage />
