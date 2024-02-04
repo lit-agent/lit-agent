@@ -26,6 +26,7 @@ export default function Home() {
   console.log("-- Home: ", { tab, user, blogger });
 
   if (!blogger) return "no blogger";
+  if (!user) return "no user";
 
   return (
     <Tabs
@@ -35,11 +36,7 @@ export default function Home() {
     >
       <div className={"grow relative"}>
         <TabsContent value={AppTab.chat} className={"h-full m-0"}>
-          {user ? (
-            <ChatPage params={{ roomId: blogger.id }} />
-          ) : (
-            "请登录后再试！"
-          )}
+          <ChatPage params={{ roomId: blogger.id }} />
         </TabsContent>
 
         <TabsContent value={AppTab.fire} className={"h-full m-0"}>
@@ -82,7 +79,7 @@ const FloatActionButton = () => (
     <DialogTrigger asChild>
       <Button
         className={
-          "bg-primary rounded-full absolute right-4 bottom-4 w-fit h-fit p-1 text-white"
+          "bg-primary rounded-full absolute right-4 bottom-16 w-fit h-fit p-1 text-white"
         }
       >
         <PlusIcon />

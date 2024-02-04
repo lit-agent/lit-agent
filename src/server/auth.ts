@@ -64,7 +64,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     jwt: (props) => {
       console.log("-- jwt: ", props);
-      return props;
+      return props.token;
     },
     /**
      *  参考：https://stackoverflow.com/a/77018015
@@ -76,7 +76,8 @@ export const authOptions: NextAuthOptions = {
      * @param user
      */
     session: async ({ session, user, token }) => {
-      const phone = session.user.phone;
+      console.log("-- session: ", { session, user, token });
+      const phone = session.user.name;
       if (phone) {
         const userInDB = await prisma.user.findUnique({
           where: {
@@ -94,7 +95,7 @@ export const authOptions: NextAuthOptions = {
               ...userInDB,
             },
           };
-          console.log("-- session callback: ", { session, user, newSession });
+          console.log("-- new session: ", newSession);
           return newSession;
         }
       }
@@ -119,7 +120,7 @@ export const authOptions: NextAuthOptions = {
       },
 
       authorize: async (credentials) => {
-        console.log("-- authorize");
+        console.log("-- authorize: ", credentials);
         // Here you should verify the phone number and the code
         // For example, check against a database where you stored the code
         if (!credentials) throw new Error("验证信息为空");
@@ -127,8 +128,6 @@ export const authOptions: NextAuthOptions = {
         const { phone, code } = credentials;
         const user = await validateSms({ phone, code });
         if (!user) throw new Error("Phone number or code is incorrect");
-
-        console.log("-- login success: ", user);
         return user;
       },
     }),

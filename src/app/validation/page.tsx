@@ -2,7 +2,7 @@
 
 import JiuguImage from "../../../public/user-jiugu.png";
 import { Avatar, AvatarImage } from "src/components/ui/avatar";
-import ChatItem from "src/components/chat-item";
+import ChatItemDetail from "src/components/chat-item";
 import { IoMenuOutline } from "react-icons/io5";
 import { cn } from "src/lib/utils";
 import { BloggerContainer } from "src/containers/blogger";
@@ -78,7 +78,7 @@ export default function ValidationPage() {
         {
           // sampleChatItems
           guidanceItems.map((chatItem, index) => (
-            <ChatItem {...chatItem} key={index} />
+            <ChatItemDetail {...chatItem} key={index} />
           ))
         }
 

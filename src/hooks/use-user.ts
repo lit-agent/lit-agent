@@ -10,7 +10,7 @@ const useTargetUserBear = createBearStore<User | null>()(
 
 export const useUser = () => {
   const session = useSession();
-  console.log("-- session: ", session);
+  // console.log("-- session: ", session);
   return {
     user: session.data?.user,
     ...useTargetUserBear(),

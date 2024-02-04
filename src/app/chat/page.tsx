@@ -6,7 +6,7 @@ import { ClientMessage } from "@/ds/user";
 import { api } from "@/trpc/react";
 import { pusherClient } from "@/lib/pusher";
 import { SelectUser } from "@/components/select-user";
-import ChatItem from "@/components/chat-item";
+import ChatItemDetail, { ChatItemContainer } from "@/components/chat-item";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { BloggerContainer } from "@/containers/blogger";
@@ -24,7 +24,7 @@ export default function ChatPage({
 }) {
   const refInput = useRef<HTMLInputElement>(null);
   const { user, targetUser } = useUser();
-  console.log("-- user: ", user);
+  console.log("-- chat: ", { userId: user.id, roomId });
 
   const [messages, setMessages] = useState<ClientMessage[]>([]);
   const fetchMessages = api.message.fetch.useMutation();
@@ -34,7 +34,7 @@ export default function ChatPage({
     if (!roomId) return;
 
     fetchMessages
-      .mutateAsync({ roomId })
+      .mutateAsync({ fromUserId: roomId })
       .then((messages) => setMessages(messages));
 
     pusherClient.subscribe(roomId);
@@ -84,16 +84,9 @@ export default function ChatPage({
       <SelectUser withBack={withBack} />
 
       <div className={"flex grow flex-col gap-4 overflow-auto p-4"}>
-        {
-          // sampleChatItems
-          messages.map((message, index) => (
-            <ChatItem
-              user={message.fromUser}
-              segments={[{ type: "text", content: message.text }]}
-              key={index}
-            />
-          ))
-        }
+        {messages.map((message, index) => (
+          <RenderChatItem message={message} key={index} />
+        ))}
       </div>
 
       <div className={"relative px-4 py-2"}>
@@ -122,3 +115,26 @@ export default function ChatPage({
     </div>
   );
 }
+
+const RenderChatItem = ({ message }: { message: ClientMessage }) => {
+  switch (message.type) {
+    case "NewTask":
+      return (
+        <ChatItemContainer user={message.fromUser}>
+          <div>
+            <div>{message.task.title}(todo: new-task)</div>
+            <div>{message.task.content}</div>
+          </div>
+        </ChatItemContainer>
+      );
+
+    case "Plain":
+    default:
+      return (
+        <ChatItemDetail
+          user={message.fromUser}
+          segments={[{ type: "text", content: message.text }]}
+        />
+      );
+  }
+};

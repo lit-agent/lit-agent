@@ -30,9 +30,10 @@ import {
 } from "@/components/ui/select";
 import moment from "moment";
 import { Input } from "@/components/ui/input";
-import TaskType = $Enums.TaskType;
 import { TaskFromUncheckedCreateInputSchema } from "../../../../prisma/generated/zod";
 import { useState } from "react";
+import TaskType = $Enums.TaskType;
+import { MinusCircleIcon } from "lucide-react";
 
 const formSchema = TaskFromUncheckedCreateInputSchema;
 
@@ -77,6 +78,8 @@ const CreateTaskWithUserPage = ({ userId }: { userId: string }) => {
         setSubmitting(false);
       });
   }
+
+  console.log("-- form: ", { userId, form });
 
   return (
     <div className={"min-h-full flex flex-col p-8 bg-black"}>
@@ -131,20 +134,39 @@ const CreateTaskWithUserPage = ({ userId }: { userId: string }) => {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="content"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>任务内容</FormLabel>
-                <FormControl>
-                  <Textarea {...field} />
-                </FormControl>
+          {form.watch("type") === TaskType.broadcast && (
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>详情</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} />
+                  </FormControl>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {form.watch("type") === TaskType.textChoices && (
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>文字选项</FormLabel>
+                  <FormControl>
+                    <TextChoicesInput onChange={field.onChange} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           <FormField
             control={form.control}
@@ -219,5 +241,46 @@ const CreateTaskWithUserPage = ({ userId }: { userId: string }) => {
         </form>
       </Form>
     </div>
+  );
+};
+
+const TextChoicesInput = ({
+  onChange,
+}: {
+  onChange: (value: string) => void;
+}) => {
+  const [choices, setChoices] = useState<string[]>([]);
+
+  useEffect(() => {
+    onChange(JSON.stringify(choices));
+  }, [JSON.stringify(choices)]);
+
+  return (
+    <>
+      {choices.map((choice, index) => (
+        <div key={index} className={"flex items-center gap-2"}>
+          <Input
+            className={"grow"}
+            key={index}
+            value={choice}
+            onChange={(event) => {
+              const newChoices = [...choices];
+              newChoices[index] = event.currentTarget.value;
+              setChoices(newChoices);
+            }}
+          />
+
+          <MinusCircleIcon
+            className={"shrink-0 text-red-800"}
+            onClick={(event) => {
+              setChoices(choices.filter((choice, i) => i !== index));
+            }}
+          />
+        </div>
+      ))}
+      <Button onClick={(event) => {}} />
+      添加
+      <Button />
+    </>
   );
 };

@@ -113,7 +113,7 @@ export const validateSms = async ({
       user: true,
     },
   });
-  console.log("-- account: ", account);
+  // console.log("-- account: ", account);
 
   if (
     // 不存在
@@ -131,7 +131,7 @@ export const validateSms = async ({
     //   创建用户
     user = await prisma.user.create({
       data: {
-        name: "",
+        name: "sms-" + phone,
         phone,
         phoneVerified: new Date(),
         status: "online",
@@ -185,7 +185,7 @@ export const validateSms = async ({
     update: {},
   });
 
-  console.log("-- user: ", user);
+  console.log("-- validated user: ", user);
 
   return user;
 };

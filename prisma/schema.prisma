@@ -71,6 +71,8 @@ model User {
   bills        Bill[]
 
   // actions  UserAction[]
+  TaskChoice   TaskChoice? @relation(fields: [taskChoiceId], references: [id])
+  taskChoiceId String?
 }
 
 /// other
@@ -235,9 +237,13 @@ model TaskFrom {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  type      TaskType
-  title     String
-  content   String // 根据task-type进行解析
+  title   String
+  type    TaskType
+  // 根据task-type进行解析
+  // 1. plain: string
+  // 2. choices: string[]
+  content String
+
   value     Int // 每个任务价值多少火币
   startTime DateTime @default(now())
   endTime   DateTime
@@ -247,8 +253,28 @@ model TaskFrom {
   toUsers    TaskTo[]
 
   status    TaskStatus
-  message   Message    @relation(fields: [messageId], references: [id])
-  messageId String     @unique
+  message   Message?   @relation(fields: [messageId], references: [id])
+  messageId String?    @unique
+
+  choices TaskChoice[]
+}
+
+model TaskChoice {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type    TaskChoiceType
+  content String
+  users   User[]
+
+  TaskFrom   TaskFrom? @relation(fields: [taskFromId], references: [id])
+  taskFromId String?
+}
+
+enum TaskChoiceType {
+  Text
+  Image
 }
 
 enum TaskStatus {
