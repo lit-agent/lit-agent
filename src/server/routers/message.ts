@@ -2,9 +2,10 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { clientMessageSlice } from "@/ds/user";
 
 import { pusherServer } from "@/lib/pusher";
-import { $Enums, MessageType, UserType } from "@prisma/client";
+import { $Enums, UserType } from "@prisma/client";
 import { z } from "zod";
-import { SegmentType } from "@/ds/chat";
+import { SegmentType, sendMessageSchema } from "@/ds/message";
+import { SocketEventType } from "@/ds/socket";
 import TaskToStatus = $Enums.TaskToStatus;
 
 export const messageRouter = createTRPCRouter({
@@ -35,17 +36,11 @@ export const messageRouter = createTRPCRouter({
     }),
 
   execAction: protectedProcedure
-    .input(
-      z.object({
-        channelId: z.string(),
-        taskId: z.string(),
-        content: z.string(),
-      }),
-    )
+    .input(sendMessageSchema)
     .mutation(async ({ ctx, input }) => {
-      const { channelId, taskId } = input;
+      const { channelId, taskId, body } = input;
 
-      const task = await ctx.prisma.taskFrom.findUnique({
+      const task = await ctx.prisma.taskFrom.findUniqueOrThrow({
         where: { id: taskId },
         include: { toUsers: true },
       });
@@ -53,8 +48,7 @@ export const messageRouter = createTRPCRouter({
       const userJoinedTask = await ctx.prisma.taskTo.create({
         data: {
           userId: ctx.user.id,
-          taskId: input.taskId,
-          content: input.content,
+          taskId: task.id,
           status: TaskToStatus.finished,
         },
       });
@@ -63,12 +57,16 @@ export const messageRouter = createTRPCRouter({
         data: {
           channelId,
           fromUserId: ctx.user.id,
-          text: input.content,
+          body: input.body,
           // todo: toUsers
         },
         ...clientMessageSlice,
       });
-      void pusherServer.trigger(channelId, MessageType.ExecTask, userMessage);
+      void pusherServer.trigger(
+        channelId,
+        SocketEventType.Message,
+        userMessage,
+      );
 
       const aiMessage = await ctx.prisma.message.create({
         data: {
@@ -84,52 +82,35 @@ export const messageRouter = createTRPCRouter({
               },
             },
           },
-          // todo: multi model
-          text: JSON.stringify([
+          body: [
             {
               type: SegmentType.text,
               content: "啊哈！\n你也选了这个？\n来群里看看别人都选了什么吧！",
             },
             { type: SegmentType.groupLink, content: task },
-          ]),
+          ],
         },
         ...clientMessageSlice,
       });
-      void pusherServer.trigger(channelId, MessageType.ExecTask, aiMessage);
+      void pusherServer.trigger(channelId, SocketEventType.Message, aiMessage);
 
       return { userMessage, aiMessage };
     }),
 
   send: protectedProcedure
-    .input(
-      z.object({
-        text: z.string(),
-        channelId: z.string(),
-        toUserIds: z.array(z.string()).optional(),
-        type: z.nativeEnum(MessageType),
-        taskId: z.string().optional(),
-      }),
-    )
+    .input(sendMessageSchema)
     .mutation(async ({ ctx, input }) => {
-      const { toUserIds, channelId, ...others } = input;
+      const { channelId, ...others } = input;
       const message = await ctx.prisma.message.create({
         data: {
-          ...others,
-          channelId,
+          ...input,
           fromUserId: ctx.user.id,
-          toUsers: {
-            connect: toUserIds?.map((u) => ({
-              id: u,
-            })),
-          },
         },
         ...clientMessageSlice,
       });
 
-      // todo: 用户 与 博主 的私人频道
       console.log("-- trigger: ", { input, message });
-      // void pusherServer.trigger(message.fromUserId, input.type, message);
-      void pusherServer.trigger(channelId, input.type, message);
+      void pusherServer.trigger(channelId, SocketEventType.Message, message);
 
       return message;
     }),

@@ -1,5 +1,5 @@
 import { BaseClientUser } from "@/ds/user";
-import { IChatItem } from "@/components/message-item";
+import { IMessageContainer } from "@/components/message-item";
 
 export const userJiuguAI: BaseClientUser = {
   id: "jiugu-ai",
@@ -36,7 +36,7 @@ export const sampleImageItems = [
   "/image-choices-2.png",
 ];
 
-export const sampleChatItems: IChatItem[] = [
+export const sampleChatItems: IMessageContainer[] = [
   {
     user: userJiuguAI,
     segments: [

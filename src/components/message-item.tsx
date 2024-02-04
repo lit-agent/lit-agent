@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "src/components/ui/avatar";
 import { BsThreeDots } from "react-icons/bs";
 import { BaseClientUser } from "src/ds/user";
-import { Segment, SegmentType } from "src/ds/chat";
+import { Segment, SegmentType } from "@/ds/message";
 import { cn } from "src/lib/utils";
 import Image from "next/image";
 import { Button } from "src/components/ui/button";
@@ -17,7 +17,7 @@ import { MyMarkdown } from "@/containers/markdown";
 import { ArrowRightIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
 
-export interface IChatItem {
+export interface IMessageContainer {
   id?: string;
   user: BaseClientUser;
   segments: Segment[];
@@ -61,7 +61,11 @@ export const MessageContainer = ({
   );
 };
 
-export function MessageComp({ user, segments, onValueChange }: IChatItem) {
+export function MessageComp({
+  user,
+  segments,
+  onValueChange,
+}: IMessageContainer) {
   return (
     <MessageContainer user={user}>
       {segments.map((segment, index) => (
@@ -79,10 +83,7 @@ export const MessageSegment = ({
   segment: { type, content },
   onValueChange,
 }: {
-  segment: {
-    type: SegmentType;
-    content: any;
-  };
+  segment: Segment;
   onValueChange?: (v: any) => void;
 }) => {
   const [imageIndex, setImageIndex] = useState(`0`);

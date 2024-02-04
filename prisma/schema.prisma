@@ -20,6 +20,14 @@ datasource db {
 //   useMultipleFiles = false // default is false
 // }
 
+/// Always after the prisma-client-js generator
+generator json {
+  provider = "prisma-json-types-generator"
+  // namespace = "PrismaJson"
+  // clientOutput = "<finds it automatically>"
+  // (./ -> relative to schema, or an importable path to require() it)
+}
+
 /// 模型排序依据：Ascii Order
 
 /// 业务建表逻辑：
@@ -72,7 +80,7 @@ model User {
   bills        Bill[]
 
   // actions  UserAction[]
-  taskChoices   TaskChoice[]
+  taskChoices TaskChoice[]
 }
 
 /// other
@@ -144,27 +152,22 @@ model Message {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  text String?
-
   fromUser   User   @relation("from", fields: [fromUserId], references: [id], onDelete: Cascade)
   fromUserId String
 
+  /// [MessageBody]
+  body Json
+
   toUsers User[] @relation("to")
 
-  type MessageType @default(Plain)
-
-  task       TaskFrom? @relation(fields: [taskFromId], references: [id], onDelete: Cascade)
-  taskId     String?
-  taskFromId String?
+  task   TaskFrom? @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId String?
 
   channelId String
-}
 
-// todo: MessageType, as well as NotificaionType
-enum MessageType {
-  Plain
-  NewTask
-  ExecTask
+  refer    Message?  @relation("refer", fields: [referId], references: [id])
+  referId  String?
+  referred Message[] @relation("refer")
 }
 
 // // for test
@@ -280,7 +283,7 @@ model TaskFrom {
   fromUserId String
   toUsers    TaskTo[]
 
-  status   TaskStatus
+  status TaskStatus
 
   // 包含发送到chat页的welcome，以及用户的评论
   messages Message[]
@@ -308,8 +311,8 @@ model TaskTo {
   task   TaskFrom @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId String
 
-  content String
-  status TaskToStatus @default(finished)
+  status  TaskToStatus @default(finished)
+  content String?
   // actions UserAction[]
 }
 

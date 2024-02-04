@@ -1,13 +1,13 @@
 import { BgModel } from "@/ds/system";
-import { IChatItem } from "@/components/message-item";
+import { IMessageContainer } from "@/components/message-item";
 import { userJiugu, userJiuguAI } from "@/ds/mock";
-import { SegmentType } from "@/ds/chat";
+import { SegmentType } from "@/ds/message";
 
 export const bloggerPhone = "17766091857";
 
 export const bgModel: BgModel = "plain";
 
-export const guidanceItems: IChatItem[] = [
+export const guidanceItems: IMessageContainer[] = [
   {
     user: userJiugu,
     segments: [
