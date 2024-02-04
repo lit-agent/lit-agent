@@ -3,7 +3,7 @@
 import { api } from "@/trpc/react";
 import Image from "next/image";
 import { PropsWithChildren } from "react";
-import Assets from "@/components/assets";
+import { FireIcon } from "@/lib/assets";
 import { PRIMARY_COLOR } from "@/const";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRightIcon, StarIcon } from "lucide-react";
@@ -48,7 +48,7 @@ export default function ProductPage() {
                 className={"text-primary flex items-baseline"}
                 color={PRIMARY_COLOR}
               >
-                <Assets.FireIcon className={"w-5 h-5"} />
+                <FireIcon className={"w-5 h-5"} />
                 <span className={"text-2xl"}>{product.price}</span>
               </div>
 
@@ -141,7 +141,7 @@ export default function ProductPage() {
           <div className={"flex items-center bg-[#FF854F] text-white"}>
             <div className={"flex items-center gap-1"}>
               <span className={"w-4 h-4"}>
-                <Assets.FireIcon />
+                <FireIcon />
               </span>
               {product.price}
             </div>

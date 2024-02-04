@@ -1,4 +1,6 @@
-import { Avatar, AvatarFallback, AvatarImage } from "src/components/ui/avatar";
+"use client";
+
+import { Avatar, AvatarImage } from "src/components/ui/avatar";
 import { BsThreeDots } from "react-icons/bs";
 import { BaseClientUser } from "src/ds/user";
 import { IMessageBody, MessageType } from "@/ds/message";
@@ -7,9 +9,8 @@ import Image from "next/image";
 import { Button } from "src/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "src/components/ui/radio-group";
 import { PropsWithChildren, useState } from "react";
-import Assets from "src/components/assets";
+import { CoverSmImage, NotificationIcon, WechatMPIcon } from "@/lib/assets";
 import { AspectRatio } from "src/components/ui/aspect-ratio";
-import { PRIMARY_COLOR } from "src/const";
 import { Badge } from "src/components/ui/badge";
 import { BloggerContainer } from "src/containers/blogger";
 import { Checkbox } from "src/components/ui/checkbox";
@@ -17,6 +18,8 @@ import { MyMarkdown } from "@/containers/markdown";
 import { ArrowRightIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import moment from "moment";
+import { UserComp } from "@/components/user";
+import { Hot } from "@/components/fire-value";
 
 export interface IMessageContainer {
   user: BaseClientUser;
@@ -82,7 +85,7 @@ export const MessageBody = ({
 
   switch (body.type) {
     case MessageType.Plain:
-      return <MyMarkdown>{body.content}</MyMarkdown>;
+      return <MyMarkdown>{body.detail ?? ""}</MyMarkdown>;
 
     case MessageType.TextChoices:
       return (
@@ -147,7 +150,7 @@ export const MessageBody = ({
         <div className={"flex flex-col gap-1 rounded-lg bg-[#3D3847] p-3"}>
           <div className={"flex items-center justify-between"}>
             <div className={"flex items-center gap-1"}>
-              <Assets.NotificationIcon />
+              <NotificationIcon />
               邀你加入限时群聊
             </div>
             <ArrowRightIcon />
@@ -210,7 +213,7 @@ export const MessageBody = ({
 
           <div className={"flex overflow-hidden rounded-lg"}>
             <Image
-              src={Assets.CoverSmImage.src}
+              src={CoverSmImage.src}
               alt={"cover"}
               width={120}
               height={160}
@@ -223,7 +226,7 @@ export const MessageBody = ({
 
               <div className={"flex justify-between"}>
                 <div className={"flex items-center gap-1"}>
-                  <Assets.WechatMPIcon />
+                  <WechatMPIcon />
                   视频号
                 </div>
                 <div>{moment(body.datetime ?? new Date()).fromNow()}发布</div>
@@ -269,22 +272,3 @@ export const MessageBody = ({
 };
 
 export default Message;
-
-export const Hot = ({ value }: { value: number }) => (
-  <div className={"text-primary flex items-center"} color={PRIMARY_COLOR}>
-    <div className={"h-4 w-4"}>
-      <Assets.FireIcon />
-    </div>
-
-    {value}
-  </div>
-);
-
-const UserComp = ({ user }: { user: BaseClientUser }) => (
-  <Avatar className={"h-8 w-8"}>
-    <AvatarImage src={user.image!} />
-    <AvatarFallback className={"bg-gray-600"}>
-      {(user.name ?? user.id)[0]}
-    </AvatarFallback>
-  </Avatar>
-);

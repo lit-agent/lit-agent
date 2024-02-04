@@ -1,9 +1,9 @@
-import { ComponentPropsWithoutRef, PropsWithChildren } from "react";
+import { ComponentPropsWithoutRef } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { userJiugu } from "@/ds/mock";
 import Image from "next/image";
-import Assets from "@/components/assets";
+import { MediasImage } from "@/lib/assets";
 import { Button } from "@/components/ui/button";
 import { TbMessageChatbot } from "react-icons/tb";
 import { cn } from "@/lib/utils";
@@ -26,12 +26,7 @@ export const GiuguProfile = () => {
 
       <div>全网粉丝 62.2w</div>
 
-      <Image
-        src={Assets.MediasImage.src}
-        alt={"medias"}
-        width={120}
-        height={30}
-      />
+      <Image src={MediasImage.src} alt={"medias"} width={120} height={30} />
     </div>
   );
 };

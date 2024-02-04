@@ -1,9 +1,9 @@
-import Assets from "@/components/assets";
+import { FireIcon, Menu1Icon, Menu3Icon } from "@/lib/assets";
 
 export const navs = [
-  { Icon: Assets.Menu1Icon, alt: "1" },
-  { Icon: Assets.FireIcon, alt: "2" },
-  { Icon: Assets.Menu3Icon, alt: "3" },
+  { Icon: Menu1Icon, alt: "1" },
+  { Icon: FireIcon, alt: "2" },
+  { Icon: Menu3Icon, alt: "3" },
 ];
 
 export const tasks = [

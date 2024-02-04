@@ -2,14 +2,20 @@
 
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import Assets from "../../components/assets";
+import {
+  AwardFillIcon,
+  BrandImage,
+  DirectBoxSendIcon,
+  FireIcon,
+  RingIcon,
+} from "../../lib/assets";
 import { tasks } from "@/ds/system";
 import { PRIMARY_COLOR } from "@/const";
-import { BottomNavbar } from "@/components/navbar";
 import Image from "next/image";
 import { ArrowUpIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
+import { Dot } from "@/components/dot";
 
 export default function Home1Page() {
   return (
@@ -21,7 +27,7 @@ export default function Home1Page() {
       >
         <div className={"w-full flex items-center justify-between"}>
           <Button onClick={() => signOut()}>退出登录</Button>
-          <Assets.RingIcon className={"ml-auto rounded-full bg-white"} />
+          <RingIcon className={"ml-auto rounded-full bg-white"} />
         </div>
 
         <div
@@ -38,7 +44,7 @@ export default function Home1Page() {
 
           <div className={"flex items-center gap-4"}>
             <div className={"text-3xl font-medium"}>4224.23</div>
-            <Assets.FireIcon color={PRIMARY_COLOR} className={"w-6 h-6"} />
+            <FireIcon color={PRIMARY_COLOR} className={"w-6 h-6"} />
           </div>
 
           <div className={"flex items-center gap-4"}>
@@ -48,12 +54,7 @@ export default function Home1Page() {
           </div>
 
           <div className={"absolute right-2 top-0"}>
-            <Image
-              src={Assets.BrandImage}
-              alt={"brand"}
-              width={120}
-              height={120}
-            />
+            <Image src={BrandImage} alt={"brand"} width={120} height={120} />
           </div>
         </div>
 
@@ -67,7 +68,7 @@ export default function Home1Page() {
               <div className={"mr-2 text-xs font-thin text-gray-950"}>
                 世界排名
               </div>
-              <Assets.AwardFillIcon />
+              <AwardFillIcon />
               <ArrowUpIcon />
               <div>5</div>
             </div>
@@ -84,7 +85,7 @@ export default function Home1Page() {
             }
           >
             <div className={"flex items-center gap-2 "}>
-              <Assets.DirectBoxSendIcon />
+              <DirectBoxSendIcon />
               <div className={"text-xs font-thin text-gray-950"}>
                 本期空投池
               </div>
@@ -92,7 +93,7 @@ export default function Home1Page() {
 
             <div className={"flex items-center gap-2"}>
               <div className={"text-lg font-medium"}>423.15</div>
-              <Assets.FireIcon color={PRIMARY_COLOR} className={"w-4 h-4"} />
+              <FireIcon color={PRIMARY_COLOR} className={"w-4 h-4"} />
             </div>
 
             <div className={"absolute right-4 top-2"}>
@@ -123,7 +124,3 @@ export default function Home1Page() {
     </div>
   );
 }
-
-const Dot = () => {
-  return <div className={"h-3 w-3 rounded-full bg-red-600"}></div>;
-};

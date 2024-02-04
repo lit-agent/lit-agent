@@ -1,6 +1,6 @@
 "use client";
 
-import Assets from "@/components/assets";
+import { CoverMdImage } from "@/lib/assets";
 import Image from "next/image";
 import { GiuguProfile } from "@/containers/blogger";
 import { Button } from "@/components/ui/button";
@@ -22,9 +22,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import "react-phone-number-input/style.css";
-import { sendSms, validateSms } from "@/server/sms";
 import { toast } from "sonner";
-import { useUser } from "@/hooks/use-user";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
@@ -79,6 +77,7 @@ export default function GuidancePage() {
   const fetchUser = api.user.fetch.useMutation();
 
   const [submitting, setSubmitting] = useState(false);
+
   // 2. Define a submit handler.
   async function onSubmit() {
     // Do something with the form values.
@@ -113,7 +112,7 @@ export default function GuidancePage() {
   return (
     <div className={"flex flex-col items-center h-full bg-[#2A2435]"}>
       <Image
-        src={Assets.CoverMdImage}
+        src={CoverMdImage}
         alt={"cover"}
         width={640}
         height={800}

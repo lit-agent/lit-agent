@@ -3,7 +3,7 @@
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import { useState } from "react";
 import { AppTab, AppTabComp } from "@/components/app-tab";
-import Assets from "@/components/assets";
+import { FireIcon, Menu1Icon, Menu3Icon } from "@/lib/assets";
 import TaskPage from "@/app/task/page";
 import ChatPage from "@/app/chat/page";
 import HomePage from "./home/page";
@@ -56,16 +56,16 @@ const NavBars = ({ tab }: { tab: AppTab }) => {
   return (
     <TabsList className="shrink-0 grid grid-cols-3 p-2 bg-black h-fit">
       <AppTabComp tab={tab} value={AppTab.chat}>
-        <Assets.Menu1Icon />
+        <Menu1Icon />
       </AppTabComp>
 
       <AppTabComp tab={tab} value={AppTab.fire}>
         {/*<RiFireFill className={"scale-150"} />*/}
-        <Assets.FireIcon className={"scale-150"} />
+        <FireIcon className={"scale-150"} />
       </AppTabComp>
 
       <AppTabComp tab={tab} value={AppTab.shop}>
-        <Assets.Menu3Icon />
+        <Menu3Icon />
       </AppTabComp>
     </TabsList>
   );

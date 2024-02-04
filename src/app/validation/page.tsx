@@ -9,10 +9,9 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
-import { useValidation } from "@/hooks/use-validation";
 
 import { guidanceItems } from "@/config";
-import Assets from "@/components/assets";
+import { JiuguImage } from "@/lib/assets";
 
 type Validation = Record<number, number[]>;
 
@@ -37,7 +36,7 @@ export default function ValidationPage() {
     <div className={"flex h-full flex-col"}>
       <div className={"flex items-center justify-center gap-1 p-2"}>
         <Avatar className={"h-5 w-5"}>
-          <AvatarImage src={Assets.JiuguImage.src} />
+          <AvatarImage src={JiuguImage.src} />
         </Avatar>
 
         <div>玖姑</div>

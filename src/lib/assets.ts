@@ -1,3 +1,5 @@
+"use client";
+
 import Menu1Icon from "../../public/menu-l.svg";
 import FireIcon from "../../public/fire.svg";
 import Menu3Icon from "../../public/menu-r.svg";
@@ -13,8 +15,11 @@ import CoverSmImage from "../../public/cover-jiugu-sm.png";
 import CoverMdImage from "../../public/cover-jiugu-md.png";
 import MediasImage from "../../public/medias.png";
 import JiuguImage from "../../public/user-jiugu.png";
+import BgCircleImage from "../../public/bg-circle.png";
+import BroadcastImage from "../../public/broadcast.png";
 
-const Assets = {
+export {
+  BroadcastImage,
   Menu1Icon,
   FireIcon,
   Menu3Icon,
@@ -24,12 +29,10 @@ const Assets = {
   WechatMPIcon,
   NotificationIcon,
   CallIcon,
-
   BrandImage,
   CoverSmImage,
   CoverMdImage,
   MediasImage,
   JiuguImage,
+  BgCircleImage,
 };
-
-export default Assets;

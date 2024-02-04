@@ -8,6 +8,7 @@ import AvatarComp from "@/components/avatar";
 import Link from "next/link";
 import { Label } from "../../components/ui/label";
 import { BaseClientUser, MyUser } from "@/ds/user";
+import { last } from "lodash";
 
 export default function TaskPage({
   params: { user },
@@ -102,7 +103,7 @@ export default function TaskPage({
 
             <div className={"text-gray-500 text-sm"}>
               {taskRelation.task?.messages.length
-                ? taskRelation.task.messages[0]!.text
+                ? JSON.stringify(last(taskRelation.task.messages)!.body)
                 : "这个群还没有发送任何消息"}
             </div>
           </div>

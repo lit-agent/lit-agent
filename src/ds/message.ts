@@ -44,13 +44,11 @@ export const messageBodySchema = z.discriminatedUnion("type", [
 
   // 邀请之类
   // todo: 需要细化
-  // z.object({
-  //   type: z.literal(MessageType.GroupLink),
-  //   // type: z.literal(MessageType.ProductLink),
-  //   // type: z.literal(MessageType.Images),
-  //   // type: z.literal(MessageType.Sheet),
-  //   // type: z.literal(MessageType.Others),
-  //
+  z.object({ type: z.literal(MessageType.GroupLink) }),
+  z.object({ type: z.literal(MessageType.ProductLink) }),
+  z.object({ type: z.literal(MessageType.Images) }),
+  z.object({ type: z.literal(MessageType.Sheet) }),
+  z.object({ type: z.literal(MessageType.Others) }),
   //   title: z.string(),
   //   cover: z.string().optional(),
   //   href: z.string().optional(),
@@ -59,7 +57,6 @@ export const messageBodySchema = z.discriminatedUnion("type", [
   //   hotValue: z.number(),
   //   datetime: z.date().optional(),
   //   source: z.string().default("不孤岛"),
-  // }),
 ]);
 export type IMessageBody = z.infer<typeof messageBodySchema>;
 
