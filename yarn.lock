@@ -1388,7 +1388,7 @@
     "@prisma/engines-version" "5.9.0-32.23fdc5965b1e05fc54e5f26ed3de66776b93de64"
     "@prisma/get-platform" "5.9.1"
 
-"@prisma/generator-helper@^5.5.2":
+"@prisma/generator-helper@^5.1.1":
   version "5.9.1"
   resolved "https://registry.yarnpkg.com/@prisma/generator-helper/-/generator-helper-5.9.1.tgz#fd73e59728be36beef4a4e6415249ed034ffdaa0"
   integrity sha512-WMdEUPpPYxUGruRQM6e6IVTWXFjt1hHdF/m2TO7pWxhPo7/ZeoTOF9fH8JsvVSV78DYLOQkx9osjFLXZu447Kw==
@@ -5740,6 +5740,7 @@ streamsearch@^1.1.0:
   integrity sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg==
 
 "string-width-cjs@npm:string-width@^4.2.0", string-width@^4.1.0:
+  name string-width-cjs
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -6438,22 +6439,22 @@ yocto-queue@^0.1.0:
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
 
-zod-prisma-types@^3.1.6:
-  version "3.1.6"
-  resolved "https://registry.yarnpkg.com/zod-prisma-types/-/zod-prisma-types-3.1.6.tgz#72f178a6846ec0ba161dd7e79260a9696a37e2c8"
-  integrity sha512-ySaG91RraTm4J19zfvuX6S3OxhDMlK4dTfYWM4rS+4AlEGqDqGu5BbIn2trjTDt8OiCMBHoIjZmRXPKQCyNApA==
+zod-prisma-types@2.7.9:
+  version "2.7.9"
+  resolved "https://registry.yarnpkg.com/zod-prisma-types/-/zod-prisma-types-2.7.9.tgz#c38682d652fdc406b517527a935386d816e0279c"
+  integrity sha512-JgPN32d/Wm6/E61oHXek2jDT6VxBpKVPmLom7585SmdCyj+xb+OAg8O3G0BLU+gWNiC+Eyt3blo1S/8W9sIaxA==
   dependencies:
-    "@prisma/generator-helper" "^5.5.2"
+    "@prisma/generator-helper" "^5.1.1"
     code-block-writer "^12.0.0"
     lodash "^4.17.21"
-    zod "^3.22.4"
+    zod "^3.21.1"
 
 zod@3.21.1:
   version "3.21.1"
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.21.1.tgz#ac5bb7cf68876281ebd02f95ac4bb9a080370282"
   integrity sha512-+dTu2m6gmCbO9Ahm4ZBDapx2O6ZY9QSPXst2WXjcznPMwf2YNpn3RevLx4KkZp1OPW/ouFcoBtBzFz/LeY69oA==
 
-zod@^3.22.4:
+zod@^3.21.1:
   version "3.22.4"
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.22.4.tgz#f31c3a9386f61b1f228af56faa9255e845cf3fff"
   integrity sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==

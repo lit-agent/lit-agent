@@ -15,7 +15,7 @@ export default function AvatarComp({
   maxN = 6,
   size = "sm",
 }: {
-  users: User[];
+  users: { image?: string; name?: string; id: string }[];
   maxN?: number;
   size?: "sm" | "lg";
 }) {

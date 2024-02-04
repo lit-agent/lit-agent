@@ -20,24 +20,20 @@ import { Switch } from "@/components/ui/switch";
 import { api } from "@/trpc/react";
 import { useUser } from "@/hooks/use-user";
 import { toast } from "sonner";
-
-const formSchema = z.object({
-  title: z.string().min(2).max(50),
-  description: z.string(),
-  images: z.array(z.string()).optional(),
-  detail: z.string(),
-  price: z.number(),
-  isOnsite: z.boolean(),
-  isSelfOperating: z.boolean(),
-  isReturnable: z.boolean(),
-  isReservationRequired: z.boolean(),
-  total: z.number(),
-});
+import { createProductSchema } from "@/server/routers/product";
+import { ClientUser } from "@/ds/user";
 
 export default function CreateTaskPage() {
+  const { user } = useUser();
+  if (!user) return "no user yet";
+
+  return <CreateTaskPage_ user={user} />;
+}
+
+function CreateTaskPage_({ user }: { user: ClientUser }) {
   // 1. Define your form.
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof createProductSchema>>({
+    resolver: zodResolver(createProductSchema),
     defaultValues: {
       title: "test - " + new Date().toLocaleString(),
       description: "# test",
@@ -49,44 +45,23 @@ export default function CreateTaskPage() {
       isSelfOperating: true,
       price: 100,
       total: 10,
+      fromUserId: user.id,
     },
   });
 
-  const { user } = useUser();
-  const createProduct = api.task.create.useMutation();
+  const createProduct = api.product.create.useMutation();
 
   const issuerId = user?.id;
   console.log("-- issuerId: ", issuerId);
 
   // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof createProductSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log("-- submit: ", { values, issuerId });
 
     createProduct
-      .mutateAsync({
-        // 不能混合 entity 和 entityId 类别 properties
-        data: {
-          ...values,
-
-          issuer: {
-            connect: {
-              id: issuerId,
-            },
-          },
-
-          room: {
-            create: {
-              users: {
-                connect: {
-                  id: issuerId,
-                },
-              },
-            },
-          },
-        },
-      })
+      .mutateAsync(values)
       .then((res) => {
         toast.success("创建成功！");
       })

@@ -1,52 +1,59 @@
 {
   "compilerOptions": {
-    /* Base Options: */
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "target": "es2022",
-    "allowJs": true,
-    "resolveJsonModule": true,
-    "moduleDetection": "force",
-    "isolatedModules": true,
-    /* Strictness */
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "checkJs": true,
-    "noImplicitAny": false,
-    /* Bundled projects */
+    "target": "es2017",
     "lib": [
       "dom",
       "dom.iterable",
-      "ES2022"
+      "esnext"
     ],
+    //    "declaration": false,
+    "allowJs": true,
+    "checkJs": true,
+    "skipLibCheck": true,
+    // ref: https://github.com/vercel/next.js/issues/5307#issuecomment-567166918
+    "sourceMap": true,
+    "strict": true,
+    // 太烦了
+    "noImplicitAny": false,
+    "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
     "jsx": "preserve",
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
     "incremental": true,
-    /* Path Aliases */
+    "noUncheckedIndexedAccess": true,
+    //    for lodash partial import
+    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
       "@/*": [
         "./src/*"
       ]
-    }
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
-    ".eslintrc.cjs",
-    "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "**/*.cjs",
     "**/*.js",
-    ".next/types/**/*.ts"
+    "**/*.cjs",
+    "**/*.mjs",
+    ".eslintrc.json",
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    ".build/types/**/*.ts",
+    ".serve/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "packages",
+    ".next-tmp",
   ]
 }

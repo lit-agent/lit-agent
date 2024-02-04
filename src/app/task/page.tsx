@@ -26,7 +26,7 @@ export default function TaskPage() {
 
   // console.log("-- user: ", user);
 
-  if (!user) return "not logined";
+  if (!user) return "no user yet";
 
   return (
     <div className={"bg-[#282232] p-2 min-h-full"}>
@@ -88,9 +88,9 @@ export default function TaskPage() {
         </div>
       </div>
 
-      {user.toTasks.map((task, index) => (
+      {user.toTasks.map((taskRelation, index) => (
         <Link
-          href={`/room/${task.room.id}`}
+          href={`/task/${taskRelation.id}`}
           key={index}
           className={
             "rounded bg-[#373041] flex items-center justify-between p-3 my-2"
@@ -99,13 +99,13 @@ export default function TaskPage() {
           <div className={"flex flex-col gap-2"}>
             <div className={"flex items-center gap-2"}>
               <div className={"w-2 h-2 bg-green-500 rounded-full"} />
-              <AvatarComp users={task.room.users} />
-              {task.room.users.length} 人
+              <AvatarComp users={taskRelation.task.toUsers} />
+              {taskRelation.task.toUsers.length} 人
             </div>
 
             <div className={"text-gray-500 text-sm"}>
-              {task.room.messages.length
-                ? task.room.messages[0]!.text
+              {taskRelation.task.messages.length
+                ? taskRelation.task.messages[0]!.text
                 : "这个群还没有发送任何消息"}
             </div>
           </div>

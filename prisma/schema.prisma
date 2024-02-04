@@ -14,9 +14,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-generator zod {
-  provider = "zod-prisma-types"
-}
+// todo: 会stuck at `validating type`
+// generator zod {
+//   provider = "zod-prisma-types"
+//   useMultipleFiles = false // default is false
+// }
 
 /// 模型排序依据：Ascii Order
 
@@ -157,8 +159,9 @@ model Message {
 
   type MessageType @default(Plain)
 
-  task   TaskFrom?
-  taskId String?
+  task       TaskFrom? @relation(fields: [taskFromId], references: [id])
+  taskId     String?
+  taskFromId String?
 }
 
 enum MessageType {
@@ -231,6 +234,43 @@ model ProductTo {
   // userActions UserAction[]
 }
 
+// 聊天室
+model Room {
+  id       String    @id @default(cuid())
+  name     String?   @unique
+  users    User[]
+  messages Message[]
+}
+
+// for auth
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+
+model TaskChoice {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type    TaskChoiceType
+  content String
+  users   User[]
+
+  TaskFrom   TaskFrom? @relation(fields: [taskFromId], references: [id])
+  taskFromId String?
+}
+
+enum TaskChoiceType {
+  Text
+  Image
+}
+
 // 博主发布的产品
 model TaskFrom {
   id        String   @id @default(cuid())
@@ -252,29 +292,11 @@ model TaskFrom {
   fromUserId String
   toUsers    TaskTo[]
 
-  status    TaskStatus
-  message   Message?   @relation(fields: [messageId], references: [id])
-  messageId String?    @unique
+  status   TaskStatus
+  // 包含发送到chat页的welcome，以及用户的评论
+  messages Message[]
 
   choices TaskChoice[]
-}
-
-model TaskChoice {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  type    TaskChoiceType
-  content String
-  users   User[]
-
-  TaskFrom   TaskFrom? @relation(fields: [taskFromId], references: [id])
-  taskFromId String?
-}
-
-enum TaskChoiceType {
-  Text
-  Image
 }
 
 enum TaskStatus {
@@ -312,23 +334,6 @@ enum TaskType {
   broadcast // 帮作品传播
   textChoices
   imageChoices
-}
-
-// 聊天室
-model Room {
-  id       String    @id @default(cuid())
-  name     String?   @unique
-  users    User[]
-  messages Message[]
-}
-
-// for auth
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // model UserAction {

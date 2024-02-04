@@ -15,8 +15,8 @@ import { $Enums, MessageType } from "@prisma/client";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import TaskType = $Enums.TaskType;
 import { toast } from "sonner";
+import TaskType = $Enums.TaskType;
 
 export default function ChatPage({
   params: { roomId, withBack },
@@ -28,7 +28,6 @@ export default function ChatPage({
 }) {
   const refInput = useRef<HTMLInputElement>(null);
   const { user, targetUser } = useUser();
-  console.log("-- chat: ", { userId: user.id, roomId });
 
   const [messages, setMessages] = useState<ClientMessage[]>([]);
   const fetchMessages = api.message.fetch.useMutation();
@@ -38,7 +37,7 @@ export default function ChatPage({
     if (!roomId) return;
 
     fetchMessages
-      .mutateAsync({ fromUserId: roomId })
+      .mutateAsync({ roomId })
       .then((messages) => setMessages(messages));
 
     pusherClient.subscribe(roomId);
@@ -66,18 +65,10 @@ export default function ChatPage({
 
     // todo: 思考要不要做上屏优化
     sendMessage.mutate({
-      toUsers: {
-        connect: {
-          id: roomId,
-        },
-      },
-      fromUser: {
-        connect: {
-          id: user.id,
-        },
-      },
       text,
       type: MessageType.Plain,
+      roomId: `${user!.id}-jiugu`,
+      toUserIds: [user!.id],
     });
 
     refInput.current.value = "";
@@ -87,7 +78,7 @@ export default function ChatPage({
 
   useEffect(() => {}, [roomId]);
 
-  const refBottom = useRef<HTMLDivElement>();
+  const refBottom = useRef<HTMLDivElement>(null);
   useEffect(() => {
     refBottom.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages.length]);
@@ -144,7 +135,7 @@ const RenderChatItem = ({
   userId: string;
   message: ClientMessage;
 }) => {
-  const [chosen, setChosen] = useState<string | null>(null);
+  const [chosen, setChosen] = useState<string | undefined>(undefined);
   const sendMessage = api.message.send.useMutation();
 
   switch (message.type) {
@@ -200,18 +191,10 @@ const RenderChatItem = ({
                       return;
                     }
                     sendMessage.mutate({
-                      toUsers: {
-                        connect: {
-                          id: roomId,
-                        },
-                      },
-                      fromUser: {
-                        connect: {
-                          id: userId,
-                        },
-                      },
-                      text: `我选了：${message.task.choices.find((choice) => choice.id === chosen)!.content}`,
                       type: MessageType.Plain,
+                      roomId: `${userId}-jiugu`,
+                      toUserIds: [userId],
+                      text: `我选了：${message.task?.choices.find((choice) => choice.id === chosen)!.content}`,
                     });
                   }}
                 >

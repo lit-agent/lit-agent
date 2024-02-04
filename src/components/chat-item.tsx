@@ -6,7 +6,7 @@ import { cn } from "src/lib/utils";
 import Image from "next/image";
 import { Button } from "src/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "src/components/ui/radio-group";
-import { useState } from "react";
+import { PropsWithChildren, useState } from "react";
 import Assets from "src/components/assets";
 import { AspectRatio } from "src/components/ui/aspect-ratio";
 import { PRIMARY_COLOR } from "src/const";
@@ -17,6 +17,7 @@ import { useValidation } from "../hooks/use-validation";
 import { api } from "@/trpc/react";
 import { MyMarkdown } from "@/containers/markdown";
 import { ArrowRightIcon } from "lucide-react";
+import { MessageType } from "@prisma/client";
 
 export interface IChatItem {
   id?: string;
@@ -66,7 +67,7 @@ export function ChatItemDetail({ user, segments, id }: IChatItem) {
 
   // console.log("-- segments: ", segments);
 
-  const sendMessage = api.room.sendMessage.useMutation();
+  const sendMessage = api.message.send.useMutation();
 
   return (
     <ChatItemContainer user={user}>
@@ -120,7 +121,7 @@ export function ChatItemDetail({ user, segments, id }: IChatItem) {
                       sendMessage.mutate({
                         text: "submitted",
                         roomId: "default",
-                        senderId: user.id!,
+                        type: MessageType.Plain,
                       });
                     }}
                     disabled={submitted || !checks.length}
