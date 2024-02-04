@@ -1,6 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { pusherServer } from "@/lib/pusher";
-import { MessageType } from "@prisma/client";
+import { MessageType, TaskType } from "@prisma/client";
 import { TaskChoiceType } from ".prisma/client";
 import { createTaskSchema } from "@/ds/task";
 
@@ -15,15 +15,6 @@ export const taskRouter = createTRPCRouter({
        * 最后再基于socket发送消息，并返回消息即可
        */
       const { choices, ...others } = input;
-      const inputInDB = {
-        ...others,
-        choices: {
-          create: (JSON.parse(input.content) as string[]).map((content) => ({
-            type: TaskChoiceType.Text,
-            content,
-          })),
-        },
-      };
 
       const message = await ctx.prisma.message.create({
         data: {
@@ -33,8 +24,24 @@ export const taskRouter = createTRPCRouter({
             },
           },
           type: MessageType.NewTask,
+          channelId: "ALL",
+
           task: {
-            create: inputInDB,
+            create: {
+              ...others,
+
+              choices: {
+                create:
+                  input.type === TaskType.broadcast
+                    ? []
+                    : (JSON.parse(input.content) as string[]).map(
+                        (content) => ({
+                          type: TaskChoiceType.Text,
+                          content,
+                        }),
+                      ),
+              },
+            },
           },
         },
         include: {
@@ -42,7 +49,11 @@ export const taskRouter = createTRPCRouter({
         },
       });
 
-      void pusherServer.trigger(ctx.user.id, MessageType.NewTask, message);
+      void pusherServer.trigger(
+        `${ctx.user.id}-jiugu`,
+        MessageType.NewTask,
+        message,
+      );
       return message;
     }),
 });

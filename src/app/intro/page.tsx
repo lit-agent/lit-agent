@@ -118,6 +118,7 @@ export default function GuidancePage() {
         width={640}
         height={800}
         className={"h-[60%] bg-gradient-to-b from-blue-500"}
+        priority
       />
 
       <div className={"-mt-[30px]"}>

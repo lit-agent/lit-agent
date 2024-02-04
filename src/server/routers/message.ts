@@ -7,11 +7,11 @@ import { z } from "zod";
 
 export const messageRouter = createTRPCRouter({
   fetch: protectedProcedure
-    .input(z.object({ roomId: z.string() }))
+    .input(z.object({ channelId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       return ctx.prisma.message.findMany({
         where: {
-          OR: [{ roomId: "ALL" }, { roomId: input.roomId }],
+          OR: [{ channelId: "ALL" }, { channelId: input.channelId }],
         },
         orderBy: { createdAt: "asc" },
         ...sendTaskMessageSlice,
@@ -24,7 +24,7 @@ export const messageRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       return ctx.prisma.message.findMany({
         where: {
-          OR: [{ roomId: "ALL" }, { roomId: input.roomId }],
+          OR: [{ channelId: "ALL" }, { channelId: input.roomId }],
         },
         orderBy: { createdAt: "asc" },
         ...sendTaskMessageSlice,
@@ -36,19 +36,21 @@ export const messageRouter = createTRPCRouter({
     .input(
       z.object({
         text: z.string(),
-        roomId: z.string().optional(),
+        channelId: z.string(),
         toUserIds: z.array(z.string()).optional(),
         type: z.nativeEnum(MessageType),
         taskId: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const { toUserIds, ...others } = input;
       const message = await ctx.prisma.message.create({
         data: {
-          ...input,
+          ...others,
+          channelId: input.channelId,
           fromUserId: ctx.user.id,
           toUsers: {
-            connect: input.toUserIds?.map((u) => ({
+            connect: toUserIds?.map((u) => ({
               id: u,
             })),
           },
@@ -58,7 +60,12 @@ export const messageRouter = createTRPCRouter({
 
       // todo: 用户 与 博主 的私人频道
       console.log("-- trigger: ", { input, message });
-      void pusherServer.trigger(message.fromUser.id, input.type, message);
+      // void pusherServer.trigger(message.fromUserId, input.type, message);
+      void pusherServer.trigger(
+        `${message.fromUserId}-jiugu`,
+        input.type,
+        message,
+      );
 
       return message;
     }),

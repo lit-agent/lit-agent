@@ -19,10 +19,10 @@ import { toast } from "sonner";
 import TaskType = $Enums.TaskType;
 
 export default function ChatPage({
-  params: { roomId, withBack },
+  params: { channelId, withBack },
 }: {
   params: {
-    roomId: string;
+    channelId: string;
     withBack?: boolean;
   };
 }) {
@@ -34,13 +34,13 @@ export default function ChatPage({
   const sendMessage = api.message.send.useMutation();
 
   useEffect(() => {
-    if (!roomId) return;
+    if (!channelId) return;
 
     fetchMessages
-      .mutateAsync({ roomId })
+      .mutateAsync({ channelId: channelId })
       .then((messages) => setMessages(messages));
 
-    pusherClient.subscribe(roomId);
+    pusherClient.subscribe(channelId);
     Object.values(MessageType).map((messageType) => {
       pusherClient.bind(messageType, (message: ClientMessage) => {
         setMessages((messages) => [...messages, message]);
@@ -48,12 +48,12 @@ export default function ChatPage({
     });
 
     return () => {
-      pusherClient.unsubscribe(roomId);
+      pusherClient.unsubscribe(channelId);
       Object.values(MessageType).map((messageType) =>
         pusherClient.unbind(messageType),
       );
     };
-  }, [roomId]);
+  }, [channelId]);
 
   const submitMessage = () => {
     if (!refInput.current || !user) return;
@@ -67,21 +67,21 @@ export default function ChatPage({
     sendMessage.mutate({
       text,
       type: MessageType.Plain,
-      roomId: `${user!.id}-jiugu`,
+      channelId: `${user!.id}-jiugu`,
       toUserIds: [user!.id],
     });
 
     refInput.current.value = "";
   };
 
-  console.log(`-- messages: `, messages);
-
-  useEffect(() => {}, [roomId]);
+  useEffect(() => {}, [channelId]);
 
   const refBottom = useRef<HTMLDivElement>(null);
   useEffect(() => {
     refBottom.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages.length]);
+
+  console.log(`-- chat page: `, { channelId });
 
   return (
     <div className={"flex h-full flex-col overflow-hidden"}>
@@ -92,7 +92,7 @@ export default function ChatPage({
           <RenderChatItem
             message={message}
             key={index}
-            roomId={roomId}
+            channelId={channelId}
             userId={user!.id}
           />
         ))}
@@ -127,11 +127,11 @@ export default function ChatPage({
 }
 
 const RenderChatItem = ({
-  roomId,
+  channelId,
   userId,
   message,
 }: {
-  roomId: string;
+  channelId: string;
   userId: string;
   message: ClientMessage;
 }) => {
@@ -192,7 +192,7 @@ const RenderChatItem = ({
                     }
                     sendMessage.mutate({
                       type: MessageType.Plain,
-                      roomId: `${userId}-jiugu`,
+                      channelId,
                       toUserIds: [userId],
                       text: `我选了：${message.task?.choices.find((choice) => choice.id === chosen)!.content}`,
                     });

@@ -34,6 +34,7 @@ import { MinusCircleIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import TaskType = $Enums.TaskType;
 import { createTaskSchema } from "@/ds/task";
+import { useRouter } from "next/navigation";
 
 export default function CreateTaskPage() {
   const { user } = useUser();
@@ -49,8 +50,8 @@ const CreateTaskWithUserPage = ({ userId }: { userId: string }) => {
     resolver: zodResolver(createTaskSchema),
     defaultValues: {
       type: TaskType.broadcast,
-      title: "test - " + moment().format(),
-      content: "test content",
+      title: "test",
+      content: "test content\n\ndata: " + moment().format(),
       value: 10,
       startTime: new Date(),
       endTime: moment().add(1, "days").toDate(),
@@ -61,6 +62,7 @@ const CreateTaskWithUserPage = ({ userId }: { userId: string }) => {
 
   const createTask = api.task.create.useMutation();
   const [submitting, setSubmitting] = useState(false);
+  const router = useRouter();
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof createTaskSchema>) {
@@ -78,16 +80,10 @@ const CreateTaskWithUserPage = ({ userId }: { userId: string }) => {
 
     setSubmitting(true);
     createTask
-      .mutateAsync({
-        ...values,
-
-        choices:
-          values.type === TaskType.textChoices
-            ? (JSON.parse(values.content) as string[])
-            : [],
-      })
+      .mutateAsync(values)
       .then((res) => {
         toast.success("创建成功！");
+        // void router.push("/");
       })
       .catch((e) => {
         console.error(e);
@@ -145,7 +141,7 @@ const CreateTaskWithUserPage = ({ userId }: { userId: string }) => {
               <FormItem>
                 <FormLabel>任务标题</FormLabel>
                 <FormControl>
-                  <Textarea {...field} />
+                  <Input {...field} />
                 </FormControl>
 
                 <FormMessage />

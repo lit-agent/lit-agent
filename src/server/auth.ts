@@ -12,14 +12,10 @@ import { Prisma } from ".prisma/client";
 import UserGetPayload = Prisma.UserGetPayload;
 import validator = Prisma.validator;
 import UserDefaultArgs = Prisma.UserDefaultArgs;
-import { signOut } from "next-auth/react";
 
 const userSlice = validator<UserDefaultArgs>()({
   include: {
     honors: true,
-
-    rooms: true,
-
     fromTasks: true,
     toTasks: {
       include: {
@@ -71,10 +67,11 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
-    jwt: (props) => {
-      console.log("-- jwt: ", props);
-      return props.token;
-    },
+    // jwt: ({token, user}) => {
+    //   console.log("-- jwt: ", props);
+    //
+    //   return props.token;
+    // },
     /**
      *  参考：https://stackoverflow.com/a/77018015
      *   session: {
@@ -85,7 +82,7 @@ export const authOptions: NextAuthOptions = {
      * @param user
      */
     session: async ({ session, user, token }) => {
-      console.log("-- session: ", { session, user, token });
+      // console.log("-- session: ", { session, user, token });
       const phone = session.user.name;
       if (phone) {
         const userInDB = await prisma.user.findUnique({
@@ -104,12 +101,18 @@ export const authOptions: NextAuthOptions = {
               ...userInDB,
             },
           };
-          console.log("-- new session: ", newSession);
+          // console.log("-- new session: ", newSession);
           return newSession;
+        } else {
+          // 浏览器有账号，但是数据库没有，强制退出登录
+          // session.error = "inactive user";
+          // return null; // https://github.com/nextauthjs/next-auth/discussions/4687#discussioncomment-4869143
         }
       }
 
-      token.expiresIn = new Date();
+      console.log("-- invalidate user");
+      token.iat = Date.now() / 1000;
+
       return session;
     },
   },

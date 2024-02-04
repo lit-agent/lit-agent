@@ -7,5 +7,5 @@ export default function RoomPage({
     id: string;
   };
 }) {
-  return <ChatPage params={{ roomId: params.id, withBack: true }} />;
+  return <ChatPage params={{ channelId: params.id, withBack: true }} />;
 }

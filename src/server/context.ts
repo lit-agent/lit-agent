@@ -37,7 +37,7 @@ export const createContext = async (
   opts: CreateNextContextOptions | CreateWSSContextFnOptions,
 ) => {
   const session = await getSession(opts);
-  console.log("-- session: ", session);
+  // console.log("-- session: ", session);
 
   console.log("createContext for", session?.user?.name ?? "unknown user");
 

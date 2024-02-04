@@ -15,11 +15,15 @@ import Link from "next/link";
 import { Label } from "@/components/ui/label";
 import { api } from "@/trpc/react";
 import { bloggerPhone } from "@/config";
+import { useSearchParams } from "next/navigation";
 
 export default function Home() {
   // noStore();
 
+  const tabInUrl = useSearchParams().get("tab");
   const [tab, setTab] = useState<AppTab>(AppTab.fire);
+  console.log("-- tab: ", { tabInUrl, tab });
+
   const { user } = useUser();
   const { data: blogger } = api.user.getUserFromPhone.useQuery(bloggerPhone);
 
@@ -36,7 +40,7 @@ export default function Home() {
     >
       <div className={"grow relative overflow-hidden"}>
         <TabsContent value={AppTab.chat} className={"h-full m-0"}>
-          <ChatPage params={{ roomId: blogger.id }} />
+          <ChatPage params={{ channelId: `${blogger.id}-jiugu` }} />
         </TabsContent>
 
         <TabsContent value={AppTab.fire} className={"h-full m-0"}>
