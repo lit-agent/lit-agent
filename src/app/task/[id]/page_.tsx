@@ -68,10 +68,10 @@ export default function TaskDetailPageInner({
 
       <div
         className={
-          "absolute w-full rounded-3xl flex flex-col gap-4 border shadow-lg p-2 bg-[#3D3847] left-0 top-1/2"
+          "absolute w-full rounded-3xl flex flex-col gap-4 border shadow-lg p-2 bg-[#3D3847]"
         }
         style={{
-          top: 400,
+          top: refTop.current!.getBoundingClientRect().height,
           // left: 0
         }}
       >
@@ -83,13 +83,8 @@ export default function TaskDetailPageInner({
             剩余1天17小时
           </div>
         </div>
-
         <Separator orientation={"horizontal"} className={"bg-white/10"} />
-
-        {Array(5).fill(
-          <MessageContainer user={session.user}>hello</MessageContainer>,
-        )}
-
+        <MessageContainer user={session.user}>hello</MessageContainer>
         <Separator orientation={"horizontal"} className={"bg-white/10 mb-12"} />
       </div>
 

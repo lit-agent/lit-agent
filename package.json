@@ -67,6 +67,7 @@
     "tailwindcss-animate": "^1.0.7",
     "tencentcloud-sdk-nodejs-sms": "^4.0.789",
     "tls": "^0.0.1",
+    "usehooks-ts": "^2.12.1",
     "ws": "^8.16.0",
     "zod": "3.21.1",
     "zod-prisma-types": "2.7.9",
