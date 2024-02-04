@@ -66,7 +66,7 @@ export const publicProcedure = t.procedure;
  */
 export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   const user = ctx.session?.user;
-  console.log("-- user: ", user);
+  // console.log("-- user: ", user);
 
   if (!ctx.session || !user?.name) {
     throw new TRPCError({ code: "UNAUTHORIZED" });

@@ -85,7 +85,7 @@ export const authOptions: NextAuthOptions = {
           },
           ...userSlice,
         });
-        console.log("-- userInDB: ", userInDB);
+        // console.log("-- userInDB: ", userInDB);
 
         if (userInDB) {
           const newSession = {

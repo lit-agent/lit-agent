@@ -34,7 +34,7 @@ export default function Home() {
       value={tab}
       onValueChange={(value) => setTab(value as AppTab)}
     >
-      <div className={"grow relative"}>
+      <div className={"grow relative overflow-hidden"}>
         <TabsContent value={AppTab.chat} className={"h-full m-0"}>
           <ChatPage params={{ roomId: blogger.id }} />
         </TabsContent>

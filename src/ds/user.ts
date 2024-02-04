@@ -18,7 +18,11 @@ export type ClientUser = UserGetPayload<ClientUserSelector>;
 export const sendTaskMessageSlice = validator<MessageDefaultArgs>()({
   include: {
     fromUser: true,
-    task: true,
+    task: {
+      include: {
+        choices: true,
+      },
+    },
   },
 });
 

@@ -11,8 +11,12 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { BloggerContainer } from "@/containers/blogger";
 import { IoMenuOutline } from "react-icons/io5";
-import { SocketEventType } from "@/ds/event";
-import { MessageType } from "@prisma/client";
+import { $Enums, MessageType } from "@prisma/client";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import TaskType = $Enums.TaskType;
+import { toast } from "sonner";
 
 export default function ChatPage({
   params: { roomId, withBack },
@@ -38,13 +42,17 @@ export default function ChatPage({
       .then((messages) => setMessages(messages));
 
     pusherClient.subscribe(roomId);
-    pusherClient.bind(SocketEventType.NewTask, (message: ClientMessage) => {
-      setMessages((messages) => [...messages, message]);
+    Object.values(MessageType).map((messageType) => {
+      pusherClient.bind(messageType, (message: ClientMessage) => {
+        setMessages((messages) => [...messages, message]);
+      });
     });
 
     return () => {
       pusherClient.unsubscribe(roomId);
-      pusherClient.unbind(SocketEventType.NewTask);
+      Object.values(MessageType).map((messageType) =>
+        pusherClient.unbind(messageType),
+      );
     };
   }, [roomId]);
 
@@ -79,14 +87,25 @@ export default function ChatPage({
 
   useEffect(() => {}, [roomId]);
 
+  const refBottom = useRef<HTMLDivElement>();
+  useEffect(() => {
+    refBottom.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages.length]);
+
   return (
     <div className={"flex h-full flex-col overflow-hidden"}>
       <SelectUser withBack={withBack} />
 
       <div className={"flex grow flex-col gap-4 overflow-auto p-4"}>
         {messages.map((message, index) => (
-          <RenderChatItem message={message} key={index} />
+          <RenderChatItem
+            message={message}
+            key={index}
+            roomId={roomId}
+            userId={user!.id}
+          />
         ))}
+        <div ref={refBottom} />
       </div>
 
       <div className={"relative px-4 py-2"}>
@@ -116,14 +135,90 @@ export default function ChatPage({
   );
 }
 
-const RenderChatItem = ({ message }: { message: ClientMessage }) => {
+const RenderChatItem = ({
+  roomId,
+  userId,
+  message,
+}: {
+  roomId: string;
+  userId: string;
+  message: ClientMessage;
+}) => {
+  const [chosen, setChosen] = useState<string | null>(null);
+  const sendMessage = api.message.send.useMutation();
+
   switch (message.type) {
     case "NewTask":
+      if (!message.task) return;
+
       return (
         <ChatItemContainer user={message.fromUser}>
           <div>
-            <div>{message.task.title}(todo: new-task)</div>
-            <div>{message.task.content}</div>
+            <div>{message.task.title}</div>
+
+            {message.task.type === TaskType.broadcast && (
+              <div>{message.task.content}</div>
+            )}
+
+            {message.task.type === TaskType.textChoices && (
+              <>
+                <RadioGroup
+                  className={"gap-0"}
+                  value={chosen}
+                  onValueChange={setChosen}
+                >
+                  {message.task.choices.map((choice, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center space-x-2 hover:bg-gray-900 px-2 rounded-lg"
+                    >
+                      <RadioGroupItem
+                        value={choice.id}
+                        id={choice.id}
+                        className={"shrink-0"}
+                      />
+                      <Label
+                        htmlFor={choice.id}
+                        className={cn(
+                          "grow p-2 rounded",
+                          chosen !== choice.id && "text-white/50",
+                        )}
+                      >
+                        {choice.content}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+
+                <Button
+                  className={"w-full"}
+                  size={"sm"}
+                  onClick={(event) => {
+                    if (!chosen) {
+                      void toast.error("请先选择");
+                      event.preventDefault();
+                      return;
+                    }
+                    sendMessage.mutate({
+                      toUsers: {
+                        connect: {
+                          id: roomId,
+                        },
+                      },
+                      fromUser: {
+                        connect: {
+                          id: userId,
+                        },
+                      },
+                      text: `我选了：${message.task.choices.find((choice) => choice.id === chosen)!.content}`,
+                      type: MessageType.Plain,
+                    });
+                  }}
+                >
+                  提交
+                </Button>
+              </>
+            )}
           </div>
         </ChatItemContainer>
       );

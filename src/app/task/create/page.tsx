@@ -18,7 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/trpc/react";
 import { useUser } from "@/hooks/use-user";
 import { toast } from "sonner";
-import { $Enums } from ".prisma/client";
+import { $Enums, TaskChoiceType } from ".prisma/client";
 import {
   Select,
   SelectContent,
@@ -31,15 +31,16 @@ import {
 import moment from "moment";
 import { Input } from "@/components/ui/input";
 import { TaskFromUncheckedCreateInputSchema } from "../../../../prisma/generated/zod";
-import { useState } from "react";
-import TaskType = $Enums.TaskType;
 import { MinusCircleIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import TaskType = $Enums.TaskType;
 
 const formSchema = TaskFromUncheckedCreateInputSchema;
-
 export default function CreateTaskPage() {
   const { user } = useUser();
-  if (!user) return "loading";
+  if (!user) {
+    return "loading";
+  }
   return <CreateTaskWithUserPage userId={user.id} />;
 }
 
@@ -64,9 +65,38 @@ const CreateTaskWithUserPage = ({ userId }: { userId: string }) => {
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("-- submit: ", values);
+
+    if (values.type === TaskType.textChoices) {
+      const content = form.watch("content");
+      const choices = JSON.parse(content) as string[];
+      if (choices.includes(""))
+        return form.setError("content", {
+          type: "manual",
+          message: "不能有空选项",
+        });
+    }
+
     setSubmitting(true);
+    const { fromUserId, ...valuesWithoutFromUser } = values;
     createTask
-      .mutateAsync(values)
+      .mutateAsync({
+        ...valuesWithoutFromUser,
+        choices:
+          values.type === TaskType.textChoices
+            ? {
+                create: (JSON.parse(values.content) as string[]).map(
+                  (content) => ({
+                    type: TaskChoiceType.Text,
+                    content,
+                  }),
+                ),
+              }
+            : undefined,
+        fromUser: {
+          connect: { id: userId },
+        },
+      })
       .then((res) => {
         toast.success("创建成功！");
       })
@@ -249,20 +279,21 @@ const TextChoicesInput = ({
 }: {
   onChange: (value: string) => void;
 }) => {
-  const [choices, setChoices] = useState<string[]>([]);
+  const [choices, setChoices] = useState<string[]>(["#1 ", "#2"]);
 
   useEffect(() => {
     onChange(JSON.stringify(choices));
   }, [JSON.stringify(choices)]);
 
   return (
-    <>
+    <div className={"flex flex-col gap-2"}>
       {choices.map((choice, index) => (
         <div key={index} className={"flex items-center gap-2"}>
           <Input
             className={"grow"}
             key={index}
             value={choice}
+            placeholder={`choice-${index + 1}`}
             onChange={(event) => {
               const newChoices = [...choices];
               newChoices[index] = event.currentTarget.value;
@@ -270,17 +301,25 @@ const TextChoicesInput = ({
             }}
           />
 
-          <MinusCircleIcon
-            className={"shrink-0 text-red-800"}
+          <Button
+            disabled={choices.length <= 2}
+            className={"shrink-0 w-fit h-fit p-0 bg-transparent text-red-800"}
             onClick={(event) => {
               setChoices(choices.filter((choice, i) => i !== index));
             }}
-          />
+          >
+            <MinusCircleIcon />
+          </Button>
         </div>
       ))}
-      <Button onClick={(event) => {}} />
-      添加
-      <Button />
-    </>
+      <Button
+        onClick={(event) => {
+          event.preventDefault();
+          setChoices([...choices, undefined]);
+        }}
+      >
+        添加
+      </Button>
+    </div>
   );
 };

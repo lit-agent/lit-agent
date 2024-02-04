@@ -24,7 +24,7 @@ export default function TaskPage() {
     finishedUsers: Array(132).fill(userHading),
   };
 
-  console.log("-- user: ", user);
+  // console.log("-- user: ", user);
 
   if (!user) return "not logined";
 

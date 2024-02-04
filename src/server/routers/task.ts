@@ -1,13 +1,11 @@
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { TaskFromUncheckedCreateInputSchema } from "prisma/generated/zod";
+import { TaskFromCreateInputSchema } from "prisma/generated/zod";
 import { pusherServer } from "@/lib/pusher";
-import { Prisma } from ".prisma/client";
-import { SocketEventType } from "@/ds/event";
 import { MessageType } from "@prisma/client";
 
 export const taskRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(TaskFromUncheckedCreateInputSchema)
+    .input(TaskFromCreateInputSchema)
     .mutation(async ({ ctx, input }) => {
       /**
        * 因为每个新发布的任务必然同步到全局聊天室产生一条消息
@@ -32,11 +30,7 @@ export const taskRouter = createTRPCRouter({
         },
       });
 
-      void pusherServer.trigger(
-        input.fromUserId,
-        SocketEventType.NewTask,
-        message,
-      );
+      void pusherServer.trigger(ctx.user.id, MessageType.NewTask, message);
       return message;
     }),
 });

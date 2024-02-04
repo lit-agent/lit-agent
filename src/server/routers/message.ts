@@ -5,6 +5,8 @@ import {
   MessageUncheckedCreateInputSchema,
   MessageWhereInputSchema,
 } from "../../../prisma/generated/zod";
+import { pusherServer } from "@/lib/pusher";
+import { MessageType } from "@prisma/client";
 
 export const messageRouter = createTRPCRouter({
   fetch: protectedProcedure
@@ -32,15 +34,14 @@ export const messageRouter = createTRPCRouter({
   send: protectedProcedure
     .input(MessageCreateInputSchema)
     .mutation(async ({ ctx, input }) => {
-      // todo: socket
-
       const message = await ctx.prisma.message.create({
         data: input,
         ...sendTaskMessageSlice,
       });
 
-      // todo
-      // void pusherServer.trigger(input.roomId, "user:sendMessage", message);
+      // todo: 用户 与 博主 的私人频道
+      console.log("-- trigger: ", { input, message });
+      void pusherServer.trigger(message.fromUser.id, input.type, message);
 
       return message;
     }),
