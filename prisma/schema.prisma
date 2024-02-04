@@ -312,8 +312,7 @@ model TaskTo {
 }
 
 enum TaskToStatus {
-  finished
-
+  finished // 默认完成
   goon
   cancelled
 }

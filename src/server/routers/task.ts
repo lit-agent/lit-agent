@@ -23,6 +23,13 @@ export const taskRouter = createTRPCRouter({
         },
       });
 
+      const toTask = await ctx.prisma.taskTo.create({
+        data: {
+          taskId: task.id,
+          userId: fromUserId,
+        },
+      });
+
       const message = await ctx.prisma.message.create({
         data: {
           fromUserId,

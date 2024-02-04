@@ -18,7 +18,7 @@ import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import moment from "moment";
 import { Input } from "@/components/ui/input";
-import { MinusCircleIcon } from "lucide-react";
+import { HomeIcon, MinusCircleIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createTaskSchema } from "@/ds/task";
 import { useRouter } from "next/navigation";
@@ -26,6 +26,7 @@ import { MessageType } from "@/ds/message";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
 
 type SupportedMessageTypes = MessageType.Plain | MessageType.TextChoices;
 
@@ -73,16 +74,19 @@ const CreateTaskWithUserPage = () => {
   console.log("-- data: ", form.getValues());
 
   return (
-    <div className={"h-full flex flex-col p-8 bg-black"}>
+    <div className={"h-full flex flex-col p-4 bg-black"}>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="h-full overflow-hidden flex flex-col gap-2"
         >
           <div className={"flex gap-2 py-2"}>
-            <div>
-              <Label className={"mt-8 text-xl"}>⭐ 发布新任务 ⭐️</Label>
-              <Label className={"my-4 text-xs text-muted-foreground`"}>
+            <div className={"inline-flex items-center"}>
+              <Link href={"/"} className={"p-2"}>
+                <HomeIcon className={"text-primary w-4 h-4"} />
+              </Link>
+              <Label className={"text-xl"}>发布新任务️</Label>
+              <Label className={"text-xs text-muted-foreground`"}>
                 （仅博主可见）️
               </Label>
             </div>
