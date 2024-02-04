@@ -36,7 +36,7 @@ export const userRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { answer } = input;
-      const target = '{"q1":[0,1,2],"q2":[2],"q3":[2],"q4":[0]}';
+      const target = '{"4":[0,1,2],"5":[2],"6":[2],"7":[0]}';
       const result = answer === target;
       console.log("-- validate: ", {
         session: ctx.session,

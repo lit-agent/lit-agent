@@ -16,9 +16,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/trpc/react";
-import { useUser } from "@/hooks/use-user";
 import { toast } from "sonner";
-import { $Enums, TaskChoiceType } from ".prisma/client";
+import { $Enums } from ".prisma/client";
 import {
   Select,
   SelectContent,
@@ -32,19 +31,14 @@ import moment from "moment";
 import { Input } from "@/components/ui/input";
 import { MinusCircleIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import TaskType = $Enums.TaskType;
 import { createTaskSchema } from "@/ds/task";
 import { useRouter } from "next/navigation";
+import { getServerAuthSession } from "@/server/auth";
+import TaskType = $Enums.TaskType;
 
-export default function CreateTaskPage() {
-  const { user } = useUser();
-  if (!user) {
-    return "loading";
-  }
-  return <CreateTaskWithUserPage userId={user.id} />;
-}
+const CreateTaskWithUserPage = async () => {
+  const user = await getServerAuthSession();
 
-const CreateTaskWithUserPage = ({ userId }: { userId: string }) => {
   // 1. Define your form.
   const form = useForm<z.infer<typeof createTaskSchema>>({
     resolver: zodResolver(createTaskSchema),
@@ -56,7 +50,6 @@ const CreateTaskWithUserPage = ({ userId }: { userId: string }) => {
       startTime: new Date(),
       endTime: moment().add(1, "days").toDate(),
       status: "on",
-      fromUserId: userId,
     },
   });
 
@@ -94,7 +87,7 @@ const CreateTaskWithUserPage = ({ userId }: { userId: string }) => {
       });
   }
 
-  console.log("-- form: ", { userId, form });
+  console.log("-- form: ", { form });
 
   return (
     <div className={"min-h-full flex flex-col p-8 bg-black"}>
@@ -327,3 +320,5 @@ const TextChoicesInput = ({
     </div>
   );
 };
+
+export default CreateTaskWithUserPage;

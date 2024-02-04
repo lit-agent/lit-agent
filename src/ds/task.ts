@@ -10,6 +10,5 @@ export const createTaskSchema = z.object({
   startTime: z.date(),
   endTime: z.date(),
   status: z.nativeEnum(TaskStatus),
-  fromUserId: z.string(),
   choices: z.array(z.string()).optional(),
 });

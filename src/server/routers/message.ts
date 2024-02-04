@@ -2,8 +2,9 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { clientMessageSlice } from "@/ds/user";
 
 import { pusherServer } from "@/lib/pusher";
-import { $Enums, MessageType, TaskType, UserType } from "@prisma/client";
+import { $Enums, MessageType, UserType } from "@prisma/client";
 import { z } from "zod";
+import { SegmentType } from "@/ds/chat";
 import TaskToStatus = $Enums.TaskToStatus;
 
 export const messageRouter = createTRPCRouter({
@@ -42,7 +43,12 @@ export const messageRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { channelId } = input;
+      const { channelId, taskId } = input;
+
+      const task = await ctx.prisma.taskFrom.findUnique({
+        where: { id: taskId },
+        include: { toUsers: true },
+      });
 
       const userJoinedTask = await ctx.prisma.taskTo.create({
         data: {
@@ -79,7 +85,13 @@ export const messageRouter = createTRPCRouter({
             },
           },
           // todo: multi model
-          text: input.content,
+          text: JSON.stringify([
+            {
+              type: SegmentType.text,
+              content: "啊哈！\n你也选了这个？\n来群里看看别人都选了什么吧！",
+            },
+            { type: SegmentType.groupLink, content: task },
+          ]),
         },
         ...clientMessageSlice,
       });

@@ -11,11 +11,12 @@ import CallIcon from "../../public/call.svg";
 import BrandImage from "../../public/brand.png";
 import CoverSmImage from "../../public/cover-jiugu-sm.png";
 import CoverMdImage from "../../public/cover-jiugu-md.png";
-import MediaaImage from "../../public/medias.png";
+import MediasImage from "../../public/medias.png";
+import JiuguImage from "../../public/user-jiugu.png";
 
 const Assets = {
   Menu1Icon,
-  FireIcon: FireIcon,
+  FireIcon,
   Menu3Icon,
   RingIcon,
   AwardFillIcon,
@@ -27,7 +28,8 @@ const Assets = {
   BrandImage,
   CoverSmImage,
   CoverMdImage,
-  MediaaImage,
+  MediasImage,
+  JiuguImage,
 };
 
 export default Assets;

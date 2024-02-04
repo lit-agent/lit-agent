@@ -27,7 +27,7 @@ export const GiuguProfile = () => {
       <div>全网粉丝 62.2w</div>
 
       <Image
-        src={Assets.MediaaImage.src}
+        src={Assets.MediasImage.src}
         alt={"medias"}
         width={120}
         height={30}

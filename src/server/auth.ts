@@ -9,7 +9,7 @@ import { prisma } from "@/server/db";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { validateSms } from "@/server/sms";
 import { Prisma } from ".prisma/client";
-import { userSlice } from "@/ds/user";
+import { MyUser, userSlice } from "@/ds/user";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`

@@ -1,91 +1,66 @@
 "use client";
 
-import JiuguImage from "../../../public/user-jiugu.png";
 import { Avatar, AvatarImage } from "src/components/ui/avatar";
-import ChatItemDetail from "src/components/chat-item";
+import MessageComp from "@/components/message-item";
 import { IoMenuOutline } from "react-icons/io5";
-import { cn } from "src/lib/utils";
 import { BloggerContainer } from "src/containers/blogger";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-} from "src/components/ui/select";
 import { Button } from "../../components/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useUser } from "../../hooks/use-user";
 import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
 import { useValidation } from "@/hooks/use-validation";
 
 import { guidanceItems } from "@/config";
+import Assets from "@/components/assets";
+
+type Validation = Record<number, number[]>;
 
 export default function ValidationPage() {
-  const { user } = useUser();
-  const { data: users = [] } = api.user.list.useQuery();
-  const { answer, validating, setValidating } = useValidation();
+  const [validating, setValidating] = useState(false);
+  const [answer, setAnswer] = useState<Validation>({
+    4: [],
+    5: [],
+    6: [],
+    7: [],
+  });
 
   const [validationResult, setValidationResult] = useState<ValidationResult>(
     ValidationResult.unknown,
   );
 
-  // console.log("-- validation: ", { answer: JSON.stringify(answer) });
   const validate = api.user.validate.useMutation();
 
   const router = useRouter();
 
-  console.log("-- validation user: ", user);
-
   return (
     <div className={"flex h-full flex-col"}>
-      <Select>
-        <SelectTrigger
-          id={"header"}
-          className={"flex items-center justify-center gap-1 p-2"}
-        >
-          <Avatar className={"h-5 w-5"}>
-            <AvatarImage src={JiuguImage.src} />
-          </Avatar>
+      <div className={"flex items-center justify-center gap-1 p-2"}>
+        <Avatar className={"h-5 w-5"}>
+          <AvatarImage src={Assets.JiuguImage.src} />
+        </Avatar>
 
-          <div>玖姑</div>
-        </SelectTrigger>
-
-        <SelectContent>
-          <SelectGroup>
-            {users.map((item, index) => (
-              <SelectItem value={`${index}`} key={index}>
-                <div className={"flex items-center gap-2"}>
-                  <div
-                    className={cn(
-                      "w-2 h-2 rounded-full",
-                      item.status === "online" && "bg-green-500",
-                      item.status === "offline" && "bg-gray-500",
-                      item.status === "busy" && "bg-yellow-500",
-                    )}
-                  />
-                  <div>{item.phone}</div>
-                </div>
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+        <div>玖姑</div>
+      </div>
 
       <div className={"flex grow flex-col gap-4 overflow-auto p-4"}>
         {
           // sampleChatItems
           guidanceItems.map((chatItem, index) => (
-            <ChatItemDetail {...chatItem} key={index} />
+            <MessageComp
+              {...chatItem}
+              key={index}
+              onValueChange={(v) => {
+                setAnswer({ ...answer, [index]: v });
+              }}
+            />
           ))
         }
 
         {validationResult === ValidationResult.unknown && (
           <Button
             disabled={
-              validating || "1234".split("").some((s) => !answer[`q${s}`])
+              validating || Object.values(answer).some((v) => !v.length)
             }
             onClick={async () => {
               setValidating(true);

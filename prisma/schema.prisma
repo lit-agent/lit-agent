@@ -72,8 +72,7 @@ model User {
   bills        Bill[]
 
   // actions  UserAction[]
-  TaskChoice   TaskChoice? @relation(fields: [taskChoiceId], references: [id])
-  taskChoiceId String?
+  taskChoices   TaskChoice[]
 }
 
 /// other
@@ -154,7 +153,7 @@ model Message {
 
   type MessageType @default(Plain)
 
-  task       TaskFrom? @relation(fields: [taskFromId], references: [id])
+  task       TaskFrom? @relation(fields: [taskFromId], references: [id], onDelete: Cascade)
   taskId     String?
   taskFromId String?
 
@@ -251,7 +250,7 @@ model TaskChoice {
   content String
   users   User[]
 
-  TaskFrom   TaskFrom? @relation(fields: [taskFromId], references: [id])
+  TaskFrom   TaskFrom? @relation(fields: [taskFromId], references: [id], onDelete: Cascade)
   taskFromId String?
 }
 
@@ -277,11 +276,12 @@ model TaskFrom {
   startTime DateTime @default(now())
   endTime   DateTime
 
-  fromUser   User     @relation(fields: [fromUserId], references: [id])
+  fromUser   User     @relation(fields: [fromUserId], references: [id], onDelete: Cascade)
   fromUserId String
   toUsers    TaskTo[]
 
   status   TaskStatus
+
   // 包含发送到chat页的welcome，以及用户的评论
   messages Message[]
 
@@ -305,7 +305,7 @@ model TaskTo {
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
-  task   TaskFrom @relation(fields: [taskId], references: [id])
+  task   TaskFrom @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId String
 
   content String

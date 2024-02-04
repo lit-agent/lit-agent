@@ -1,5 +1,5 @@
 import { BaseClientUser } from "@/ds/user";
-import { IChatItem } from "@/components/chat-item";
+import { IChatItem } from "@/components/message-item";
 
 export const userJiuguAI: BaseClientUser = {
   id: "jiugu-ai",
