@@ -64,6 +64,8 @@ export const postRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       const { name } = ctx.user;
+      if (!name) return;
+
       const post = await prisma.post.create({
         data: {
           ...input,
@@ -93,6 +95,8 @@ export const postRouter = router({
     .input(z.object({ typing: z.boolean() }))
     .mutation(({ input, ctx }) => {
       const { name } = ctx.user;
+      if (!name) return;
+
       if (!input.typing) {
         delete currentlyTyping[name];
       } else {

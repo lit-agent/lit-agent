@@ -21,7 +21,16 @@ const userSlice = validator<UserDefaultArgs>()({
     rooms: true,
 
     fromTasks: true,
-    toTasks: true,
+    toTasks: {
+      include: {
+        task: {
+          include: {
+            toUsers: true,
+            messages: true,
+          },
+        },
+      },
+    },
 
     fromProducts: true,
     toProducts: true,

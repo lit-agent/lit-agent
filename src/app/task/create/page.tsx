@@ -30,12 +30,11 @@ import {
 } from "@/components/ui/select";
 import moment from "moment";
 import { Input } from "@/components/ui/input";
-import { TaskFromUncheckedCreateInputSchema } from "../../../../prisma/generated/zod";
 import { MinusCircleIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { createTaskSchema } from "@/server/routers/task";
 import TaskType = $Enums.TaskType;
 
-const formSchema = TaskFromUncheckedCreateInputSchema;
 export default function CreateTaskPage() {
   const { user } = useUser();
   if (!user) {
@@ -46,8 +45,8 @@ export default function CreateTaskPage() {
 
 const CreateTaskWithUserPage = ({ userId }: { userId: string }) => {
   // 1. Define your form.
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof createTaskSchema>>({
+    resolver: zodResolver(createTaskSchema),
     defaultValues: {
       type: TaskType.broadcast,
       title: "test - " + moment().format(),
@@ -64,7 +63,7 @@ const CreateTaskWithUserPage = ({ userId }: { userId: string }) => {
   const [submitting, setSubmitting] = useState(false);
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof createTaskSchema>) {
     console.log("-- submit: ", values);
 
     if (values.type === TaskType.textChoices) {
@@ -78,24 +77,14 @@ const CreateTaskWithUserPage = ({ userId }: { userId: string }) => {
     }
 
     setSubmitting(true);
-    const { fromUserId, ...valuesWithoutFromUser } = values;
     createTask
       .mutateAsync({
-        ...valuesWithoutFromUser,
+        ...values,
+
         choices:
           values.type === TaskType.textChoices
-            ? {
-                create: (JSON.parse(values.content) as string[]).map(
-                  (content) => ({
-                    type: TaskChoiceType.Text,
-                    content,
-                  }),
-                ),
-              }
-            : undefined,
-        fromUser: {
-          connect: { id: userId },
-        },
+            ? (JSON.parse(values.content) as string[])
+            : [],
       })
       .then((res) => {
         toast.success("创建成功！");
@@ -187,6 +176,23 @@ const CreateTaskWithUserPage = ({ userId }: { userId: string }) => {
               name="content"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>图片选项</FormLabel>
+                  <FormControl>
+                    <TextChoicesInput onChange={field.onChange} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {form.watch("type") === TaskType.imageChoices && (
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem>
                   <FormLabel>文字选项</FormLabel>
                   <FormControl>
                     <TextChoicesInput onChange={field.onChange} />
@@ -209,7 +215,9 @@ const CreateTaskWithUserPage = ({ userId }: { userId: string }) => {
                     type={"number"}
                     {...field}
                     onChange={(event) => {
-                      field.onChange(Math.floor(event.currentTarget.value));
+                      field.onChange(
+                        Math.floor(parseFloat(event.currentTarget.value)),
+                      );
                     }}
                   />
                 </FormControl>
@@ -315,7 +323,7 @@ const TextChoicesInput = ({
       <Button
         onClick={(event) => {
           event.preventDefault();
-          setChoices([...choices, undefined]);
+          setChoices([...choices, ""]);
         }}
       >
         添加
