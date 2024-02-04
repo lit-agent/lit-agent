@@ -11,10 +11,13 @@ import { ReactNode } from "react";
 import { Separator } from "@/components/ui/separator";
 import { CgArrowsExchangeAlt } from "react-icons/cg";
 import HonorType = $Enums.HonorType;
+import { MyUser } from "@/ds/user";
 
-export default function HomePage() {
-  const { user } = useUser();
-
+export default function HomePage({
+  params: { user },
+}: {
+  params: { user: MyUser };
+}) {
   if (!user) return "请登录后再试";
 
   return (

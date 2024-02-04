@@ -20,7 +20,7 @@ import { Switch } from "@/components/ui/switch";
 import { api } from "@/trpc/react";
 import { useUser } from "@/hooks/use-user";
 import { toast } from "sonner";
-import { ClientUser } from "@/ds/user";
+import { BaseClientUser } from "@/ds/user";
 import { createProductSchema } from "@/ds/product";
 
 export default function CreateTaskPage() {
@@ -30,7 +30,7 @@ export default function CreateTaskPage() {
   return <CreateTaskPage_ user={user} />;
 }
 
-function CreateTaskPage_({ user }: { user: ClientUser }) {
+function CreateTaskPage_({ user }: { user: BaseClientUser }) {
   // 1. Define your form.
   const form = useForm<z.infer<typeof createProductSchema>>({
     resolver: zodResolver(createProductSchema),
@@ -73,7 +73,7 @@ function CreateTaskPage_({ user }: { user: ClientUser }) {
 
   return (
     <div className={"flex flex-col p-8 bg-black"}>
-      <Label className={"my-8 text-xl"}>创建任务</Label>
+      <Label className={"my-8 text-xl"}>发布产品</Label>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField

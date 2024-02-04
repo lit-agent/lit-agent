@@ -23,14 +23,15 @@ export const productRouter = createTRPCRouter({
        * 最后再基于socket发送消息，并返回消息即可
        */
 
-      const message = await ctx.prisma.productFrom.create({
+      const product = await ctx.prisma.productFrom.create({
         data: input,
         include: {
           fromUser: true,
         },
       });
+      console.log("-- created product: ", product);
 
-      void pusherServer.trigger(ctx.user.id, MessageType.NewTask, message);
-      return message;
+      void pusherServer.trigger(ctx.user.id, MessageType.NewTask, product);
+      return product;
     }),
 });

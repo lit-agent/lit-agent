@@ -9,30 +9,7 @@ import { prisma } from "@/server/db";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { validateSms } from "@/server/sms";
 import { Prisma } from ".prisma/client";
-import UserGetPayload = Prisma.UserGetPayload;
-import validator = Prisma.validator;
-import UserDefaultArgs = Prisma.UserDefaultArgs;
-
-const userSlice = validator<UserDefaultArgs>()({
-  include: {
-    honors: true,
-    fromTasks: true,
-    toTasks: {
-      include: {
-        task: {
-          include: {
-            toUsers: true,
-            messages: true,
-          },
-        },
-      },
-    },
-
-    fromProducts: true,
-    toProducts: true,
-    bills: true,
-  },
-});
+import { userSlice } from "@/ds/user";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -42,7 +19,7 @@ const userSlice = validator<UserDefaultArgs>()({
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: DefaultSession["user"] & UserGetPayload<typeof userSlice>;
+    user: DefaultSession["user"] & MyUser;
   }
 
   // interface User {

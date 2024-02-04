@@ -30,6 +30,16 @@ export const taskRouter = createTRPCRouter({
             create: {
               ...others,
 
+              fromUserId: ctx.user.id,
+
+              toUsers: {
+                connect: [
+                  {
+                    id: ctx.user.id,
+                  },
+                ],
+              },
+
               choices: {
                 create:
                   input.type === TaskType.broadcast

@@ -161,29 +161,31 @@ model Message {
   channelId String
 }
 
+// todo: MessageType, as well as NotificaionType
 enum MessageType {
   Plain
   NewTask
+  ExecTask
 }
 
-// for test
-model Post {
-  id     String       @id @default(uuid())
-  name   String
-  text   String
-  source PosterSource @default(RAW)
+// // for test
+// model Post {
+//   id     String       @id @default(uuid())
+//   name   String
+//   text   String
+//   source PosterSource @default(RAW)
+//
+//   // To return `Date`s intact through the API we need to add data transformers
+//   // https://trpc.io/docs/v11/data-transformers
+//   createdAt DateTime @unique @default(now())
+//   updatedAt DateTime @unique @default(now())
+// }
 
-  // To return `Date`s intact through the API we need to add data transformers
-  // https://trpc.io/docs/v11/data-transformers
-  createdAt DateTime @unique @default(now())
-  updatedAt DateTime @unique @default(now())
-}
-
-// for test
-enum PosterSource {
-  RAW
-  GITHUB
-}
+// // for test
+// enum PosterSource {
+//   RAW
+//   GITHUB
+// }
 
 // 博主发布的产品
 model ProductFrom {
@@ -231,7 +233,6 @@ model ProductTo {
   // userActions UserAction[]
 }
 
-
 // for auth
 model Session {
   id           String   @id @default(cuid())
@@ -240,8 +241,6 @@ model Session {
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
-
-
 
 model TaskChoice {
   id        String   @id @default(cuid())
@@ -309,14 +308,15 @@ model TaskTo {
   task   TaskFrom @relation(fields: [taskId], references: [id])
   taskId String
 
-  status TaskToStatus
-
+  content String
+  status TaskToStatus @default(finished)
   // actions UserAction[]
 }
 
 enum TaskToStatus {
-  goon
   finished
+
+  goon
   cancelled
 }
 

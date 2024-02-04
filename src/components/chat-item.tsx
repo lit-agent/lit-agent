@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "src/components/ui/avatar";
 import { BsThreeDots } from "react-icons/bs";
-import { ClientUser } from "src/ds/user";
+import { BaseClientUser } from "src/ds/user";
 import { ChatType } from "src/ds/chat";
 import { cn } from "src/lib/utils";
 import Image from "next/image";
@@ -21,7 +21,7 @@ import { MessageType } from "@prisma/client";
 
 export interface IChatItem {
   id?: string;
-  user: ClientUser;
+  user: BaseClientUser;
   segments: {
     type: ChatType;
     content: any;
@@ -31,33 +31,39 @@ export interface IChatItem {
 export const ChatItemContainer = ({
   user,
   children,
-}: { user: ClientUser } & PropsWithChildren) => (
-  <div className={"relative flex gap-2 "}>
-    {user.type === "user" ? (
-      <UserComp user={user} />
-    ) : (
-      <BloggerContainer className={"flex items-start"}>
+}: { user: BaseClientUser } & PropsWithChildren) => {
+  // console.log("-- user in chat item container: ", user);
+
+  return (
+    <div className={"relative flex gap-2 "}>
+      {user.type === "user" ? (
         <UserComp user={user} />
-      </BloggerContainer>
-    )}
+      ) : (
+        <BloggerContainer className={"flex items-start"}>
+          <UserComp user={user} />
+        </BloggerContainer>
+      )}
 
-    <div className={"flex grow flex-col gap-2"}>
-      <div className={"flex items-center gap-1 text-xs text-gray-400"}>
-        {user.name}
-        {user.type === "blogger" && (
-          <Badge className={"rounded-sm bg-green-800 px-1 py-0 text-gray-200"}>
-            博主
-          </Badge>
-        )}
+      <div className={"flex grow flex-col gap-2"}>
+        <div className={"flex items-center gap-1 text-xs text-gray-400"}>
+          {user.name}
+          {user.type === "blogger" && (
+            <Badge
+              className={"rounded-sm bg-green-800 px-1 py-0 text-gray-200"}
+            >
+              博主
+            </Badge>
+          )}
+        </div>
+        {children}
       </div>
-      {children}
-    </div>
 
-    {user.type === "assistant" && (
-      <BsThreeDots className={cn("text-muted-foreground absolute right-2")} />
-    )}
-  </div>
-);
+      {user.type === "assistant" && (
+        <BsThreeDots className={cn("text-muted-foreground absolute right-2")} />
+      )}
+    </div>
+  );
+};
 
 export function ChatItemDetail({ user, segments, id }: IChatItem) {
   const [imageIndex, setImageIndex] = useState(`0`);
@@ -65,9 +71,7 @@ export function ChatItemDetail({ user, segments, id }: IChatItem) {
   const [submitted, setSubmitted] = useState(false);
   const { setAnswer, answer } = useValidation();
 
-  // console.log("-- segments: ", segments);
-
-  const sendMessage = api.message.send.useMutation();
+  // console.log("-- user in chat item detail: ", user);
 
   return (
     <ChatItemContainer user={user}>
@@ -112,24 +116,24 @@ export function ChatItemDetail({ user, segments, id }: IChatItem) {
                 </div>
               ))}
 
-              {
-                // 使用 Call To Action 按钮
-                content.withCTA && !submitted && (
-                  <Button
-                    onClick={() => {
-                      setSubmitted(true);
-                      sendMessage.mutate({
-                        text: "submitted",
-                        roomId: "default",
-                        type: MessageType.Plain,
-                      });
-                    }}
-                    disabled={submitted || !checks.length}
-                  >
-                    {checks.length ? "" : "待"}提交
-                  </Button>
-                )
-              }
+              {/*{*/}
+              {/*  // 使用 Call To Action 按钮*/}
+              {/*  content.withCTA && !submitted && (*/}
+              {/*    <Button*/}
+              {/*      onClick={() => {*/}
+              {/*        setSubmitted(true);*/}
+              {/*        sendMessage.mutate({*/}
+              {/*          text: "submitted",*/}
+              {/*          roomId: "default",*/}
+              {/*          type: MessageType.Plain,*/}
+              {/*        });*/}
+              {/*      }}*/}
+              {/*      disabled={submitted || !checks.length}*/}
+              {/*    >*/}
+              {/*      {checks.length ? "" : "待"}提交*/}
+              {/*    </Button>*/}
+              {/*  )*/}
+              {/*}*/}
             </div>
           )}
 
@@ -147,7 +151,7 @@ export function ChatItemDetail({ user, segments, id }: IChatItem) {
                 <div className={"flex -space-x-4"}>
                   {content.members
                     .slice(0, 6)
-                    .map((user: ClientUser, index: number) => (
+                    .map((user: BaseClientUser, index: number) => (
                       <Avatar key={index}>
                         <AvatarImage src={user.image!} />
                       </Avatar>
@@ -272,7 +276,7 @@ export const Hot = ({ value }: { value: number }) => (
   </div>
 );
 
-const UserComp = ({ user }: { user: ClientUser }) => (
+const UserComp = ({ user }: { user: BaseClientUser }) => (
   <Avatar className={"h-8 w-8"}>
     <AvatarImage src={user.image!} />
     <AvatarFallback className={"bg-gray-600"}>

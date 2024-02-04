@@ -5,15 +5,16 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { userHading } from "@/ds/mock";
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
 import AvatarComp from "@/components/avatar";
-import { Button } from "@/components/ui/button";
-import { useUser } from "@/hooks/use-user";
 import Link from "next/link";
 import { Label } from "../../components/ui/label";
-import { api } from "@/trpc/react";
+import { BaseClientUser, MyUser } from "@/ds/user";
 
-export default function TaskPage() {
+export default function TaskPage({
+  params: { user },
+}: {
+  params: { user: MyUser };
+}) {
   const userNew = userHading;
-  const { user } = useUser();
 
   // todo: db data
   const data = {
@@ -23,10 +24,6 @@ export default function TaskPage() {
     // todo: 需要更好的数据结构
     finishedUsers: Array(132).fill(userHading),
   };
-
-  // console.log("-- user: ", user);
-
-  if (!user) return "no user yet";
 
   return (
     <div className={"bg-[#282232] p-2 min-h-full"}>

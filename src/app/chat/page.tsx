@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useUser } from "@/hooks/use-user";
-import { ClientMessage } from "@/ds/user";
+import { ClientMessage, BaseClientUser, MyUser } from "@/ds/user";
 import { api } from "@/trpc/react";
 import { pusherClient } from "@/lib/pusher";
 import { SelectUser } from "@/components/select-user";
@@ -19,16 +19,15 @@ import { toast } from "sonner";
 import TaskType = $Enums.TaskType;
 
 export default function ChatPage({
-  params: { channelId, withBack },
+  params: { user, channelId, withBack },
 }: {
   params: {
+    user: MyUser;
     channelId: string;
     withBack?: boolean;
   };
 }) {
   const refInput = useRef<HTMLInputElement>(null);
-  const { user, targetUser } = useUser();
-
   const [messages, setMessages] = useState<ClientMessage[]>([]);
   const fetchMessages = api.message.fetch.useMutation();
   const sendMessage = api.message.send.useMutation();
@@ -81,7 +80,7 @@ export default function ChatPage({
     refBottom.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages.length]);
 
-  console.log(`-- chat page: `, { channelId });
+  // console.log(`-- chat page: `, {channelId,/* messages */});
 
   return (
     <div className={"flex h-full flex-col overflow-hidden"}>
@@ -93,7 +92,8 @@ export default function ChatPage({
             message={message}
             key={index}
             channelId={channelId}
-            userId={user!.id}
+            taskId={message.task?.id}
+            user={user}
           />
         ))}
         <div ref={refBottom} />
@@ -128,15 +128,19 @@ export default function ChatPage({
 
 const RenderChatItem = ({
   channelId,
-  userId,
+  taskId,
+  user,
   message,
 }: {
   channelId: string;
-  userId: string;
+  taskId?: string;
+  user: MyUser;
   message: ClientMessage;
 }) => {
   const [chosen, setChosen] = useState<string | undefined>(undefined);
-  const sendMessage = api.message.send.useMutation();
+  const execAction = api.message.execAction.useMutation();
+
+  // console.log("-- render chat item: ", { user, message });
 
   switch (message.type) {
     case "NewTask":
@@ -185,16 +189,18 @@ const RenderChatItem = ({
                   className={"w-full"}
                   size={"sm"}
                   onClick={(event) => {
+                    console.log("-- clicked message: ", message);
+
                     if (!chosen) {
                       void toast.error("请先选择");
                       event.preventDefault();
                       return;
                     }
-                    sendMessage.mutate({
-                      type: MessageType.Plain,
+
+                    execAction.mutate({
                       channelId,
-                      toUserIds: [userId],
-                      text: `我选了：${message.task?.choices.find((choice) => choice.id === chosen)!.content}`,
+                      content: `我选了：${message.task?.choices.find((choice) => choice.id === chosen)!.content}`,
+                      taskId: taskId!,
                     });
                   }}
                 >

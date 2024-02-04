@@ -27,7 +27,7 @@ export default function Home() {
   const { user } = useUser();
   const { data: blogger } = api.user.getUserFromPhone.useQuery(bloggerPhone);
 
-  console.log("-- Home: ", { tab, user, blogger });
+  // console.log("-- Home: ", { tab, user, blogger });
 
   if (!blogger) return "no blogger";
   if (!user) return "no user";
@@ -40,15 +40,15 @@ export default function Home() {
     >
       <div className={"grow relative overflow-hidden"}>
         <TabsContent value={AppTab.chat} className={"h-full m-0"}>
-          <ChatPage params={{ channelId: `${blogger.id}-jiugu` }} />
+          <ChatPage params={{ user, channelId: `${blogger.id}-jiugu` }} />
         </TabsContent>
 
         <TabsContent value={AppTab.fire} className={"h-full m-0"}>
-          <TaskPage />
+          <TaskPage params={{ user }} />
         </TabsContent>
 
         <TabsContent value={AppTab.shop} className={"h-full m-0"}>
-          <HomePage />
+          <HomePage params={{ user }} />
         </TabsContent>
 
         {user?.type === "blogger" && <FloatActionButton />}
