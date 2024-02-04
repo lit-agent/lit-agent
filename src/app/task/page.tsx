@@ -88,7 +88,7 @@ export default function TaskPage({
 
       {user.toTasks.map((taskRelation, index) => (
         <Link
-          href={`/task/${taskRelation.id}`}
+          href={`/task/${taskRelation.task.id}`}
           key={index}
           className={
             "rounded bg-[#373041] flex items-center justify-between p-3 my-2"
