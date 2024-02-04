@@ -20,8 +20,8 @@ import { Switch } from "@/components/ui/switch";
 import { api } from "@/trpc/react";
 import { useUser } from "@/hooks/use-user";
 import { toast } from "sonner";
-import { createProductSchema } from "@/server/routers/product";
 import { ClientUser } from "@/ds/user";
+import { createProductSchema } from "@/ds/product";
 
 export default function CreateTaskPage() {
   const { user } = useUser();

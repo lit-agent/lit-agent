@@ -1,20 +1,8 @@
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { pusherServer } from "@/lib/pusher";
-import { MessageType, TaskType } from "@prisma/client";
-import { z } from "zod";
-import { TaskChoiceType, TaskStatus } from ".prisma/client";
-
-export const createTaskSchema = z.object({
-  type: z.nativeEnum(TaskType),
-  title: z.string(),
-  content: z.string(),
-  value: z.number(),
-  startTime: z.date(),
-  endTime: z.date(),
-  status: z.nativeEnum(TaskStatus),
-  fromUserId: z.string(),
-  choices: z.array(z.string()).optional(),
-});
+import { MessageType } from "@prisma/client";
+import { TaskChoiceType } from ".prisma/client";
+import { createTaskSchema } from "@/ds/task";
 
 export const taskRouter = createTRPCRouter({
   create: protectedProcedure

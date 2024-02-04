@@ -32,8 +32,8 @@ import moment from "moment";
 import { Input } from "@/components/ui/input";
 import { MinusCircleIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { createTaskSchema } from "@/server/routers/task";
 import TaskType = $Enums.TaskType;
+import { createTaskSchema } from "@/ds/task";
 
 export default function CreateTaskPage() {
   const { user } = useUser();

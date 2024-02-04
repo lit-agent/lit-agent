@@ -1,22 +1,7 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { pusherServer } from "@/lib/pusher";
-import { MessageType, TaskType } from "@prisma/client";
-import { z } from "zod";
-import { TaskChoiceType, TaskStatus } from ".prisma/client";
-
-export const createProductSchema = z.object({
-  title: z.string().min(2).max(50),
-  description: z.string(),
-  images: z.array(z.string()).optional(),
-  detail: z.string(),
-  price: z.number(),
-  isOnsite: z.boolean(),
-  isSelfOperating: z.boolean(),
-  isReturnable: z.boolean(),
-  isReservationRequired: z.boolean(),
-  total: z.number(),
-  fromUserId: z.string(),
-});
+import { MessageType } from "@prisma/client";
+import { createProductSchema } from "@/ds/product";
 
 export const productRouter = createTRPCRouter({
   list: publicProcedure.query(async ({ ctx, input }) => {
