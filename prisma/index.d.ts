@@ -1,0 +1,1 @@
+/Users/mark/@LitAgent/lit-agent/node_modules/.prisma/client/index.d.ts

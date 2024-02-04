@@ -4,7 +4,7 @@ import { clientMessageSlice } from "@/ds/user";
 import { pusherServer } from "@/lib/pusher";
 import { $Enums, UserType } from "@prisma/client";
 import { z } from "zod";
-import { SegmentType, sendMessageSchema } from "@/ds/message";
+import { MessageType, sendMessageSchema } from "@/ds/message";
 import { SocketEventType } from "@/ds/socket";
 import TaskToStatus = $Enums.TaskToStatus;
 
@@ -84,10 +84,10 @@ export const messageRouter = createTRPCRouter({
           },
           body: [
             {
-              type: SegmentType.text,
+              type: MessageType.Plain,
               content: "啊哈！\n你也选了这个？\n来群里看看别人都选了什么吧！",
             },
-            { type: SegmentType.groupLink, content: task },
+            { type: MessageType.GroupLink, content: task },
           ],
         },
         ...clientMessageSlice,

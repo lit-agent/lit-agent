@@ -1,7 +1,7 @@
 "use client";
 
 import { Avatar, AvatarImage } from "src/components/ui/avatar";
-import MessageComp from "@/components/message-item";
+import Message from "@/components/message-item";
 import { IoMenuOutline } from "react-icons/io5";
 import { BloggerContainer } from "src/containers/blogger";
 import { Button } from "../../components/ui/button";
@@ -47,7 +47,7 @@ export default function ValidationPage() {
         {
           // sampleChatItems
           guidanceItems.map((chatItem, index) => (
-            <MessageComp
+            <Message
               {...chatItem}
               key={index}
               onValueChange={(v) => {

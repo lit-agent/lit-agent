@@ -269,25 +269,20 @@ model TaskFrom {
   updatedAt DateTime @updatedAt
 
   title   String
-  type    TaskType
-  // 根据task-type进行解析
-  // 1. plain: string
-  // 2. choices: string[]
-  content String
+  /// [MessageBody]
+  body Json
 
   value     Int // 每个任务价值多少火币
   startTime DateTime @default(now())
   endTime   DateTime
+  status TaskStatus
 
   fromUser   User     @relation(fields: [fromUserId], references: [id], onDelete: Cascade)
   fromUserId String
   toUsers    TaskTo[]
 
-  status TaskStatus
-
   // 包含发送到chat页的welcome，以及用户的评论
   messages Message[]
-
   choices TaskChoice[]
 }
 
@@ -323,11 +318,7 @@ enum TaskToStatus {
   cancelled
 }
 
-enum TaskType {
-  broadcast // 帮作品传播
-  textChoices
-  imageChoices
-}
+
 
 // model UserAction {
 //   id        String   @id @default(cuid())

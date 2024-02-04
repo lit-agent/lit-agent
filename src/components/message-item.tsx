@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "src/components/ui/avatar";
 import { BsThreeDots } from "react-icons/bs";
 import { BaseClientUser } from "src/ds/user";
-import { Segment, SegmentType } from "@/ds/message";
+import { IMessageBody, MessageType } from "@/ds/message";
 import { cn } from "src/lib/utils";
 import Image from "next/image";
 import { Button } from "src/components/ui/button";
@@ -16,11 +16,11 @@ import { Checkbox } from "src/components/ui/checkbox";
 import { MyMarkdown } from "@/containers/markdown";
 import { ArrowRightIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import moment from "moment";
 
 export interface IMessageContainer {
-  id?: string;
   user: BaseClientUser;
-  segments: Segment[];
+  body: IMessageBody;
   onValueChange?: (v: any) => void;
 }
 
@@ -61,43 +61,33 @@ export const MessageContainer = ({
   );
 };
 
-export function MessageComp({
-  user,
-  segments,
-  onValueChange,
-}: IMessageContainer) {
+export function Message({ user, body, onValueChange }: IMessageContainer) {
   return (
     <MessageContainer user={user}>
-      {segments.map((segment, index) => (
-        <MessageSegment
-          segment={segment}
-          onValueChange={onValueChange}
-          key={index}
-        />
-      ))}
+      <MessageBody body={body} onValueChange={onValueChange} />
     </MessageContainer>
   );
 }
 
-export const MessageSegment = ({
-  segment: { type, content },
+export const MessageBody = ({
+  body,
   onValueChange,
 }: {
-  segment: Segment;
+  body: IMessageBody;
   onValueChange?: (v: any) => void;
 }) => {
   const [imageIndex, setImageIndex] = useState(`0`);
   const [checks, setChecks] = useState<number[]>([]);
   const [submitted, setSubmitted] = useState(false);
 
-  switch (type) {
-    case SegmentType.text:
-      return <MyMarkdown>{content}</MyMarkdown>;
+  switch (body.type) {
+    case MessageType.Plain:
+      return <MyMarkdown>{body.content}</MyMarkdown>;
 
-    case SegmentType.textChoices:
+    case MessageType.TextChoices:
       return (
         <div className={"flex w-full flex-col"}>
-          {(content.choices as string[]).map((text, index) => (
+          {body.questions.map((text, index) => (
             <Label
               className={cn(
                 "flex items-center gap-2 py-1 hover:bg-primary/25 rounded",
@@ -112,13 +102,14 @@ export const MessageSegment = ({
                 onCheckedChange={(checked) => {
                   // console.log("-- content: ", content);
 
-                  const newChecks = !content.multiple
-                    ? // 单选
-                      [index]
-                    : // 多选
-                      checked
-                      ? [...checks, index].sort()
-                      : checks.filter((c) => c !== index);
+                  const newChecks =
+                    body.answer?.length === 1
+                      ? // 单选
+                        [index]
+                      : // 多选
+                        checked
+                        ? [...checks, index].sort()
+                        : checks.filter((c) => c !== index);
 
                   // console.log("-- newChecks: ", newChecks);
                   onValueChange && onValueChange(newChecks);
@@ -151,7 +142,7 @@ export const MessageSegment = ({
         </div>
       );
 
-    case SegmentType.groupLink:
+    case MessageType.GroupLink:
       return (
         <div className={"flex flex-col gap-1 rounded-lg bg-[#3D3847] p-3"}>
           <div className={"flex items-center justify-between"}>
@@ -164,21 +155,19 @@ export const MessageSegment = ({
 
           <div className={"flex items-center justify-between"}>
             <div className={"flex -space-x-4"}>
-              {content.members
-                .slice(0, 6)
-                .map((user: BaseClientUser, index: number) => (
-                  <Avatar key={index}>
-                    <AvatarImage src={user.image!} />
-                  </Avatar>
-                ))}
+              {body.memberAvatars?.slice(0, 6).map((avatar, index: number) => (
+                <Avatar key={index}>
+                  <AvatarImage src={avatar} />
+                </Avatar>
+              ))}
             </div>
 
-            <div>{content.members.length}人已加入</div>
+            <div>{body.membersCount}人已加入</div>
           </div>
         </div>
       );
 
-    case SegmentType.imageChoices:
+    case MessageType.ImageChoices:
       return (
         <div className={"flex flex-col gap-2"}>
           <RadioGroup
@@ -186,7 +175,7 @@ export const MessageSegment = ({
             value={imageIndex}
             onValueChange={setImageIndex}
           >
-            {(content.images as string[]).map((image, index) => (
+            {body.questions.map((image, index) => (
               <div
                 className={cn(
                   "flex flex-col items-center gap-2",
@@ -210,13 +199,13 @@ export const MessageSegment = ({
         </div>
       );
 
-    case SegmentType.task:
+    case MessageType.Task:
       return (
         <div className={"flex flex-col gap-2 rounded-lg bg-[#3D3847] p-3"}>
           <div className={"flex items-center justify-between"}>
             <div>帮作品传播</div>
 
-            <Hot value={content.value} />
+            <Hot value={body.hotValue} />
           </div>
 
           <div className={"flex overflow-hidden rounded-lg"}>
@@ -230,20 +219,20 @@ export const MessageSegment = ({
             <div
               className={"flex grow flex-col justify-between bg-[#2A2434] p-3"}
             >
-              <div>{content.title}</div>
+              <div>{body.title}</div>
 
               <div className={"flex justify-between"}>
                 <div className={"flex items-center gap-1"}>
                   <Assets.WechatMPIcon />
                   视频号
                 </div>
-                <div>{content.datetime}发布</div>
+                <div>{moment(body.datetime ?? new Date()).fromNow()}发布</div>
               </div>
             </div>
           </div>
         </div>
       );
-    case SegmentType.productLink:
+    case MessageType.ProductLink:
       return (
         <div className={"flex flex-col gap-2"}>
           <div className={"flex justify-between rounded-lg bg-[#3D3847] p-2"}>
@@ -251,7 +240,7 @@ export const MessageSegment = ({
               <div className={"w-[80px] "}>
                 <AspectRatio ratio={1}>
                   <Image
-                    src={content.cover}
+                    src={body.cover!}
                     alt={"cover"}
                     fill
                     className="rounded-md object-cover"
@@ -260,26 +249,26 @@ export const MessageSegment = ({
               </div>
 
               <div className={"flex grow flex-col gap-2"}>
-                <div>{content.title}</div>
-                <Hot value={content.value} />
+                <div>{body.title}</div>
+                <Hot value={body.hotValue} />
               </div>
             </div>
           </div>
 
           <div className={"text-muted-foreground text-xs"}>
-            来自{content.source}
+            来自{body.source}
           </div>
         </div>
       );
 
-    case SegmentType.any:
+    case MessageType.Others:
 
     default:
-      return content;
+      return body.title;
   }
 };
 
-export default MessageComp;
+export default Message;
 
 export const Hot = ({ value }: { value: number }) => (
   <div className={"text-primary flex items-center"} color={PRIMARY_COLOR}>

@@ -39,9 +39,9 @@ export const sampleImageItems = [
 export const sampleChatItems: IMessageContainer[] = [
   {
     user: userJiuguAI,
-    segments: [
+    body: [
       {
-        type: "text",
+        type: "plain",
         content:
           "Yo！恭喜你成为姑的Friend！\n\n" +
           "在这里你可以随时跟我的AI替身闲聊（放心它不会瞎编），所有的聊天记录我都能看到，如果有值得回复的问题我会亲自回复\n\n" +
@@ -56,9 +56,9 @@ export const sampleChatItems: IMessageContainer[] = [
 
   {
     user: userJiugu,
-    segments: [
+    body: [
       {
-        type: "text",
+        type: "plain",
         content: "新作封面二选一，你喜欢哪个？",
       },
       {
@@ -72,9 +72,9 @@ export const sampleChatItems: IMessageContainer[] = [
 
   {
     user: userHading,
-    segments: [
+    body: [
       {
-        type: "text",
+        type: "plain",
         content: "我选了左边的",
       },
     ],
@@ -82,9 +82,9 @@ export const sampleChatItems: IMessageContainer[] = [
 
   {
     user: userJiuguAI,
-    segments: [
+    body: [
       {
-        type: "text",
+        type: "plain",
         content:
           "感谢！\n" +
           "你也可以来群里看看别人是怎么选的，说不定你们能碰撞出更牛逼的点子💡",
@@ -100,9 +100,9 @@ export const sampleChatItems: IMessageContainer[] = [
 
   {
     user: userJiugu,
-    segments: [
+    body: [
       {
-        type: "text",
+        type: "plain",
         content: "下一期的选题，你更想看哪个？",
       },
       {
@@ -114,9 +114,9 @@ export const sampleChatItems: IMessageContainer[] = [
 
   {
     user: userHading,
-    segments: [
+    body: [
       {
-        type: "text",
+        type: "plain",
         content: "我选了：玖姑开喷程前",
       },
     ],
@@ -124,9 +124,9 @@ export const sampleChatItems: IMessageContainer[] = [
 
   {
     user: userJiuguAI,
-    segments: [
+    body: [
       {
-        type: "text",
+        type: "plain",
         content:
           "啊哈！\n" + "你也选了这个？\n" + "来群里看看别人都选了什么吧！",
       },
@@ -141,9 +141,9 @@ export const sampleChatItems: IMessageContainer[] = [
 
   {
     user: userJiugu,
-    segments: [
+    body: [
       {
-        type: "text",
+        type: "plain",
         content: "想看喷程前的直接速速来点赞评论转发！",
       },
       {
@@ -161,9 +161,9 @@ export const sampleChatItems: IMessageContainer[] = [
 
   {
     user: userHading,
-    segments: [
+    body: [
       {
-        type: "text",
+        type: "plain",
         content: "上传了作品截图",
       },
       {
@@ -177,9 +177,9 @@ export const sampleChatItems: IMessageContainer[] = [
 
   {
     user: userJiuguAI,
-    segments: [
+    body: [
       {
-        type: "text",
+        type: "plain",
         content: "买这个",
       },
       {

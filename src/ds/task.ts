@@ -1,14 +1,13 @@
 import { z } from "zod";
-import { TaskType } from "@prisma/client";
 import { TaskStatus } from ".prisma/client";
+import { messageBodySchema } from "@/ds/message";
 
 export const createTaskSchema = z.object({
-  type: z.nativeEnum(TaskType),
+  body: messageBodySchema,
+
   title: z.string(),
-  content: z.string(),
   value: z.number(),
   startTime: z.date(),
   endTime: z.date(),
-  status: z.nativeEnum(TaskStatus),
-  choices: z.array(z.string()).optional(),
+  status: z.nativeEnum(TaskStatus).default(TaskStatus.on),
 });

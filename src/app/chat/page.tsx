@@ -5,7 +5,7 @@ import { ClientMessage, MyUser } from "@/ds/user";
 import { api } from "@/trpc/react";
 import { pusherClient } from "@/lib/pusher";
 import { SelectUser } from "@/components/select-user";
-import { MessageContainer, MessageSegment } from "@/components/message-item";
+import { MessageContainer, MessageBody } from "@/components/message-item";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { BloggerContainer } from "@/containers/blogger";
@@ -15,7 +15,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { SegmentType } from "@/ds/message";
+import { MessageType } from "@/ds/message";
 import { SocketEventType } from "@/ds/socket";
 import TaskType = $Enums.TaskType;
 
@@ -63,7 +63,7 @@ export default function ChatPage({
     // todo: 思考要不要做上屏优化
     sendMessage.mutate({
       channelId: `${user!.id}-jiugu`,
-      body: [{ type: SegmentType.text, content: text }],
+      body: [{ type: MessageType.Plain, content: text }],
     });
 
     refInput.current.value = "";
@@ -137,7 +137,7 @@ const MessageItem = ({
     <MessageContainer user={message.fromUser}>
       <MessageMain channelId={channelId} taskId={taskId} message={message} />
       {message.body.map((segment, index) => (
-        <MessageSegment segment={segment} key={index} />
+        <MessageBody body={segment} key={index} />
       ))}
     </MessageContainer>
   );
@@ -211,7 +211,7 @@ const MessageMain = ({
                 taskId: taskId!,
                 body: [
                   {
-                    type: SegmentType.text,
+                    type: MessageType.Plain,
                     content: `我选了：${message.task?.choices.find((choice) => choice.id === chosen)!.content}`,
                   },
                 ],
