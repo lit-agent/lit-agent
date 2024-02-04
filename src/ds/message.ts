@@ -21,44 +21,45 @@ export const segmentSchema = z.object({
 
 export type Segment = z.infer<typeof segmentSchema>;
 
-export const messageBodySchema = z.union([
+export const messageBodySchema = z.discriminatedUnion("type", [
   // 纯图文
   z.object({
     type: z.literal(MessageType.Plain),
-    content: z.string(),
+    detail: z.string().optional(),
   }),
 
-  // 选择题
+  // 文字选择题
   z.object({
-    type: z.union([
-      z.literal(MessageType.TextChoices),
-      z.literal(MessageType.ImageChoices),
-    ]),
-    title: z.string().optional(),
+    type: z.literal(MessageType.TextChoices),
     questions: z.array(z.string()).min(2),
-    // 可以没有答案
-    answer: z.array(z.number()).min(2),
+    answer: z.array(z.number()).min(2).optional(), // 可以没有答案
+  }),
+
+  // 图片选择题
+  z.object({
+    type: z.literal(MessageType.ImageChoices),
+    questions: z.array(z.string()).min(2),
+    answer: z.array(z.number()).min(2).optional(), // 可以没有答案
   }),
 
   // 邀请之类
   // todo: 需要细化
-  z.object({
-    type: z.union([
-      z.literal(MessageType.Others),
-      z.literal(MessageType.GroupLink),
-      z.literal(MessageType.Images),
-      z.literal(MessageType.ProductLink),
-      z.literal(MessageType.Sheet),
-    ]),
-    title: z.string(),
-    cover: z.string().optional(),
-    href: z.string().optional(),
-    memberAvatars: z.array(z.string()).optional(),
-    membersCount: z.number().optional(),
-    hotValue: z.number(),
-    datetime: z.date().optional(),
-    source: z.string().default("不孤岛"),
-  }),
+  // z.object({
+  //   type: z.literal(MessageType.GroupLink),
+  //   // type: z.literal(MessageType.ProductLink),
+  //   // type: z.literal(MessageType.Images),
+  //   // type: z.literal(MessageType.Sheet),
+  //   // type: z.literal(MessageType.Others),
+  //
+  //   title: z.string(),
+  //   cover: z.string().optional(),
+  //   href: z.string().optional(),
+  //   memberAvatars: z.array(z.string()).optional(),
+  //   membersCount: z.number().optional(),
+  //   hotValue: z.number(),
+  //   datetime: z.date().optional(),
+  //   source: z.string().default("不孤岛"),
+  // }),
 ]);
 export type IMessageBody = z.infer<typeof messageBodySchema>;
 

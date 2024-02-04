@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,21 +16,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
-import { $Enums } from ".prisma/client";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import moment from "moment";
 import { Input } from "@/components/ui/input";
 import { MinusCircleIcon } from "lucide-react";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { createTaskSchema } from "@/ds/task";
 import { useRouter } from "next/navigation";
 import { MessageType } from "@/ds/message";
@@ -39,7 +27,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 
+type SupportedMessageTypes = MessageType.Plain | MessageType.TextChoices;
+
 const CreateTaskWithUserPage = () => {
+  const type: SupportedMessageTypes = MessageType.Plain;
   // 1. Define your form.
   const form = useForm<z.infer<typeof createTaskSchema>>({
     resolver: zodResolver(createTaskSchema),
@@ -49,6 +40,9 @@ const CreateTaskWithUserPage = () => {
       startTime: new Date(),
       endTime: moment().add(1, "days").toDate(),
       status: "on",
+      body: {
+        type,
+      },
     },
   });
 
@@ -59,18 +53,6 @@ const CreateTaskWithUserPage = () => {
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof createTaskSchema>) {
     console.log("-- submit: ", values);
-
-    if (
-      values.body.type === MessageType.TextChoices ||
-      values.body.type === MessageType.ImageChoices
-    ) {
-      if (values.body.questions.includes(""))
-        return form.setError("body.questions", {
-          type: "manual",
-          message: "不能有空选项",
-        });
-    }
-
     setSubmitting(true);
     createTask
       .mutateAsync(values)
@@ -131,7 +113,10 @@ const CreateTaskWithUserPage = () => {
 
           <Tabs
             className={"h-full flex gap-4 overflow-hidden"}
-            defaultValue={MessageType.TextChoices}
+            defaultValue={type}
+            onValueChange={(value) =>
+              form.setValue("body.type", value as SupportedMessageTypes)
+            }
           >
             <TabsList
               className={"flex flex-col  shrink-0 w-1/4 h-full bg-transparent"}
@@ -182,7 +167,7 @@ const CreateTaskWithUserPage = () => {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>任务标题</FormLabel>
+                    <FormLabel>标题</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -192,15 +177,40 @@ const CreateTaskWithUserPage = () => {
                 )}
               />
 
+              <TabsContent value={MessageType.Plain}>
+                <FormField
+                  control={form.control}
+                  name="body.detail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>详情</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </TabsContent>
+
               <TabsContent value={MessageType.TextChoices}>
                 <FormField
                   control={form.control}
                   name="body.questions"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>文字选项</FormLabel>
+                      <FormLabel>
+                        选项
+                        <span className={"text-muted-foreground text-xs"}>
+                          （至少两个）
+                        </span>
+                      </FormLabel>
                       <FormControl>
-                        <TextChoicesInput onChange={field.onChange} />
+                        <TextChoicesInput
+                          value={["#1 ", "#2 "]}
+                          onChange={field.onChange}
+                        />
                       </FormControl>
 
                       <FormMessage />
@@ -215,9 +225,17 @@ const CreateTaskWithUserPage = () => {
                   name="body.questions"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>图片选项</FormLabel>
+                      <FormLabel>
+                        选项
+                        <span className={"text-muted-foreground text-xs"}>
+                          （至少两个）
+                        </span>
+                      </FormLabel>
                       <FormControl>
-                        <TextChoicesInput onChange={field.onChange} />
+                        <TextChoicesInput
+                          value={["/product-1.png", "/product-1.png"]}
+                          onChange={field.onChange}
+                        />
                       </FormControl>
 
                       <FormMessage />
@@ -231,7 +249,12 @@ const CreateTaskWithUserPage = () => {
                 name="value"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>火币价值</FormLabel>
+                    <FormLabel>
+                      价值
+                      <span className={"text-muted-foreground text-xs"}>
+                        （单位：火币）
+                      </span>
+                    </FormLabel>
                     <FormControl>
                       <Input
                         type={"number"}
@@ -298,23 +321,6 @@ const CreateTaskWithUserPage = () => {
                   </FormItem>
                 )}
               />
-
-              <TabsContent value={MessageType.Plain}>
-                <FormField
-                  control={form.control}
-                  name="body.content"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>详情</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </TabsContent>
             </div>
           </Tabs>
         </form>
@@ -324,14 +330,16 @@ const CreateTaskWithUserPage = () => {
 };
 
 const TextChoicesInput = ({
+  value,
   onChange,
 }: {
-  onChange: (value: string) => void;
+  value?: string[];
+  onChange: (value: string[]) => void;
 }) => {
-  const [choices, setChoices] = useState<string[]>(["#1 ", "#2"]);
+  const [choices, setChoices] = useState<string[]>(value ?? []);
 
   useEffect(() => {
-    onChange(JSON.stringify(choices));
+    onChange(choices);
   }, [JSON.stringify(choices)]);
 
   return (
