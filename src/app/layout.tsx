@@ -11,8 +11,6 @@ import { TRPCReactProvider } from "@/providers/trpc"
 import { Metadata, Viewport } from "next"
 import { AppAutoMobileHeight } from "@/components/app-auto-mobile-height"
 
-import "moment/locale/zh-cn"
-
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",

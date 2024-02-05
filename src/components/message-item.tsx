@@ -18,6 +18,7 @@ import moment from "moment"
 import Image from "next/image"
 
 import "moment/locale/zh-cn"
+import { toast } from "sonner"
 
 export interface IMessageContainer {
   message: ClientMessage
@@ -127,7 +128,16 @@ export const MessageBody = ({
 
     case MessageType.Task:
       return (
-        <div className={"flex flex-col gap-2 rounded-lg bg-[#3D3847] p-3"}>
+        <div
+          className={
+            "flex flex-col gap-2 rounded-lg bg-[#3D3847] p-3 cursor-pointer"
+          }
+          onClick={(event) => {
+            event.preventDefault()
+
+            toast.success("恭喜，任务完成！")
+          }}
+        >
           <div className={"flex items-center justify-between"}>
             <div>帮作品传播</div>
 
