@@ -1,22 +1,31 @@
-"use client";
+"use client"
 
-import Menu1Icon from "../../public/menu-l.svg";
-import FireIcon from "../../public/fire.svg";
-import Menu3Icon from "../../public/menu-r.svg";
-import RingIcon from "../../public/ring.svg";
-import AwardFillIcon from "../../public/award-fill.svg";
-import DirectBoxSendIcon from "../../public/directbox-send.svg";
-import WechatMPIcon from "../../public/wechat-mp.svg";
-import NotificationIcon from "../../public/notification.svg";
-import CallIcon from "../../public/call.svg";
+import Menu1Icon from "../../public/static/menu-l.svg"
+import FireIcon from "../../public/static/fire.svg"
+import Menu3Icon from "../../public/static/menu-r.svg"
+import RingIcon from "../../public/static/ring.svg"
+import AwardFillIcon from "../../public/static/award-fill.svg"
+import DirectBoxSendIcon from "../../public/static/directbox-send.svg"
+import WechatMPIcon from "../../public/static/wechat-mp.svg"
+import NotificationIcon from "../../public/static/notification.svg"
+import CallIcon from "../../public/static/call.svg"
 
-import BrandImage from "../../public/brand.png";
-import CoverSmImage from "../../public/cover-jiugu-sm.png";
-import CoverMdImage from "../../public/cover-jiugu-md.png";
-import MediasImage from "../../public/medias.png";
-import JiuguImage from "../../public/user-jiugu.png";
-import BgCircleImage from "../../public/bg-circle.png";
-import BroadcastImage from "../../public/broadcast.png";
+import BrandImage from "../../public/static/brand.png"
+import CoverSmImage from "../../public/static/cover-jiugu-sm.png"
+import CoverMdImage from "../../public/static/cover-jiugu-md.png"
+import MediasImage from "../../public/static/medias.png"
+import JiuguImage from "../../public/static/user-jiugu.png"
+import HadingImage from "../../public/static/user-hading.png"
+import SampleUser1Image from "../../public/static/user-sample-1.png"
+import BgCircleImage from "../../public/static/bg-circle.png"
+import BroadcastImage from "../../public/static/broadcast.png"
+import Choice1Image from "../../public/static/image-choices-1.png"
+import Choice2Image from "../../public/static/image-choices-2.png"
+import Honor1SVG from "../../public/static/honor/honor-1.svg"
+import Honor2SVG from "../../public/static/honor/honor-2.svg"
+import Honor3SVG from "../../public/static/honor/honor-3.svg"
+import Honor4SVG from "../../public/static/honor/honor-4.svg"
+import Honor5SVG from "../../public/static/honor/honor-5.svg"
 
 export {
   BroadcastImage,
@@ -34,5 +43,14 @@ export {
   CoverMdImage,
   MediasImage,
   JiuguImage,
+  HadingImage,
   BgCircleImage,
-};
+  SampleUser1Image,
+  Choice1Image,
+  Choice2Image,
+  Honor1SVG,
+  Honor2SVG,
+  Honor3SVG,
+  Honor4SVG,
+  Honor5SVG,
+}

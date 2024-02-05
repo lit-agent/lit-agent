@@ -18,9 +18,8 @@ import { toast } from "sonner"
 import moment from "moment"
 import { Input } from "@/components/ui/input"
 import { HomeIcon } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { createRequirementSchema } from "@/ds/requirement"
-import { useRouter } from "next/navigation"
 import { MessageType, SupportedMessageTypes } from "@/ds/message.base"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
@@ -32,10 +31,11 @@ import { TextChoicesInput } from "@/components/input-choices"
 import { useUserData } from "@/hooks/use-user-data"
 
 const schema = createRequirementSchema
+const FINISHED = 3
 
 export default function CreateTaskWithUserPage() {
   const { preferredMessageType: type, setPreferredMessageType } = useUserData()
-  console.log("-- schema: ", { schema })
+  // console.log("-- schema: ", { schema })
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof schema>>({
@@ -45,6 +45,7 @@ export default function CreateTaskWithUserPage() {
       startTime: new Date(),
       endTime: moment().add(1, "days").toDate(),
       body: {
+        type, // !important
         title: "Untitled",
         platform: "不孤岛",
         targetUsers: "全体姑的Friends",
@@ -58,10 +59,12 @@ export default function CreateTaskWithUserPage() {
       },
     },
   })
+  const {
+    formState: { errors },
+  } = form
 
   const createTask = api.task.create.useMutation()
   const [submitting, setSubmitting] = useState(false)
-  const router = useRouter()
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof schema>) {
@@ -82,8 +85,13 @@ export default function CreateTaskWithUserPage() {
       })
   }
 
-  const FINISHED = 3
-  console.log("-- data: ", form.getValues())
+  useEffect(() => {
+    if (Object.keys(errors).length) {
+      console.error(errors)
+    }
+  }, [JSON.stringify(errors)])
+
+  console.log("-- form: ", { type, state: form.getValues() })
 
   return (
     <div className={"h-full flex flex-col p-4 bg-black"}>
@@ -131,6 +139,7 @@ export default function CreateTaskWithUserPage() {
             className={"h-full flex gap-4 overflow-hidden"}
             value={type}
             onValueChange={(value) => {
+              console.log("-- message type changed into: ", value)
               form.setValue("body.type", value as SupportedMessageTypes)
               setPreferredMessageType(value as SupportedMessageTypes)
             }}
@@ -139,9 +148,6 @@ export default function CreateTaskWithUserPage() {
               className={
                 "flex flex-col overflow-auto shrink-0 w-1/4 h-full bg-transparent"
               }
-              onChange={(event) => {
-                console.log("-- tabs change: ", event)
-              }}
             >
               <Label className={"my-2 text-lg"}>选择类型</Label>
 
@@ -203,7 +209,28 @@ export default function CreateTaskWithUserPage() {
                   <FormItem>
                     <FormLabel>封面（todo）</FormLabel>
                     <FormControl>
-                      <Textarea {...field} />
+                      <Input
+                        type={"file"}
+                        accept={"image/*"}
+                        onChange={async (event) => {
+                          const files = event.currentTarget.files
+                          if (!files || !files.length) return
+                          const data = new FormData()
+                          const file = files[0]!
+                          data.set("file", file)
+                          const res = await fetch("/api/oss/upload", {
+                            method: "POST",
+                            body: data,
+                          })
+                          if (!res.ok) {
+                            toast.error("上传失败")
+                            console.error(res)
+                          } else {
+                            toast.success("上传成功！")
+                            console.log("-- uploaded result: ", res)
+                          }
+                        }}
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -265,7 +292,7 @@ export default function CreateTaskWithUserPage() {
                 <FormField
                   control={form.control}
                   name="body.choices"
-                  render={({ field: questionFields }) => (
+                  render={({ field: questionField }) => (
                     <FormItem>
                       <FormLabel>
                         选项
@@ -275,8 +302,8 @@ export default function CreateTaskWithUserPage() {
                       </FormLabel>
                       <FormControl>
                         <TextChoicesInput
-                          value={questionFields.value}
-                          onChange={questionFields.onChange}
+                          value={questionField.value}
+                          onChange={questionField.onChange}
                         />
                       </FormControl>
 

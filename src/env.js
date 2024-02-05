@@ -1,5 +1,5 @@
-import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "zod";
+import { createEnv } from "@t3-oss/env-nextjs"
+import { z } from "zod"
 
 export const env = createEnv({
   /**
@@ -35,6 +35,9 @@ export const env = createEnv({
 
     PUSHER_APP_ID: z.string(),
     PUSHER_APP_SECRET: z.string(),
+
+    OSS_ACCESS_KEY_ID: z.string(),
+    OSS_ACCESS_KEY_SECRET: z.string(),
   },
 
   /**
@@ -72,6 +75,9 @@ export const env = createEnv({
     PUSHER_APP_SECRET: process.env.PUSHER_APP_SECRET,
     NEXT_PUBLIC_PUSHER_APP_KEY: process.env.NEXT_PUBLIC_PUSHER_APP_KEY,
     NEXT_PUBLIC_PUSHER_CLUSTER: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
+
+    OSS_ACCESS_KEY_ID: process.env.OSS_ACCESS_KEY_ID,
+    OSS_ACCESS_KEY_SECRET: process.env.OSS_ACCESS_KEY_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
@@ -83,4 +89,4 @@ export const env = createEnv({
    * `SOME_VAR=''` will throw an error.
    */
   emptyStringAsUndefined: true,
-});
+})

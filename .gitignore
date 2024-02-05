@@ -1,3 +1,6 @@
+# 用户上传的文件，不要加入git
+public/uploaded
+
 **/.idea
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.

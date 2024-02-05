@@ -1,40 +1,44 @@
-import { BaseClientUser } from "@/ds/user";
-import { IMessageContainer } from "@/components/message-item";
+import { BaseClientUser } from "@/ds/user"
+import { IMessageContainer } from "@/components/message-item"
+import {
+  Choice1Image,
+  Choice2Image,
+  HadingImage,
+  JiuguImage,
+  SampleUser1Image,
+} from "@/lib/assets"
 
 export const userJiuguAI: BaseClientUser = {
   id: "jiugu-ai",
   name: "玖姑的AI助理",
-  image: "/user-jiugu.png",
+  image: JiuguImage.src,
   type: "assistant",
-};
+}
 
 export const userJiugu: BaseClientUser = {
   id: "jiugu",
   name: "玖姑",
-  image: "/user-jiugu.png",
+  image: JiuguImage.src,
   type: "blogger",
-};
+}
 
 export const userHading: BaseClientUser = {
   id: "hading",
   name: "哈丁",
-  image: "/user-hading.png",
+  image: HadingImage.src,
   type: "user",
-};
+}
 
 export const userSample: BaseClientUser = {
   id: "demo",
   name: "demo",
-  image: "/user-sample-1.png",
+  image: SampleUser1Image.src,
   type: "user",
-};
+}
 
-export const genUsers = (n: number) => new Array(n).fill(userSample);
+export const genUsers = (n: number) => new Array(n).fill(userSample)
 
-export const sampleImageItems = [
-  "/image-choices-1.png",
-  "/image-choices-2.png",
-];
+export const sampleImageItems = [Choice1Image.src, Choice2Image.src]
 
 // export const sampleChatItems: IMessageContainer[] = [
 //

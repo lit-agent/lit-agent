@@ -66,7 +66,7 @@ export const createRequirementSchema = z
     value: z.number(),
     startTime: z.date(),
     endTime: z.date(),
-    status: z.nativeEnum(TaskStatus),
+    status: z.nativeEnum(TaskStatus).default(TaskStatus.on),
   })
   .extend({
     body: createRequirementBodySchema,

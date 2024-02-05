@@ -1,16 +1,23 @@
-"use client";
+"use client"
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { $Enums } from ".prisma/client";
-import Image from "next/image";
-import { ChevronRightIcon, SearchIcon } from "lucide-react";
-import { RiFireFill } from "react-icons/ri";
-import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
-import { Separator } from "@/components/ui/separator";
-import { CgArrowsExchangeAlt } from "react-icons/cg";
-import { MyUser } from "@/ds/user";
-import HonorType = $Enums.HonorType;
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { $Enums } from ".prisma/client"
+import Image from "next/image"
+import { ChevronRightIcon, SearchIcon } from "lucide-react"
+import { RiFireFill } from "react-icons/ri"
+import { cn } from "@/lib/utils"
+import { ReactNode } from "react"
+import { Separator } from "@/components/ui/separator"
+import { CgArrowsExchangeAlt } from "react-icons/cg"
+import { MyUser } from "@/ds/user"
+import {
+  Honor1SVG,
+  Honor2SVG,
+  Honor3SVG,
+  Honor4SVG,
+  Honor5SVG,
+} from "@/lib/assets"
+import HonorType = $Enums.HonorType
 
 export default function HomePage({ user }: { user: MyUser }) {
   return (
@@ -24,15 +31,10 @@ export default function HomePage({ user }: { user: MyUser }) {
         <div>{user.name ?? "Unnamed"}</div>
 
         <div className={"flex items-center gap-1"}>
-          {user.honors.map((honor, index) => (
-            <Image
-              key={honor.id}
-              src={honorDict[honor.id]}
-              alt={honor.id}
-              width={20}
-              height={40}
-            />
-          ))}
+          {user.honors.map((Honor, index) => {
+            const Item = honorDict[Honor.id]
+            return <Item key={index} />
+          })}
           <ChevronRightIcon className={"w-4 h-4"} />
         </div>
       </div>
@@ -104,7 +106,7 @@ export default function HomePage({ user }: { user: MyUser }) {
           ))}
       </div>
     </div>
-  );
+  )
 }
 
 const HalfCard = ({
@@ -114,11 +116,11 @@ const HalfCard = ({
   d,
   side,
 }: {
-  a: ReactNode;
-  b: number;
-  c: ReactNode;
-  d: number;
-  side: "L" | "R";
+  a: ReactNode
+  b: number
+  c: ReactNode
+  d: number
+  side: "L" | "R"
 }) => (
   <div className={cn("flex flex-col gap-2", side === "R" && "items-end")}>
     <div className={"text-gray-300"}>{a}</div>
@@ -126,13 +128,13 @@ const HalfCard = ({
     <div className={"text-gray-300"}>{c}</div>
     <div className={"text-gray-300"}>{d}</div>
   </div>
-);
+)
 
 const honorDict: Record<HonorType, string> = {
-  NewUser: "/honor-1.svg",
-  GoodFriend: "/honor-2.svg",
-  HotFriend: "/honor-3.svg",
-  GoodFriendEver: "/honor-4.svg",
-  HotFriendEver: "/honor-5.svg",
-  NewTask: "/honor-1.svg",
-};
+  NewUser: Honor1SVG,
+  GoodFriend: Honor2SVG,
+  HotFriend: Honor3SVG,
+  GoodFriendEver: Honor4SVG,
+  HotFriendEver: Honor5SVG,
+  NewTask: Honor1SVG,
+}
