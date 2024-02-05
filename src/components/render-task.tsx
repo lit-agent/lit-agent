@@ -1,16 +1,14 @@
-"use server"
-
 import Link from "next/link"
 import { Hot } from "@/components/fire-value"
 import Image from "next/image"
 import { CoverSmImage, WechatMPIcon } from "@/lib/assets"
 import moment from "moment/moment"
-import { prisma } from "@/server/db"
 import { z } from "zod"
 import { createTaskRequirementBodySchema } from "@/ds/requirement"
+import { api } from "@/trpc/react"
 
-export default async function RenderTask({ taskId }: { taskId: string }) {
-  const task = await prisma.taskFrom.findUnique({ where: { id: taskId } })
+export default function RenderTask({ taskId }: { taskId: string }) {
+  const { data: task } = api.task.get.useQuery({ id: taskId })
   if (!task) return "loading task..."
 
   const body = task.body as z.infer<typeof createTaskRequirementBodySchema>

@@ -1,28 +1,28 @@
-"use client";
+"use client"
 
-import Image from "next/image";
-import { BgCircleImage, BroadcastImage, FireIcon } from "@/lib/assets";
-import { TrendingUpIcon } from "lucide-react";
-import { RiDoubleQuotesL, RiDoubleQuotesR } from "react-icons/ri";
-import { Dot } from "@/components/dot";
-import { Separator } from "@/components/ui/separator";
-import { MessageContainer } from "@/components/message-item";
-import { UserComp } from "@/components/user";
-import { Input } from "@/components/ui/input";
-import { useRef } from "react";
-import { Session } from "next-auth";
-import { TaskFrom } from ".prisma/client";
+import Image from "next/image"
+import { BgCircleImage, BroadcastImage, FireIcon } from "@/lib/assets"
+import { TrendingUpIcon } from "lucide-react"
+import { RiDoubleQuotesL, RiDoubleQuotesR } from "react-icons/ri"
+import { Dot } from "@/components/dot"
+import { Separator } from "@/components/ui/separator"
+import { MessageContainer } from "@/components/message-item"
+import { UserComp } from "@/components/user"
+import { Input } from "@/components/ui/input"
+import { useRef } from "react"
+import { Session } from "next-auth"
+import { TaskFrom } from ".prisma/client"
 
 export default function TaskDetailPageInner({
   session,
   task,
 }: {
-  session: Session;
-  task: TaskFrom;
+  session: Session
+  task: TaskFrom
 }) {
-  const refTop = useRef<HTMLDivElement>(null);
+  const refTop = useRef<HTMLDivElement>(null)
 
-  console.log("-- top: ", refTop.current?.getBoundingClientRect());
+  console.log("-- top: ", refTop.current?.getBoundingClientRect())
 
   return (
     <div>
@@ -71,7 +71,7 @@ export default function TaskDetailPageInner({
           "absolute w-full rounded-3xl flex flex-col gap-4 border shadow-lg p-2 bg-[#3D3847]"
         }
         style={{
-          top: refTop.current!.getBoundingClientRect().height,
+          top: refTop.current?.getBoundingClientRect().height,
           // left: 0
         }}
       >
@@ -102,5 +102,5 @@ export default function TaskDetailPageInner({
         />
       </div>
     </div>
-  );
+  )
 }

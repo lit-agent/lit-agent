@@ -1,15 +1,15 @@
-import { RiFireFill } from "react-icons/ri";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { userHading } from "@/ds/mock";
-import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
-import AvatarComp from "@/components/avatar";
-import Link from "next/link";
-import { Label } from "../../components/ui/label";
-import { MyUser } from "@/ds/user";
-import { last } from "lodash";
+import { RiFireFill } from "react-icons/ri"
+import { Avatar, AvatarImage } from "@/components/ui/avatar"
+import { ChevronDownIcon, ChevronRightIcon } from "lucide-react"
+import AvatarComp from "@/components/avatar"
+import Link from "next/link"
+import { Label } from "../../components/ui/label"
+import { MyUser } from "@/ds/user"
+import { last } from "lodash"
+import { userHading } from "@/config"
 
 export default function TaskPage({ user }: { user: MyUser }) {
-  const userNew = userHading;
+  const userNew = userHading
 
   // todo: db data
   const data = {
@@ -18,9 +18,9 @@ export default function TaskPage({ user }: { user: MyUser }) {
     ranking: 355,
     // todo: 需要更好的数据结构
     finishedUsers: Array(10).fill(userHading),
-  };
+  }
 
-  console.log("-- task page: ", { user, data });
+  console.log("-- task page: ", { user, data })
 
   return (
     <div className={"bg-[#282232] p-2 min-h-full"}>
@@ -106,7 +106,7 @@ export default function TaskPage({ user }: { user: MyUser }) {
         </Link>
       ))}
     </div>
-  );
+  )
 }
 
-const maskName = (s: string) => s[0] + s.slice(1).replace(/./g, "*");
+const maskName = (s: string) => s[0] + s.slice(1).replace(/./g, "*")

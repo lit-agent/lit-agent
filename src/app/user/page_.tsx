@@ -19,7 +19,7 @@ import {
 } from "@/lib/assets"
 import HonorType = $Enums.HonorType
 
-export default function HomePage({ user }: { user: MyUser }) {
+export default function UserPage({ user }: { user: MyUser }) {
   return (
     <div className={"p-2 flex flex-col gap-4"}>
       <div className={"flex flex-col items-center gap-2"}>

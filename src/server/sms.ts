@@ -1,15 +1,15 @@
-import * as tencentcloud from "tencentcloud-sdk-nodejs-sms";
-import * as process from "process";
-import { getTimeS } from "../lib/datetime";
-import { JIUGU_AI_ID, SMS_EXPIRE_MINUTES } from "@/const";
-import { prisma } from "@/server/db";
-import { signOut } from "next-auth/react";
-import { MessageType } from "@/ds/message.base";
+import * as tencentcloud from "tencentcloud-sdk-nodejs-sms"
+import * as process from "process"
+import { getTimeS } from "../lib/datetime"
+import { prisma } from "@/server/db"
+import { MessageType } from "@/ds/message.base"
+import { registerSuccessCallback } from "@/server/user"
+import { SMS_EXPIRE_MINUTES, USER_JIUGU_AI_ID } from "@/config"
 
-const SmsClient = tencentcloud.sms.v20210111.Client;
+const SmsClient = tencentcloud.sms.v20210111.Client
 
-const secretId = process.env.TENCENTCLOUD_SECRET_ID;
-const secretKey = process.env.TENCENTCLOUD_SECRET_KEY;
+const secretId = process.env.TENCENTCLOUD_SECRET_ID
+const secretKey = process.env.TENCENTCLOUD_SECRET_KEY
 // console.log("-- tencent clout sdk: ", { secretId, secretKey });
 
 // 实例化要请求产品(以cvm为例)的client对象
@@ -32,10 +32,10 @@ const client = new SmsClient({
       // proxy: "http://127.0.0.1:8899" // http请求代理
     },
   },
-});
+})
 
 export const sendSms = async ({ phone }: { phone: string }) => {
-  const code = Math.random().toString().slice(2, 8);
+  const code = Math.random().toString().slice(2, 8)
 
   const params = {
     PhoneNumberSet: [phone],
@@ -43,14 +43,14 @@ export const sendSms = async ({ phone }: { phone: string }) => {
     SignName: "邢健的个人博客",
     TemplateId: "2064119",
     TemplateParamSet: [code, `${SMS_EXPIRE_MINUTES}`],
-  };
+  }
 
   try {
-    console.log("-- sending sms: ", { phone, code });
+    console.log("-- sending sms: ", { phone, code })
     const user = await prisma.user.findUnique({
       where: { phone },
       include: { honors: true },
-    });
+    })
     if (!user) {
       // 新建 user 和 account
       await prisma.user.create({
@@ -70,7 +70,7 @@ export const sendSms = async ({ phone }: { phone: string }) => {
             },
           },
         },
-      });
+      })
     } else {
       // 只更新 account
       await prisma.account.update({
@@ -84,24 +84,24 @@ export const sendSms = async ({ phone }: { phone: string }) => {
           access_token: code,
           expires_at: getTimeS() + SMS_EXPIRE_MINUTES * 60 * 1000,
         },
-      });
+      })
     }
 
-    const res = await client.SendSms(params);
-    console.log("-- res: ", res);
-    return res;
+    const res = await client.SendSms(params)
+    console.log("-- res: ", res)
+    return res
   } catch (e) {
-    console.error(e);
-    return null;
+    console.error(e)
+    return null
   }
-};
+}
 
 export const validateSms = async ({
   phone,
   code,
 }: {
-  phone: string;
-  code: string;
+  phone: string
+  code: string
 }) => {
   const account = await prisma.account.findUnique({
     where: {
@@ -113,7 +113,7 @@ export const validateSms = async ({
     include: {
       user: true,
     },
-  });
+  })
   // console.log("-- account: ", account);
 
   if (
@@ -124,88 +124,22 @@ export const validateSms = async ({
     // 错误
     account.access_token !== code
   ) {
-    return null;
+    return null
   }
 
-  let user;
+  let user
   if (!account.user) {
-    //   创建用户
-    user = await prisma.user.create({
-      data: {
-        name: "sms-" + phone,
-        phone,
-        phoneVerified: new Date(),
-        status: "online",
-
-        // 连接 user - account
-        // todo: 连接 user - verificationToken - session
-        accounts: {
-          connect: {
-            provider_providerAccountId: {
-              provider: "sms",
-              providerAccountId: phone,
-            },
-          },
-        },
-      },
-    });
-
-    // 欢迎语不需要使用socket发，因为用户还没到房间
-    await prisma.message.create({
-      data: {
-        body: {
-          type: MessageType.Plain,
-          title:
-            "Yo！恭喜你成为姑的Friend！\n\n" +
-            "在这里你可以随时跟我的AI替身闲聊（放心它不会瞎编），所有的聊天记录我都能看到，如果有值得回复的问题我会亲自回复\n\n" +
-            "商务合作留言请加 #合作 标签\n" +
-            "商品售后留言请加 #售后 标签\n\n" +
-            "常见问题：\n" +
-            "[如何直接联系玖姑本人？](https://baidu.com)\n" +
-            "[什么是火值？如何赚火值？](https://baidu.com)",
-        },
-        channelId: `${user.id}-jiugu`,
-        fromUserId: JIUGU_AI_ID,
-      },
-    });
+    user = await registerSuccessCallback({ phone })
   } else {
     user = await prisma.user.update({
       where: { id: account.user.id },
       data: {
         status: "online",
       },
-    });
+    })
   }
 
-  // 确保徽章
-  // honors 一开始没有
-  if (!user.honors?.length) {
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        honors: {
-          connectOrCreate: {
-            where: {
-              id: "NewUser",
-            },
-            create: {
-              id: "NewUser",
-            },
-          },
-        },
-      },
-    });
-  }
+  console.log("-- validated user: ", user)
 
-  // 确保房间
-  // const roomId = `${user.id}-jiugu`;
-  // await prisma.room.upsert({
-  //   where: { id: roomId },
-  //   create: { id: roomId },
-  //   update: {},
-  // });
-
-  console.log("-- validated user: ", user);
-
-  return user;
-};
+  return user
+}

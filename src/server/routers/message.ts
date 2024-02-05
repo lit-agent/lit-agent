@@ -1,26 +1,32 @@
-import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { clientMessageSlice } from "@/ds/user";
+import { createTRPCRouter, protectedProcedure } from "../trpc"
+import { clientMessageSlice } from "@/ds/user"
 
-import { pusherServer } from "@/lib/pusher";
-import { $Enums, UserType } from "@prisma/client";
-import { z } from "zod";
-import { MessageType } from "@/ds/message.base";
-import { SocketEventType } from "@/ds/socket";
-import TaskToStatus = $Enums.TaskToStatus;
-import { sendMessageSchema } from "@/ds/message";
+import { pusherServer } from "@/lib/pusher"
+import { $Enums, UserType } from "@prisma/client"
+import { z } from "zod"
+import { MessageType } from "@/ds/message.base"
+import { SocketEventType } from "@/ds/socket"
+import { sendMessageSchema } from "@/ds/message"
+import { getChatChannelId } from "@/lib/channel"
+import TaskToStatus = $Enums.TaskToStatus
+import { JiuguImage } from "@/lib/assets"
 
 export const messageRouter = createTRPCRouter({
   fetch: protectedProcedure
-    .input(z.object({ channelId: z.string() }))
+    .input(z.object({ targetUserId: z.string() }))
     .mutation(async ({ ctx, input }) => {
+      const { targetUserId } = input
       return ctx.prisma.message.findMany({
         where: {
-          OR: [{ channelId: "ALL" }, { channelId: input.channelId }],
+          OR: [
+            { channelId: "ALL" },
+            { channelId: getChatChannelId(ctx.user.id, input.targetUserId) },
+          ],
         },
         orderBy: { createdAt: "asc" },
         ...clientMessageSlice,
         //   todo: infinite
-      });
+      })
     }),
 
   list: protectedProcedure
@@ -33,18 +39,18 @@ export const messageRouter = createTRPCRouter({
         orderBy: { createdAt: "asc" },
         ...clientMessageSlice,
         //   todo: infinite
-      });
+      })
     }),
 
   execAction: protectedProcedure
     .input(sendMessageSchema)
     .mutation(async ({ ctx, input }) => {
-      const { channelId, taskId, body } = input;
+      const { channelId, taskId, body } = input
 
       const task = await ctx.prisma.taskFrom.findUniqueOrThrow({
         where: { id: taskId },
         include: { toUsers: true },
-      });
+      })
 
       const userJoinedTask = await ctx.prisma.taskTo.create({
         data: {
@@ -52,7 +58,7 @@ export const messageRouter = createTRPCRouter({
           taskId: task.id,
           status: TaskToStatus.finished,
         },
-      });
+      })
 
       const userMessage = await ctx.prisma.message.create({
         data: {
@@ -62,12 +68,8 @@ export const messageRouter = createTRPCRouter({
           // todo: toUsers
         },
         ...clientMessageSlice,
-      });
-      void pusherServer.trigger(
-        channelId,
-        SocketEventType.Message,
-        userMessage,
-      );
+      })
+      void pusherServer.trigger(channelId, SocketEventType.Message, userMessage)
 
       const aiMessage = await ctx.prisma.message.create({
         data: {
@@ -78,7 +80,7 @@ export const messageRouter = createTRPCRouter({
               create: {
                 id: "ai",
                 name: "玖姑的AI助手",
-                image: "/user-jiugu.png",
+                image: JiuguImage.src,
                 type: UserType.assistant,
               },
             },
@@ -90,27 +92,27 @@ export const messageRouter = createTRPCRouter({
           },
         },
         ...clientMessageSlice,
-      });
-      void pusherServer.trigger(channelId, SocketEventType.Message, aiMessage);
+      })
+      void pusherServer.trigger(channelId, SocketEventType.Message, aiMessage)
 
-      return { userMessage, aiMessage };
+      return { userMessage, aiMessage }
     }),
 
   send: protectedProcedure
     .input(sendMessageSchema)
     .mutation(async ({ ctx, input }) => {
-      const { channelId, ...others } = input;
+      const { channelId, ...others } = input
       const message = await ctx.prisma.message.create({
         data: {
           ...input,
           fromUserId: ctx.user.id,
         },
         ...clientMessageSlice,
-      });
+      })
 
-      console.log("-- trigger: ", { input, message });
-      void pusherServer.trigger(channelId, SocketEventType.Message, message);
+      console.log("-- trigger: ", { input, message })
+      void pusherServer.trigger(channelId, SocketEventType.Message, message)
 
-      return message;
+      return message
     }),
-});
+})

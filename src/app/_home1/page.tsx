@@ -1,21 +1,21 @@
-"use client";
+"use client"
 
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label"
+import { Badge } from "@/components/ui/badge"
 import {
   AwardFillIcon,
   BrandImage,
   DirectBoxSendIcon,
   FireIcon,
   RingIcon,
-} from "../../lib/assets";
-import { tasks } from "@/ds/system";
-import { PRIMARY_COLOR } from "@/const";
-import Image from "next/image";
-import { ArrowUpIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { signOut } from "next-auth/react";
-import { Dot } from "@/components/dot";
+} from "../../lib/assets"
+import { tasks } from "@/ds/system"
+import Image from "next/image"
+import { ArrowUpIcon } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { signOut } from "next-auth/react"
+import { Dot } from "@/components/dot"
+import { PRIMARY_COLOR } from "@/config"
 
 export default function Home1Page() {
   return (
@@ -122,5 +122,5 @@ export default function Home1Page() {
         </div>
       </div>
     </div>
-  );
+  )
 }

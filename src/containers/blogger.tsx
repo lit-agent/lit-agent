@@ -1,19 +1,19 @@
-import { ComponentPropsWithoutRef } from "react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { userJiugu } from "@/ds/mock";
-import Image from "next/image";
-import { MediasImage } from "@/lib/assets";
-import { Button } from "@/components/ui/button";
-import { TbMessageChatbot } from "react-icons/tb";
-import { cn } from "@/lib/utils";
+import { ComponentPropsWithoutRef } from "react"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Avatar, AvatarImage } from "@/components/ui/avatar"
+import Image from "next/image"
+import { MediasImage } from "@/lib/assets"
+import { Button } from "@/components/ui/button"
+import { TbMessageChatbot } from "react-icons/tb"
+import { cn } from "@/lib/utils"
+import { bloggerId } from "@/config"
 
 export const GiuguProfile = () => {
   return (
     <div className={"flex flex-col items-center gap-2 "}>
       <div className={"relative"}>
         <Avatar className={"h-14 w-14"}>
-          <AvatarImage src={userJiugu.image!} />
+          <AvatarImage src={bloggerId.image!} />
         </Avatar>
         <div
           className={
@@ -22,14 +22,14 @@ export const GiuguProfile = () => {
         />
       </div>
 
-      <div className={"text-2xl font-semibold"}>{userJiugu.name}</div>
+      <div className={"text-2xl font-semibold"}>{bloggerId.name}</div>
 
       <div>全网粉丝 62.2w</div>
 
       <Image src={MediasImage.src} alt={"medias"} width={120} height={30} />
     </div>
-  );
-};
+  )
+}
 
 export const BloggerContainer = ({
   children,
@@ -58,5 +58,5 @@ export const BloggerContainer = ({
         </div>
       </SheetContent>
     </Sheet>
-  );
-};
+  )
+}

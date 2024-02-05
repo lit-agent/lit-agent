@@ -1,15 +1,15 @@
-"use client";
+"use client"
 
-import { CoverMdImage } from "@/lib/assets";
-import Image from "next/image";
-import { GiuguProfile } from "@/containers/blogger";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Input } from "@/components/ui/input";
+import { CoverMdImage } from "@/lib/assets"
+import Image from "next/image"
+import { GiuguProfile } from "@/containers/blogger"
+import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Input } from "@/components/ui/input"
 
-import { z } from "zod";
-import { PHONE_REGEX, SMS_EXPIRE_MINUTES } from "@/const";
-import { useForm } from "react-hook-form";
+import { z } from "zod"
+import { PHONE_REGEX } from "@/const"
+import { useForm } from "react-hook-form"
 import {
   Form,
   FormControl,
@@ -18,15 +18,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
+} from "@/components/ui/form"
+import { zodResolver } from "@hookform/resolvers/zod"
 
-import "react-phone-number-input/style.css";
-import { toast } from "sonner";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { api } from "@/trpc/react";
-import { signIn } from "next-auth/react";
+import "react-phone-number-input/style.css"
+import { toast } from "sonner"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { api } from "@/trpc/react"
+import { signIn } from "next-auth/react"
+import { useAppData } from "@/hooks/use-app-data"
+import { useUserPreference } from "@/hooks/use-user-preference"
+import { SMS_EXPIRE_MINUTES } from "@/config"
 
 export default function GuidancePage() {
   // 1. Define your form.
@@ -36,7 +39,7 @@ export default function GuidancePage() {
       .regex(PHONE_REGEX, "请输入有效的手机号码！")
       .default("17766091857"),
     code: z.string().regex(/\d{6}/, "请输入有效的验证码！"),
-  });
+  })
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onChange", // ref: https://github.com/orgs/react-hook-form/discussions/9252#discussioncomment-3926048
@@ -44,69 +47,69 @@ export default function GuidancePage() {
       phone: "",
       code: "",
     },
-  });
+  })
 
   const {
     watch,
     formState: { errors },
-  } = form;
+  } = form
 
-  const [sendingSms, setSendingSms] = useState(false);
-  const sendSms = api.sms.send.useMutation();
-  const router = useRouter();
+  const [sendingSms, setSendingSms] = useState(false)
+  const sendSms = api.sms.send.useMutation()
+  const router = useRouter()
   const onRequestingVerifyCode = async (event) => {
-    event.preventDefault(); // 防止触发form的验证
-    setSendingSms(true);
+    event.preventDefault() // 防止触发form的验证
+    setSendingSms(true)
 
-    const phone = watch("phone");
-    console.log("-- phone: ", phone);
+    const phone = watch("phone")
+    console.log("-- phone: ", phone)
 
-    const res = await sendSms.mutateAsync({ phone });
-    console.log("-- res: ", res);
+    const res = await sendSms.mutateAsync({ phone })
+    console.log("-- res: ", res)
 
-    const msg = res?.SendStatusSet![0]!.Code;
+    const msg = res?.SendStatusSet![0]!.Code
     if (msg === "Ok") {
-      toast.success("验证码已发送！");
-      void router.push("/validation");
+      toast.success("验证码已发送！")
+      void router.push("/validation")
       // void location.replace("/validation");
-    } else toast.error(`验证码发送失败，原因：${msg}`);
+    } else toast.error(`验证码发送失败，原因：${msg}`)
 
-    setSendingSms(false);
-  };
+    setSendingSms(false)
+  }
 
-  const fetchUser = api.user.fetch.useMutation();
+  const fetchUser = api.user.fetch.useMutation()
 
-  const [submitting, setSubmitting] = useState(false);
+  const [submitting, setSubmitting] = useState(false)
 
   // 2. Define a submit handler.
   async function onSubmit() {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    setSubmitting(true);
+    setSubmitting(true)
 
-    const phone = watch("phone");
-    const code = watch("code");
+    const phone = watch("phone")
+    const code = watch("code")
     const res = await signIn("sms", {
       phone,
       code,
       redirect: false,
       // callbackUrl: '/', // 感谢: https://github.com/sidebase/nuxt-auth/issues/469#issuecomment-1661909912
-    });
-    console.log("-- res: ", res);
+    })
+    console.log("-- res: ", res)
 
     if (res?.ok) {
-      toast.success("登录成功！");
+      toast.success("登录成功！")
 
       // todo: directly got validated info from signIn
-      const user = await fetchUser.mutateAsync({ phone });
+      const user = await fetchUser.mutateAsync({ phone })
       // void router.push('/'); // todo: why 这个不行
-      void location.replace(user?.validated ? "/" : "/validation"); // 这个可以，ref: https://stackoverflow.com/a/77209617
-      return;
+      void location.replace(user?.validated ? "/" : "/validation") // 这个可以，ref: https://stackoverflow.com/a/77209617
+      return
     }
 
     // 仅在不成功的时候重新允许提交
-    setSubmitting(false);
-    toast.error(res?.error ?? "没有返回");
+    setSubmitting(false)
+    toast.error(res?.error ?? "没有返回")
   }
 
   return (
@@ -202,5 +205,5 @@ export default function GuidancePage() {
         </Sheet>
       </div>
     </div>
-  );
+  )
 }

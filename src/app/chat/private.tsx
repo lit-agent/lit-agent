@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { ClientMessage, MyUser } from "@/ds/user"
+import { BaseClientUser, ClientMessage, MyUser } from "@/ds/user"
 import { api } from "@/trpc/react"
 import { pusherClient } from "@/lib/pusher"
 import { SelectUser } from "@/components/select-user"
@@ -12,39 +12,43 @@ import { BloggerContainer } from "@/containers/blogger"
 import { IoMenuOutline } from "react-icons/io5"
 import { MessageType } from "@/ds/message.base"
 import { SocketEventType } from "@/ds/socket"
+import { useAppData } from "@/hooks/use-app-data"
+import { UserComp } from "@/components/user"
+import { UserType } from "@prisma/client"
+import { ChevronLeftIcon } from "lucide-react"
+import { getChatChannelId } from "@/lib/channel"
+import { last } from "lodash"
 
-export default function ChatPage({
+export default function PrivateChatPage({
   user,
-  channelId,
+  targetUser,
   withBack,
 }: {
   user: MyUser
-  channelId: string
+  targetUser: BaseClientUser
   withBack?: boolean
 }) {
   const refInput = useRef<HTMLInputElement>(null)
   const [messages, setMessages] = useState<ClientMessage[]>([])
   const fetchMessages = api.message.fetch.useMutation()
   const sendMessage = api.message.send.useMutation()
+  const { setTargetUserId, unreadMessages, setUnreadMessages } = useAppData()
 
   useEffect(() => {
-    if (!channelId) return
-
     fetchMessages
-      .mutateAsync({ channelId: channelId })
+      .mutateAsync({ targetUserId: targetUser.id })
       .then((messages) => setMessages(messages))
+  }, [])
 
-    pusherClient.subscribe(channelId)
+  const channelId = getChatChannelId(user.id, targetUser.id)
 
-    pusherClient.bind(SocketEventType.Message, (message: ClientMessage) => {
-      setMessages((messages) => [...messages, message])
-    })
-
-    return () => {
-      pusherClient.unsubscribe(channelId)
-      pusherClient.unbind(SocketEventType.Message)
+  useEffect(() => {
+    const newMessage = last(unreadMessages)
+    if (newMessage?.channelId === channelId) {
+      setMessages((messages) => [...messages, newMessage])
+      setUnreadMessages(unreadMessages.slice(0, unreadMessages.length - 1))
     }
-  }, [channelId])
+  }, [unreadMessages.length])
 
   const submitMessage = () => {
     if (!refInput.current || !user) return
@@ -52,18 +56,17 @@ export default function ChatPage({
     const text = refInput.current.value
     if (!text) return
 
-    console.log("-- sending: ", { text })
+    const channelId = getChatChannelId(user.id, targetUser.id)
+    console.log("-- sending: ", { channelId, text })
 
     // todo: 思考要不要做上屏优化
     sendMessage.mutate({
-      channelId: `${user!.id}-jiugu`,
+      channelId,
       body: { type: MessageType.Plain, title: text },
     })
 
     refInput.current.value = ""
   }
-
-  useEffect(() => {}, [channelId])
 
   const refBottom = useRef<HTMLDivElement>(null)
   useEffect(() => {
@@ -74,14 +77,29 @@ export default function ChatPage({
 
   return (
     <div className={"flex h-full flex-col overflow-hidden"}>
-      <SelectUser withBack={withBack} />
+      <div className={"w-full justify-between items-center flex"}>
+        <div className={"w-8"}>
+          {user.type === UserType.blogger && (
+            <ChevronLeftIcon
+              onClick={() => {
+                setTargetUserId(null)
+              }}
+            />
+          )}
+        </div>
+
+        <SelectUser user={user} />
+
+        {/*<UserComp user={targetUser} />*/}
+
+        <div className={"w-8"} />
+      </div>
 
       <div className={"flex grow flex-col gap-4 overflow-auto p-4"}>
         {messages.map((message, index) => (
           <MessageItem
             message={message}
             key={index}
-            channelId={channelId}
             taskId={message.task?.id}
             user={user}
           />
@@ -117,12 +135,10 @@ export default function ChatPage({
 }
 
 const MessageItem = ({
-  channelId,
   taskId,
   user,
   message,
 }: {
-  channelId: string
   taskId?: string
   user: MyUser
   message: ClientMessage
@@ -130,7 +146,7 @@ const MessageItem = ({
   return (
     <MessageContainer user={message.fromUser}>
       {/*<MessageMain channelId={channelId} taskId={taskId} message={message} />*/}
-      <MessageBody body={message.body} />
+      <MessageBody body={message.body} taskId={taskId} />
     </MessageContainer>
   )
 }

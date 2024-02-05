@@ -1,15 +1,14 @@
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import {
   type DefaultSession,
   getServerSession,
   type NextAuthOptions,
-} from "next-auth";
-import { prisma } from "@/server/db";
+} from "next-auth"
+import { prisma } from "@/server/db"
 
-import CredentialsProvider from "next-auth/providers/credentials";
-import { validateSms } from "@/server/sms";
-import { Prisma } from ".prisma/client";
-import { MyUser, userSlice } from "@/ds/user";
+import CredentialsProvider from "next-auth/providers/credentials"
+import { validateSms } from "@/server/sms"
+import { MyUser, userSlice } from "@/ds/user"
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -19,7 +18,7 @@ import { MyUser, userSlice } from "@/ds/user";
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: DefaultSession["user"] & MyUser;
+    user: DefaultSession["user"] & MyUser
   }
 
   // interface User {
@@ -60,14 +59,14 @@ export const authOptions: NextAuthOptions = {
      */
     session: async ({ session, user, token }) => {
       // console.log("-- session: ", { session, user, token });
-      const phone = session.user.name;
+      const phone = session.user.name
       if (phone) {
         const userInDB = await prisma.user.findUnique({
           where: {
             phone,
           },
           ...userSlice,
-        });
+        })
         // console.log("-- userInDB: ", userInDB);
 
         if (userInDB) {
@@ -77,9 +76,9 @@ export const authOptions: NextAuthOptions = {
               ...session.user,
               ...userInDB,
             },
-          };
+          }
           // console.log("-- new session: ", newSession);
-          return newSession;
+          return newSession
         } else {
           // 浏览器有账号，但是数据库没有，强制退出登录
           // session.error = "inactive user";
@@ -87,10 +86,10 @@ export const authOptions: NextAuthOptions = {
         }
       }
 
-      console.log("-- invalidate user");
-      token.iat = Date.now() / 1000;
+      console.log("-- invalidate user")
+      token.iat = Date.now() / 1000
 
-      return session;
+      return session
     },
   },
 
@@ -100,24 +99,22 @@ export const authOptions: NextAuthOptions = {
       id: "sms",
       name: "sms",
       credentials: {
-        phone: {
-          label: "Phone Number",
-          type: "text",
-          placeholder: "+123456789",
-        },
+        phone: { label: "Phone Number", placeholder: "+123456789" },
         code: { label: "Verification Code", type: "text" },
       },
 
       authorize: async (credentials) => {
-        console.log("-- authorize: ", credentials);
+        console.log("-- authorize: ", credentials)
         // Here you should verify the phone number and the code
         // For example, check against a database where you stored the code
-        if (!credentials) throw new Error("验证信息为空");
+        if (!credentials) throw new Error("验证信息为空！")
 
-        const { phone, code } = credentials;
-        const user = await validateSms({ phone, code });
-        if (!user) throw new Error("Phone number or code is incorrect");
-        return user;
+        const { phone, code } = credentials
+        if (!phone || !code) throw new Error("验证信息错误！")
+
+        const user = await validateSms({ phone, code })
+        if (!user) throw new Error("Phone number or code is incorrect")
+        return user
       },
     }),
 
@@ -135,12 +132,12 @@ export const authOptions: NextAuthOptions = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
-};
+}
 
 /**
  * Wrapper for `getServerSession` so that you don't need to import the `authOptions` in every file.
  *
  * @see https://next-auth.js.org/configuration/nextjs
  */
-export const getServerAuthSession = () => getServerSession(authOptions);
-export const getServerUser = async () => (await getServerAuthSession())?.user;
+export const getServerAuthSession = () => getServerSession(authOptions)
+export const getServerUser = async () => (await getServerAuthSession())?.user

@@ -1,34 +1,34 @@
-"use client";
+"use client"
 
-import { api } from "@/trpc/react";
-import Image from "next/image";
-import { PropsWithChildren } from "react";
-import { FireIcon } from "@/lib/assets";
-import { PRIMARY_COLOR } from "@/const";
-import { Badge } from "@/components/ui/badge";
-import { ArrowRightIcon, StarIcon } from "lucide-react";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { MyMarkdown } from "@/containers/markdown";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Separator } from "@/components/ui/separator";
-import { AvatarFallback } from "@radix-ui/react-avatar";
+import { api } from "@/trpc/react"
+import Image from "next/image"
+import { PropsWithChildren } from "react"
+import { FireIcon } from "@/lib/assets"
+import { Badge } from "@/components/ui/badge"
+import { ArrowRightIcon, StarIcon } from "lucide-react"
+import { Avatar, AvatarImage } from "@/components/ui/avatar"
+import { MyMarkdown } from "@/containers/markdown"
+import { AspectRatio } from "@/components/ui/aspect-ratio"
+import { Separator } from "@/components/ui/separator"
+import { AvatarFallback } from "@radix-ui/react-avatar"
+import { PRIMARY_COLOR } from "@/config"
 
 const Card = ({ children }: PropsWithChildren) => (
   <div className={"m-2 bg-[#2A2435]"}>
     <div className={"rounded p-2 bg-[#3D3847]"}>{children}</div>
   </div>
-);
+)
 
 export default function ProductPage() {
-  const { data: products = [] } = api.product.list.useQuery();
+  const { data: products = [] } = api.product.list.useQuery()
 
-  console.log("-- products: ", products);
+  console.log("-- products: ", products)
 
-  const product = products[0];
+  const product = products[0]
 
-  if (!product) return "商品不存在！";
+  if (!product) return "商品不存在！"
 
-  const surplus = product.total - product.toUsers.length;
+  const surplus = product.total - product.toUsers.length
 
   return (
     <div className={"flex flex-col"}>
@@ -150,5 +150,5 @@ export default function ProductPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

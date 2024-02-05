@@ -1,11 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client"
 
-import { env } from "@/env";
-import { DEFAULT_ROOM_ID, JIUGU_AI_ID } from "@/const";
+import { env } from "@/env"
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
+  prisma: PrismaClient | undefined
+}
 
 export const prisma =
   globalForPrisma.prisma ??
@@ -18,6 +17,6 @@ export const prisma =
             "warn",
           ]
         : ["error"],
-  });
+  })
 
-if (env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+if (env.NODE_ENV !== "production") globalForPrisma.prisma = prisma

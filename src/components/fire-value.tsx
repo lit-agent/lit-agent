@@ -1,5 +1,7 @@
-import { PRIMARY_COLOR } from "@/const";
-import { FireIcon } from "@/lib/assets";
+"use client"
+
+import { FireIcon } from "@/lib/assets"
+import { PRIMARY_COLOR } from "@/config"
 
 export const Hot = ({ value }: { value: number }) => (
   <div className={"text-primary flex items-center"} color={PRIMARY_COLOR}>
@@ -9,4 +11,4 @@ export const Hot = ({ value }: { value: number }) => (
 
     {value}
   </div>
-);
+)

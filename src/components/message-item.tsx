@@ -4,7 +4,7 @@ import { BsThreeDots } from "react-icons/bs"
 import { BaseClientUser, ClientMessage } from "src/ds/user"
 import { MessageType } from "@/ds/message.base"
 import { cn } from "src/lib/utils"
-import { PropsWithChildren, useState } from "react"
+import { HTMLAttributes, PropsWithChildren, useState } from "react"
 import { Badge } from "src/components/ui/badge"
 import { BloggerContainer } from "src/containers/blogger"
 import { Checkbox } from "src/components/ui/checkbox"
@@ -26,17 +26,20 @@ import RenderTask from "@/components/render-task"
 export interface IMessageContainer {
   user: BaseClientUser
   body: IMessageBody
+  taskId?: string
   onValueChange?: (v: any) => void
 }
 
 export const MessageContainer = ({
   user,
+  className,
   children,
-}: { user: BaseClientUser } & PropsWithChildren) => {
+  ...props
+}: { user: BaseClientUser } & HTMLAttributes<HTMLDivElement>) => {
   // console.log("-- user in chat item container: ", user);
 
   return (
-    <div className={"relative flex gap-2 "}>
+    <div className={cn("relative flex gap-2 ", className)} {...props}>
       {user.type === "user" ? (
         <UserComp user={user} />
       ) : (
@@ -66,10 +69,15 @@ export const MessageContainer = ({
   )
 }
 
-export function Message({ user, body, onValueChange }: IMessageContainer) {
+export function Message({
+  user,
+  body,
+  taskId,
+  onValueChange,
+}: IMessageContainer) {
   return (
     <MessageContainer user={user}>
-      <MessageBody body={body} onValueChange={onValueChange} />
+      <MessageBody body={body} taskId={taskId} onValueChange={onValueChange} />
     </MessageContainer>
   )
 }
@@ -131,7 +139,7 @@ export const MessageBody = ({
       )
 
     case MessageType.Task:
-      return taskId ? <RenderTask taskId={taskId} /> : null
+      return taskId ? <RenderTask taskId={taskId} /> : "no task id"
 
     case MessageType.GroupLink:
     // return (

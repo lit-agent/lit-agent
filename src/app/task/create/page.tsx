@@ -28,13 +28,14 @@ import Link from "next/link"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { TextChoicesInput } from "@/components/input-choices"
-import { useUserData } from "@/hooks/use-user-data"
+import { useUserPreference } from "@/hooks/use-user-preference"
 
 const schema = createRequirementSchema
 const FINISHED = 3
 
 export default function CreateTaskWithUserPage() {
-  const { preferredMessageType: type, setPreferredMessageType } = useUserData()
+  const { preferredMessageType: type, setPreferredMessageType } =
+    useUserPreference()
   // console.log("-- schema: ", { schema })
 
   // 1. Define your form.

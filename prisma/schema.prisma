@@ -81,6 +81,24 @@ model User {
 
   // actions  UserAction[]
   taskChoices TaskChoice[]
+
+  following UserFollow[] @relation("following")
+  followedBy UserFollow[] @relation("followedBy")
+
+}
+
+model UserFollow {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  followedBy   User   @relation("followedBy",fields: [followedById], references: [id])
+  followedById String
+
+  following  User   @relation("following", fields: [followingId], references: [id])
+  followingId String
+
+  @@unique([followedById, followingId])
 }
 
 /// other
@@ -269,7 +287,7 @@ model TaskFrom {
   updatedAt DateTime @updatedAt
 
   /// [MessageBody]
-  body  Json
+  body Json
 
   value     Int // 每个任务价值多少火币
   startTime DateTime   @default(now())

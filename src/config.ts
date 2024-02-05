@@ -1,15 +1,53 @@
 import { BgModel } from "@/ds/system"
 import { IMessageContainer } from "@/components/message-item"
-import { userJiugu, userJiuguAI } from "@/ds/mock"
 import { MessageType } from "@/ds/message.base"
+import { BaseClientUser } from "@/ds/user"
+import {
+  Choice1Image,
+  Choice2Image,
+  HadingImage,
+  JiuguImage,
+  SampleUser1Image,
+} from "@/lib/assets"
 
-export const bloggerPhone = "17766091857"
+export const PRIMARY_COLOR = "hsla(17, 100%, 64%, 1)"
+export const SMS_EXPIRE_MINUTES = 10
+export const USER_AI_FOR_ALL_ID = "ai"
+export const USER_JIUGU_AI_ID = "jiugu-ai"
+export const USER_JIUGU_ID = "jiugu"
+export const ADMIN_PHONE = "17766091857"
 
 export const bgModel: BgModel = "plain"
 
+export const userJiuguAI: BaseClientUser = {
+  id: USER_JIUGU_AI_ID,
+  name: "玖姑的AI助理",
+  image: JiuguImage.src,
+  type: "assistant",
+}
+export const bloggerId: BaseClientUser = {
+  id: "jiugu",
+  name: "玖姑",
+  image: JiuguImage.src,
+  type: "blogger",
+}
+export const userHading: BaseClientUser = {
+  id: "hading",
+  name: "哈丁",
+  image: HadingImage.src,
+  type: "user",
+}
+export const userSample: BaseClientUser = {
+  id: "demo",
+  name: "demo",
+  image: SampleUser1Image.src,
+  type: "user",
+}
+export const genUsers = (n: number) => new Array(n).fill(userSample)
+export const sampleImageItems = [Choice1Image.src, Choice2Image.src]
 export const guidanceItems: IMessageContainer[] = [
   {
-    user: userJiugu,
+    user: bloggerId,
     body: {
       type: MessageType.Plain,
       title: "Hello，我是玖姑。欢迎加入我的朋友圈。",
@@ -17,7 +55,7 @@ export const guidanceItems: IMessageContainer[] = [
   },
 
   {
-    user: userJiugu,
+    user: bloggerId,
     body: {
       type: MessageType.Plain,
       title:

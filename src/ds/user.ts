@@ -1,18 +1,18 @@
-import { Prisma } from "@prisma/client";
-import UserGetPayload = Prisma.UserGetPayload;
-import MessageGetPayload = Prisma.MessageGetPayload;
-import validator = Prisma.validator;
-import MessageDefaultArgs = Prisma.MessageDefaultArgs;
-import UserDefaultArgs = Prisma.UserDefaultArgs;
+import { Prisma } from "@prisma/client"
+import UserGetPayload = Prisma.UserGetPayload
+import MessageGetPayload = Prisma.MessageGetPayload
+import validator = Prisma.validator
+import MessageDefaultArgs = Prisma.MessageDefaultArgs
+import UserDefaultArgs = Prisma.UserDefaultArgs
 
 export type BaseClientUser = UserGetPayload<{
   select: {
-    id: true;
-    name: true;
-    image: true;
-    type: true;
-  };
-}>;
+    id: true
+    name: true
+    image: true
+    type: true
+  }
+}>
 
 export const clientMessageSlice = validator<MessageDefaultArgs>()({
   include: {
@@ -23,14 +23,24 @@ export const clientMessageSlice = validator<MessageDefaultArgs>()({
       },
     },
   },
-});
+})
 
-export type ClientMessage = MessageGetPayload<typeof clientMessageSlice>;
+export type ClientMessage = MessageGetPayload<typeof clientMessageSlice>
 
 export const userSlice = validator<UserDefaultArgs>()({
   include: {
     honors: true,
     fromTasks: true,
+    following: {
+      include: {
+        followedBy: true,
+      },
+    },
+    followedBy: {
+      include: {
+        following: true,
+      },
+    },
     toTasks: {
       include: {
         task: {
@@ -46,5 +56,5 @@ export const userSlice = validator<UserDefaultArgs>()({
     toProducts: true,
     bills: true,
   },
-});
-export type MyUser = UserGetPayload<typeof userSlice>;
+})
+export type MyUser = UserGetPayload<typeof userSlice>
