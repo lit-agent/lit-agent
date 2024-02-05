@@ -1,30 +1,34 @@
 import { prisma } from "@/server/db"
-import { User, UserType } from "@prisma/client"
-import { USER_AI_FOR_ALL_ID, USER_JIUGU_AI_ID } from "@/config"
+import { UserType } from "@prisma/client"
+
+import { ADMIN_PHONE, USER_JIUGU_AI_ID } from "@/const"
 
 const init = async () => {
   console.log("⏰ initializing database...")
 
-  let id = USER_AI_FOR_ALL_ID
-  let type: UserType = "blogger"
-  let data: Partial<User> = {
-    type,
-    name: "AI",
+  const data = {
+    type: UserType.assistant,
+    name: "玖姑的AI助手",
   }
   await prisma.user.upsert({
-    where: { id },
-    create: { id, ...data },
-    update: { ...data },
+    where: { id: USER_JIUGU_AI_ID },
+    create: {
+      id: USER_JIUGU_AI_ID,
+      ...data,
+    },
+    update: data,
   })
 
-  id = USER_JIUGU_AI_ID
-  type = "assistant"
-  data.type = type
-  data.name = "玖姑的AI助手"
-  await prisma.user.upsert({
-    where: { id },
-    create: { id, ...data },
-    update: { ...data },
+  const users = await prisma.user.findMany()
+  const adminUser = users.find((u) => u.phone === ADMIN_PHONE)!
+  await prisma.follow.deleteMany()
+  await prisma.follow.createMany({
+    data: users
+      .filter((u) => u.id !== adminUser.id)
+      .map((u) => ({
+        followingId: u.id,
+        followedById: adminUser.id,
+      })),
   })
 
   console.log("✅ initialized database.")

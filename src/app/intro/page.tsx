@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Input } from "@/components/ui/input"
 
 import { z } from "zod"
-import { PHONE_REGEX } from "@/const"
+import { PHONE_REGEX, SMS_EXPIRE_MINUTES } from "@/const"
 import { useForm } from "react-hook-form"
 import {
   Form,
@@ -29,7 +29,6 @@ import { api } from "@/trpc/react"
 import { signIn } from "next-auth/react"
 import { useAppData } from "@/hooks/use-app-data"
 import { useUserPreference } from "@/hooks/use-user-preference"
-import { SMS_EXPIRE_MINUTES } from "@/config"
 
 export default function GuidancePage() {
   // 1. Define your form.
@@ -172,7 +171,10 @@ export default function GuidancePage() {
                         <Button
                           onClick={onRequestingVerifyCode}
                           disabled={
-                            !watch("phone") || !!errors.phone || sendingSms
+                            !watch("phone") ||
+                            !!errors.phone ||
+                            sendingSms ||
+                            submitting
                           }
                         >
                           获取验证码

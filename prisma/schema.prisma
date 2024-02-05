@@ -38,69 +38,6 @@ generator json {
 
 /// todo: user action
 
-/// most important
-model User {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // auth
-  accounts      Account[]
-  sessions      Session[]
-  emailVerified DateTime?
-  phoneVerified DateTime?
-  validated     Boolean?  @default(false) // 是否通过验证
-
-  // basic info
-  name   String?
-  email  String?    @unique
-  phone  String?    @unique
-  image  String?
-  status UserStatus @default(offline)
-  type   UserType   @default(user)
-
-  // balance
-  currentBalance Int @default(0)
-  historyBalance Int @default(0)
-
-  // platform
-  honors Honor[]
-
-  // chat
-  sentMessages     Message[] @relation("from")
-  receivedMessages Message[] @relation("to")
-
-  // tasks
-  fromTasks TaskFrom[]
-  toTasks   TaskTo[]
-
-  // products
-  fromProducts ProductFrom[]
-  toProducts   ProductTo[]
-  bills        Bill[]
-
-  // actions  UserAction[]
-  taskChoices TaskChoice[]
-
-  following UserFollow[] @relation("following")
-  followedBy UserFollow[] @relation("followedBy")
-
-}
-
-model UserFollow {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  followedBy   User   @relation("followedBy",fields: [followedById], references: [id])
-  followedById String
-
-  following  User   @relation("following", fields: [followingId], references: [id])
-  followingId String
-
-  @@unique([followedById, followingId])
-}
-
 /// other
 
 // for auth
@@ -139,6 +76,22 @@ model Bill {
   productId String
 
   // userActions UserAction[]
+}
+
+model Follow {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  followedBy   User   @relation("followedBy", fields: [followedById], references: [id])
+  followedById String
+
+  following   User   @relation("following", fields: [followingId], references: [id])
+  followingId String
+
+  messages Message[]
+
+  @@unique([followedById, followingId])
 }
 
 // 用户徽章，每个徽章可以有自己的一些信息，通过 id 与程序的UI对接
@@ -186,6 +139,9 @@ model Message {
   refer    Message?  @relation("refer", fields: [referId], references: [id])
   referId  String?
   referred Message[] @relation("refer")
+
+  follow   Follow?   @relation(fields: [followId], references: [id])
+  followId String?
 }
 
 // // for test
@@ -332,6 +288,54 @@ enum TaskToStatus {
   finished // 默认完成
   goon
   cancelled
+}
+
+/// most important
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // auth
+  accounts      Account[]
+  sessions      Session[]
+  emailVerified DateTime?
+  phoneVerified DateTime?
+  validated     Boolean?  @default(false) // 是否通过验证
+
+  // basic info
+  name   String?
+  email  String?    @unique
+  phone  String?    @unique
+  image  String?
+  status UserStatus @default(offline)
+  type   UserType   @default(user)
+
+  // balance
+  currentBalance Int @default(0)
+  historyBalance Int @default(0)
+
+  // platform
+  honors Honor[]
+
+  // chat
+  sentMessages     Message[] @relation("from")
+  receivedMessages Message[] @relation("to")
+
+  // tasks
+  fromTasks TaskFrom[]
+  toTasks   TaskTo[]
+
+  // products
+  fromProducts ProductFrom[]
+  toProducts   ProductTo[]
+  bills        Bill[]
+
+  // actions  UserAction[]
+  taskChoices TaskChoice[]
+
+  following  Follow[] @relation("following")
+  followedBy Follow[] @relation("followedBy")
 }
 
 // model UserAction {

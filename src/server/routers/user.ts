@@ -32,7 +32,7 @@ export const userRouter = createTRPCRouter({
   followUser: protectedProcedure
     .input(z.object({ targetUserId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.prisma.userFollow.upsert({
+      return ctx.prisma.follow.upsert({
         where: {
           followedById_followingId: {
             followingId: ctx.user.id,

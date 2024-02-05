@@ -4,7 +4,8 @@ import { getTimeS } from "../lib/datetime"
 import { prisma } from "@/server/db"
 import { MessageType } from "@/ds/message.base"
 import { registerSuccessCallback } from "@/server/user"
-import { SMS_EXPIRE_MINUTES, USER_JIUGU_AI_ID } from "@/config"
+
+import { SMS_EXPIRE_MINUTES, USER_JIUGU_AI_ID } from "@/const"
 
 const SmsClient = tencentcloud.sms.v20210111.Client
 

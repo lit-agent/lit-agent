@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input"
 import { useAppData } from "@/hooks/use-app-data"
 import PrivateChatPage from "@/app/chat/private"
 import { UserType } from "@prisma/client"
-import { getFollowRelativeUsers } from "@/lib/follow"
+import { getFollows } from "@/lib/follow"
+import { last } from "lodash"
 
 export default function HomeChatPage({ user }: { user: MyUser }) {
   const { targetUserId, setTargetUserId } = useAppData()
@@ -16,7 +17,7 @@ export default function HomeChatPage({ user }: { user: MyUser }) {
     { enabled: !!targetUserId },
   )
 
-  console.log("-- HomeChatPage: ", { targetUserId, targetUser })
+  console.log("-- HomeChatPage: ", { user, targetUserId, targetUser })
 
   if (user.type === UserType.blogger && !targetUserId) {
     return (
@@ -25,15 +26,20 @@ export default function HomeChatPage({ user }: { user: MyUser }) {
           <Input type={"search"} className={"bg-gray-700"} />
         </div>
 
-        {getFollowRelativeUsers(user).map((user) => (
+        {getFollows(user).map((follow) => (
           <div
-            key={user.id}
+            key={follow.id}
             onClick={() => {
-              setTargetUserId(user.id)
+              setTargetUserId(follow.targetUser.id)
             }}
           >
-            <MessageContainer user={user} className={"p-4 border-b"}>
-              todo: 暂无消息
+            <MessageContainer
+              user={follow.targetUser}
+              className={"p-4 border-b"}
+            >
+              {last(follow.messages)
+                ? JSON.stringify(last(follow.messages)!.body)
+                : "暂无消息！"}
             </MessageContainer>
           </div>
         ))}

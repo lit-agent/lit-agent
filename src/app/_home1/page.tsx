@@ -9,13 +9,14 @@ import {
   FireIcon,
   RingIcon,
 } from "../../lib/assets"
-import { tasks } from "@/ds/system"
 import Image from "next/image"
 import { ArrowUpIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "next-auth/react"
 import { Dot } from "@/components/dot"
-import { PRIMARY_COLOR } from "@/config"
+
+import { PRIMARY_COLOR } from "@/const"
+import { tasks } from "@/config"
 
 export default function Home1Page() {
   return (

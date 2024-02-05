@@ -1,7 +1,8 @@
 import { createBearStore } from "@/lib/create-bear-store"
 import { AppTab } from "@/components/app-tab"
 import { ClientMessage } from "@/ds/user"
-import { USER_AI_FOR_ALL_ID } from "@/config"
+
+import { USER_AI_FOR_ALL_ID } from "@/const"
 
 const useNavBear = createBearStore<AppTab>()("appTab", AppTab.chat, true)
 

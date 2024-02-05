@@ -1,7 +1,8 @@
 import { prisma } from "@/server/db"
 import { MessageType } from "@/ds/message.base"
 import { getChatChannelId } from "@/lib/channel"
-import { ADMIN_PHONE, USER_JIUGU_AI_ID } from "@/config"
+
+import { ADMIN_PHONE, USER_JIUGU_AI_ID } from "@/const"
 
 export const registerSuccessCallback = async ({ phone }: { phone: string }) => {
   //   创建用户
@@ -41,7 +42,7 @@ export const validationSuccessCallback = async (userId: string) => {
   const targetUserId = targetUser.id
 
   console.log("-- 正在关注博主")
-  prisma.userFollow.create({
+  prisma.follow.create({
     data: {
       followingId: userId,
       followedById: targetUserId,

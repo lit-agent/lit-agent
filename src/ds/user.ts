@@ -33,12 +33,16 @@ export const userSlice = validator<UserDefaultArgs>()({
     fromTasks: true,
     following: {
       include: {
+        following: true,
         followedBy: true,
+        messages: true,
       },
     },
     followedBy: {
       include: {
         following: true,
+        followedBy: true,
+        messages: true,
       },
     },
     toTasks: {

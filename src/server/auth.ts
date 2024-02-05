@@ -9,6 +9,16 @@ import { prisma } from "@/server/db"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { validateSms } from "@/server/sms"
 import { MyUser, userSlice } from "@/ds/user"
+import { DefaultJWT } from "next-auth/jwt"
+
+// ref: https://next-auth.js.org/getting-started/typescript#submodules
+declare module "next-auth/jwt" {
+  /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
+  interface JWT {
+    /** OpenID ID Token */
+    phone: string | null
+  }
+}
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -24,6 +34,7 @@ declare module "next-auth" {
   // interface User {
   //   // ...other properties
   //   // role: UserRole;
+  //   phone?: string
   // }
 }
 
@@ -43,11 +54,20 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
-    // jwt: ({token, user}) => {
-    //   console.log("-- jwt: ", props);
-    //
-    //   return props.token;
-    // },
+    jwt: async ({ token, user, session }) => {
+      const userInDB = await prisma.user.findUnique({
+        where: { id: token.sub },
+      })
+      if (userInDB) {
+        console.log("-- add phone")
+        token.phone = userInDB.phone
+      } else {
+        console.warn("-- invalidate user")
+        token.iat = Date.now() / 1000
+      }
+      console.log("-- jwt: ", { token, user, userInDB, session })
+      return token
+    },
     /**
      *  参考：https://stackoverflow.com/a/77018015
      *   session: {
@@ -59,36 +79,26 @@ export const authOptions: NextAuthOptions = {
      */
     session: async ({ session, user, token }) => {
       // console.log("-- session: ", { session, user, token });
-      const phone = session.user.name
+      const phone = token.phone
+
+      let userInDB
       if (phone) {
-        const userInDB = await prisma.user.findUnique({
+        userInDB = await prisma.user.findUnique({
           where: {
             phone,
           },
           ...userSlice,
         })
-        // console.log("-- userInDB: ", userInDB);
 
         if (userInDB) {
-          const newSession = {
-            ...session,
-            user: {
-              ...session.user,
-              ...userInDB,
-            },
+          session.user = {
+            ...session.user,
+            ...userInDB,
           }
-          // console.log("-- new session: ", newSession);
-          return newSession
-        } else {
-          // 浏览器有账号，但是数据库没有，强制退出登录
-          // session.error = "inactive user";
-          // return null; // https://github.com/nextauthjs/next-auth/discussions/4687#discussioncomment-4869143
         }
       }
 
-      console.log("-- invalidate user")
-      token.iat = Date.now() / 1000
-
+      console.log("-- session: ", { phone, user, userInDB, session })
       return session
     },
   },

@@ -1,21 +1,17 @@
-import { BgModel } from "@/ds/system"
 import { IMessageContainer } from "@/components/message-item"
 import { MessageType } from "@/ds/message.base"
 import { BaseClientUser } from "@/ds/user"
 import {
   Choice1Image,
   Choice2Image,
+  FireIcon,
   HadingImage,
   JiuguImage,
+  Menu1Icon,
+  Menu3Icon,
   SampleUser1Image,
 } from "@/lib/assets"
-
-export const PRIMARY_COLOR = "hsla(17, 100%, 64%, 1)"
-export const SMS_EXPIRE_MINUTES = 10
-export const USER_AI_FOR_ALL_ID = "ai"
-export const USER_JIUGU_AI_ID = "jiugu-ai"
-export const USER_JIUGU_ID = "jiugu"
-export const ADMIN_PHONE = "17766091857"
+import { BgModel, USER_JIUGU_AI_ID } from "@/const"
 
 export const bgModel: BgModel = "plain"
 
@@ -133,4 +129,14 @@ export const guidanceItems: IMessageContainer[] = [
       ],
     },
   },
+]
+export const navs = [
+  { Icon: Menu1Icon, alt: "1" },
+  { Icon: FireIcon, alt: "2" },
+  { Icon: Menu3Icon, alt: "3" },
+]
+export const tasks = [
+  { name: "在途任务", cnt: 6, hasReminder: true },
+  { name: "完成的任务", cnt: 11 },
+  { name: "失败的任务", cnt: 11 },
 ]

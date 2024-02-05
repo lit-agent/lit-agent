@@ -11,7 +11,8 @@ import { MyMarkdown } from "@/containers/markdown"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import { Separator } from "@/components/ui/separator"
 import { AvatarFallback } from "@radix-ui/react-avatar"
-import { PRIMARY_COLOR } from "@/config"
+
+import { PRIMARY_COLOR } from "@/const"
 
 const Card = ({ children }: PropsWithChildren) => (
   <div className={"m-2 bg-[#2A2435]"}>
