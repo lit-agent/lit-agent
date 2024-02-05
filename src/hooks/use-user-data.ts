@@ -8,7 +8,7 @@ const useTargetUserBear = createBearStore<User | null>()(
   true,
 );
 
-export const useUser = () => {
+export const useUserData = () => {
   const session = useSession();
   // console.log("-- session: ", session);
   return {

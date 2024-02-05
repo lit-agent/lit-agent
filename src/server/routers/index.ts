@@ -1,7 +1,6 @@
 import { createTRPCRouter } from "@/server/trpc";
 import { smsRouter } from "@/server/routers/sms";
 import { userRouter } from "@/server/routers/user";
-import { postRouter } from "@/server/routers/post";
 import { messageRouter } from "@/server/routers/message";
 import { taskRouter } from "@/server/routers/task";
 import { productRouter } from "./product";
@@ -18,8 +17,6 @@ export const appRouter = createTRPCRouter({
   message: messageRouter,
   task: taskRouter,
   product: productRouter,
-
-  send: postRouter,
 });
 
 // export type definition of API

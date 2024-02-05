@@ -1,5 +1,3 @@
-"use client";
-
 import { RiFireFill } from "react-icons/ri";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { userHading } from "@/ds/mock";
@@ -9,13 +7,11 @@ import Link from "next/link";
 import { Label } from "../../components/ui/label";
 import { BaseClientUser, MyUser } from "@/ds/user";
 import { last } from "lodash";
+import { getServerAuthSession, getServerUser } from "@/server/auth";
 
-export default function TaskPage({
-  params: { user },
-}: {
-  params: { user: MyUser };
-}) {
+export default async function TaskPage({}: {}) {
   const userNew = userHading;
+  const user = await getServerUser();
 
   // todo: db data
   const data = {
@@ -23,8 +19,10 @@ export default function TaskPage({
     capital: 1093,
     ranking: 355,
     // todo: 需要更好的数据结构
-    finishedUsers: Array(132).fill(userHading),
+    finishedUsers: Array(10).fill(userHading),
   };
+
+  console.log("-- task page: ", { user, data });
 
   return (
     <div className={"bg-[#282232] p-2 min-h-full"}>
@@ -86,7 +84,7 @@ export default function TaskPage({
         </div>
       </div>
 
-      {user.toTasks.map((taskRelation, index) => (
+      {user?.toTasks.map((taskRelation, index) => (
         <Link
           href={`/task/${taskRelation.task.id}`}
           key={index}

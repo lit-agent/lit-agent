@@ -268,14 +268,14 @@ model TaskFrom {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  title   String
+  title String
   /// [MessageBody]
-  body Json
+  body  Json
 
   value     Int // 每个任务价值多少火币
-  startTime DateTime @default(now())
+  startTime DateTime   @default(now())
   endTime   DateTime
-  status TaskStatus
+  status    TaskStatus
 
   fromUser   User     @relation(fields: [fromUserId], references: [id], onDelete: Cascade)
   fromUserId String
@@ -283,7 +283,7 @@ model TaskFrom {
 
   // 包含发送到chat页的welcome，以及用户的评论
   messages Message[]
-  choices TaskChoice[]
+  choices  TaskChoice[]
 }
 
 enum TaskStatus {
@@ -316,8 +316,6 @@ enum TaskToStatus {
   goon
   cancelled
 }
-
-
 
 // model UserAction {
 //   id        String   @id @default(cuid())

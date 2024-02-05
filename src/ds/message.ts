@@ -31,6 +31,7 @@ export const messageBodySchema = z.discriminatedUnion("type", [
   // 文字选择题
   z.object({
     type: z.literal(MessageType.TextChoices),
+    title: z.string().optional(),
     questions: z.array(z.string()).min(2),
     answer: z.array(z.number()).min(2).optional(), // 可以没有答案
   }),
@@ -38,13 +39,20 @@ export const messageBodySchema = z.discriminatedUnion("type", [
   // 图片选择题
   z.object({
     type: z.literal(MessageType.ImageChoices),
+    title: z.string().optional(),
     questions: z.array(z.string()).min(2),
     answer: z.array(z.number()).min(2).optional(), // 可以没有答案
   }),
 
+  // todo: create task 和 message 有区别
   // 邀请之类
+  z.object({
+    type: z.literal(MessageType.GroupLink),
+    title: z.string().optional(),
+    groupId: z.string(),
+  }),
+
   // todo: 需要细化
-  z.object({ type: z.literal(MessageType.GroupLink) }),
   z.object({ type: z.literal(MessageType.ProductLink) }),
   z.object({ type: z.literal(MessageType.Images) }),
   z.object({ type: z.literal(MessageType.Sheet) }),

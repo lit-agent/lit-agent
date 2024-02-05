@@ -82,13 +82,11 @@ export const messageRouter = createTRPCRouter({
               },
             },
           },
-          body: [
-            {
-              type: MessageType.Plain,
-              content: "啊哈！\n你也选了这个？\n来群里看看别人都选了什么吧！",
-            },
-            { type: MessageType.GroupLink, content: task },
-          ],
+          body: {
+            type: MessageType.GroupLink,
+            title: "啊哈！\n你也选了这个？\n来群里看看别人都选了什么吧！",
+            groupId: task.id,
+          },
         },
         ...clientMessageSlice,
       });

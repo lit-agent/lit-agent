@@ -5,19 +5,13 @@ import { ClientMessage, MyUser } from "@/ds/user";
 import { api } from "@/trpc/react";
 import { pusherClient } from "@/lib/pusher";
 import { SelectUser } from "@/components/select-user";
-import { MessageContainer, MessageBody } from "@/components/message-item";
+import { MessageBody, MessageContainer } from "@/components/message-item";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { BloggerContainer } from "@/containers/blogger";
 import { IoMenuOutline } from "react-icons/io5";
-import { $Enums } from "@prisma/client";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { MessageType } from "@/ds/message";
 import { SocketEventType } from "@/ds/socket";
-import TaskType = $Enums.TaskType;
 
 export default function ChatPage({
   params: { user, channelId, withBack },
@@ -63,7 +57,7 @@ export default function ChatPage({
     // todo: 思考要不要做上屏优化
     sendMessage.mutate({
       channelId: `${user!.id}-jiugu`,
-      body: [{ type: MessageType.Plain, content: text }],
+      body: { type: MessageType.Plain, detail: text },
     });
 
     refInput.current.value = "";
@@ -135,93 +129,91 @@ const MessageItem = ({
 }) => {
   return (
     <MessageContainer user={message.fromUser}>
-      <MessageMain channelId={channelId} taskId={taskId} message={message} />
-      {message.body.map((segment, index) => (
-        <MessageBody body={segment} key={index} />
-      ))}
+      {/*<MessageMain channelId={channelId} taskId={taskId} message={message} />*/}
+      <MessageBody body={message.body} />
     </MessageContainer>
   );
 };
-
-const MessageMain = ({
-  channelId,
-  taskId,
-  message,
-}: {
-  channelId: string;
-  taskId?: string;
-  message: ClientMessage;
-}) => {
-  const [chosen, setChosen] = useState<string | undefined>(undefined);
-  const execAction = api.message.execAction.useMutation();
-  if (!message.task) return;
-
-  return (
-    <div>
-      <div>{message.task.title}</div>
-
-      {message.task.type === TaskType.broadcast && (
-        <div>{message.task.content}</div>
-      )}
-
-      {message.task.type === TaskType.textChoices && (
-        <>
-          <RadioGroup
-            className={"gap-0"}
-            value={chosen}
-            onValueChange={setChosen}
-          >
-            {message.task.choices.map((choice, index) => (
-              <div
-                key={index}
-                className="flex items-center space-x-2 hover:bg-gray-900 px-2 rounded-lg"
-              >
-                <RadioGroupItem
-                  value={choice.id}
-                  id={choice.id}
-                  className={"shrink-0"}
-                />
-                <Label
-                  htmlFor={choice.id}
-                  className={cn(
-                    "grow p-2 rounded",
-                    chosen !== choice.id && "text-white/50",
-                  )}
-                >
-                  {choice.content}
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
-
-          <Button
-            className={"w-full"}
-            size={"sm"}
-            onClick={(event) => {
-              console.log("-- clicked message: ", message);
-
-              if (!chosen) {
-                void toast.error("请先选择");
-                event.preventDefault();
-                return;
-              }
-
-              execAction.mutate({
-                channelId,
-                taskId: taskId!,
-                body: [
-                  {
-                    type: MessageType.Plain,
-                    content: `我选了：${message.task?.choices.find((choice) => choice.id === chosen)!.content}`,
-                  },
-                ],
-              });
-            }}
-          >
-            提交
-          </Button>
-        </>
-      )}
-    </div>
-  );
-};
+//
+// const MessageMain = ({
+//   channelId,
+//   taskId,
+//   message,
+// }: {
+//   channelId: string;
+//   taskId?: string;
+//   message: ClientMessage;
+// }) => {
+//   const [chosen, setChosen] = useState<string | undefined>(undefined);
+//   const execAction = api.message.execAction.useMutation();
+//   if (!message.task) return;
+//
+//   return (
+//     <div>
+//       <div>{message.task.title}</div>
+//
+//       {message.task.body.type === TaskType.broadcast && (
+//         <div>{message.task.content}</div>
+//       )}
+//
+//       {message.task.type === TaskType.textChoices && (
+//         <>
+//           <RadioGroup
+//             className={"gap-0"}
+//             value={chosen}
+//             onValueChange={setChosen}
+//           >
+//             {message.task.choices.map((choice, index) => (
+//               <div
+//                 key={index}
+//                 className="flex items-center space-x-2 hover:bg-gray-900 px-2 rounded-lg"
+//               >
+//                 <RadioGroupItem
+//                   value={choice.id}
+//                   id={choice.id}
+//                   className={"shrink-0"}
+//                 />
+//                 <Label
+//                   htmlFor={choice.id}
+//                   className={cn(
+//                     "grow p-2 rounded",
+//                     chosen !== choice.id && "text-white/50",
+//                   )}
+//                 >
+//                   {choice.content}
+//                 </Label>
+//               </div>
+//             ))}
+//           </RadioGroup>
+//
+//           <Button
+//             className={"w-full"}
+//             size={"sm"}
+//             onClick={(event) => {
+//               console.log("-- clicked message: ", message);
+//
+//               if (!chosen) {
+//                 void toast.error("请先选择");
+//                 event.preventDefault();
+//                 return;
+//               }
+//
+//               execAction.mutate({
+//                 channelId,
+//                 taskId: taskId!,
+//                 body: [
+//                   {
+//                     type: MessageType.Plain,
+//                     content: `我选了：${message.task?.choices.find((choice) => choice.id === chosen)!.content}`,
+//                   },
+//                 ],
+//               });
+//             }}
+//           >
+//             提交
+//           </Button>
+//         </>
+//       )}
+//     </div>
+//   );
+// };

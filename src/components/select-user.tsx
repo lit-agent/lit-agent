@@ -1,6 +1,6 @@
 import { api } from "@/trpc/react";
 import { userJiugu } from "@/ds/mock";
-import { useUser } from "@/hooks/use-user";
+import { useUserData } from "@/hooks/use-user-data";
 import {
   Select,
   SelectContent,
@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 
 export const SelectUser = ({ withBack }: { withBack?: boolean }) => {
   const { data: users = [] } = api.user.list.useQuery();
-  const { targetUser = userJiugu, setTargetUser } = useUser();
+  const { targetUser = userJiugu, setTargetUser } = useUserData();
   const router = useRouter();
 
   // console.log("-- target user: ", targetUser);

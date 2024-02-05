@@ -1,9 +1,10 @@
 import * as tencentcloud from "tencentcloud-sdk-nodejs-sms";
 import * as process from "process";
 import { getTimeS } from "../lib/datetime";
-import { SMS_EXPIRE_MINUTES } from "@/const";
+import { JIUGU_AI_ID, SMS_EXPIRE_MINUTES } from "@/const";
 import { prisma } from "@/server/db";
 import { signOut } from "next-auth/react";
+import { MessageType } from "@/ds/message";
 
 const SmsClient = tencentcloud.sms.v20210111.Client;
 
@@ -146,6 +147,25 @@ export const validateSms = async ({
             },
           },
         },
+      },
+    });
+
+    // 欢迎语不需要使用socket发，因为用户还没到房间
+    await prisma.message.create({
+      data: {
+        body: {
+          type: MessageType.Plain,
+          detail:
+            "Yo！恭喜你成为姑的Friend！\n\n" +
+            "在这里你可以随时跟我的AI替身闲聊（放心它不会瞎编），所有的聊天记录我都能看到，如果有值得回复的问题我会亲自回复\n\n" +
+            "商务合作留言请加 #合作 标签\n" +
+            "商品售后留言请加 #售后 标签\n\n" +
+            "常见问题：\n" +
+            "[如何直接联系玖姑本人？](https://baidu.com)\n" +
+            "[什么是火值？如何赚火值？](https://baidu.com)",
+        },
+        channelId: `${user.id}-jiugu`,
+        fromUserId: JIUGU_AI_ID,
       },
     });
   } else {

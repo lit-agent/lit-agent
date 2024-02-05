@@ -1,6 +1,4 @@
-"use client";
-
-import { useUser } from "@/hooks/use-user";
+import { useUserData } from "@/hooks/use-user-data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { $Enums } from ".prisma/client";
 import Image from "next/image";
@@ -12,13 +10,11 @@ import { Separator } from "@/components/ui/separator";
 import { CgArrowsExchangeAlt } from "react-icons/cg";
 import HonorType = $Enums.HonorType;
 import { MyUser } from "@/ds/user";
+import { getServerUser } from "@/server/auth";
 
-export default function HomePage({
-  params: { user },
-}: {
-  params: { user: MyUser };
-}) {
-  if (!user) return "请登录后再试";
+export default async function HomePage({}) {
+  const user = await getServerUser();
+  if (!user) return "loading home page...";
 
   return (
     <div className={"p-2 flex flex-col gap-4"}>

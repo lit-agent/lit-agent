@@ -1,11 +1,6 @@
-"use client";
-
 import { useEffect } from "react";
 
-export const AutoMobileHeight = () => {
-  /**
-   * set height for mobile browser (safari, chrome ...) to be full of inner height (but invalid !)
-   */
+export default function useAppAutoMobileHeight() {
   useEffect(() => {
     const setInnerHeight = () => {
       console.log("add setInnerHeight");
@@ -22,6 +17,4 @@ export const AutoMobileHeight = () => {
       window.removeEventListener("resize", setInnerHeight);
     };
   }, []);
-
-  return null;
-};
+}

@@ -1,9 +1,9 @@
-import { useSystem } from "@/hooks/use-system";
+import { useAppData } from "@/hooks/use-app-data";
 import { navs } from "@/ds/system";
 import { cn } from "@/lib/utils";
 
 export const BottomNavbar = () => {
-  const { nav, setNav } = useSystem();
+  const { nav, setNav } = useAppData();
 
   return (
     <div

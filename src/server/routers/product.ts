@@ -1,7 +1,7 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { pusherServer } from "@/lib/pusher";
-import { MessageType } from "@prisma/client";
 import { createProductSchema } from "@/ds/product";
+import { SocketEventType } from "@/ds/socket";
 
 export const productRouter = createTRPCRouter({
   list: publicProcedure.query(async ({ ctx, input }) => {
@@ -31,7 +31,7 @@ export const productRouter = createTRPCRouter({
       });
       console.log("-- created product: ", product);
 
-      void pusherServer.trigger(ctx.user.id, MessageType.NewTask, product);
+      void pusherServer.trigger(ctx.user.id, SocketEventType.Message, product);
       return product;
     }),
 });

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { AppTab, AppTabComp } from "@/components/app-tab";
 import { FireIcon, Menu1Icon, Menu3Icon } from "@/lib/assets";
 import TaskPage from "@/app/task/page";
-import ChatPage from "@/app/chat/page";
+import ChatPage from "@/app/chat/page_";
 import HomePage from "./home/page";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
@@ -23,7 +23,7 @@ export default function Home_({ user }: { user: MyUser }) {
 
   const channelId = `${user.id}-jiugu`;
 
-  console.log("-- tab: ", { tabInUrl, tab });
+  console.log("-- Home: ", { tabInUrl, tab, user });
 
   return (
     <Tabs
@@ -37,11 +37,11 @@ export default function Home_({ user }: { user: MyUser }) {
         </TabsContent>
 
         <TabsContent value={AppTab.fire} className={"h-full overflow-auto m-0"}>
-          <TaskPage params={{ user }} />
+          <TaskPage />
         </TabsContent>
 
         <TabsContent value={AppTab.shop} className={"h-full overflow-auto m-0"}>
-          <HomePage params={{ user }} />
+          <HomePage />
         </TabsContent>
 
         {user?.type === "blogger" && <FloatActionButton />}

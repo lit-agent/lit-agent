@@ -9,7 +9,7 @@ import { Toaster } from "sonner";
 import MySessionProvider from "@/providers/session";
 import { TRPCReactProvider } from "@/providers/trpc";
 import { Metadata, Viewport } from "next";
-import { AutoMobileHeight } from "@/components/auto-mobile-height";
+import { AppAutoMobileHeight } from "@/components/app-auto-mobile-height";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -41,7 +41,7 @@ export default async function RootLayout({
         <MyThemeProvider>
           <MySessionProvider>
             <TRPCReactProvider>
-              <AutoMobileHeight />
+              <AppAutoMobileHeight />
 
               <Toaster richColors position={"top-right"} />
 

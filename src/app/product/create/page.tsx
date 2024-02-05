@@ -18,13 +18,13 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { api } from "@/trpc/react";
-import { useUser } from "@/hooks/use-user";
+import { useUserData } from "@/hooks/use-user-data";
 import { toast } from "sonner";
 import { BaseClientUser } from "@/ds/user";
 import { createProductSchema } from "@/ds/product";
 
 export default function CreateTaskPage() {
-  const { user } = useUser();
+  const { user } = useUserData();
   if (!user) return "no user yet";
 
   return <CreateTaskPage_ user={user} />;
