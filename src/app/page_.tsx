@@ -4,9 +4,9 @@ import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import { useState } from "react";
 import { AppTab, AppTabComp } from "@/components/app-tab";
 import { FireIcon, Menu1Icon, Menu3Icon } from "@/lib/assets";
-import TaskPage from "@/app/task/page";
+import TaskPage from "@/app/task/page_";
 import ChatPage from "@/app/chat/page_";
-import HomePage from "./home/page";
+import HomePage from "./home/page_";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -33,15 +33,15 @@ export default function Home_({ user }: { user: MyUser }) {
     >
       <div className={"grow relative overflow-hidden"}>
         <TabsContent value={AppTab.chat} className={"h-full overflow-auto m-0"}>
-          <ChatPage params={{ user, channelId }} />
+          <ChatPage user={user} channelId={channelId} />
         </TabsContent>
 
         <TabsContent value={AppTab.fire} className={"h-full overflow-auto m-0"}>
-          <TaskPage />
+          <TaskPage user={user} />
         </TabsContent>
 
         <TabsContent value={AppTab.shop} className={"h-full overflow-auto m-0"}>
-          <HomePage />
+          <HomePage user={user} />
         </TabsContent>
 
         {user?.type === "blogger" && <FloatActionButton />}

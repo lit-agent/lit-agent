@@ -14,13 +14,13 @@ import { MessageType } from "@/ds/message";
 import { SocketEventType } from "@/ds/socket";
 
 export default function ChatPage({
-  params: { user, channelId, withBack },
+  user,
+  channelId,
+  withBack,
 }: {
-  params: {
-    user: MyUser;
-    channelId: string;
-    withBack?: boolean;
-  };
+  user: MyUser;
+  channelId: string;
+  withBack?: boolean;
 }) {
   const refInput = useRef<HTMLInputElement>(null);
   const [messages, setMessages] = useState<ClientMessage[]>([]);

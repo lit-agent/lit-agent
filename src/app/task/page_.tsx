@@ -5,13 +5,11 @@ import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
 import AvatarComp from "@/components/avatar";
 import Link from "next/link";
 import { Label } from "../../components/ui/label";
-import { BaseClientUser, MyUser } from "@/ds/user";
+import { MyUser } from "@/ds/user";
 import { last } from "lodash";
-import { getServerAuthSession, getServerUser } from "@/server/auth";
 
-export default async function TaskPage({}: {}) {
+export default function TaskPage({ user }: { user: MyUser }) {
   const userNew = userHading;
-  const user = await getServerUser();
 
   // todo: db data
   const data = {
