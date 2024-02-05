@@ -1,74 +1,74 @@
-"use client";
+"use client"
 
-import { useEffect, useRef, useState } from "react";
-import { ClientMessage, MyUser } from "@/ds/user";
-import { api } from "@/trpc/react";
-import { pusherClient } from "@/lib/pusher";
-import { SelectUser } from "@/components/select-user";
-import { MessageBody, MessageContainer } from "@/components/message-item";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { BloggerContainer } from "@/containers/blogger";
-import { IoMenuOutline } from "react-icons/io5";
-import { MessageType } from "@/ds/message.base";
-import { SocketEventType } from "@/ds/socket";
+import { useEffect, useRef, useState } from "react"
+import { ClientMessage, MyUser } from "@/ds/user"
+import { api } from "@/trpc/react"
+import { pusherClient } from "@/lib/pusher"
+import { SelectUser } from "@/components/select-user"
+import { MessageBody, MessageContainer } from "@/components/message-item"
+import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils"
+import { BloggerContainer } from "@/containers/blogger"
+import { IoMenuOutline } from "react-icons/io5"
+import { MessageType } from "@/ds/message.base"
+import { SocketEventType } from "@/ds/socket"
 
 export default function ChatPage({
   user,
   channelId,
   withBack,
 }: {
-  user: MyUser;
-  channelId: string;
-  withBack?: boolean;
+  user: MyUser
+  channelId: string
+  withBack?: boolean
 }) {
-  const refInput = useRef<HTMLInputElement>(null);
-  const [messages, setMessages] = useState<ClientMessage[]>([]);
-  const fetchMessages = api.message.fetch.useMutation();
-  const sendMessage = api.message.send.useMutation();
+  const refInput = useRef<HTMLInputElement>(null)
+  const [messages, setMessages] = useState<ClientMessage[]>([])
+  const fetchMessages = api.message.fetch.useMutation()
+  const sendMessage = api.message.send.useMutation()
 
   useEffect(() => {
-    if (!channelId) return;
+    if (!channelId) return
 
     fetchMessages
       .mutateAsync({ channelId: channelId })
-      .then((messages) => setMessages(messages));
+      .then((messages) => setMessages(messages))
 
-    pusherClient.subscribe(channelId);
+    pusherClient.subscribe(channelId)
 
     pusherClient.bind(SocketEventType.Message, (message: ClientMessage) => {
-      setMessages((messages) => [...messages, message]);
-    });
+      setMessages((messages) => [...messages, message])
+    })
 
     return () => {
-      pusherClient.unsubscribe(channelId);
-      pusherClient.unbind(SocketEventType.Message);
-    };
-  }, [channelId]);
+      pusherClient.unsubscribe(channelId)
+      pusherClient.unbind(SocketEventType.Message)
+    }
+  }, [channelId])
 
   const submitMessage = () => {
-    if (!refInput.current || !user) return;
+    if (!refInput.current || !user) return
 
-    const text = refInput.current.value;
-    if (!text) return;
+    const text = refInput.current.value
+    if (!text) return
 
-    console.log("-- sending: ", { text });
+    console.log("-- sending: ", { text })
 
     // todo: 思考要不要做上屏优化
     sendMessage.mutate({
       channelId: `${user!.id}-jiugu`,
       body: { type: MessageType.Plain, title: text },
-    });
+    })
 
-    refInput.current.value = "";
-  };
+    refInput.current.value = ""
+  }
 
-  useEffect(() => {}, [channelId]);
+  useEffect(() => {}, [channelId])
 
-  const refBottom = useRef<HTMLDivElement>(null);
+  const refBottom = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    refBottom.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages.length]);
+    refBottom.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages.length])
 
   // console.log(`-- chat page: `, {channelId,/* messages */});
 
@@ -99,7 +99,7 @@ export default function ChatPage({
           )}
           onKeyDown={(event) => {
             if (event.key === "Enter" && !event.nativeEvent.isComposing) {
-              submitMessage();
+              submitMessage()
             }
           }}
         />
@@ -113,7 +113,7 @@ export default function ChatPage({
         </BloggerContainer>
       </div>
     </div>
-  );
+  )
 }
 
 const MessageItem = ({
@@ -122,18 +122,18 @@ const MessageItem = ({
   user,
   message,
 }: {
-  channelId: string;
-  taskId?: string;
-  user: MyUser;
-  message: ClientMessage;
+  channelId: string
+  taskId?: string
+  user: MyUser
+  message: ClientMessage
 }) => {
   return (
     <MessageContainer user={message.fromUser}>
       {/*<MessageMain channelId={channelId} taskId={taskId} message={message} />*/}
-      <MessageBody body={message.body} />
+      <MessageBody message={message} />
     </MessageContainer>
-  );
-};
+  )
+}
 //
 // const MessageMain = ({
 //   channelId,

@@ -65,6 +65,7 @@ export default function CreateTaskWithUserPage() {
 
   const createTask = api.task.create.useMutation()
   const [submitting, setSubmitting] = useState(false)
+  const utils = api.useUtils()
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof schema>) {
@@ -74,6 +75,7 @@ export default function CreateTaskWithUserPage() {
       .mutateAsync(values)
       .then((res) => {
         toast.success("创建成功！")
+        // utils.task.invalidate() // 触发刷新 // 没用，因为目前task是从user找的,todo: trpc tasks
         // void router.push("/");
       })
       .catch((e) => {

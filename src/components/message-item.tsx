@@ -1,22 +1,27 @@
-"use client";
+"use client"
 
-import { BsThreeDots } from "react-icons/bs";
-import { BaseClientUser } from "src/ds/user";
-import { MessageType } from "@/ds/message.base";
-import { cn } from "src/lib/utils";
-import { PropsWithChildren, useState } from "react";
-import { Badge } from "src/components/ui/badge";
-import { BloggerContainer } from "src/containers/blogger";
-import { Checkbox } from "src/components/ui/checkbox";
-import { MyMarkdown } from "@/containers/markdown";
-import { Label } from "@/components/ui/label";
-import { UserComp } from "@/components/user";
-import { IMessageBody } from "@/ds/message";
+import { BsThreeDots } from "react-icons/bs"
+import { BaseClientUser, ClientMessage } from "src/ds/user"
+import { MessageType } from "@/ds/message.base"
+import { cn } from "src/lib/utils"
+import { PropsWithChildren, useState } from "react"
+import { Badge } from "src/components/ui/badge"
+import { BloggerContainer } from "src/containers/blogger"
+import { Checkbox } from "src/components/ui/checkbox"
+import { MyMarkdown } from "@/containers/markdown"
+import { Label } from "@/components/ui/label"
+import { UserComp } from "@/components/user"
+import { IMessageBody } from "@/ds/message"
+import { Hot } from "./fire-value"
+import { CoverSmImage, WechatMPIcon } from "@/lib/assets"
+import moment from "moment"
+import Image from "next/image"
+
+import "moment/locale/zh-cn"
 
 export interface IMessageContainer {
-  user: BaseClientUser;
-  body: IMessageBody;
-  onValueChange?: (v: any) => void;
+  message: ClientMessage
+  onValueChange?: (v: any) => void
 }
 
 export const MessageContainer = ({
@@ -53,31 +58,32 @@ export const MessageContainer = ({
         <BsThreeDots className={cn("text-muted-foreground absolute right-2")} />
       )}
     </div>
-  );
-};
+  )
+}
 
-export function Message({ user, body, onValueChange }: IMessageContainer) {
+export function Message({ message, onValueChange }: IMessageContainer) {
   return (
-    <MessageContainer user={user}>
-      <MessageBody body={body} onValueChange={onValueChange} />
+    <MessageContainer user={message.fromUser}>
+      <MessageBody message={message} onValueChange={onValueChange} />
     </MessageContainer>
-  );
+  )
 }
 
 export const MessageBody = ({
-  body,
+  message,
   onValueChange,
 }: {
-  body: IMessageBody;
-  onValueChange?: (v: any) => void;
+  message: ClientMessage
+  onValueChange?: (v: any) => void
 }) => {
-  const [imageIndex, setImageIndex] = useState(`0`);
-  const [checks, setChecks] = useState<number[]>([]);
-  const [submitted, setSubmitted] = useState(false);
+  const [imageIndex, setImageIndex] = useState(`0`)
+  const [checks, setChecks] = useState<number[]>([])
+  const [submitted, setSubmitted] = useState(false)
+  const { body } = message
 
   switch (body.type) {
     case MessageType.Plain:
-      return <MyMarkdown>{body.title ?? ""}</MyMarkdown>;
+      return <MyMarkdown>{body.title ?? ""}</MyMarkdown>
 
     case MessageType.TextChoices:
       return (
@@ -105,11 +111,11 @@ export const MessageBody = ({
                     : // 多选
                       checked
                       ? [...checks, index].sort()
-                      : checks.filter((c) => c !== index);
+                      : checks.filter((c) => c !== index)
 
                   // console.log("-- newChecks: ", newChecks);
-                  onValueChange && onValueChange(newChecks);
-                  setChecks(newChecks);
+                  onValueChange && onValueChange(newChecks)
+                  setChecks(newChecks)
                 }}
               />
 
@@ -117,7 +123,46 @@ export const MessageBody = ({
             </Label>
           ))}
         </div>
-      );
+      )
+
+    case MessageType.Task:
+      return (
+        <div className={"flex flex-col gap-2 rounded-lg bg-[#3D3847] p-3"}>
+          <div className={"flex items-center justify-between"}>
+            <div>帮作品传播</div>
+
+            <Hot value={message.task?.value ?? 0} />
+          </div>
+
+          <div className={"flex overflow-hidden rounded-lg"}>
+            <Image
+              src={CoverSmImage}
+              alt={"cover"}
+              width={120}
+              height={160}
+              className={"shrink-0"}
+            />
+            <div
+              className={"flex grow flex-col justify-between bg-[#2A2434] p-3"}
+            >
+              <div>{body.title}</div>
+
+              <div className={"flex justify-between items-baseline"}>
+                <div className={"flex items-center gap-1"}>
+                  <WechatMPIcon />
+                  {body.platform}
+                </div>
+                <div className={"text-muted-foreground text-xs"}>
+                  {moment(message.task?.startTime ?? new Date())
+                    .locale("zh")
+                    .fromNow()}
+                  发布
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
 
     case MessageType.GroupLink:
     // return (
@@ -176,39 +221,6 @@ export const MessageBody = ({
     //   </div>
     // );
 
-    // case MessageType.Task:
-    // return (
-    //   <div className={"flex flex-col gap-2 rounded-lg bg-[#3D3847] p-3"}>
-    //     <div className={"flex items-center justify-between"}>
-    //       <div>帮作品传播</div>
-    //
-    //       <Hot value={body.hotValue} />
-    //     </div>
-    //
-    //     <div className={"flex overflow-hidden rounded-lg"}>
-    //       <Image
-    //         src={CoverSmImage.src}
-    //         alt={"cover"}
-    //         width={120}
-    //         height={160}
-    //         className={"shrink-0"}
-    //       />
-    //       <div
-    //         className={"flex grow flex-col justify-between bg-[#2A2434] p-3"}
-    //       >
-    //         <div>{body.title}</div>
-    //
-    //         <div className={"flex justify-between"}>
-    //           <div className={"flex items-center gap-1"}>
-    //             <WechatMPIcon />
-    //             视频号
-    //           </div>
-    //           <div>{moment(body.datetime ?? new Date()).fromNow()}发布</div>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   </div>
-    // );
     case MessageType.ProductLink:
     // return (
     //   <div className={"flex flex-col gap-2"}>
@@ -241,8 +253,8 @@ export const MessageBody = ({
     case MessageType.Others:
 
     default:
-      return body.type;
+      return body.type
   }
-};
+}
 
-export default Message;
+export default Message
