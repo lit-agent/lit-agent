@@ -30,16 +30,16 @@ export const userRouter = createTRPCRouter({
   }),
 
   followUser: protectedProcedure
-    .input(z.object({ bloggerId: z.string() }))
+    .input(z.object({ targetUserId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       return ctx.prisma.userFollow.upsert({
         where: {
           followedById_followingId: {
             followingId: ctx.user.id,
-            followedById: input.bloggerId,
+            followedById: input.targetUserId,
           },
         },
-        create: { followingId: ctx.user.id, followedById: input.bloggerId },
+        create: { followingId: ctx.user.id, followedById: input.targetUserId },
         update: {},
       })
     }),
@@ -57,11 +57,11 @@ export const userRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { answer } = input
       const target = '{"4":[0,1,2],"5":[2],"6":[2],"7":[0]}'
-      const result = answer === target
+      const validateOk = answer === target
 
       const uid = ctx.session.user.id
-      if (result) await validationSuccessCallback(uid)
+      if (validateOk) return await validationSuccessCallback(uid)
 
-      return result
+      return { success: false, targetUserId: null }
     }),
 })

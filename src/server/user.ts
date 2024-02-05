@@ -34,17 +34,17 @@ export const validationSuccessCallback = async (userId: string) => {
     data: { validated: true },
   })
 
-  const blogger = await prisma.user.findUnique({
+  const targetUser = await prisma.user.findUnique({
     where: { phone: ADMIN_PHONE },
   })
-  if (!blogger) throw new Error("管理员账号不存在！")
-  const bloggerId = blogger.id
+  if (!targetUser) throw new Error("管理员账号不存在！")
+  const targetUserId = targetUser.id
 
   console.log("-- 正在关注博主")
   await prisma.userFollow.create({
     data: {
       followingId: userId,
-      followedById: bloggerId,
+      followedById: targetUserId,
     },
   })
 
@@ -63,8 +63,13 @@ export const validationSuccessCallback = async (userId: string) => {
           "[如何直接联系玖姑本人？](https://baidu.com)\n" +
           "[什么是火值？如何赚火值？](https://baidu.com)",
       },
-      channelId: getChatChannelId(userId, bloggerId),
+      channelId: getChatChannelId(userId, targetUserId),
       fromUserId: USER_JIUGU_AI_ID,
     },
   })
+
+  return {
+    success: true,
+    targetUserId,
+  }
 }
