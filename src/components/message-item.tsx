@@ -19,9 +19,13 @@ import Image from "next/image"
 
 import "moment/locale/zh-cn"
 import { toast } from "sonner"
+import Link from "next/link"
+import { api } from "@/trpc/react"
+import RenderTask from "@/components/render-task"
 
 export interface IMessageContainer {
-  message: ClientMessage
+  user: BaseClientUser
+  body: IMessageBody
   onValueChange?: (v: any) => void
 }
 
@@ -62,25 +66,25 @@ export const MessageContainer = ({
   )
 }
 
-export function Message({ message, onValueChange }: IMessageContainer) {
+export function Message({ user, body, onValueChange }: IMessageContainer) {
   return (
-    <MessageContainer user={message.fromUser}>
-      <MessageBody message={message} onValueChange={onValueChange} />
+    <MessageContainer user={user}>
+      <MessageBody body={body} onValueChange={onValueChange} />
     </MessageContainer>
   )
 }
 
 export const MessageBody = ({
-  message,
+  body,
+  taskId,
   onValueChange,
 }: {
-  message: ClientMessage
+  body: IMessageBody
+  taskId?: string
   onValueChange?: (v: any) => void
 }) => {
-  const [imageIndex, setImageIndex] = useState(`0`)
   const [checks, setChecks] = useState<number[]>([])
   const [submitted, setSubmitted] = useState(false)
-  const { body } = message
 
   switch (body.type) {
     case MessageType.Plain:
@@ -127,52 +131,7 @@ export const MessageBody = ({
       )
 
     case MessageType.Task:
-      return (
-        <div
-          className={
-            "flex flex-col gap-2 rounded-lg bg-[#3D3847] p-3 cursor-pointer"
-          }
-          onClick={(event) => {
-            event.preventDefault()
-
-            toast.success("恭喜，任务完成！")
-          }}
-        >
-          <div className={"flex items-center justify-between"}>
-            <div>帮作品传播</div>
-
-            <Hot value={message.task?.value ?? 0} />
-          </div>
-
-          <div className={"flex overflow-hidden rounded-lg"}>
-            <Image
-              src={CoverSmImage}
-              alt={"cover"}
-              width={120}
-              height={160}
-              className={"shrink-0"}
-            />
-            <div
-              className={"flex grow flex-col justify-between bg-[#2A2434] p-3"}
-            >
-              <div>{body.title}</div>
-
-              <div className={"flex justify-between items-baseline"}>
-                <div className={"flex items-center gap-1"}>
-                  <WechatMPIcon />
-                  {body.platform}
-                </div>
-                <div className={"text-muted-foreground text-xs"}>
-                  {moment(message.task?.startTime ?? new Date())
-                    .locale("zh")
-                    .fromNow()}
-                  发布
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )
+      return taskId ? <RenderTask taskId={taskId} /> : null
 
     case MessageType.GroupLink:
     // return (

@@ -1,11 +1,11 @@
-import { BgModel } from "@/ds/system";
-import { IMessageContainer } from "@/components/message-item";
-import { userJiugu, userJiuguAI } from "@/ds/mock";
-import { MessageType } from "@/ds/message.base";
+import { BgModel } from "@/ds/system"
+import { IMessageContainer } from "@/components/message-item"
+import { userJiugu, userJiuguAI } from "@/ds/mock"
+import { MessageType } from "@/ds/message.base"
 
-export const bloggerPhone = "17766091857";
+export const bloggerPhone = "17766091857"
 
-export const bgModel: BgModel = "plain";
+export const bgModel: BgModel = "plain"
 
 export const guidanceItems: IMessageContainer[] = [
   {
@@ -47,8 +47,12 @@ export const guidanceItems: IMessageContainer[] = [
     body: {
       type: MessageType.TextChoices,
       title: "玖姑为什么不化妆？（多选）",
-      questions: ["懒的化", "对颜值自信", "挑战公众对女性的束缚"],
-      answer: [0, 1, 2],
+      multiple: true,
+      choices: [
+        { value: "懒的化", checked: true },
+        { value: "对颜值自信", checked: true },
+        { value: "挑战公众对女性的束缚", checked: true },
+      ],
     },
   },
 
@@ -57,8 +61,12 @@ export const guidanceItems: IMessageContainer[] = [
     body: {
       type: MessageType.TextChoices,
       title: "玖姑的立场是？",
-      questions: ["厌男", "厌女", "厌蠢"],
-      answer: [2],
+      multiple: false,
+      choices: [
+        { value: "厌男", checked: false },
+        { value: "厌女", checked: false },
+        { value: "厌蠢", checked: false },
+      ],
     },
   },
   {
@@ -66,9 +74,12 @@ export const guidanceItems: IMessageContainer[] = [
     body: {
       type: MessageType.TextChoices,
       title: "玖姑是否支持彩礼？",
-
-      questions: ["是", "否", "无所谓"],
-      answer: [2],
+      multiple: false,
+      choices: [
+        { value: "是", checked: false },
+        { value: "否", checked: false },
+        { value: "无所谓", checked: true },
+      ],
     },
   },
   {
@@ -76,8 +87,12 @@ export const guidanceItems: IMessageContainer[] = [
     body: {
       type: MessageType.TextChoices,
       title: "玖姑的目标是什么？",
-      questions: ["成为世界巨星", "赚一个小目标", "环游世界"],
-      answer: [0],
+      multiple: false,
+      choices: [
+        { value: "成为世界巨星", checked: true },
+        { value: "赚一个小目标", checked: false },
+        { value: "环游世界", checked: false },
+      ],
     },
   },
-];
+]

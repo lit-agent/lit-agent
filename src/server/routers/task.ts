@@ -1,9 +1,18 @@
-import { createTRPCRouter, protectedProcedure } from "../trpc"
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
 import { pusherServer } from "@/lib/pusher"
 import { createRequirementSchema } from "@/ds/requirement"
 import { SocketEventType } from "@/ds/socket"
+import { z } from "zod"
 
 export const taskRouter = createTRPCRouter({
+  get: publicProcedure
+    .input(z.object({ id: z.string().optional() }))
+    .query(async ({ ctx, input }) => {
+      const { id } = input
+      if (!id) return null
+      return ctx.prisma.taskFrom.findUnique({ where: { id } })
+    }),
+
   create: protectedProcedure
     .input(createRequirementSchema)
     .mutation(async ({ ctx, input }) => {

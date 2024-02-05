@@ -130,7 +130,7 @@ const MessageItem = ({
   return (
     <MessageContainer user={message.fromUser}>
       {/*<MessageMain channelId={channelId} taskId={taskId} message={message} />*/}
-      <MessageBody message={message} />
+      <MessageBody body={message.body} />
     </MessageContainer>
   )
 }
