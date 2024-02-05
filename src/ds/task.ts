@@ -5,7 +5,6 @@ import { messageBodySchema } from "@/ds/message";
 export const createTaskSchema = z.object({
   body: messageBodySchema,
 
-  title: z.string(),
   value: z.number(),
   startTime: z.date(),
   endTime: z.date(),

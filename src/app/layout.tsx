@@ -43,7 +43,7 @@ export default async function RootLayout({
             <TRPCReactProvider>
               <AppAutoMobileHeight />
 
-              <Toaster richColors position={"top-right"} />
+              <Toaster richColors position={"top-right"} duration={1000} />
 
               <main className={"relative w-screen"}>
                 <div

@@ -35,9 +35,8 @@ function CreateTaskPage_({ user }: { user: BaseClientUser }) {
   const form = useForm<z.infer<typeof createProductSchema>>({
     resolver: zodResolver(createProductSchema),
     defaultValues: {
-      title: "test - " + new Date().toLocaleString(),
+      title: "# test",
       description: "# test",
-      detail: "# test",
       images: [],
       isOnsite: false,
       isReturnable: true,
@@ -130,21 +129,6 @@ function CreateTaskPage_({ user }: { user: BaseClientUser }) {
                 <FormControl>
                   <Textarea placeholder="" {...field} />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="detail"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>详情</FormLabel>
-                <FormControl>
-                  <Textarea placeholder="" {...field} />
-                </FormControl>
-                <FormDescription>Markdown格式，支持图文</FormDescription>
                 <FormMessage />
               </FormItem>
             )}

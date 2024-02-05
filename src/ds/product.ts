@@ -4,7 +4,7 @@ export const createProductSchema = z.object({
   title: z.string().min(2).max(50),
   description: z.string(),
   images: z.array(z.string()).optional(),
-  detail: z.string(),
+  title: z.string(),
   price: z.number(),
   isOnsite: z.boolean(),
   isSelfOperating: z.boolean(),

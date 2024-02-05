@@ -155,7 +155,7 @@ export const validateSms = async ({
       data: {
         body: {
           type: MessageType.Plain,
-          detail:
+          title:
             "Yo！恭喜你成为姑的Friend！\n\n" +
             "在这里你可以随时跟我的AI替身闲聊（放心它不会瞎编），所有的聊天记录我都能看到，如果有值得回复的问题我会亲自回复\n\n" +
             "商务合作留言请加 #合作 标签\n" +

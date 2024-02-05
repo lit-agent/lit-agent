@@ -21,34 +21,40 @@ export const segmentSchema = z.object({
 
 export type Segment = z.infer<typeof segmentSchema>;
 
+export const basicBodySchema = z.object({
+  title: z.string().optional(),
+});
+
+export const choiceItemSchema = z.object({
+  value: z.string(),
+  checked: z.boolean().optional(),
+});
+export type IChoiceItem = z.infer<typeof choiceItemSchema>;
+
+export const choicesBodySchema = basicBodySchema.extend({
+  choices: z.array(choiceItemSchema).min(2),
+  multiple: z.boolean().default(false),
+});
+export type IChoiceBody = z.infer<typeof choicesBodySchema>;
+
 export const messageBodySchema = z.discriminatedUnion("type", [
   // 纯图文
-  z.object({
-    type: z.literal(MessageType.Plain),
-    detail: z.string().optional(),
-  }),
+  basicBodySchema.extend({ type: z.literal(MessageType.Plain) }),
 
   // 文字选择题
-  z.object({
+  choicesBodySchema.extend({
     type: z.literal(MessageType.TextChoices),
-    title: z.string().optional(),
-    questions: z.array(z.string()).min(2),
-    answer: z.array(z.number()).min(2).optional(), // 可以没有答案
   }),
 
   // 图片选择题
-  z.object({
+  choicesBodySchema.extend({
     type: z.literal(MessageType.ImageChoices),
-    title: z.string().optional(),
-    questions: z.array(z.string()).min(2),
-    answer: z.array(z.number()).min(2).optional(), // 可以没有答案
   }),
 
   // todo: create task 和 message 有区别
   // 邀请之类
-  z.object({
+  basicBodySchema.extend({
     type: z.literal(MessageType.GroupLink),
-    title: z.string().optional(),
     groupId: z.string(),
   }),
 

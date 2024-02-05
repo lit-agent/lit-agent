@@ -57,7 +57,7 @@ export default function ChatPage({
     // todo: 思考要不要做上屏优化
     sendMessage.mutate({
       channelId: `${user!.id}-jiugu`,
-      body: { type: MessageType.Plain, detail: text },
+      body: { type: MessageType.Plain, title: text },
     });
 
     refInput.current.value = "";

@@ -76,14 +76,14 @@ export const MessageBody = ({
 
   switch (body.type) {
     case MessageType.Plain:
-      return <MyMarkdown>{body.detail ?? ""}</MyMarkdown>;
+      return <MyMarkdown>{body.title ?? ""}</MyMarkdown>;
 
     case MessageType.TextChoices:
       return (
         <div className={"flex w-full flex-col"}>
           {body.title && <MyMarkdown>{body.title}</MyMarkdown>}
 
-          {body.questions.map((text, index) => (
+          {body.choices.map(({ value }, index) => (
             <Label
               className={cn(
                 "flex items-center gap-2 py-1 hover:bg-primary/25 rounded",
@@ -98,14 +98,13 @@ export const MessageBody = ({
                 onCheckedChange={(checked) => {
                   // console.log("-- content: ", content);
 
-                  const newChecks =
-                    body.answer?.length === 1
-                      ? // 单选
-                        [index]
-                      : // 多选
-                        checked
-                        ? [...checks, index].sort()
-                        : checks.filter((c) => c !== index);
+                  const newChecks = !body.multiple
+                    ? // 单选
+                      [index]
+                    : // 多选
+                      checked
+                      ? [...checks, index].sort()
+                      : checks.filter((c) => c !== index);
 
                   // console.log("-- newChecks: ", newChecks);
                   onValueChange && onValueChange(newChecks);
@@ -113,7 +112,7 @@ export const MessageBody = ({
                 }}
               />
 
-              <span>{text}</span>
+              <span>{value}</span>
             </Label>
           ))}
         </div>

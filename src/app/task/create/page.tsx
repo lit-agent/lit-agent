@@ -13,7 +13,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import moment from "moment";
@@ -27,6 +26,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type SupportedMessageTypes = MessageType.Plain | MessageType.TextChoices;
 
@@ -36,13 +37,13 @@ const CreateTaskWithUserPage = () => {
   const form = useForm<z.infer<typeof createTaskSchema>>({
     resolver: zodResolver(createTaskSchema),
     defaultValues: {
-      title: "Sample Title",
       value: 10,
       startTime: new Date(),
       endTime: moment().add(1, "days").toDate(),
       status: "on",
       body: {
         type,
+        title: "Sample Title",
       },
     },
   });
@@ -168,7 +169,7 @@ const CreateTaskWithUserPage = () => {
             <div className={"grow space-y-2"}>
               <FormField
                 control={form.control}
-                name="title"
+                name="body.title"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>标题</FormLabel>
@@ -181,53 +182,30 @@ const CreateTaskWithUserPage = () => {
                 )}
               />
 
-              <TabsContent value={MessageType.Plain}>
-                <FormField
-                  control={form.control}
-                  name="body.detail"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>详情</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </TabsContent>
-
               <TabsContent value={MessageType.TextChoices}>
                 <FormField
                   control={form.control}
-                  name="body.questions"
+                  name="body.multiple"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        选项
-                        <span className={"text-muted-foreground text-xs"}>
-                          （至少两个）
-                        </span>
-                      </FormLabel>
-                      <FormControl>
-                        <TextChoicesInput
-                          value={["#1 ", "#2 "]}
-                          onChange={field.onChange}
-                        />
-                      </FormControl>
-
+                      <div className={"flex items-center gap-2"}>
+                        <FormLabel>是否多选</FormLabel>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              </TabsContent>
 
-              <TabsContent value={MessageType.ImageChoices}>
                 <FormField
                   control={form.control}
-                  name="body.questions"
-                  render={({ field }) => (
+                  name="body.choices"
+                  render={({ field: questionFields }) => (
                     <FormItem>
                       <FormLabel>
                         选项
@@ -237,8 +215,11 @@ const CreateTaskWithUserPage = () => {
                       </FormLabel>
                       <FormControl>
                         <TextChoicesInput
-                          value={["/product-1.png", "/product-1.png"]}
-                          onChange={field.onChange}
+                          defaultChoices={[
+                            { value: "#1 ", checked: false },
+                            { value: "#2 ", checked: false },
+                          ]}
+                          onChoicesChange={questionFields.onChange}
                         />
                       </FormControl>
 
@@ -333,31 +314,45 @@ const CreateTaskWithUserPage = () => {
   );
 };
 
+export type ChoiceItem = {
+  value: string;
+  checked?: boolean;
+};
+
 const TextChoicesInput = ({
-  value,
-  onChange,
+  defaultChoices,
+  onChoicesChange,
 }: {
-  value?: string[];
-  onChange: (value: string[]) => void;
+  defaultChoices: ChoiceItem[];
+  onChoicesChange: (choice: ChoiceItem[]) => void;
 }) => {
-  const [choices, setChoices] = useState<string[]>(value ?? []);
+  const [choices, setChoices] = useState<ChoiceItem[]>(defaultChoices);
 
   useEffect(() => {
-    onChange(choices);
+    onChoicesChange(choices);
   }, [JSON.stringify(choices)]);
 
   return (
     <div className={"flex flex-col gap-2"}>
       {choices.map((choice, index) => (
         <div key={index} className={"flex items-center gap-2"}>
+          <Checkbox
+            checked={choice.checked}
+            onCheckedChange={(value) => {
+              const newChoices = [...choices];
+              newChoices[index]!.checked = !!value;
+              setChoices(newChoices);
+            }}
+          />
+
           <Input
             className={"grow"}
             key={index}
-            value={choice}
+            value={choice.value}
             placeholder={`choice-${index + 1}`}
             onChange={(event) => {
               const newChoices = [...choices];
-              newChoices[index] = event.currentTarget.value;
+              newChoices[index]!.value = event.currentTarget.value;
               setChoices(newChoices);
             }}
           />
@@ -376,7 +371,7 @@ const TextChoicesInput = ({
       <Button
         onClick={(event) => {
           event.preventDefault();
-          setChoices([...choices, ""]);
+          setChoices([...choices, { value: "", checked: false }]);
         }}
         variant={"outline"}
       >

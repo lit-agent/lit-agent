@@ -12,7 +12,7 @@ export const guidanceItems: IMessageContainer[] = [
     user: userJiugu,
     body: {
       type: MessageType.Plain,
-      detail: "Hello，我是玖姑。欢迎加入我的朋友圈。",
+      title: "Hello，我是玖姑。欢迎加入我的朋友圈。",
     },
   },
 
@@ -20,7 +20,7 @@ export const guidanceItems: IMessageContainer[] = [
     user: userJiugu,
     body: {
       type: MessageType.Plain,
-      detail:
+      title:
         "我就是玖姑本姑。因为找我的人太多，我做了个AI助理，帮我处理一些简单问题，比如售后、基本信息。同时我也也会在后台看到你的所有信息，并记录你给我的所有贡献。",
     },
   },
@@ -29,7 +29,7 @@ export const guidanceItems: IMessageContainer[] = [
     user: userJiuguAI,
     body: {
       type: MessageType.Plain,
-      detail:
+      title:
         "Hi 我是姑的AI助理。如果我回答不了你的问题，我会收集整理告诉姑。如果你想直接迅速找到姑，可以花一些火值。你可以通过帮姑把内容转评赞、或完成一些指定任务来获得火值。火值也可以用来兑换其他姑提供的产品和服务。",
     },
   },
@@ -38,7 +38,7 @@ export const guidanceItems: IMessageContainer[] = [
     user: userJiuguAI,
     body: {
       type: MessageType.Plain,
-      detail: "首先我先帮姑筛选一下真正的姑的friend。请回答以下几个问题：",
+      title: "首先我先帮姑筛选一下真正的姑的friend。请回答以下几个问题：",
     },
   },
 
