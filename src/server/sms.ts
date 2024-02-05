@@ -4,7 +4,7 @@ import { getTimeS } from "../lib/datetime";
 import { JIUGU_AI_ID, SMS_EXPIRE_MINUTES } from "@/const";
 import { prisma } from "@/server/db";
 import { signOut } from "next-auth/react";
-import { MessageType } from "@/ds/message";
+import { MessageType } from "@/ds/message.base";
 
 const SmsClient = tencentcloud.sms.v20210111.Client;
 

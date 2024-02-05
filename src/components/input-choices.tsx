@@ -1,22 +1,24 @@
-import { IChoiceItem } from "@/ds/message";
-import { useEffect, useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { MinusCircleIcon } from "lucide-react";
+import { IChoiceItem } from "@/ds/message.base"
+import { useEffect, useState } from "react"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { MinusCircleIcon } from "lucide-react"
 
 export const TextChoicesInput = ({
-  defaultChoices,
-  onChoicesChange,
+  value,
+  onChange,
 }: {
-  defaultChoices: IChoiceItem[];
-  onChoicesChange: (choice: IChoiceItem[]) => void;
+  value?: IChoiceItem[]
+  onChange: (choice: IChoiceItem[]) => void
 }) => {
-  const [choices, setChoices] = useState<IChoiceItem[]>(defaultChoices);
+  const [choices, setChoices] = useState<IChoiceItem[]>(value ?? [])
 
   useEffect(() => {
-    onChoicesChange(choices);
-  }, [JSON.stringify(choices)]);
+    onChange(choices)
+  }, [JSON.stringify(choices)])
+
+  console.log("-- input text choices: ", { value, choices })
 
   return (
     <div className={"flex flex-col gap-2"}>
@@ -25,9 +27,9 @@ export const TextChoicesInput = ({
           <Checkbox
             checked={choice.checked}
             onCheckedChange={(value) => {
-              const newChoices = [...choices];
-              newChoices[index]!.checked = !!value;
-              setChoices(newChoices);
+              const newChoices = [...choices]
+              newChoices[index]!.checked = !!value
+              setChoices(newChoices)
             }}
           />
 
@@ -37,9 +39,9 @@ export const TextChoicesInput = ({
             value={choice.value}
             placeholder={`choice-${index + 1}`}
             onChange={(event) => {
-              const newChoices = [...choices];
-              newChoices[index]!.value = event.currentTarget.value;
-              setChoices(newChoices);
+              const newChoices = [...choices]
+              newChoices[index]!.value = event.currentTarget.value
+              setChoices(newChoices)
             }}
           />
 
@@ -47,7 +49,7 @@ export const TextChoicesInput = ({
             disabled={choices.length <= 2}
             className={"shrink-0 w-fit h-fit p-0 bg-transparent text-red-800"}
             onClick={(event) => {
-              setChoices(choices.filter((choice, i) => i !== index));
+              setChoices(choices.filter((choice, i) => i !== index))
             }}
           >
             <MinusCircleIcon />
@@ -56,13 +58,13 @@ export const TextChoicesInput = ({
       ))}
       <Button
         onClick={(event) => {
-          event.preventDefault();
-          setChoices([...choices, { value: "", checked: false }]);
+          event.preventDefault()
+          setChoices([...choices, { value: "", checked: false }])
         }}
         variant={"outline"}
       >
         添加
       </Button>
     </div>
-  );
-};
+  )
+}

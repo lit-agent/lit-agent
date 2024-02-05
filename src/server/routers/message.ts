@@ -4,9 +4,10 @@ import { clientMessageSlice } from "@/ds/user";
 import { pusherServer } from "@/lib/pusher";
 import { $Enums, UserType } from "@prisma/client";
 import { z } from "zod";
-import { MessageType, sendMessageSchema } from "@/ds/message";
+import { MessageType } from "@/ds/message.base";
 import { SocketEventType } from "@/ds/socket";
 import TaskToStatus = $Enums.TaskToStatus;
+import { sendMessageSchema } from "@/ds/message";
 
 export const messageRouter = createTRPCRouter({
   fetch: protectedProcedure

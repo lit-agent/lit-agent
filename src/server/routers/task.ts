@@ -1,11 +1,11 @@
-import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { pusherServer } from "@/lib/pusher";
-import { createTaskSchema } from "@/ds/task";
-import { SocketEventType } from "@/ds/socket";
+import { createTRPCRouter, protectedProcedure } from "../trpc"
+import { pusherServer } from "@/lib/pusher"
+import { createRequirementSchema } from "@/ds/requirement"
+import { SocketEventType } from "@/ds/socket"
 
 export const taskRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(createTaskSchema)
+    .input(createRequirementSchema)
     .mutation(async ({ ctx, input }) => {
       /**
        * 因为每个新发布的任务必然同步到全局聊天室产生一条消息
@@ -13,22 +13,22 @@ export const taskRouter = createTRPCRouter({
        * 因此直接创建消息，并内嵌任务
        * 最后再基于socket发送消息，并返回消息即可
        */
-      const channelId = "ALL";
+      const channelId = "ALL"
 
-      const fromUserId = ctx.user.id;
+      const fromUserId = ctx.user.id
       const task = await ctx.prisma.taskFrom.create({
         data: {
           ...input,
           fromUserId,
         },
-      });
+      })
 
       const toTask = await ctx.prisma.taskTo.create({
         data: {
           taskId: task.id,
           userId: fromUserId,
         },
-      });
+      })
 
       const message = await ctx.prisma.message.create({
         data: {
@@ -40,9 +40,9 @@ export const taskRouter = createTRPCRouter({
         include: {
           fromUser: true,
         },
-      });
+      })
 
-      void pusherServer.trigger(channelId, SocketEventType.Message, message);
-      return message;
+      void pusherServer.trigger(channelId, SocketEventType.Message, message)
+      return message
     }),
-});
+})

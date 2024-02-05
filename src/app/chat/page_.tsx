@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { BloggerContainer } from "@/containers/blogger";
 import { IoMenuOutline } from "react-icons/io5";
-import { MessageType } from "@/ds/message";
+import { MessageType } from "@/ds/message.base";
 import { SocketEventType } from "@/ds/socket";
 
 export default function ChatPage({

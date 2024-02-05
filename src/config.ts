@@ -1,7 +1,7 @@
 import { BgModel } from "@/ds/system";
 import { IMessageContainer } from "@/components/message-item";
 import { userJiugu, userJiuguAI } from "@/ds/mock";
-import { MessageType } from "@/ds/message";
+import { MessageType } from "@/ds/message.base";
 
 export const bloggerPhone = "17766091857";
 

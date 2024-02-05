@@ -2,7 +2,7 @@
 
 import { BsThreeDots } from "react-icons/bs";
 import { BaseClientUser } from "src/ds/user";
-import { IMessageBody, MessageType } from "@/ds/message";
+import { MessageType } from "@/ds/message.base";
 import { cn } from "src/lib/utils";
 import { PropsWithChildren, useState } from "react";
 import { Badge } from "src/components/ui/badge";
@@ -11,6 +11,7 @@ import { Checkbox } from "src/components/ui/checkbox";
 import { MyMarkdown } from "@/containers/markdown";
 import { Label } from "@/components/ui/label";
 import { UserComp } from "@/components/user";
+import { IMessageBody } from "@/ds/message";
 
 export interface IMessageContainer {
   user: BaseClientUser;

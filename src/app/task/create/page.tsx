@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import { Label } from "@/components/ui/label";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Label } from "@/components/ui/label"
+import { z } from "zod"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Form,
   FormControl,
@@ -11,69 +11,79 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { api } from "@/trpc/react";
-import { toast } from "sonner";
-import moment from "moment";
-import { Input } from "@/components/ui/input";
-import { HomeIcon } from "lucide-react";
-import { useState } from "react";
-import { createTaskSchema } from "@/ds/task";
-import { useRouter } from "next/navigation";
-import { MessageType, SupportedMessageTypes } from "@/ds/message";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
-import Link from "next/link";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import { TextChoicesInput } from "@/components/input-choices";
-import { useUserData } from "@/hooks/use-user-data";
+} from "@/components/ui/form"
+import { Button } from "@/components/ui/button"
+import { api } from "@/trpc/react"
+import { toast } from "sonner"
+import moment from "moment"
+import { Input } from "@/components/ui/input"
+import { HomeIcon } from "lucide-react"
+import { useState } from "react"
+import { createRequirementSchema } from "@/ds/requirement"
+import { useRouter } from "next/navigation"
+import { MessageType, SupportedMessageTypes } from "@/ds/message.base"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { cn } from "@/lib/utils"
+import { Separator } from "@/components/ui/separator"
+import Link from "next/link"
+import { Switch } from "@/components/ui/switch"
+import { Textarea } from "@/components/ui/textarea"
+import { TextChoicesInput } from "@/components/input-choices"
+import { useUserData } from "@/hooks/use-user-data"
+
+const schema = createRequirementSchema
 
 export default function CreateTaskWithUserPage() {
-  const { preferredMessageType: type, setPreferredMessageType } = useUserData();
+  const { preferredMessageType: type, setPreferredMessageType } = useUserData()
+  console.log("-- schema: ", { schema })
 
   // 1. Define your form.
-  const form = useForm<z.infer<typeof createTaskSchema>>({
-    resolver: zodResolver(createTaskSchema),
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
     defaultValues: {
       value: 10,
       startTime: new Date(),
       endTime: moment().add(1, "days").toDate(),
-      status: "on",
       body: {
-        type,
-        title: "Sample Title",
+        title: "Untitled",
+        platform: "不孤岛",
+        targetUsers: "全体姑的Friends",
+        purpose:
+          "1. 在视频号里看完我这条短视频作品\n" +
+          "2. 点赞、评论、转发、收藏该作品，帮助作品更好的传播",
+        choices: [
+          { value: "#1 ", checked: false },
+          { value: "#2 ", checked: false },
+        ],
       },
     },
-  });
+  })
 
-  const createTask = api.task.create.useMutation();
-  const [submitting, setSubmitting] = useState(false);
-  const router = useRouter();
+  const createTask = api.task.create.useMutation()
+  const [submitting, setSubmitting] = useState(false)
+  const router = useRouter()
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof createTaskSchema>) {
-    console.log("-- submit: ", values);
-    setSubmitting(true);
+  function onSubmit(values: z.infer<typeof schema>) {
+    console.log("-- submit: ", values)
+    setSubmitting(true)
     createTask
       .mutateAsync(values)
       .then((res) => {
-        toast.success("创建成功！");
+        toast.success("创建成功！")
         // void router.push("/");
       })
       .catch((e) => {
-        console.error(e);
-        toast.error("创建失败");
+        console.error(e)
+        toast.error("创建失败")
       })
       .finally(() => {
-        setSubmitting(false);
-      });
+        setSubmitting(false)
+      })
   }
 
-  const FINISHED = 3;
-  console.log("-- data: ", form.getValues());
+  const FINISHED = 3
+  console.log("-- data: ", form.getValues())
 
   return (
     <div className={"h-full flex flex-col p-4 bg-black"}>
@@ -121,14 +131,16 @@ export default function CreateTaskWithUserPage() {
             className={"h-full flex gap-4 overflow-hidden"}
             value={type}
             onValueChange={(value) => {
-              form.setValue("body.type", value as SupportedMessageTypes);
-              setPreferredMessageType(value as MessageType);
+              form.setValue("body.type", value as SupportedMessageTypes)
+              setPreferredMessageType(value as SupportedMessageTypes)
             }}
           >
             <TabsList
-              className={"flex flex-col  shrink-0 w-1/4 h-full bg-transparent"}
+              className={
+                "flex flex-col overflow-auto shrink-0 w-1/4 h-full bg-transparent"
+              }
               onChange={(event) => {
-                console.log("-- tabs change: ", event);
+                console.log("-- tabs change: ", event)
               }}
             >
               <Label className={"my-2 text-lg"}>选择类型</Label>
@@ -168,7 +180,7 @@ export default function CreateTaskWithUserPage() {
 
             <Separator orientation={"vertical"} />
 
-            <div className={"grow space-y-2"}>
+            <div className={"grow space-y-4 overflow-auto"}>
               <FormField
                 control={form.control}
                 name="body.title"
@@ -199,7 +211,7 @@ export default function CreateTaskWithUserPage() {
                 )}
               />
 
-              <TabsContent value={MessageType.Task}>
+              <TabsContent value={MessageType.Task} className={"space-y-4"}>
                 <FormField
                   control={form.control}
                   name="body.purpose"
@@ -246,7 +258,33 @@ export default function CreateTaskWithUserPage() {
                 />
               </TabsContent>
 
-              <TabsContent value={MessageType.TextChoices}>
+              <TabsContent
+                value={MessageType.TextChoices}
+                className={"space-y-4"}
+              >
+                <FormField
+                  control={form.control}
+                  name="body.choices"
+                  render={({ field: questionFields }) => (
+                    <FormItem>
+                      <FormLabel>
+                        选项
+                        <span className={"text-muted-foreground text-xs"}>
+                          （至少两个）
+                        </span>
+                      </FormLabel>
+                      <FormControl>
+                        <TextChoicesInput
+                          value={questionFields.value}
+                          onChange={questionFields.onChange}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="body.multiple"
@@ -261,32 +299,6 @@ export default function CreateTaskWithUserPage() {
                           />
                         </FormControl>
                       </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="body.choices"
-                  render={({ field: questionFields }) => (
-                    <FormItem>
-                      <FormLabel>
-                        选项
-                        <span className={"text-muted-foreground text-xs"}>
-                          （至少两个）
-                        </span>
-                      </FormLabel>
-                      <FormControl>
-                        <TextChoicesInput
-                          defaultChoices={[
-                            { value: "#1 ", checked: false },
-                            { value: "#2 ", checked: false },
-                          ]}
-                          onChoicesChange={questionFields.onChange}
-                        />
-                      </FormControl>
-
                       <FormMessage />
                     </FormItem>
                   )}
@@ -311,7 +323,7 @@ export default function CreateTaskWithUserPage() {
                         onChange={(event) => {
                           field.onChange(
                             Math.floor(parseFloat(event.currentTarget.value)),
-                          );
+                          )
                         }}
                       />
                     </FormControl>
@@ -337,7 +349,7 @@ export default function CreateTaskWithUserPage() {
                           // console.log("-- onChange: ", event.currentTarget.value);
                           field.onChange(
                             moment(event.currentTarget.value).toDate(),
-                          );
+                          )
                         }}
                       />
                     </FormControl>
@@ -362,7 +374,7 @@ export default function CreateTaskWithUserPage() {
                           // console.log("-- onChange: ", event.currentTarget.value);
                           field.onChange(
                             moment(event.currentTarget.value).toDate(),
-                          );
+                          )
                         }}
                       />
                     </FormControl>
@@ -375,5 +387,5 @@ export default function CreateTaskWithUserPage() {
         </form>
       </Form>
     </div>
-  );
+  )
 }
