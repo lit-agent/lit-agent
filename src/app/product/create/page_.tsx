@@ -18,19 +18,11 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { api } from "@/trpc/react";
-import { useUserData } from "@/hooks/use-user-data";
 import { toast } from "sonner";
 import { BaseClientUser } from "@/ds/user";
 import { createProductSchema } from "@/ds/product";
 
-export default function CreateTaskPage() {
-  const { user } = useUserData();
-  if (!user) return "no user yet";
-
-  return <CreateTaskPage_ user={user} />;
-}
-
-function CreateTaskPage_({ user }: { user: BaseClientUser }) {
+export default function CreateProductPage_({ user }: { user: BaseClientUser }) {
   // 1. Define your form.
   const form = useForm<z.infer<typeof createProductSchema>>({
     resolver: zodResolver(createProductSchema),

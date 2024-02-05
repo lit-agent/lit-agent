@@ -17,22 +17,23 @@ import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import moment from "moment";
 import { Input } from "@/components/ui/input";
-import { HomeIcon, MinusCircleIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { HomeIcon } from "lucide-react";
+import { useState } from "react";
 import { createTaskSchema } from "@/ds/task";
 import { useRouter } from "next/navigation";
-import { MessageType } from "@/ds/message";
+import { MessageType, SupportedMessageTypes } from "@/ds/message";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { Switch } from "@/components/ui/switch";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { TextChoicesInput } from "@/components/input-choices";
+import { useUserData } from "@/hooks/use-user-data";
 
-type SupportedMessageTypes = MessageType.Plain | MessageType.TextChoices;
+export default function CreateTaskWithUserPage() {
+  const { preferredMessageType: type, setPreferredMessageType } = useUserData();
 
-const CreateTaskWithUserPage = () => {
-  const type: SupportedMessageTypes = MessageType.Plain;
   // 1. Define your form.
   const form = useForm<z.infer<typeof createTaskSchema>>({
     resolver: zodResolver(createTaskSchema),
@@ -71,7 +72,7 @@ const CreateTaskWithUserPage = () => {
       });
   }
 
-  const FINISHED = 2;
+  const FINISHED = 3;
   console.log("-- data: ", form.getValues());
 
   return (
@@ -118,10 +119,11 @@ const CreateTaskWithUserPage = () => {
 
           <Tabs
             className={"h-full flex gap-4 overflow-hidden"}
-            defaultValue={type}
-            onValueChange={(value) =>
-              form.setValue("body.type", value as SupportedMessageTypes)
-            }
+            value={type}
+            onValueChange={(value) => {
+              form.setValue("body.type", value as SupportedMessageTypes);
+              setPreferredMessageType(value as MessageType);
+            }}
           >
             <TabsList
               className={"flex flex-col  shrink-0 w-1/4 h-full bg-transparent"}
@@ -181,6 +183,68 @@ const CreateTaskWithUserPage = () => {
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="body.cover"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>封面（todo）</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <TabsContent value={MessageType.Task}>
+                <FormField
+                  control={form.control}
+                  name="body.purpose"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>任务目标</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="body.targetUsers"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>目标群体</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="body.platform"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>平台渠道</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </TabsContent>
 
               <TabsContent value={MessageType.TextChoices}>
                 <FormField
@@ -312,73 +376,4 @@ const CreateTaskWithUserPage = () => {
       </Form>
     </div>
   );
-};
-
-export type ChoiceItem = {
-  value: string;
-  checked?: boolean;
-};
-
-const TextChoicesInput = ({
-  defaultChoices,
-  onChoicesChange,
-}: {
-  defaultChoices: ChoiceItem[];
-  onChoicesChange: (choice: ChoiceItem[]) => void;
-}) => {
-  const [choices, setChoices] = useState<ChoiceItem[]>(defaultChoices);
-
-  useEffect(() => {
-    onChoicesChange(choices);
-  }, [JSON.stringify(choices)]);
-
-  return (
-    <div className={"flex flex-col gap-2"}>
-      {choices.map((choice, index) => (
-        <div key={index} className={"flex items-center gap-2"}>
-          <Checkbox
-            checked={choice.checked}
-            onCheckedChange={(value) => {
-              const newChoices = [...choices];
-              newChoices[index]!.checked = !!value;
-              setChoices(newChoices);
-            }}
-          />
-
-          <Input
-            className={"grow"}
-            key={index}
-            value={choice.value}
-            placeholder={`choice-${index + 1}`}
-            onChange={(event) => {
-              const newChoices = [...choices];
-              newChoices[index]!.value = event.currentTarget.value;
-              setChoices(newChoices);
-            }}
-          />
-
-          <Button
-            disabled={choices.length <= 2}
-            className={"shrink-0 w-fit h-fit p-0 bg-transparent text-red-800"}
-            onClick={(event) => {
-              setChoices(choices.filter((choice, i) => i !== index));
-            }}
-          >
-            <MinusCircleIcon />
-          </Button>
-        </div>
-      ))}
-      <Button
-        onClick={(event) => {
-          event.preventDefault();
-          setChoices([...choices, { value: "", checked: false }]);
-        }}
-        variant={"outline"}
-      >
-        添加
-      </Button>
-    </div>
-  );
-};
-
-export default CreateTaskWithUserPage;
+}

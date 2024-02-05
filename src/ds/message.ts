@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export enum MessageType {
+  Task = "Task",
   Plain = "Plain",
   TextChoices = "TextChoices",
 
@@ -14,6 +15,11 @@ export enum MessageType {
   Others = "Others",
 }
 
+export type SupportedMessageTypes =
+  | MessageType.Plain
+  | MessageType.TextChoices
+  | MessageType.Task;
+
 export const segmentSchema = z.object({
   type: z.nativeEnum(MessageType),
   content: z.any(),
@@ -23,6 +29,7 @@ export type Segment = z.infer<typeof segmentSchema>;
 
 export const basicBodySchema = z.object({
   title: z.string().optional(),
+  cover: z.string().optional(),
 });
 
 export const choiceItemSchema = z.object({
@@ -49,6 +56,17 @@ export const messageBodySchema = z.discriminatedUnion("type", [
   // 图片选择题
   choicesBodySchema.extend({
     type: z.literal(MessageType.ImageChoices),
+  }),
+
+  basicBodySchema.extend({ type: z.literal(MessageType.Task) }).extend({
+    platform: z.string().default("不孤岛"),
+    targetUsers: z.string().default("全体姑的Friends"),
+    purpose: z
+      .string()
+      .default(
+        "1. 在视频号里看完我这条短视频作品\n" +
+          "2. 点赞、评论、转发、收藏该作品，帮助作品更好的传播",
+      ),
   }),
 
   // todo: create task 和 message 有区别
