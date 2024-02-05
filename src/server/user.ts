@@ -41,7 +41,7 @@ export const validationSuccessCallback = async (userId: string) => {
   const targetUserId = targetUser.id
 
   console.log("-- 正在关注博主")
-  await prisma.userFollow.create({
+  prisma.userFollow.create({
     data: {
       followingId: userId,
       followedById: targetUserId,
@@ -50,7 +50,7 @@ export const validationSuccessCallback = async (userId: string) => {
 
   console.log("-- 正在发送欢迎语")
   // 欢迎语不需要使用socket发，因为用户还没到房间
-  await prisma.message.create({
+  prisma.message.create({
     data: {
       body: {
         type: MessageType.Plain,

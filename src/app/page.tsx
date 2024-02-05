@@ -20,13 +20,29 @@ import { getChatChannelId } from "@/lib/channel"
 
 export function Home({ user }: { user: MyUser }) {
   const tabInUrl = useSearchParams().get("tab")
-  const { appTab, setAppTab, targetUserId, setUnreadMessages, unreadMessages } =
-    useAppData()
+  const {
+    appTab,
+    setAppTab,
+    targetUserId,
+    setTargetUserId,
+    setUnreadMessages,
+    unreadMessages,
+  } = useAppData()
+
+  const relativeUsers = getFollowRelativeUsers(user)
+
+  // 防止用户清空存储，导致没有对象
+  useEffect(() => {
+    console.log("-- relative users: ", relativeUsers)
+    if (!targetUserId && relativeUsers.length)
+      setTargetUserId(relativeUsers[0]!.id)
+  }, [])
 
   useEffect(() => {
-    const channels: string[] = getFollowRelativeUsers(user).map((user) =>
-      getChatChannelId(user.id, user.id),
+    const channels = relativeUsers.map((relativeUser) =>
+      getChatChannelId(user.id, relativeUser.id),
     )
+
     // 用户监听广播
     if (user.type === UserType.user && targetUserId)
       channels.push(`${targetUserId}_broadcast`)
@@ -41,9 +57,7 @@ export function Home({ user }: { user: MyUser }) {
     })
 
     return () => {
-      channels.forEach((channelId) => {
-        pusherClient.unsubscribe(channelId)
-      })
+      channels.forEach((channelId) => pusherClient.unsubscribe(channelId))
       pusherClient.unbind(SocketEventType.Message)
     }
   }, [])

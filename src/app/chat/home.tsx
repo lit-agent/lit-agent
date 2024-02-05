@@ -16,6 +16,8 @@ export default function HomeChatPage({ user }: { user: MyUser }) {
     { enabled: !!targetUserId },
   )
 
+  console.log("-- HomeChatPage: ", { targetUserId, targetUser })
+
   if (user.type === UserType.blogger && !targetUserId) {
     return (
       <div className={"h-full overflow-hidden"}>

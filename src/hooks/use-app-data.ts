@@ -8,7 +8,7 @@ const useNavBear = createBearStore<AppTab>()("appTab", AppTab.chat, true)
 const useTargetUserIdBear = createBearStore<string | null>()(
   "targetUserId",
   null,
-  false,
+  true,
 )
 
 const useUnreadMessagesBear = createBearStore<ClientMessage[]>()(
