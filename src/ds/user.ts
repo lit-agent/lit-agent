@@ -18,7 +18,11 @@ export const userSlice = validator<UserDefaultArgs>()({
     fromTasks: true,
     rooms: {
       include: {
-        messages: true,
+        messages: {
+          include: {
+            fromUser: true,
+          },
+        },
         users: true,
       },
     },
