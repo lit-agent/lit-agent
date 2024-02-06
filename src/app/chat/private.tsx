@@ -77,7 +77,7 @@ export default function PrivateChatPage({
 
   return (
     <div className={"flex h-full flex-col overflow-hidden"}>
-      <div className={"w-full justify-between items-center flex"}>
+      <div className={"w-full justify-between items-center flex px-4 py-2"}>
         <div className={"w-8"}>
           {user.type === UserType.blogger && (
             <ChevronLeftIcon
@@ -101,7 +101,7 @@ export default function PrivateChatPage({
             body={message.body}
             key={index}
             taskId={message.room?.task?.id}
-            user={user}
+            user={message.fromUser}
           />
         ))}
         <div ref={refBottom} />

@@ -59,10 +59,10 @@ export const authOptions: NextAuthOptions = {
         where: { id: token.sub },
       })
       if (userInDB) {
-        console.log("-- add phone")
+        console.log("✅ JWT authenticated")
         token.phone = userInDB.phone
       } else {
-        console.warn("-- invalidate user")
+        console.warn("❌ JWT invalidating")
         token.iat = Date.now() / 1000
         // token.expires // todo: 可能修改 expires 就可以让 前台的 session 变得 unauthenticated 了
       }

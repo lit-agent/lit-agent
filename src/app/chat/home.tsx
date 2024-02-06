@@ -10,6 +10,7 @@ import { Prisma, UserType } from "@prisma/client"
 import { last, sortBy } from "lodash"
 import { useEffect, useState } from "react"
 import MessageGetPayload = Prisma.MessageGetPayload
+import { Label } from "@/components/ui/label"
 
 type IListRoom = {
   id: string
@@ -18,7 +19,8 @@ type IListRoom = {
 }
 
 export default function HomeChatPage({ user }: { user: MyUser }) {
-  const { targetUserId, setTargetUserId, unreadMessages } = useAppData()
+  const { targetUserId, setTargetUserId, unreadMessages, setUnreadMessages } =
+    useAppData()
   const { data: targetUser } = api.user.get.useQuery(
     { id: targetUserId! },
     { enabled: !!targetUserId },
@@ -42,26 +44,21 @@ export default function HomeChatPage({ user }: { user: MyUser }) {
       setRooms([{ id: message.room!.id, message, unreadCount: 1 }, ...rooms])
       return
     }
-
-    const newRooms = [...rooms]
-    const room = newRooms.find((r) => r.id === message.room!.id)!
-    room.unreadCount++
-    room.message = message
-    setRooms(sortBy(newRooms, (r) => -+r.message.createdAt))
+    setRooms((rooms) => {
+      const room = rooms.find((r) => r.id === message.room!.id)!
+      room.unreadCount++
+      room.message = message
+      return sortBy(rooms, (r) => -+r.message.createdAt)
+    })
   }, [unreadMessages.length])
 
   if (user.type === UserType.blogger && !targetUserId) {
     return (
       <div className={"h-full overflow-hidden"}>
-        <div className={"p-4"}>
-          <Input type={"search"} />
+        <div className={"p-4 flex justify-center"}>
+          {/*<Input type={"search"} />*/}
+          <Label>不孤岛</Label>
         </div>
-
-        {unreadMessages.length && (
-          <div className={"flex justify-center text-sm text-gray-500"}>
-            您有 {unreadMessages.length} 条未读消息
-          </div>
-        )}
 
         {rooms.map((room) => {
           const targetUser = room.message.fromUser
@@ -70,8 +67,15 @@ export default function HomeChatPage({ user }: { user: MyUser }) {
               key={room.id}
               onClick={() => {
                 setTargetUserId(targetUser.id)
+                setRooms((rooms) => {
+                  rooms.find((r) => r.id === room.id)!.unreadCount = 0
+                  return rooms
+                })
+                setUnreadMessages((um) =>
+                  um.filter((m) => m.room!.id !== room.id),
+                )
               }}
-              className={"relative bg-cyan-500"}
+              className={"relative"}
             >
               <MessageContainer
                 user={targetUser}
