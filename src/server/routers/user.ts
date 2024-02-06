@@ -2,17 +2,17 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
 import { z } from "zod"
 import { initValidatedUser } from "@/server/user"
 
-import { clientUserSlice } from "@/ds/user.base"
+import { userViewSelector } from "@/ds/user.base"
 
 export const userRouter = createTRPCRouter({
   list: publicProcedure.query(async ({ ctx, input }) => {
-    return ctx.prisma.user.findMany({ ...clientUserSlice })
+    return ctx.prisma.user.findMany({ ...userViewSelector })
   }),
 
   getUserByPhone: publicProcedure
     .input(z.object({ phone: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.prisma.user.findUnique({ where: input, ...clientUserSlice })
+      return ctx.prisma.user.findUnique({ where: input, ...userViewSelector })
     }),
 
   get: publicProcedure
@@ -22,7 +22,7 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      return ctx.prisma.user.findUnique({ where: input, ...clientUserSlice })
+      return ctx.prisma.user.findUnique({ where: input, ...userViewSelector })
     }),
 
   validate: protectedProcedure

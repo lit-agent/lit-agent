@@ -1,10 +1,13 @@
 import { z } from "zod"
-import { TaskStatus } from "@prisma/client"
+import { Prisma, TaskStatus } from "@prisma/client"
 import {
   basicBodySchema,
   choicesBodySchema,
   MessageType,
 } from "@/ds/message.base"
+import validator = Prisma.validator
+import TaskFromDefaultArgs = Prisma.TaskFromDefaultArgs
+import { userViewSelector } from "@/ds/user.base"
 
 // 纯图文
 export const createPlainRequirementBodySchema = basicBodySchema.extend({
@@ -31,6 +34,23 @@ export const createTaskRequirementBodySchema = basicBodySchema
     targetUsers: z.string(),
     purpose: z.string(),
   })
+export type ICreateTaskRequirementBody = z.infer<
+  typeof createTaskRequirementBodySchema
+>
+export const taskViewSelector = validator<TaskFromDefaultArgs>()({
+  select: {
+    fromUser: userViewSelector,
+    toUsers: {
+      select: {
+        user: userViewSelector,
+      },
+    },
+    body: true,
+    value: true,
+    startTime: true,
+    endTime: true,
+  },
+})
 
 export const createRequirementBodySchema = z.discriminatedUnion("type", [
   createPlainRequirementBodySchema,

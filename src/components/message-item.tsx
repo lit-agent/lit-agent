@@ -15,10 +15,10 @@ import { IClientMessage, IMessageBody } from "@/ds/message"
 
 import "moment/locale/zh-cn"
 import RenderTask from "@/components/render-task"
-import { IClientUser } from "@/ds/user.base"
+import { IUserView } from "@/ds/user.base"
 
 export interface IMessageContainer {
-  user: IClientUser
+  user: IUserView
   body: IMessageBody
   taskId?: string
   onValueChange?: (v: any) => void
@@ -42,7 +42,7 @@ export const MessageContainer = ({
   className,
   children,
   ...props
-}: { user: IClientUser } & HTMLAttributes<HTMLDivElement>) => {
+}: { user: IUserView } & HTMLAttributes<HTMLDivElement>) => {
   // console.log("-- user in chat item container: ", user);
 
   return (

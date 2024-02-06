@@ -1,13 +1,22 @@
 import { NextRequest, NextResponse } from "next/server"
-import { uploadFile } from "@/server/oss"
+import { UPLOAD_FILES_FIELD } from "@/const"
+import { uploadFile } from "@/app/api/oss/upload/server"
 
 export async function POST(request: NextRequest) {
-  const data = await request.formData()
-  const file = data.get("file") as unknown as File
+  const formData = await request.formData()
 
-  if (!file) return NextResponse.json({ success: false })
+  const files = formData.getAll(UPLOAD_FILES_FIELD) as File[]
+  console.log({ formData, files })
 
-  await uploadFile(file)
+  if (!files)
+    return NextResponse.json({
+      success: false,
+      message: "should have files",
+    })
 
-  return NextResponse.json({ success: true })
+  const data = await Promise.all(
+    files.map(async (file) => await uploadFile(file)),
+  )
+
+  return NextResponse.json({ success: true, data })
 }

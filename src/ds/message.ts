@@ -5,7 +5,7 @@ import validator = Prisma.validator
 import MessageDefaultArgs = Prisma.MessageDefaultArgs
 import MessageGetPayload = Prisma.MessageGetPayload
 
-import { clientUserSlice } from "@/ds/user.base"
+import { userViewSelector } from "@/ds/user.base"
 import { getChatId } from "@/lib/socket"
 
 export const selectChatTarget = z.object({
@@ -27,13 +27,13 @@ export type IMessageBody = z.infer<typeof createRequirementBodySchema>
 export const clientMessageSlice = validator<MessageDefaultArgs>()({
   select: {
     body: true,
-    fromUser: clientUserSlice,
-    toUser: clientUserSlice,
+    fromUser: userViewSelector,
+    toUser: userViewSelector,
     task: true,
     room: {
       select: {
         id: true,
-        users: clientUserSlice,
+        users: userViewSelector,
       },
     },
   },

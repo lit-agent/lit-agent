@@ -1,6 +1,7 @@
 import { prisma } from "@/server/db"
 import { getServerAuthSession } from "@/server/auth"
-import TaskDetailPageInner from "@/app/task/[id]/page_"
+import TaskDetail2 from "@/components/task-detail-2"
+import { taskViewSelector } from "@/ds/requirement"
 
 export default async function TaskDetailPage({
   params: { id },
@@ -10,19 +11,11 @@ export default async function TaskDetailPage({
   const session = await getServerAuthSession()
   const task = await prisma.taskFrom.findUnique({
     where: { id },
-    include: {
-      room: {
-        include: {
-          messages: true,
-        },
-      },
-      fromUser: true,
-      toUsers: true,
-    },
+    ...taskViewSelector,
   })
 
-  console.log("-- task detail page: ", { session, id, task })
+  // console.log("-- task detail page: ", { session, id, task })
   if (!session || !task) return
 
-  return <TaskDetailPageInner session={session} task={task} />
+  return <TaskDetail2 user={session.user} task={task} />
 }

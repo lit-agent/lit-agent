@@ -76,7 +76,7 @@ export default function GuidancePage() {
     setSendingSms(false)
   }
 
-  const getUserByPhone = api.user.triggerList.useMutation()
+  const getUserByPhone = api.user.getUserByPhone.useMutation()
 
   const [submitting, setSubmitting] = useState(false)
 

@@ -9,3 +9,4 @@ export const USER_JIUGU_ID = "jiugu"
 export const ADMIN_PHONE = "17766091857"
 
 export type BgModel = "plain" | "mirror"
+export const UPLOAD_FILES_FIELD = "files"

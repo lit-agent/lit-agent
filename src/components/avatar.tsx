@@ -1,6 +1,6 @@
-import { User } from "@prisma/client";
-import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { IUserView } from "@/ds/user.base"
 
 /**
  * space-x 这个是控制子孩子距离，不用tailwind的话，要用 css 写，比较麻烦
@@ -15,9 +15,9 @@ export default function AvatarComp({
   maxN = 6,
   size = "sm",
 }: {
-  users: { image?: string; name?: string; id: string }[];
-  maxN?: number;
-  size?: "sm" | "lg";
+  users: IUserView[]
+  maxN?: number
+  size?: "sm" | "lg"
 }) {
   return (
     <div
@@ -28,17 +28,7 @@ export default function AvatarComp({
       )}
     >
       {users.slice(0, maxN).map((user, index) => (
-        <Avatar
-          key={index}
-          className={cn(
-            "border",
-            size === "lg" && "w-12 h-12",
-            size === "sm" && "w-6 h-6",
-          )}
-        >
-          <AvatarImage src={user.image ?? undefined} />
-          <AvatarFallback>{(user.name ?? "U")[0]}</AvatarFallback>
-        </Avatar>
+        <UserAvatar user={user} size={size} key={index} />
       ))}
 
       {users.length > maxN && (
@@ -57,5 +47,26 @@ export default function AvatarComp({
         </Avatar>
       )}
     </div>
-  );
+  )
 }
+
+export const UserAvatar = ({
+  user,
+  size = "lg",
+}: {
+  user: IUserView
+  size?: "sm" | "lg"
+}) => (
+  <Avatar
+    className={cn(
+      "border",
+      size === "lg" && "w-12 h-12",
+      size === "sm" && "w-6 h-6",
+    )}
+  >
+    <AvatarImage src={user.image ?? undefined} />
+    <AvatarFallback className={"bg-gray-500"}>
+      {(user.name ?? "U")[0]}
+    </AvatarFallback>
+  </Avatar>
+)

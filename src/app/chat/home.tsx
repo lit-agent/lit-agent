@@ -15,16 +15,16 @@ import { v4 } from "uuid"
 import { IClientMessage } from "@/ds/message"
 import _ from "lodash"
 import { getBroadcastId, getChatId } from "@/lib/socket"
-import { IClientUser } from "@/ds/user.base"
+import { IUserView } from "@/ds/user.base"
 
 type IChat = {
   message: IClientMessage
   unreadCount: number
 
   roomId?: string
-  users?: IClientUser[] // 群
+  users?: IUserView[] // 群
 
-  targetUser?: IClientUser // 个人
+  targetUser?: IUserView // 个人
 }
 
 export default function HomeChatPage({ user }: { user: MyUser }) {

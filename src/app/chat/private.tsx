@@ -15,7 +15,7 @@ import { UserType } from "@prisma/client"
 import { ChevronLeftIcon } from "lucide-react"
 import { getClientMessageId } from "@/ds/message"
 import { getChatId } from "@/lib/socket"
-import { IClientUser } from "@/ds/user.base"
+import { IUserView } from "@/ds/user.base"
 
 export default function PrivateChatPage({
   user,
@@ -23,7 +23,7 @@ export default function PrivateChatPage({
   withBack,
 }: {
   user: MyUser
-  toUser: IClientUser
+  toUser: IUserView
   // todo: room
   withBack?: boolean
 }) {

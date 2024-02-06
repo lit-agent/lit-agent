@@ -11,29 +11,29 @@ import {
   SampleUser1Image,
 } from "@/lib/assets"
 import { BgModel, USER_JIUGU_AI_ID } from "@/const"
-import { IClientUser } from "@/ds/user.base"
+import { IUserView } from "@/ds/user.base"
 
 export const bgModel: BgModel = "plain"
 
-export const userJiuguAI: IClientUser = {
+export const userJiuguAI: IUserView = {
   id: USER_JIUGU_AI_ID,
   name: "玖姑的AI助理",
   image: JiuguImage.src,
   type: "assistant",
 }
-export const bloggerId: IClientUser = {
+export const bloggerId: IUserView = {
   id: "jiugu",
   name: "玖姑",
   image: JiuguImage.src,
   type: "blogger",
 }
-export const userHading: IClientUser = {
+export const userHading: IUserView = {
   id: "hading",
   name: "哈丁",
   image: HadingImage.src,
   type: "user",
 }
-export const userSample: IClientUser = {
+export const userSample: IUserView = {
   id: "demo",
   name: "demo",
   image: SampleUser1Image.src,

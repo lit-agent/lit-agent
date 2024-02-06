@@ -30,6 +30,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { TextChoicesInput } from "@/components/input-choices"
 import { useUserPreference } from "@/hooks/use-user-preference"
 
+import { uploadFiles } from "@/app/api/oss/upload/client"
+
 const schema = createRequirementSchema
 const FINISHED = 3
 
@@ -47,7 +49,8 @@ export default function CreateTaskWithUserPage() {
       endTime: moment().add(1, "days").toDate(),
       body: {
         type, // !important
-        title: "Untitled",
+        title:
+          "我会在我的社群如实分享更多律师咨询的细节，欢迎去同名公众号帮我传播视频...",
         platform: "不孤岛",
         targetUsers: "全体姑的Friends",
         purpose:
@@ -217,21 +220,8 @@ export default function CreateTaskWithUserPage() {
                         accept={"image/*"}
                         onChange={async (event) => {
                           const files = event.currentTarget.files
-                          if (!files || !files.length) return
-                          const data = new FormData()
-                          const file = files[0]!
-                          data.set("file", file)
-                          const res = await fetch("/api/oss/upload", {
-                            method: "POST",
-                            body: data,
-                          })
-                          if (!res.ok) {
-                            toast.error("上传失败")
-                            console.error(res)
-                          } else {
-                            toast.success("上传成功！")
-                            console.log("-- uploaded result: ", res)
-                          }
+                          if (!files) return
+                          await uploadFiles(Object.values(files))
                         }}
                       />
                     </FormControl>

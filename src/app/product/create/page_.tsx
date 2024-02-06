@@ -20,9 +20,9 @@ import { Switch } from "@/components/ui/switch"
 import { api } from "@/trpc/react"
 import { toast } from "sonner"
 import { createProductSchema } from "@/ds/product"
-import { IClientUser } from "@/ds/user.base"
+import { IUserView } from "@/ds/user.base"
 
-export default function CreateProductPage_({ user }: { user: IClientUser }) {
+export default function CreateProductPage_({ user }: { user: IUserView }) {
   // 1. Define your form.
   const form = useForm<z.infer<typeof createProductSchema>>({
     resolver: zodResolver(createProductSchema),

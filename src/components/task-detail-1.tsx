@@ -10,19 +10,19 @@ import { MessageContainer } from "@/components/message-item"
 import { UserComp } from "@/components/user"
 import { Input } from "@/components/ui/input"
 import { useRef } from "react"
-import { Session } from "next-auth"
 import { TaskFrom } from ".prisma/client"
+import { MyUser } from "@/ds/user"
 
-export default function TaskDetailPageInner({
-  session,
+export default function TaskDetail1({
   task,
+  user,
 }: {
-  session: Session
+  user: MyUser
   task: TaskFrom
 }) {
   const refTop = useRef<HTMLDivElement>(null)
 
-  console.log("-- top: ", refTop.current?.getBoundingClientRect())
+  // console.log("-- top: ", refTop.current?.getBoundingClientRect())
 
   return (
     <div>
@@ -84,7 +84,7 @@ export default function TaskDetailPageInner({
           </div>
         </div>
         <Separator orientation={"horizontal"} className={"bg-white/10"} />
-        <MessageContainer user={session.user}>hello</MessageContainer>
+        <MessageContainer user={user}>hello</MessageContainer>
         <Separator orientation={"horizontal"} className={"bg-white/10 mb-12"} />
       </div>
 
@@ -93,7 +93,7 @@ export default function TaskDetailPageInner({
           "fixed bottom-0 left-0 z-50 w-full p-2 flex items-center gap-2 bg-[#3D3847]"
         }
       >
-        <UserComp user={session.user} />
+        <UserComp user={user} />
         <Input
           placeholder={"观点碰撞产生共鸣💥"}
           className={

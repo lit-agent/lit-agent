@@ -3,7 +3,7 @@ import UserDefaultArgs = Prisma.UserDefaultArgs
 import UserGetPayload = Prisma.UserGetPayload
 import validator = Prisma.validator
 
-export const clientUserSlice = validator<UserDefaultArgs>()({
+export const userViewSelector = validator<UserDefaultArgs>()({
   select: {
     id: true,
     name: true,
@@ -14,4 +14,4 @@ export const clientUserSlice = validator<UserDefaultArgs>()({
     phone: true,
   },
 })
-export type IClientUser = UserGetPayload<typeof clientUserSlice>
+export type IUserView = UserGetPayload<typeof userViewSelector>
