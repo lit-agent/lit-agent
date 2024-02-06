@@ -61,10 +61,23 @@ export const messageRouter = createTRPCRouter({
   send: protectedProcedure
     .input(sendMessageSchema)
     .mutation(async ({ ctx, input }) => {
+      const { roomId, body } = input
       const message = await ctx.prisma.message.create({
         data: {
-          ...input,
-          fromUserId: ctx.user.id,
+          body,
+          fromUser: {
+            connect: {
+              id: ctx.user.id,
+            },
+          },
+          room: {
+            connectOrCreate: {
+              where: { id: roomId },
+              create: {
+                id: roomId,
+              },
+            },
+          },
         },
         ...clientMessageSlice,
       })
