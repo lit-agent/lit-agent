@@ -9,7 +9,6 @@ import { prisma } from "@/server/db"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { validateSms } from "@/server/sms"
 import { MyUser, myUserSlice } from "@/ds/user"
-import { DefaultJWT } from "next-auth/jwt"
 
 // ref: https://next-auth.js.org/getting-started/typescript#submodules
 declare module "next-auth/jwt" {

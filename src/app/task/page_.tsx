@@ -1,23 +1,23 @@
 import { RiFireFill } from "react-icons/ri"
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-react"
-import AvatarComp from "@/components/avatar"
+import AvatarComp, { UserAvatar } from "@/components/avatar"
 import Link from "next/link"
 import { Label } from "../../components/ui/label"
 import { MyUser } from "@/ds/user"
 import { last } from "lodash"
-import { userHading } from "@/config"
+import { admins } from "@/config"
 
 export default function TaskPage({ user }: { user: MyUser }) {
-  const userNew = userHading
+  const userNew = admins.hading
 
   // todo: db data
   const data = {
-    userNew: userHading,
+    userNew,
     capital: 1093,
     ranking: 355,
     // todo: 需要更好的数据结构
-    finishedUsers: Array(10).fill(userHading),
+    finishedUsers: Array(10).fill(userNew),
   }
 
   console.log("-- task page: ", { user, data })
@@ -26,9 +26,7 @@ export default function TaskPage({ user }: { user: MyUser }) {
     <div className={"bg-[#282232] p-2 min-h-full"}>
       <div className={"flex flex-col items-center gap-4 p-4"}>
         <div className={"flex items-center gap-1 text-xs"}>
-          <Avatar className={"w-4 h-4"}>
-            <AvatarImage src={userHading.image!} />
-          </Avatar>
+          <UserAvatar user={userNew} />
           {maskName(userNew.name!)}
           <span className={"text-gray-500"}>完成了作品传播任务</span>
         </div>

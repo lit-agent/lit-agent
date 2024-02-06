@@ -1,11 +1,11 @@
 import * as tencentcloud from "tencentcloud-sdk-nodejs-sms"
 import * as process from "process"
 import { prisma } from "@/server/db"
-import { MessageType } from "@/ds/message.base"
-import { initRegisteredUser } from "@/server/user"
 
-import { SMS_EXPIRE_MINUTES, USER_JIUGU_AI_ID } from "@/const"
+import { SMS_EXPIRE_MINUTES } from "@/const"
 import { getTimeS } from "@/lib/utils"
+import { userViewSelector } from "@/ds/user.base"
+import { registerUser, validateUser } from "@/server/user"
 
 const SmsClient = tencentcloud.sms.v20210111.Client
 
@@ -46,55 +46,12 @@ export const sendSms = async ({ phone }: { phone: string }) => {
     TemplateParamSet: [code, `${SMS_EXPIRE_MINUTES}`],
   }
 
-  try {
-    console.log("-- sending sms: ", { phone, code })
-    const user = await prisma.user.findUnique({
-      where: { phone },
-      include: { honors: true },
-    })
-    if (!user) {
-      // 新建 user 和 account
-      await prisma.user.create({
-        data: {
-          name: phone,
-          phone,
+  console.log("[sms] sending: ", { phone, code })
+  const res = await client.SendSms(params)
+  console.log("[sms] response: ", res)
 
-          // 创建平台级的账号，todo: 未来应该是继续account创建或者更新user
-          accounts: {
-            create: {
-              provider: "sms",
-              providerAccountId: phone,
-              type: "credentials",
-
-              access_token: code,
-              expires_at: getTimeS() + SMS_EXPIRE_MINUTES * 60 * 1000,
-            },
-          },
-        },
-      })
-    } else {
-      // 只更新 account
-      await prisma.account.update({
-        where: {
-          provider_providerAccountId: {
-            provider: "sms",
-            providerAccountId: phone,
-          },
-        },
-        data: {
-          access_token: code,
-          expires_at: getTimeS() + SMS_EXPIRE_MINUTES * 60 * 1000,
-        },
-      })
-    }
-
-    const res = await client.SendSms(params)
-    console.log("-- res: ", res)
-    return res
-  } catch (e) {
-    console.error(e)
-    return null
-  }
+  await registerUser({ phone, code })
+  return res
 }
 
 export const validateSms = async ({
@@ -115,32 +72,18 @@ export const validateSms = async ({
       user: true,
     },
   })
-  // console.log("-- account: ", account);
+  console.log("[sms] validating account: ", account)
 
   if (
     // 不存在
     !account ||
-    // 过期
-    getTimeS() > account.expires_at! ||
+    // todo: 过期
+    // getTimeS() > account.expires_at! ||
     // 错误
     account.access_token !== code
   ) {
     return null
   }
 
-  let user
-  if (!account.user) {
-    user = await initRegisteredUser({ phone })
-  } else {
-    user = await prisma.user.update({
-      where: { id: account.user.id },
-      data: {
-        status: "online",
-      },
-    })
-  }
-
-  console.log("-- validated user: ", user)
-
-  return user
+  return validateUser(account.user.id)
 }

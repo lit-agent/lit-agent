@@ -6,15 +6,14 @@ import { MediasImage } from "@/lib/assets"
 import { Button } from "@/components/ui/button"
 import { TbMessageChatbot } from "react-icons/tb"
 import { cn } from "@/lib/utils"
-import { bloggerId } from "@/config"
+import { UserAvatar } from "@/components/avatar"
+import { admins } from "@/config"
 
 export const GiuguProfile = () => {
   return (
     <div className={"flex flex-col items-center gap-2 "}>
       <div className={"relative"}>
-        <Avatar className={"h-14 w-14"}>
-          <AvatarImage src={bloggerId.image!} />
-        </Avatar>
+        <UserAvatar user={admins.jiugu} />
         <div
           className={
             "absolute bottom-[3px] right-[3px] h-3 w-3 rounded-full border border-white bg-green-700"
@@ -22,7 +21,7 @@ export const GiuguProfile = () => {
         />
       </div>
 
-      <div className={"text-2xl font-semibold"}>{bloggerId.name}</div>
+      <div className={"text-2xl font-semibold"}>{admins.jiugu.name}</div>
 
       <div>全网粉丝 62.2w</div>
 

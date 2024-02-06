@@ -1,60 +1,68 @@
 import { IMessageContainer } from "@/components/message-item"
 import { MessageType } from "@/ds/message.base"
-import {
-  Choice1Image,
-  Choice2Image,
-  FireIcon,
-  HadingImage,
-  JiuguImage,
-  Menu1Icon,
-  Menu3Icon,
-  SampleUser1Image,
-} from "@/lib/assets"
-import { BgModel, USER_JIUGU_AI_ID } from "@/const"
-import { IUserView } from "@/ds/user.base"
-import { $Enums } from "@prisma/client"
+import { BgModel, USER_JIUGU_AI_ID, USER_JIUGU_ID } from "@/const"
+import { $Enums, UserType } from "@prisma/client"
 import UserStatus = $Enums.UserStatus
-
-export const bgModel: BgModel = "plain"
 
 const userBase = {
   validated: true,
   status: UserStatus.online,
-  phone: "",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  emailVerified: null,
+  phoneVerified: null,
+  email: null,
+  currentBalance: 0,
+  historyBalance: 0,
 }
-export const userJiuguAI: IUserView = {
-  id: USER_JIUGU_AI_ID,
-  name: "玖姑的AI助理",
-  image: JiuguImage.src,
-  type: "assistant",
-  ...userBase,
+
+export const admins = {
+  jiugu: {
+    ...userBase,
+    id: USER_JIUGU_ID,
+    phone: "",
+    name: "玖姑",
+    image: "/image/user/jiugu-avatar.png",
+    type: UserType.blogger,
+  },
+  jiuguAi: {
+    ...userBase,
+    id: USER_JIUGU_AI_ID,
+    phone: "",
+    name: "玖姑的AI助手",
+    image: "/image/user/jiugu-avatar.png",
+    type: UserType.assistant,
+  },
+  mark: {
+    ...userBase,
+    id: "mark",
+    phone: "17766091857",
+    name: "南川",
+    image: "/image/user/mark-wx.png",
+    type: UserType.blogger,
+  },
+  shuyu: {
+    ...userBase,
+    id: "shuyu",
+    phone: "15052382005",
+    name: "舒昱",
+    image: "/image/user/shuyu-wx.png",
+    type: UserType.blogger,
+  },
+  hading: {
+    ...userBase,
+    id: "hading",
+    phone: "",
+    name: "哈丁",
+    image: "/image/user/hading-wx.png",
+    type: UserType.user,
+  },
 }
-export const bloggerId: IUserView = {
-  id: "jiugu",
-  name: "玖姑",
-  image: JiuguImage.src,
-  type: "blogger",
-  ...userBase,
-}
-export const userHading: IUserView = {
-  id: "hading",
-  name: "哈丁",
-  image: HadingImage.src,
-  type: "user",
-  ...userBase,
-}
-export const userSample: IUserView = {
-  id: "demo",
-  name: "demo",
-  image: SampleUser1Image.src,
-  type: "user",
-  ...userBase,
-}
-export const genUsers = (n: number) => new Array(n).fill(userSample)
-export const sampleImageItems = [Choice1Image.src, Choice2Image.src]
+
+export const genUsers = (n: number) => new Array(n).fill(admins.hading)
 export const guidanceItems: IMessageContainer[] = [
   {
-    user: bloggerId,
+    user: admins.jiugu,
     body: {
       type: MessageType.Plain,
       title: "Hello，我是玖姑。欢迎加入我的朋友圈。",
@@ -62,7 +70,7 @@ export const guidanceItems: IMessageContainer[] = [
   },
 
   {
-    user: bloggerId,
+    user: admins.jiugu,
     body: {
       type: MessageType.Plain,
       title:
@@ -71,7 +79,7 @@ export const guidanceItems: IMessageContainer[] = [
   },
 
   {
-    user: userJiuguAI,
+    user: admins.jiuguAi,
     body: {
       type: MessageType.Plain,
       title:
@@ -80,7 +88,7 @@ export const guidanceItems: IMessageContainer[] = [
   },
 
   {
-    user: userJiuguAI,
+    user: admins.jiuguAi,
     body: {
       type: MessageType.Plain,
       title: "首先我先帮姑筛选一下真正的姑的friend。请回答以下几个问题：",
@@ -88,7 +96,7 @@ export const guidanceItems: IMessageContainer[] = [
   },
 
   {
-    user: userJiuguAI,
+    user: admins.jiuguAi,
     body: {
       type: MessageType.TextChoices,
       title: "玖姑为什么不化妆？（多选）",
@@ -102,7 +110,7 @@ export const guidanceItems: IMessageContainer[] = [
   },
 
   {
-    user: userJiuguAI,
+    user: admins.jiuguAi,
     body: {
       type: MessageType.TextChoices,
       title: "玖姑的立场是？",
@@ -115,7 +123,7 @@ export const guidanceItems: IMessageContainer[] = [
     },
   },
   {
-    user: userJiuguAI,
+    user: admins.jiuguAi,
     body: {
       type: MessageType.TextChoices,
       title: "玖姑是否支持彩礼？",
@@ -128,7 +136,7 @@ export const guidanceItems: IMessageContainer[] = [
     },
   },
   {
-    user: userJiuguAI,
+    user: admins.jiuguAi,
     body: {
       type: MessageType.TextChoices,
       title: "玖姑的目标是什么？",
@@ -141,13 +149,11 @@ export const guidanceItems: IMessageContainer[] = [
     },
   },
 ]
-export const navs = [
-  { Icon: Menu1Icon, alt: "1" },
-  { Icon: FireIcon, alt: "2" },
-  { Icon: Menu3Icon, alt: "3" },
-]
+
 export const tasks = [
   { name: "在途任务", cnt: 6, hasReminder: true },
   { name: "完成的任务", cnt: 11 },
   { name: "失败的任务", cnt: 11 },
 ]
+
+export const bgModel: BgModel = "plain"

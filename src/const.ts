@@ -5,6 +5,7 @@ export const PRIMARY_COLOR = "hsla(17, 100%, 64%, 1)"
 export const SMS_EXPIRE_MINUTES = 10
 export const USER_AI_FOR_ALL_ID = "ai"
 export const USER_JIUGU_AI_ID = "jiugu-ai"
+export const USER_JIUGU_AI_NAME = "玖姑的AI助手"
 export const USER_JIUGU_ID = "jiugu"
 export const ADMIN_PHONE = "17766091857"
 

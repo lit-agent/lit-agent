@@ -1,6 +1,6 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
 import { z } from "zod"
-import { initValidatedUser } from "@/server/user"
+import { validateUser } from "@/server/user"
 
 import { userViewSelector } from "@/ds/user.base"
 
@@ -37,7 +37,7 @@ export const userRouter = createTRPCRouter({
       const validateOk = answer === target
 
       const userId = ctx.user.id
-      if (validateOk) return await initValidatedUser(userId)
+      if (validateOk) return await validateUser(userId)
 
       return { success: false, userId, targetUserId: null }
     }),
