@@ -1,11 +1,11 @@
 import * as tencentcloud from "tencentcloud-sdk-nodejs-sms"
 import * as process from "process"
-import { getTimeS } from "../lib/datetime"
 import { prisma } from "@/server/db"
 import { MessageType } from "@/ds/message.base"
-import { registerSuccessCallback } from "@/server/user"
+import { initRegisteredUser } from "@/server/user"
 
 import { SMS_EXPIRE_MINUTES, USER_JIUGU_AI_ID } from "@/const"
+import { getTimeS } from "@/lib/utils"
 
 const SmsClient = tencentcloud.sms.v20210111.Client
 
@@ -130,7 +130,7 @@ export const validateSms = async ({
 
   let user
   if (!account.user) {
-    user = await registerSuccessCallback({ phone })
+    user = await initRegisteredUser({ phone })
   } else {
     user = await prisma.user.update({
       where: { id: account.user.id },

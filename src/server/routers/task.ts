@@ -1,7 +1,6 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
-import { pusherServer } from "@/lib/pusher"
+import { pusherServer, SocketEventType } from "@/lib/socket"
 import { createRequirementSchema } from "@/ds/requirement"
-import { SocketEventType } from "@/ds/socket"
 import { z } from "zod"
 
 export const taskRouter = createTRPCRouter({

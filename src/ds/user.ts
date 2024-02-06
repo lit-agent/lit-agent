@@ -1,8 +1,6 @@
 import { Prisma } from "@prisma/client"
 import UserGetPayload = Prisma.UserGetPayload
-import MessageGetPayload = Prisma.MessageGetPayload
 import validator = Prisma.validator
-import MessageDefaultArgs = Prisma.MessageDefaultArgs
 import UserDefaultArgs = Prisma.UserDefaultArgs
 
 export type BaseClientUser = UserGetPayload<{
@@ -14,35 +12,19 @@ export type BaseClientUser = UserGetPayload<{
   }
 }>
 
-export const clientMessageSlice = validator<MessageDefaultArgs>()({
-  include: {
-    fromUser: true,
-    task: {
-      include: {
-        choices: true,
-      },
-    },
-  },
-})
-
-export type ClientMessage = MessageGetPayload<typeof clientMessageSlice>
-
 export const userSlice = validator<UserDefaultArgs>()({
   include: {
     honors: true,
     fromTasks: true,
-    following: {
+    rooms: {
       include: {
-        following: true,
-        followedBy: true,
         messages: true,
+        users: true,
       },
     },
-    followedBy: {
+    toRelations: {
       include: {
-        following: true,
-        followedBy: true,
-        messages: true,
+        toUser: true,
       },
     },
     toTasks: {
@@ -50,7 +32,11 @@ export const userSlice = validator<UserDefaultArgs>()({
         task: {
           include: {
             toUsers: true,
-            messages: true,
+            room: {
+              include: {
+                messages: true,
+              },
+            },
           },
         },
       },

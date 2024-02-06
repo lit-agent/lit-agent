@@ -1,7 +1,6 @@
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { pusherServer } from "@/lib/pusher";
-import { createProductSchema } from "@/ds/product";
-import { SocketEventType } from "@/ds/socket";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
+import { pusherServer, SocketEventType } from "@/lib/socket"
+import { createProductSchema } from "@/ds/product"
 
 export const productRouter = createTRPCRouter({
   list: publicProcedure.query(async ({ ctx, input }) => {
@@ -10,7 +9,7 @@ export const productRouter = createTRPCRouter({
         fromUser: true,
         toUsers: true,
       },
-    });
+    })
   }),
 
   create: protectedProcedure
@@ -28,10 +27,10 @@ export const productRouter = createTRPCRouter({
         include: {
           fromUser: true,
         },
-      });
-      console.log("-- created product: ", product);
+      })
+      console.log("-- created product: ", product)
 
-      void pusherServer.trigger(ctx.user.id, SocketEventType.Message, product);
-      return product;
+      void pusherServer.trigger(ctx.user.id, SocketEventType.Message, product)
+      return product
     }),
-});
+})

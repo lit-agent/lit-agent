@@ -1,13 +1,11 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
 import { z } from "zod"
-import { validationSuccessCallback } from "@/server/user"
+import { initValidatedUser } from "@/server/user"
 
 export const userRouter = createTRPCRouter({
-  getUserFromPhone: protectedProcedure
-    .input(z.string())
-    .query(async ({ ctx, input }) => {
-      return ctx.prisma.user.findUnique({ where: { phone: input } })
-    }),
+  list: publicProcedure.query(async ({ ctx, input }) => {
+    return ctx.prisma.user.findMany({})
+  }),
 
   fetch: publicProcedure
     .input(z.object({ phone: z.string() }))
@@ -25,29 +23,6 @@ export const userRouter = createTRPCRouter({
       return ctx.prisma.user.findUnique({ where: input })
     }),
 
-  list: publicProcedure.query(async ({ ctx, input }) => {
-    return ctx.prisma.user.findMany({})
-  }),
-
-  followUser: protectedProcedure
-    .input(z.object({ targetUserId: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      return ctx.prisma.follow.upsert({
-        where: {
-          followedById_followingId: {
-            followingId: ctx.user.id,
-            followedById: input.targetUserId,
-          },
-        },
-        create: { followingId: ctx.user.id, followedById: input.targetUserId },
-        update: {},
-      })
-    }),
-
-  // listFans: protectedProcedure.query(async ({ ctx }) => {
-  //   return ctx.prisma.user.findMany({})
-  // }),
-
   validate: protectedProcedure
     .input(
       z.object({
@@ -59,9 +34,9 @@ export const userRouter = createTRPCRouter({
       const target = '{"4":[0,1,2],"5":[2],"6":[2],"7":[0]}'
       const validateOk = answer === target
 
-      const uid = ctx.session.user.id
-      if (validateOk) return await validationSuccessCallback(uid)
+      const userId = ctx.user.id
+      if (validateOk) return await initValidatedUser(userId)
 
-      return { success: false, targetUserId: null }
+      return { success: false, userId, targetUserId: null }
     }),
 })

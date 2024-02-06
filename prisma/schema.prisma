@@ -78,22 +78,6 @@ model Bill {
   // userActions UserAction[]
 }
 
-model Follow {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  followedBy   User   @relation("followedBy", fields: [followedById], references: [id])
-  followedById String
-
-  following   User   @relation("following", fields: [followingId], references: [id])
-  followingId String
-
-  messages Message[]
-
-  @@unique([followedById, followingId])
-}
-
 // 用户徽章，每个徽章可以有自己的一些信息，通过 id 与程序的UI对接
 model Honor {
   id        HonorType @id
@@ -118,30 +102,25 @@ enum HonorType {
 
 // 用户群聊消息
 model Message {
-  // todo: keep message even user/room deleted
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  fromUser   User   @relation("from", fields: [fromUserId], references: [id], onDelete: Cascade)
-  fromUserId String
-
   /// [MessageBody]
   body Json
 
-  toUsers User[] @relation("to")
+  // 发送
+  fromUser   User   @relation(fields: [fromUserId], references: [id], onDelete: Cascade)
+  fromUserId String
 
-  task   TaskFrom? @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  taskId String?
+  // 接收
+  room   Room?   @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId String?
 
-  channelId String
-
+  // 引用
   refer    Message?  @relation("refer", fields: [referId], references: [id])
   referId  String?
   referred Message[] @relation("refer")
-
-  follow   Follow?   @relation(fields: [followId], references: [id])
-  followId String?
 }
 
 // // for test
@@ -209,6 +188,18 @@ model ProductTo {
   // userActions UserAction[]
 }
 
+model Room {
+  id        String   @id @default(cuid())
+  createdAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt
+
+  users User[]
+
+  task TaskFrom?
+
+  messages Message[]
+}
+
 // for auth
 model Session {
   id           String   @id @default(cuid())
@@ -216,24 +207,6 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model TaskChoice {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  type    TaskChoiceType
-  content String
-  users   User[]
-
-  TaskFrom   TaskFrom? @relation(fields: [taskFromId], references: [id], onDelete: Cascade)
-  taskFromId String?
-}
-
-enum TaskChoiceType {
-  Text
-  Image
 }
 
 // 博主发布的产品
@@ -255,8 +228,8 @@ model TaskFrom {
   toUsers    TaskTo[]
 
   // 包含发送到chat页的welcome，以及用户的评论
-  messages Message[]
-  choices  TaskChoice[]
+  room   Room   @relation(fields: [roomId], references: [id])
+  roomId String @unique
 }
 
 enum TaskStatus {
@@ -319,8 +292,7 @@ model User {
   honors Honor[]
 
   // chat
-  sentMessages     Message[] @relation("from")
-  receivedMessages Message[] @relation("to")
+  sentMessages Message[]
 
   // tasks
   fromTasks TaskFrom[]
@@ -332,10 +304,11 @@ model User {
   bills        Bill[]
 
   // actions  UserAction[]
-  taskChoices TaskChoice[]
 
-  following  Follow[] @relation("following")
-  followedBy Follow[] @relation("followedBy")
+  fromRelations UserRelation[] @relation("to")
+  toRelations   UserRelation[] @relation("from")
+
+  rooms Room[]
 }
 
 // model UserAction {
@@ -383,6 +356,25 @@ enum UserActionType {
   unfavor
   payByCash
   payByFire
+}
+
+model UserRelation {
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  fromUser   User   @relation("from", fields: [fromUserId], references: [id])
+  fromUserId String
+
+  toUser   User   @relation("to", fields: [toUserId], references: [id])
+  toUserId String
+
+  // 粉丝
+  isFans Boolean @default(false)
+
+  // 拉黑
+  isBlocking Boolean @default(false)
+
+  @@id([fromUserId, toUserId])
 }
 
 enum UserStatus {

@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input"
 import { useAppData } from "@/hooks/use-app-data"
 import PrivateChatPage from "@/app/chat/private"
 import { UserType } from "@prisma/client"
-import { getFollows } from "@/lib/follow"
 import { last } from "lodash"
 
 export default function HomeChatPage({ user }: { user: MyUser }) {
@@ -26,23 +25,23 @@ export default function HomeChatPage({ user }: { user: MyUser }) {
           <Input type={"search"} className={"bg-gray-700"} />
         </div>
 
-        {getFollows(user).map((follow) => (
-          <div
-            key={follow.id}
-            onClick={() => {
-              setTargetUserId(follow.targetUser.id)
-            }}
-          >
-            <MessageContainer
-              user={follow.targetUser}
-              className={"p-4 border-b"}
+        {user.rooms.map((room) => {
+          const targetUser = room.users.find((u) => u.id !== user.id)!
+          return (
+            <div
+              key={room.id}
+              onClick={() => {
+                setTargetUserId(targetUser.id)
+              }}
             >
-              {last(follow.messages)
-                ? JSON.stringify(last(follow.messages)!.body)
-                : "暂无消息！"}
-            </MessageContainer>
-          </div>
-        ))}
+              <MessageContainer user={targetUser} className={"p-4 border-b"}>
+                {last(room.messages)
+                  ? JSON.stringify(last(room.messages)!.body)
+                  : "暂无消息！"}
+              </MessageContainer>
+            </div>
+          )
+        })}
       </div>
     )
   }

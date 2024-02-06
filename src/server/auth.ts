@@ -54,7 +54,7 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
-    jwt: async ({ token, user, session }) => {
+    jwt: async ({ token, user, session, trigger, account, profile }) => {
       const userInDB = await prisma.user.findUnique({
         where: { id: token.sub },
       })
@@ -64,8 +64,9 @@ export const authOptions: NextAuthOptions = {
       } else {
         console.warn("-- invalidate user")
         token.iat = Date.now() / 1000
+        // token.expires // todo: 可能修改 expires 就可以让 前台的 session 变得 unauthenticated 了
       }
-      console.log("-- jwt: ", { token, user, userInDB, session })
+      // console.log("-- jwt: ", { token, user, userInDB, session })
       return token
     },
     /**
@@ -77,7 +78,7 @@ export const authOptions: NextAuthOptions = {
      * @param session
      * @param user
      */
-    session: async ({ session, user, token }) => {
+    session: async ({ session, user, token, trigger, newSession }) => {
       // console.log("-- session: ", { session, user, token });
       const phone = token.phone
 
@@ -98,7 +99,7 @@ export const authOptions: NextAuthOptions = {
         }
       }
 
-      console.log("-- session: ", { phone, user, userInDB, session })
+      // console.log("-- session: ", { phone, user, userInDB, session })
       return session
     },
   },

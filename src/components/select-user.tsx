@@ -30,7 +30,6 @@ export const SelectUser = ({
   const { targetUserId, setTargetUserId } = useAppData()
   const router = useRouter()
 
-  const followBlogger = api.user.followUser.useMutation()
   const { data: blogger } = api.user.get.useQuery(
     { id: targetUserId! },
     { enabled: !!targetUserId },
@@ -86,20 +85,11 @@ export const SelectUser = ({
                 {users
                   .filter((user) => user.type === userType)
                   .map((targetUser) => {
-                    const isFollowedBy = user.followedBy.some(
-                      (r) => r.following.id === targetUser.id,
-                    )
-                    const isFollowing = user.following.some(
-                      (r) => r.followedBy.id === targetUser.id,
-                    )
                     return (
                       <SelectItem
                         value={targetUser.id}
                         key={targetUser.id}
-                        disabled={
-                          targetUser.id === user.id ||
-                          (!isFollowedBy && !isFollowing)
-                        }
+                        disabled={targetUser.id === user.id}
                       >
                         <div className={"flex items-center gap-2"}>
                           <div
@@ -111,9 +101,7 @@ export const SelectUser = ({
                             )}
                           />
                           <div>
-                            {targetUser.id}({targetUser.phone}) | [
-                            {isFollowedBy ? "+" : "-"}
-                            {isFollowing ? "+" : "-"}]
+                            {targetUser.id}({targetUser.phone})
                           </div>
                         </div>
                       </SelectItem>

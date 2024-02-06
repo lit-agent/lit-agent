@@ -10,6 +10,7 @@ import MySessionProvider from "@/providers/session"
 import { TRPCReactProvider } from "@/providers/trpc"
 import { Metadata, Viewport } from "next"
 import { AppAutoMobileHeight } from "@/components/app-auto-mobile-height"
+import { getServerAuthSession } from "@/server/auth"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -35,6 +36,9 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const session = await getServerAuthSession()
+  console.log("-- [RootLayout]: ", { session })
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`font-sans ${inter.variable}`}>

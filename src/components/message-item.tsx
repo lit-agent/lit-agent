@@ -1,26 +1,19 @@
 "use client"
 
 import { BsThreeDots } from "react-icons/bs"
-import { BaseClientUser, ClientMessage } from "src/ds/user"
+import { BaseClientUser, MyUser } from "src/ds/user"
 import { MessageType } from "@/ds/message.base"
 import { cn } from "src/lib/utils"
-import { HTMLAttributes, PropsWithChildren, useState } from "react"
+import { HTMLAttributes, useState } from "react"
 import { Badge } from "src/components/ui/badge"
 import { BloggerContainer } from "src/containers/blogger"
 import { Checkbox } from "src/components/ui/checkbox"
 import { MyMarkdown } from "@/containers/markdown"
 import { Label } from "@/components/ui/label"
 import { UserComp } from "@/components/user"
-import { IMessageBody } from "@/ds/message"
-import { Hot } from "./fire-value"
-import { CoverSmImage, WechatMPIcon } from "@/lib/assets"
-import moment from "moment"
-import Image from "next/image"
+import { ClientMessage, IMessageBody } from "@/ds/message"
 
 import "moment/locale/zh-cn"
-import { toast } from "sonner"
-import Link from "next/link"
-import { api } from "@/trpc/react"
 import RenderTask from "@/components/render-task"
 
 export interface IMessageContainer {
@@ -28,6 +21,19 @@ export interface IMessageContainer {
   body: IMessageBody
   taskId?: string
   onValueChange?: (v: any) => void
+}
+
+export default function Message({
+  user,
+  body,
+  taskId,
+  onValueChange,
+}: IMessageContainer) {
+  return (
+    <MessageContainer user={user}>
+      <MessageBody body={body} taskId={taskId} onValueChange={onValueChange} />
+    </MessageContainer>
+  )
 }
 
 export const MessageContainer = ({
@@ -66,19 +72,6 @@ export const MessageContainer = ({
         <BsThreeDots className={cn("text-muted-foreground absolute right-2")} />
       )}
     </div>
-  )
-}
-
-export function Message({
-  user,
-  body,
-  taskId,
-  onValueChange,
-}: IMessageContainer) {
-  return (
-    <MessageContainer user={user}>
-      <MessageBody body={body} taskId={taskId} onValueChange={onValueChange} />
-    </MessageContainer>
   )
 }
 
@@ -233,5 +226,3 @@ export const MessageBody = ({
       return body.type
   }
 }
-
-export default Message

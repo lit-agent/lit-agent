@@ -2,6 +2,7 @@ import { prisma } from "@/server/db"
 import { UserType } from "@prisma/client"
 
 import { ADMIN_PHONE, USER_JIUGU_AI_ID } from "@/const"
+import { initValidatedUser } from "@/server/user"
 
 const init = async () => {
   console.log("⏰ initializing database...")
@@ -20,16 +21,12 @@ const init = async () => {
   })
 
   const users = await prisma.user.findMany()
-  const adminUser = users.find((u) => u.phone === ADMIN_PHONE)!
-  await prisma.follow.deleteMany()
-  await prisma.follow.createMany({
-    data: users
-      .filter((u) => u.id !== adminUser.id)
-      .map((u) => ({
-        followingId: u.id,
-        followedById: adminUser.id,
-      })),
-  })
+  const result = await Promise.all(
+    users.map(async (user) => {
+      return await initValidatedUser(user.id)
+    }),
+  )
+  console.log("-- init all user: ", result)
 
   console.log("✅ initialized database.")
 

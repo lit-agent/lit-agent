@@ -1,7 +1,8 @@
 import { createBearStore } from "@/lib/create-bear-store"
 import { useSession } from "next-auth/react"
 import { MessageType, SupportedMessageTypes } from "@/ds/message.base"
-import { ClientMessage } from "@/ds/user"
+
+import { ClientMessage } from "@/ds/message"
 
 const usePreferredRequirementTypeBear =
   createBearStore<SupportedMessageTypes>()(
