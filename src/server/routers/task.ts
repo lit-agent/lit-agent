@@ -1,11 +1,13 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
 import {
   getAdminBroadcastId,
+  getBroadcastId,
   pusherServer,
   SocketEventType,
 } from "@/lib/socket"
 import { createRequirementSchema } from "@/ds/requirement"
 import { z } from "zod"
+import { clientMessageSlice } from "@/ds/message"
 
 export const taskRouter = createTRPCRouter({
   get: publicProcedure
@@ -26,32 +28,30 @@ export const taskRouter = createTRPCRouter({
        * 最后再基于socket发送消息，并返回消息即可
        */
 
-      const fromUserId = ctx.user.id
-      const roomId = await getAdminBroadcastId()
+      const userId = ctx.user.id
 
-      const {} = input
       let message
       await ctx.prisma.$transaction(async (prisma) => {
-        await prisma.taskFrom.create({
-          data: {
-            ...input,
-            fromUserId,
-          },
-        })
-
         message = await prisma.message.create({
           data: {
             body: input.body,
-            fromUserId,
-            roomId,
+            fromUserId: userId,
+            task: {
+              create: {
+                ...input,
+                fromUserId: userId,
+              },
+            },
           },
-          include: {
-            fromUser: true,
-          },
+          ...clientMessageSlice,
         })
       })
 
-      void pusherServer.trigger(roomId, SocketEventType.Message, message)
+      void pusherServer.trigger(
+        getBroadcastId(userId),
+        SocketEventType.Message,
+        message,
+      )
       return message
     }),
 })

@@ -43,6 +43,7 @@ export default function PrivateChatPage({
         fromUser: user,
         toUser: toUser,
         room: null,
+        task: null,
         body: { type: MessageType.Plain, title: text },
       },
       ...newMessages,
@@ -88,13 +89,15 @@ export default function PrivateChatPage({
 
         {newMessages
           .filter(
-            (m) => getClientMessageId(m) === getChatId(user.id, toUser.id),
+            (m) =>
+              (!m.toUser && !m.room) || // broadcast
+              getClientMessageId(m) === getChatId(user.id, toUser.id), // user chat
           )
           .map((message, index) => (
             <Message
               body={message.body}
               key={index}
-              taskId={message.room?.task?.id}
+              taskId={message.task?.id}
               user={message.fromUser}
             />
           ))}

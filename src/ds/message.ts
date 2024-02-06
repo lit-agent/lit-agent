@@ -29,15 +29,11 @@ export const clientMessageSlice = validator<MessageDefaultArgs>()({
     body: true,
     fromUser: clientUserSlice,
     toUser: clientUserSlice,
+    task: true,
     room: {
       select: {
         id: true,
         users: clientUserSlice,
-        task: {
-          select: {
-            id: true,
-          },
-        },
       },
     },
   },

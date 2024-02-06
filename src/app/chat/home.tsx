@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label"
 import { v4 } from "uuid"
 import { IClientMessage } from "@/ds/message"
 import _ from "lodash"
-import { getChatId } from "@/lib/socket"
+import { getBroadcastId, getChatId } from "@/lib/socket"
 import { IClientUser } from "@/ds/user.base"
 
 type IChat = {
@@ -51,7 +51,15 @@ export default function HomeChatPage({ user }: { user: MyUser }) {
     const chats: IChat[] = []
     const seenChannels = new Set<string>()
     newMessages.forEach((m) => {
-      const channelId = m.room?.id ?? getChatId(m.fromUser.id, m.toUser!.id)
+      const isBroadcast = !m.room && !m.toUser
+      if (isBroadcast) return
+
+      const channelId =
+        // group
+        m.room?.id ??
+        // chat
+        getChatId(m.fromUser.id, m.toUser!.id)
+
       if (seenChannels.has(channelId)) return
 
       seenChannels.add(channelId)

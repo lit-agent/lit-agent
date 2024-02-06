@@ -109,6 +109,10 @@ model Message {
   /// [MessageBody]
   body Json
 
+  // 1. user  chat: getChatId
+  // 2. group chat: roomId
+  channelId String?
+
   // 发送
   fromUser   User   @relation("from", fields: [fromUserId], references: [id], onDelete: Cascade)
   fromUserId String
@@ -128,6 +132,9 @@ model Message {
   referred Message[] @relation("refer")
 
   userMessages UserMessage[]
+
+  // 博主发布的任务到这
+  task TaskFrom?
 }
 
 // // for test
@@ -237,6 +244,9 @@ model TaskFrom {
   // 包含发送到chat页的welcome，以及用户的评论
   room   Room?   @relation(fields: [roomId], references: [id])
   roomId String? @unique
+
+  sentMessage   Message @relation(fields: [sentMessageId], references: [id])
+  sentMessageId String  @unique
 }
 
 enum TaskStatus {

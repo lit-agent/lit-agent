@@ -7,11 +7,7 @@ import Link from "next/link"
 export const FloatActionButton = () => (
   <Dialog>
     <DialogTrigger asChild>
-      <Button
-        className={
-          "bg-primary rounded-full absolute right-4 bottom-16 w-fit h-fit p-1 text-white"
-        }
-      >
+      <Button className={"bg-primary rounded-full w-fit h-fit p-1 text-white"}>
         <PlusIcon />
       </Button>
     </DialogTrigger>

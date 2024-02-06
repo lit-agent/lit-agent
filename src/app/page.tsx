@@ -75,7 +75,9 @@ function Home({ user }: { user: MyUser }) {
           <UserPage user={user} />
         </TabsContent>
 
-        {user?.type === "blogger" && <FloatActionButton />}
+        <div className={"absolute right-4 bottom-16"}>
+          {user?.type === "blogger" && <FloatActionButton />}
+        </div>
       </div>
 
       <NavBars tab={appTab} />
