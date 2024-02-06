@@ -44,10 +44,10 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`font-sans ${inter.variable}`}>
-        <MyThemeProvider>
-          <MySessionProvider>
-            <TRPCReactProvider>
-              <SocketProvider>
+        <MySessionProvider>
+          <TRPCReactProvider>
+            <SocketProvider>
+              <MyThemeProvider>
                 <AppAutoMobileHeightProvider>
                   <main className={"relative w-screen"}>
                     <BgProvider>{children}</BgProvider>
@@ -59,10 +59,10 @@ export default async function RootLayout({
                     />
                   </main>
                 </AppAutoMobileHeightProvider>
-              </SocketProvider>
-            </TRPCReactProvider>
-          </MySessionProvider>
-        </MyThemeProvider>
+              </MyThemeProvider>
+            </SocketProvider>
+          </TRPCReactProvider>
+        </MySessionProvider>
       </body>
     </html>
   )
