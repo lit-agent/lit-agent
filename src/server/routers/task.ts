@@ -1,5 +1,9 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
-import { getBroadcastRoomId, pusherServer, SocketEventType } from "@/lib/socket"
+import {
+  getAdminBroadcastId,
+  pusherServer,
+  SocketEventType,
+} from "@/lib/socket"
 import { createRequirementSchema } from "@/ds/requirement"
 import { z } from "zod"
 
@@ -23,8 +27,9 @@ export const taskRouter = createTRPCRouter({
        */
 
       const fromUserId = ctx.user.id
-      const roomId = await getBroadcastRoomId()
+      const roomId = await getAdminBroadcastId()
 
+      const {} = input
       let message
       await ctx.prisma.$transaction(async (prisma) => {
         await prisma.taskFrom.create({

@@ -1,29 +1,18 @@
 import { Prisma } from "@prisma/client"
+import { clientMessageSlice } from "@/ds/message"
+import { clientUserSlice } from "@/ds/user.base"
 import UserGetPayload = Prisma.UserGetPayload
 import validator = Prisma.validator
 import UserDefaultArgs = Prisma.UserDefaultArgs
 
-export type BaseClientUser = UserGetPayload<{
-  select: {
-    id: true
-    name: true
-    image: true
-    type: true
-  }
-}>
-
-export const userSlice = validator<UserDefaultArgs>()({
+export const myUserSlice = validator<UserDefaultArgs>()({
   include: {
     honors: true,
     fromTasks: true,
     rooms: {
       include: {
-        messages: {
-          include: {
-            fromUser: true,
-          },
-        },
-        users: true,
+        messages: clientMessageSlice,
+        users: clientUserSlice,
       },
     },
     toRelations: {
@@ -51,4 +40,4 @@ export const userSlice = validator<UserDefaultArgs>()({
     bills: true,
   },
 })
-export type MyUser = UserGetPayload<typeof userSlice>
+export type MyUser = UserGetPayload<typeof myUserSlice>

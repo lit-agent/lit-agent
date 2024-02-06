@@ -7,47 +7,52 @@ import TaskPage from "@/app/task/page_"
 import { useSearchParams } from "next/navigation"
 import { MyUser } from "@/ds/user"
 import { useAppData } from "@/hooks/use-app-data"
-import { pusherClient, SocketEventType } from "@/lib/socket"
+import {
+  getAdminBroadcastId,
+  getBroadcastId,
+  pusherClient,
+  SocketEventType,
+} from "@/lib/socket"
 import { UserType } from "@prisma/client"
 import ChatPage from "@/app/chat/home"
 import { NavBars } from "@/components/nav"
 import { FloatActionButton } from "@/components/float-action-button"
 import { signOut, useSession } from "next-auth/react"
 import UserPage from "./user/page_"
-import { ClientMessage } from "@/ds/message"
+import { IClientMessage } from "@/ds/message"
 
 function Home({ user }: { user: MyUser }) {
   const tabInUrl = useSearchParams().get("tab")
-  const {
-    appTab,
-    setAppTab,
-    targetUserId,
-    setTargetUserId,
-    setUnreadMessages,
-    unreadMessages,
-  } = useAppData()
+  const { appTab, setAppTab, targetUserId, setTargetUserId, setNewMessages } =
+    useAppData()
 
   useEffect(() => {
-    // 监听所有的room即可
-    const channels = user.rooms.map((room) => room.id)
+    const channels: string[] = []
+
+    // 监听自己（所有发给自己的消息）
+    channels.push(user.id)
+
+    // 监听所有的room
+    channels.push(...user.rooms.map((room) => room.id))
 
     // 监听广播（博主监听这个，从而能在列表页实时收到最新的）
-    channels.push(`${targetUserId}_broadcast`)
+    if (targetUserId) channels.push(getBroadcastId(targetUserId))
 
     console.log("-- bound channels: ", channels)
 
     channels.forEach((channelId) => pusherClient.subscribe(channelId))
 
-    pusherClient.bind(SocketEventType.Message, (message: ClientMessage) => {
+    pusherClient.bind(SocketEventType.Message, (message: IClientMessage) => {
       console.log("-- received message: ", message)
-      setUnreadMessages((unreadMessages) => [...unreadMessages, message])
+      // 倒序
+      setNewMessages((messages) => [message, ...messages])
     })
 
     return () => {
       channels.forEach((channelId) => pusherClient.unsubscribe(channelId))
       pusherClient.unbind(SocketEventType.Message)
     }
-  }, [])
+  }, [targetUserId])
 
   // console.log("-- Home: ", { tabInUrl, appTab, user })
 

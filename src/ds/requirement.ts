@@ -1,11 +1,10 @@
 import { z } from "zod"
-import { TaskStatus } from ".prisma/client"
+import { TaskStatus } from "@prisma/client"
 import {
   basicBodySchema,
   choicesBodySchema,
   MessageType,
 } from "@/ds/message.base"
-import moment from "moment"
 
 // 纯图文
 export const createPlainRequirementBodySchema = basicBodySchema.extend({

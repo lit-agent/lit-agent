@@ -1,6 +1,5 @@
 import { IMessageContainer } from "@/components/message-item"
 import { MessageType } from "@/ds/message.base"
-import { BaseClientUser } from "@/ds/user"
 import {
   Choice1Image,
   Choice2Image,
@@ -12,28 +11,29 @@ import {
   SampleUser1Image,
 } from "@/lib/assets"
 import { BgModel, USER_JIUGU_AI_ID } from "@/const"
+import { IClientUser } from "@/ds/user.base"
 
 export const bgModel: BgModel = "plain"
 
-export const userJiuguAI: BaseClientUser = {
+export const userJiuguAI: IClientUser = {
   id: USER_JIUGU_AI_ID,
   name: "玖姑的AI助理",
   image: JiuguImage.src,
   type: "assistant",
 }
-export const bloggerId: BaseClientUser = {
+export const bloggerId: IClientUser = {
   id: "jiugu",
   name: "玖姑",
   image: JiuguImage.src,
   type: "blogger",
 }
-export const userHading: BaseClientUser = {
+export const userHading: IClientUser = {
   id: "hading",
   name: "哈丁",
   image: HadingImage.src,
   type: "user",
 }
-export const userSample: BaseClientUser = {
+export const userSample: IClientUser = {
   id: "demo",
   name: "demo",
   image: SampleUser1Image.src,

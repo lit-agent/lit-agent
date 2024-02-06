@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import { Label } from "@/components/ui/label";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Label } from "@/components/ui/label"
+import { z } from "zod"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Form,
   FormControl,
@@ -12,17 +12,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { api } from "@/trpc/react";
-import { toast } from "sonner";
-import { BaseClientUser } from "@/ds/user";
-import { createProductSchema } from "@/ds/product";
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
+import { Switch } from "@/components/ui/switch"
+import { api } from "@/trpc/react"
+import { toast } from "sonner"
+import { createProductSchema } from "@/ds/product"
+import { IClientUser } from "@/ds/user.base"
 
-export default function CreateProductPage_({ user }: { user: BaseClientUser }) {
+export default function CreateProductPage_({ user }: { user: IClientUser }) {
   // 1. Define your form.
   const form = useForm<z.infer<typeof createProductSchema>>({
     resolver: zodResolver(createProductSchema),
@@ -38,28 +38,28 @@ export default function CreateProductPage_({ user }: { user: BaseClientUser }) {
       total: 10,
       fromUserId: user.id,
     },
-  });
+  })
 
-  const createProduct = api.product.create.useMutation();
+  const createProduct = api.product.create.useMutation()
 
-  const issuerId = user?.id;
-  console.log("-- issuerId: ", issuerId);
+  const issuerId = user?.id
+  console.log("-- issuerId: ", issuerId)
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof createProductSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log("-- submit: ", { values, issuerId });
+    console.log("-- submit: ", { values, issuerId })
 
     createProduct
       .mutateAsync(values)
       .then((res) => {
-        toast.success("创建成功！");
+        toast.success("创建成功！")
       })
       .catch((e) => {
-        console.error(e);
-        toast.error("创建失败");
-      });
+        console.error(e)
+        toast.error("创建失败")
+      })
   }
 
   return (
@@ -223,5 +223,5 @@ export default function CreateProductPage_({ user }: { user: BaseClientUser }) {
         </form>
       </Form>
     </div>
-  );
+  )
 }

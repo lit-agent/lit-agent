@@ -110,17 +110,24 @@ model Message {
   body Json
 
   // 发送
-  fromUser   User   @relation(fields: [fromUserId], references: [id], onDelete: Cascade)
+  fromUser   User   @relation("from", fields: [fromUserId], references: [id], onDelete: Cascade)
   fromUserId String
 
   // 接收
   room   Room?   @relation(fields: [roomId], references: [id], onDelete: Cascade)
   roomId String?
 
+  toUser   User?   @relation("to", fields: [toUserId], references: [id])
+  toUserId String?
+
+  mentionUsers User[] @relation("mention")
+
   // 引用
   refer    Message?  @relation("refer", fields: [referId], references: [id])
   referId  String?
   referred Message[] @relation("refer")
+
+  userMessages UserMessage[]
 }
 
 // // for test
@@ -292,7 +299,10 @@ model User {
   honors Honor[]
 
   // chat
-  sentMessages Message[]
+  messages          UserMessage[] // 做分类用
+  sentMessages      Message[]     @relation("from")
+  receivedMessages  Message[]     @relation("to")
+  mentionedMessages Message[]     @relation("mention")
 
   // tasks
   fromTasks TaskFrom[]
@@ -356,6 +366,24 @@ enum UserActionType {
   unfavor
   payByCash
   payByFire
+}
+
+/// @Depreciated
+/// 这个表的重要性，在于聊天列表页，可以方便做通知和排序
+/// 但是成本太高了，每条消息会导致O(n)的建表，还是弃用了！
+model UserMessage {
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  message   Message @relation(fields: [messageId], references: [id])
+  messageId String
+
+  isSender    Boolean
+  isReceiver  Boolean
+  isMentioned Boolean
+  isQuoted    Boolean
+
+  @@id([userId, messageId])
 }
 
 model UserRelation {

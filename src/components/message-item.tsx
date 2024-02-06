@@ -1,7 +1,7 @@
 "use client"
 
 import { BsThreeDots } from "react-icons/bs"
-import { BaseClientUser, MyUser } from "src/ds/user"
+import { MyUser } from "src/ds/user"
 import { MessageType } from "@/ds/message.base"
 import { cn } from "src/lib/utils"
 import { HTMLAttributes, useState } from "react"
@@ -11,13 +11,14 @@ import { Checkbox } from "src/components/ui/checkbox"
 import { MyMarkdown } from "@/containers/markdown"
 import { Label } from "@/components/ui/label"
 import { UserComp } from "@/components/user"
-import { ClientMessage, IMessageBody } from "@/ds/message"
+import { IClientMessage, IMessageBody } from "@/ds/message"
 
 import "moment/locale/zh-cn"
 import RenderTask from "@/components/render-task"
+import { IClientUser } from "@/ds/user.base"
 
 export interface IMessageContainer {
-  user: BaseClientUser
+  user: IClientUser
   body: IMessageBody
   taskId?: string
   onValueChange?: (v: any) => void
@@ -41,7 +42,7 @@ export const MessageContainer = ({
   className,
   children,
   ...props
-}: { user: BaseClientUser } & HTMLAttributes<HTMLDivElement>) => {
+}: { user: IClientUser } & HTMLAttributes<HTMLDivElement>) => {
   // console.log("-- user in chat item container: ", user);
 
   return (

@@ -2,15 +2,15 @@ import { prisma } from "@/server/db"
 import { UserType } from "@prisma/client"
 
 import { ADMIN_PHONE, USER_JIUGU_AI_ID } from "@/const"
-import { getAdminUser, initValidatedUser } from "@/server/user"
-import { getBroadcastRoomId } from "@/lib/socket"
+import { fetchAdminUser, initValidatedUser } from "@/server/user"
+import { getAdminBroadcastId } from "@/lib/socket"
 
 const init = async () => {
   console.log("⏰ initializing database...")
 
-  const adminUser = await getAdminUser()
+  const adminUser = await fetchAdminUser()
 
-  const roomId = await getBroadcastRoomId()
+  const roomId = await getAdminBroadcastId()
   await prisma.room.upsert({
     where: { id: roomId },
     create: { id: roomId },

@@ -2,7 +2,7 @@ import { createBearStore } from "@/lib/create-bear-store"
 import { AppTab } from "@/components/app-tab"
 
 import { USER_AI_FOR_ALL_ID } from "@/const"
-import { ClientMessage } from "@/ds/message"
+import { IClientMessage } from "@/ds/message"
 
 const useNavBear = createBearStore<AppTab>()("appTab", AppTab.chat, true)
 
@@ -12,16 +12,16 @@ const useTargetUserIdBear = createBearStore<string | null>()(
   true,
 )
 
-const useUnreadMessagesBear = createBearStore<ClientMessage[]>()(
-  "unreadMessages",
+const useNewMessagesBear = createBearStore<IClientMessage[]>()(
+  "newMessages",
   [],
-  true,
+  false,
 )
 
 export const useAppData = () => {
   return {
     ...useNavBear(),
     ...useTargetUserIdBear(),
-    ...useUnreadMessagesBear(),
+    ...useNewMessagesBear(),
   }
 }

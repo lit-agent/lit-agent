@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
-import { BaseClientUser, MyUser } from "@/ds/user"
+import { useEffect, useRef } from "react"
+import { MyUser } from "@/ds/user"
 import { api } from "@/trpc/react"
 import { SelectUser } from "@/components/select-user"
 import Message from "@/components/message-item"
@@ -13,55 +13,43 @@ import { MessageType } from "@/ds/message.base"
 import { useAppData } from "@/hooks/use-app-data"
 import { UserType } from "@prisma/client"
 import { ChevronLeftIcon } from "lucide-react"
-import { last } from "lodash"
-import { ClientMessage } from "@/ds/message"
-import { getChatRoomId } from "@/lib/socket"
+import { getClientMessageId } from "@/ds/message"
+import { getChatId } from "@/lib/socket"
+import { IClientUser } from "@/ds/user.base"
 
 export default function PrivateChatPage({
   user,
-  targetUser,
+  toUser,
   withBack,
 }: {
   user: MyUser
-  targetUser: BaseClientUser
+  toUser: IClientUser
+  // todo: room
   withBack?: boolean
 }) {
   const refInput = useRef<HTMLInputElement>(null)
-  const [messages, setMessages] = useState<ClientMessage[]>([])
-  const fetchMessages = api.message.fetch.useMutation()
   const sendMessage = api.message.send.useMutation()
-  const { setTargetUserId, unreadMessages, setUnreadMessages } = useAppData()
-
-  const roomId = getChatRoomId(user.id, targetUser.id)
-
-  useEffect(() => {
-    fetchMessages
-      .mutateAsync({ roomId })
-      .then((messages) => setMessages(messages))
-  }, [])
-
-  const channelId = getChatRoomId(user.id, targetUser.id)
-
-  useEffect(() => {
-    const newMessage = last(unreadMessages)
-    if (newMessage?.roomId === channelId) {
-      setMessages((messages) => [...messages, newMessage])
-      setUnreadMessages(unreadMessages.slice(0, unreadMessages.length - 1))
-    }
-  }, [unreadMessages.length])
+  const { setTargetUserId, newMessages, setNewMessages } = useAppData()
 
   const submitMessage = () => {
     if (!refInput.current || !user) return
-
     const text = refInput.current.value
     if (!text) return
 
-    const channelId = getChatRoomId(user.id, targetUser.id)
+    const channelId = getChatId(user.id, toUser.id)
     console.log("-- sending: ", { channelId, text })
+    setNewMessages([
+      {
+        fromUser: user,
+        toUser: toUser,
+        room: null,
+        body: { type: MessageType.Plain, title: text },
+      },
+      ...newMessages,
+    ])
 
-    // todo: 思考要不要做上屏优化
     sendMessage.mutate({
-      roomId,
+      toUserId: toUser.id,
       body: { type: MessageType.Plain, title: text },
     })
 
@@ -71,7 +59,7 @@ export default function PrivateChatPage({
   const refBottom = useRef<HTMLDivElement>(null)
   useEffect(() => {
     refBottom.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages.length])
+  }, [newMessages.length])
 
   // console.log(`-- chat page: `, {channelId,/* messages */});
 
@@ -95,16 +83,21 @@ export default function PrivateChatPage({
         <div className={"w-8"} />
       </div>
 
-      <div className={"flex grow flex-col gap-4 overflow-auto p-4"}>
-        {messages.map((message, index) => (
-          <Message
-            body={message.body}
-            key={index}
-            taskId={message.room?.task?.id}
-            user={message.fromUser}
-          />
-        ))}
+      <div className={"flex grow flex-col-reverse gap-4 overflow-auto p-4"}>
         <div ref={refBottom} />
+
+        {newMessages
+          .filter(
+            (m) => getClientMessageId(m) === getChatId(user.id, toUser.id),
+          )
+          .map((message, index) => (
+            <Message
+              body={message.body}
+              key={index}
+              taskId={message.room?.task?.id}
+              user={message.fromUser}
+            />
+          ))}
       </div>
 
       <div className={"relative px-4 py-2"}>

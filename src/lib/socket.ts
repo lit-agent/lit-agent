@@ -1,7 +1,7 @@
 import PusherServer from "pusher"
 import PusherClient from "pusher-js"
 import { env } from "src/env"
-import { getAdminUser } from "@/server/user"
+import { fetchAdminUser } from "@/server/user"
 
 export const pusherServer = new PusherServer({
   appId: env.PUSHER_APP_ID,
@@ -19,8 +19,10 @@ export enum SocketEventType {
   Message = "Message",
 }
 
-export const getChatRoomId = (...userIds: string[]) =>
+export const getChatId = (...userIds: string[]) =>
   userIds.sort().join("-") + "_chat"
 
-export const getBroadcastRoomId = async () =>
-  (await getAdminUser())!.id + "_broadcast"
+export const getBroadcastId = (userId: string) => userId + "_broadcast"
+
+export const getAdminBroadcastId = async () =>
+  getBroadcastId((await fetchAdminUser())!.id)

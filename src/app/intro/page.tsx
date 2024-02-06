@@ -76,7 +76,7 @@ export default function GuidancePage() {
     setSendingSms(false)
   }
 
-  const fetchUser = api.user.fetch.useMutation()
+  const getUserByPhone = api.user.triggerList.useMutation()
 
   const [submitting, setSubmitting] = useState(false)
 
@@ -100,7 +100,7 @@ export default function GuidancePage() {
       toast.success("登录成功！")
 
       // todo: directly got validated info from signIn
-      const user = await fetchUser.mutateAsync({ phone })
+      const user = await getUserByPhone.mutateAsync({ phone })
       // void router.push('/'); // todo: why 这个不行
       void location.replace(user?.validated ? "/" : "/validation") // 这个可以，ref: https://stackoverflow.com/a/77209617
       return

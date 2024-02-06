@@ -2,7 +2,7 @@ import { prisma } from "@/server/db"
 import { MessageType } from "@/ds/message.base"
 
 import { ADMIN_PHONE, USER_JIUGU_AI_ID } from "@/const"
-import { getChatRoomId } from "@/lib/socket"
+import { getChatId } from "@/lib/socket"
 
 export const initRegisteredUser = async ({ phone }: { phone: string }) => {
   //   创建用户
@@ -29,7 +29,7 @@ export const initRegisteredUser = async ({ phone }: { phone: string }) => {
   return user
 }
 
-export const getAdminUser = () =>
+export const fetchAdminUser = () =>
   prisma.user.findUnique({
     where: { phone: ADMIN_PHONE },
   })
@@ -40,14 +40,14 @@ export const initValidatedUser = async (userId: string) => {
     data: { validated: true },
   })
 
-  const adminUser = await getAdminUser()
+  const adminUser = await fetchAdminUser()
   if (!adminUser) throw new Error("管理员账号不存在！")
 
   const targetUserId = adminUser.id
   if (userId == targetUserId) return { success: true, targetUserId }
 
   console.log("-- 正在关注博主")
-  const roomId = getChatRoomId(userId, targetUserId)
+  const roomId = getChatId(userId, targetUserId)
 
   await prisma.userRelation.upsert({
     where: {
@@ -83,7 +83,7 @@ export const initValidatedUser = async (userId: string) => {
             "[什么是火值？如何赚火值？](https://baidu.com)",
         },
         fromUserId: USER_JIUGU_AI_ID,
-        roomId: roomId,
+        toUserId: userId,
       },
     })
   }
