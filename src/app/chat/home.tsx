@@ -54,48 +54,52 @@ export default function HomeChatPage({ user }: { user: MyUser }) {
 
   if (user.type === UserType.blogger && !targetUserId) {
     return (
-      <div className={"h-full overflow-hidden"}>
+      <div className={"h-full overflow-hidden flex flex-col"}>
         <div className={"p-4 flex justify-center"}>
           {/*<Input type={"search"} />*/}
           <Label>不孤岛</Label>
         </div>
 
-        {rooms.map((room) => {
-          const targetUser = room.message.fromUser
-          return (
-            <div
-              key={room.id}
-              onClick={() => {
-                setTargetUserId(targetUser.id)
-                setRooms((rooms) => {
-                  rooms.find((r) => r.id === room.id)!.unreadCount = 0
-                  return rooms
-                })
-                setUnreadMessages((um) =>
-                  um.filter((m) => m.room!.id !== room.id),
-                )
-              }}
-              className={"relative"}
-            >
-              <MessageContainer
-                user={targetUser}
-                className={"p-4 border-b relative"}
+        <div className={"grow overflow-auto"}>
+          {rooms.map((room) => {
+            const targetUser = room.message.fromUser
+            return (
+              <div
+                key={room.id}
+                onClick={() => {
+                  setTargetUserId(targetUser.id)
+                  setRooms((rooms) => {
+                    rooms.find((r) => r.id === room.id)!.unreadCount = 0
+                    return rooms
+                  })
+                  setUnreadMessages((um) =>
+                    um.filter((m) => m.room!.id !== room.id),
+                  )
+                }}
+                className={"relative"}
               >
-                {JSON.stringify(room.message.body)}
-              </MessageContainer>
-
-              {!!room.unreadCount && (
-                <div
-                  className={
-                    "absolute right-4 top-0 bottom-0 my-auto z-50 w-6 h-6 flex items-center justify-center rounded-full shrink-0 bg-red-800 text-white"
-                  }
+                <MessageContainer
+                  user={targetUser}
+                  className={"p-4 border-b relative"}
                 >
-                  {room.unreadCount}
-                </div>
-              )}
-            </div>
-          )
-        })}
+                  <div className={"line-clamp-2"}>
+                    {JSON.stringify(room.message.body)}
+                  </div>
+                </MessageContainer>
+
+                {!!room.unreadCount && (
+                  <div
+                    className={
+                      "absolute right-4 top-0 bottom-0 my-auto z-50 w-6 h-6 flex items-center justify-center rounded-full shrink-0 bg-red-800 text-white"
+                    }
+                  >
+                    {room.unreadCount}
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
       </div>
     )
   }

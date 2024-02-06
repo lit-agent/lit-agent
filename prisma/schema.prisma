@@ -228,8 +228,8 @@ model TaskFrom {
   toUsers    TaskTo[]
 
   // 包含发送到chat页的welcome，以及用户的评论
-  room   Room   @relation(fields: [roomId], references: [id])
-  roomId String @unique
+  room   Room?   @relation(fields: [roomId], references: [id])
+  roomId String? @unique
 }
 
 enum TaskStatus {

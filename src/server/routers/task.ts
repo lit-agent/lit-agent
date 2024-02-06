@@ -21,33 +21,29 @@ export const taskRouter = createTRPCRouter({
        * 因此直接创建消息，并内嵌任务
        * 最后再基于socket发送消息，并返回消息即可
        */
-      const roomId = await getBroadcastRoomId()
 
       const fromUserId = ctx.user.id
-      const task = await ctx.prisma.taskFrom.create({
-        data: {
-          ...input,
-          roomId,
-          fromUserId,
-        },
-      })
+      const roomId = await getBroadcastRoomId()
 
-      const toTask = await ctx.prisma.taskTo.create({
-        data: {
-          taskId: task.id,
-          userId: fromUserId,
-        },
-      })
+      let message
+      await ctx.prisma.$transaction(async (prisma) => {
+        await prisma.taskFrom.create({
+          data: {
+            ...input,
+            fromUserId,
+          },
+        })
 
-      const message = await ctx.prisma.message.create({
-        data: {
-          fromUserId,
-          roomId,
-          body: input.body,
-        },
-        include: {
-          fromUser: true,
-        },
+        message = await prisma.message.create({
+          data: {
+            body: input.body,
+            fromUserId,
+            roomId,
+          },
+          include: {
+            fromUser: true,
+          },
+        })
       })
 
       void pusherServer.trigger(roomId, SocketEventType.Message, message)
