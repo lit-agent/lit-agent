@@ -26,6 +26,7 @@ import Honor2SVG from "../../public/static/honor/honor-2.svg"
 import Honor3SVG from "../../public/static/honor/honor-3.svg"
 import Honor4SVG from "../../public/static/honor/honor-4.svg"
 import Honor5SVG from "../../public/static/honor/honor-5.svg"
+import { OSS_DOMAIN } from "@/const"
 
 export {
   BroadcastImage,
@@ -53,4 +54,12 @@ export {
   Honor3SVG,
   Honor4SVG,
   Honor5SVG,
+}
+
+export const getImagePath = (s: string) => {
+  if (s.startsWith("/")) return s
+
+  if (s.startsWith("http")) return s
+
+  return OSS_DOMAIN + s
 }

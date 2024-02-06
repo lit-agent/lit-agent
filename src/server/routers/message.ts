@@ -7,6 +7,7 @@ import {
   sendMessageSchema,
 } from "@/ds/message"
 import { prisma } from "@/server/db"
+import { z } from "zod"
 
 export const messageRouter = createTRPCRouter({
   triggerList: protectedProcedure
@@ -40,6 +41,10 @@ export const messageRouter = createTRPCRouter({
 
       return message
     }),
+
+  // todo: submit
+  // submitImagesTask: protectedProcedure
+  //     .input(z.object({task}))
 
   // todo
   execAction: protectedProcedure

@@ -1,6 +1,7 @@
 import { last } from "lodash"
 import { v4 } from "uuid"
 import { oss } from "../config"
+import { OSS_DOMAIN } from "@/const"
 
 export const uploadFile = async (file: File) => {
   const { name } = file
@@ -8,5 +9,5 @@ export const uploadFile = async (file: File) => {
   const id = `${v4()}.${suffix}`
   console.log("-- uploading: ", { name, id })
   await oss.put(id, Buffer.from(await file.arrayBuffer()))
-  return id
+  return OSS_DOMAIN + id
 }

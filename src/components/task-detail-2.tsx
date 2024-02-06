@@ -20,6 +20,8 @@ import { api } from "@/trpc/react"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { uploadFiles } from "@/app/api/oss/upload/client"
+import { MessageType } from "@/ds/message.base"
+import { useAppData } from "@/hooks/use-app-data"
 
 export default function TaskDetail2({
   task,
@@ -29,9 +31,11 @@ export default function TaskDetail2({
   task: TaskFromGetPayload<typeof taskViewSelector>
 }) {
   const refTop = useRef<HTMLDivElement>(null)
+  const { targetUserId } = useAppData()
 
   // console.log("-- top: ", refTop.current?.getBoundingClientRect())
   const body = task.body as ICreateTaskRequirementBody
+  const sendMessage = api.message.send.useMutation()
 
   const [v, copy] = useCopyToClipboard()
 
@@ -165,10 +169,19 @@ export default function TaskDetail2({
             accept={"image/*"}
             multiple
             onChange={async (event) => {
+              if (!targetUserId) throw Error
               const files = event.currentTarget.files
               if (!files) return
-              const res = await uploadFiles(files)
-              console.log("-- uploaded result: ", res)
+              const result = await uploadFiles(files)
+              if (result.success) {
+                await sendMessage.mutateAsync({
+                  body: {
+                    type: MessageType.Images,
+                    images: result.data,
+                  },
+                  toUserId: targetUserId,
+                })
+              }
             }}
           />
         </Label>

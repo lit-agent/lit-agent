@@ -16,6 +16,10 @@ import { IClientMessage, IMessageBody } from "@/ds/message"
 import "moment/locale/zh-cn"
 import RenderTask from "@/components/render-task"
 import { IUserView } from "@/ds/user.base"
+import { ChevronRightIcon } from "lucide-react"
+import { AspectRatio } from "@/components/ui/aspect-ratio"
+import Image from "next/image"
+import { getImagePath } from "@/lib/assets"
 
 export interface IMessageContainer {
   user: IUserView
@@ -129,6 +133,35 @@ export const MessageBody = ({
               <span>{value}</span>
             </Label>
           ))}
+        </div>
+      )
+
+    case MessageType.Images:
+      return (
+        <div>
+          <div>上传了作品截图</div>
+          <div
+            className={
+              "bg-[#3D3847] p-4 rounded flex items-center justify-between"
+            }
+          >
+            <div className={"flex items-center gap-4"}>
+              {body.images.map((s, index) => (
+                <div className={"w-12"} key={index}>
+                  <AspectRatio ratio={1}>
+                    <Image
+                      src={getImagePath(s)}
+                      alt={s}
+                      fill
+                      className={"rounded"}
+                    />
+                  </AspectRatio>
+                </div>
+              ))}
+            </div>
+
+            <ChevronRightIcon className={"text-muted-foreground"} />
+          </div>
         </div>
       )
 

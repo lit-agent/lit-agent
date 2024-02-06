@@ -10,3 +10,6 @@ export const ADMIN_PHONE = "17766091857"
 
 export type BgModel = "plain" | "mirror"
 export const UPLOAD_FILES_FIELD = "files"
+
+export const OSS_DOMAIN =
+  "https://mark-general-lf.oss-cn-hangzhou.aliyuncs.com/"

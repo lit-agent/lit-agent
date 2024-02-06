@@ -65,9 +65,12 @@ export const createRequirementBodySchema = z.discriminatedUnion("type", [
     groupId: z.string(),
   }),
 
+  z.object({ type: z.literal(MessageType.Images) }).extend({
+    images: z.array(z.string()).min(1),
+  }),
+
   // todo: 需要细化
   z.object({ type: z.literal(MessageType.ProductLink) }),
-  z.object({ type: z.literal(MessageType.Images) }),
   z.object({ type: z.literal(MessageType.Sheet) }),
   z.object({ type: z.literal(MessageType.Others) }),
   //   title: z.string(),

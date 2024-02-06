@@ -1,5 +1,6 @@
 import { UPLOAD_FILES_FIELD } from "@/const"
 import { toast } from "sonner"
+import { IApi } from "@/ds/api"
 
 export const uploadFiles = async (files: FileList) => {
   const formData = new FormData()
@@ -12,7 +13,7 @@ export const uploadFiles = async (files: FileList) => {
     body: formData,
   })
 
-  const data = await res.json()
+  const data = (await res.json()) as IApi
   if (!data.success) {
     toast.error("上传失败")
     console.error("-- ❌ uploaded: ", data)
