@@ -5,7 +5,7 @@ import { $Enums, UserType } from "@prisma/client"
 import UserStatus = $Enums.UserStatus
 
 const userBase = {
-  validated: true,
+  validated: false,
   status: UserStatus.online,
   createdAt: new Date(),
   updatedAt: new Date(),

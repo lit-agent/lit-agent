@@ -1,6 +1,6 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
 import { z } from "zod"
-import { initUser } from "@/server/user"
+import { initUserAfterValidation } from "@/server/user"
 
 import { userViewSelector } from "@/ds/user.base"
 
@@ -36,7 +36,7 @@ export const userRouter = createTRPCRouter({
       const target = '{"4":[0,1,2],"5":[2],"6":[2],"7":[0]}'
       const validateOk = answer === target
 
-      if (validateOk) await initUser(ctx.user.id)
+      if (validateOk) await initUserAfterValidation(ctx.user.id)
 
       return validateOk
     }),

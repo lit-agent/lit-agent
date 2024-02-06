@@ -4,7 +4,7 @@ import { MessageType } from "@/ds/message.base"
 import { ADMIN_PHONE, USER_JIUGU_AI_ID } from "@/const"
 import { admins } from "@/config"
 
-export const registerUser = async ({
+export const initUserWithSMS = async ({
   phone,
   code,
 }: {
@@ -34,7 +34,7 @@ export const registerUser = async ({
   return account
 }
 
-export const initUser = async (userId: string) => {
+export const initUserAfterValidation = async (userId: string) => {
   const user = await prisma.user.update({
     where: { id: userId },
     data: { validated: true, status: "online" },

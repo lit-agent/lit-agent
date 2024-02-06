@@ -20,6 +20,7 @@ import { FloatActionButton } from "@/components/float-action-button"
 import { signOut, useSession } from "next-auth/react"
 import UserPage from "./user/page_"
 import { IClientMessage } from "@/ds/message"
+import { toast } from "sonner"
 
 function Home({ user }: { user: MyUser }) {
   const tabInUrl = useSearchParams().get("tab")
@@ -93,33 +94,15 @@ export default function HomePage() {
 
   console.log("-- home: ", { session })
 
-  // 浏览器初始化
-  useEffect(() => {
-    if (!user) return
-
-    if (user.toRelations.length && !targetUserId) {
-      setTargetUserId(user.toRelations[0]!.toUser.id)
-    }
-  }, [JSON.stringify(user)])
-
   // return JSON.stringify(session, null, 2)
   if (!user) return "loading user..."
 
   // todo: in middleware
   if (!user?.phone) {
+    toast.error("user failed to authenticate, re-login...", { duration: 0 })
     signOut()
-    return "user failed to authenticate, re-login..."
+    return
   }
-
-  if (user.type === UserType.user && !targetUserId)
-    return (
-      <div>
-        <div>setting target user...</div>
-        <div className={"whitespace-pre-wrap"}>
-          {JSON.stringify(user, null, 2)}
-        </div>
-      </div>
-    )
 
   return <Home user={user} />
 }

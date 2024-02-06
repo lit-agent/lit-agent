@@ -147,10 +147,14 @@ export default function TaskDetail2({
       <div className={"flex flex-col w-full shrink-0 space-y-4 pt-4"}>
         <Button
           className={"bg-white text-primary hover:bg-white/90"}
-          onClick={() => {
+          onClick={async (event) => {
             const url = location.href
-            copy(url)
-            toast.info("链接已拷贝：" + url)
+            try {
+              await navigator.clipboard.writeText(url)
+              toast.success("链接已拷贝：" + url)
+            } catch (error) {
+              toast.error("Failed to copy!" + error, { duration: 3000 })
+            }
           }}
         >
           🔗复制作品链接

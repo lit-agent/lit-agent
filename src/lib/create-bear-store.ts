@@ -50,9 +50,9 @@ export const createBearStore =
           // persist middleware
           persist(f, {
             name: "StarAgent." + k,
-            version: 0.4,
+            version: 0.5,
             migrate: (persistedState: any, version) => {
-              if (version === 0.3) delete persistedState.targetUserId
+              if (version < 0.5) delete persistedState.targetUserId
 
               if (version === 0.1) delete persistedState.userId
 

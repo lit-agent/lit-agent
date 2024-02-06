@@ -16,6 +16,9 @@ import { IClientMessage } from "@/ds/message"
 import _ from "lodash"
 import { getBroadcastId, getChatId } from "@/lib/socket"
 import { IUserView } from "@/ds/user.base"
+import { Select } from "@/components/ui/select"
+import { UserAvatar } from "@/components/avatar"
+import { AwardFillIcon } from "@/lib/assets"
 
 type IChat = {
   message: IClientMessage
@@ -30,10 +33,7 @@ type IChat = {
 export default function HomeChatPage({ user }: { user: MyUser }) {
   const { targetUserId, setTargetUserId, newMessages, setNewMessages } =
     useAppData()
-  const { data: targetUser } = api.user.get.useQuery(
-    { id: targetUserId! },
-    { enabled: !!targetUserId },
-  )
+  const { data: users = [] } = api.user.list.useQuery()
 
   // 倒序
   const { data: serverMessages } = api.message.list.useQuery({})
@@ -46,6 +46,7 @@ export default function HomeChatPage({ user }: { user: MyUser }) {
     setNewMessages(serverMessages)
   }, [serverMessages])
 
+  // todo: chats 按照对象 而非聊天记录
   // 对消息进行分组排序成会话列表
   useEffect(() => {
     const chats: IChat[] = []
@@ -135,7 +136,37 @@ export default function HomeChatPage({ user }: { user: MyUser }) {
     )
   }
 
-  if (!targetUser) return "loading..."
+  if (!targetUserId)
+    return (
+      <div className={"h-full flex flex-col gap-4 justify-center items-center"}>
+        <div>total users: {users.length}</div>
+        <div>
+          total bloggers:{" "}
+          {users.filter((user) => user.type === UserType.blogger).length}
+        </div>
 
-  return <PrivateChatPage user={user} toUser={targetUser} />
+        {users
+          .filter((user) => user.type === UserType.blogger)
+          .map((user) => (
+            <div
+              key={user.id}
+              className={"flex items-center gap-2"}
+              onClick={() => {
+                setTargetUserId(user.id)
+              }}
+            >
+              <UserAvatar user={user} />
+              <span>{user.name}</span>
+              <span>{user.type === UserType.blogger && <AwardFillIcon />}</span>
+            </div>
+          ))}
+      </div>
+    )
+
+  return (
+    <PrivateChatPage
+      user={user}
+      toUser={users.find((u) => u.id === targetUserId)!}
+    />
+  )
 }

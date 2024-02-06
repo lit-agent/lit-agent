@@ -5,7 +5,7 @@ import { prisma } from "@/server/db"
 import { SMS_EXPIRE_MINUTES } from "@/const"
 import { getTimeS } from "@/lib/utils"
 import { userViewSelector } from "@/ds/user.base"
-import { registerUser, initUser } from "@/server/user"
+import { initUserWithSMS, initUserAfterValidation } from "@/server/user"
 
 const SmsClient = tencentcloud.sms.v20210111.Client
 
@@ -50,7 +50,7 @@ export const sendSms = async ({ phone }: { phone: string }) => {
   const res = await client.SendSms(params)
   console.log("[sms] response: ", res)
 
-  await registerUser({ phone, code })
+  await initUserWithSMS({ phone, code })
   return res
 }
 
@@ -85,5 +85,5 @@ export const validateSms = async ({
     return null
   }
 
-  return initUser(account.user.id)
+  return account.user
 }
