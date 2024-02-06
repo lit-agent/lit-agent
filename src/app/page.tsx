@@ -28,12 +28,11 @@ function Home({ user }: { user: MyUser }) {
   } = useAppData()
 
   useEffect(() => {
-    // 只要监听所有的room即可
+    // 监听所有的room即可
     const channels = user.rooms.map((room) => room.id)
 
-    // 用户监听广播
-    if (user.type === UserType.user && targetUserId)
-      channels.push(`${targetUserId}_broadcast`)
+    // 监听广播（博主监听这个，从而能在列表页实时收到最新的）
+    channels.push(`${targetUserId}_broadcast`)
 
     console.log("-- bound channels: ", channels)
 
