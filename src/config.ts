@@ -12,32 +12,43 @@ import {
 } from "@/lib/assets"
 import { BgModel, USER_JIUGU_AI_ID } from "@/const"
 import { IUserView } from "@/ds/user.base"
+import { $Enums } from "@prisma/client"
+import UserStatus = $Enums.UserStatus
 
 export const bgModel: BgModel = "plain"
 
+const userBase = {
+  validated: true,
+  status: UserStatus.online,
+  phone: "",
+}
 export const userJiuguAI: IUserView = {
   id: USER_JIUGU_AI_ID,
   name: "玖姑的AI助理",
   image: JiuguImage.src,
   type: "assistant",
+  ...userBase,
 }
 export const bloggerId: IUserView = {
   id: "jiugu",
   name: "玖姑",
   image: JiuguImage.src,
   type: "blogger",
+  ...userBase,
 }
 export const userHading: IUserView = {
   id: "hading",
   name: "哈丁",
   image: HadingImage.src,
   type: "user",
+  ...userBase,
 }
 export const userSample: IUserView = {
   id: "demo",
   name: "demo",
   image: SampleUser1Image.src,
   type: "user",
+  ...userBase,
 }
 export const genUsers = (n: number) => new Array(n).fill(userSample)
 export const sampleImageItems = [Choice1Image.src, Choice2Image.src]

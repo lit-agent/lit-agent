@@ -24,7 +24,7 @@ export const sendMessageSchema = z
 
 export type IMessageBody = z.infer<typeof createRequirementBodySchema>
 
-export const clientMessageSlice = validator<MessageDefaultArgs>()({
+export const messageViewSelector = validator<MessageDefaultArgs>()({
   select: {
     body: true,
     fromUser: userViewSelector,
@@ -38,7 +38,7 @@ export const clientMessageSlice = validator<MessageDefaultArgs>()({
     },
   },
 })
-export type IClientMessage = MessageGetPayload<typeof clientMessageSlice> & {
+export type IClientMessage = MessageGetPayload<typeof messageViewSelector> & {
   read?: boolean
 }
 

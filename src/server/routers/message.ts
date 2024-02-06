@@ -2,7 +2,7 @@ import { createTRPCRouter, protectedProcedure } from "../trpc"
 
 import { pusherServer, SocketEventType } from "@/lib/socket"
 import {
-  clientMessageSlice,
+  messageViewSelector,
   selectChatTarget,
   sendMessageSchema,
 } from "@/ds/message"
@@ -33,7 +33,7 @@ export const messageRouter = createTRPCRouter({
           ...input,
           fromUserId: ctx.user.id,
         },
-        ...clientMessageSlice,
+        ...messageViewSelector,
       })
       console.log("-- trigger: ", { input, message })
       // room 和 toUser 必有一个
@@ -112,7 +112,7 @@ export const fetchMessages = async (
           : [{ fromUserId: userId }, { toUserId: userId }, AT_ROOM],
     },
     orderBy: { createdAt: "desc" },
-    ...clientMessageSlice,
+    ...messageViewSelector,
     //   todo: infinite
   })
 }

@@ -221,7 +221,8 @@ export default function CreateTaskWithUserPage() {
                         onChange={async (event) => {
                           const files = event.currentTarget.files
                           if (!files) return
-                          await uploadFiles(Object.values(files))
+                          await uploadFiles(files)
+                          // todo: bind field
                         }}
                       />
                     </FormControl>

@@ -93,7 +93,9 @@ export default function TaskPage({ user }: { user: MyUser }) {
           <div className={"flex flex-col gap-2"}>
             <div className={"flex items-center gap-2"}>
               <div className={"w-2 h-2 bg-green-500 rounded-full"} />
-              <AvatarComp users={taskRelation.task.toUsers} />
+              <AvatarComp
+                users={taskRelation.task.toUsers.map((u) => u.user)}
+              />
               {taskRelation.task.toUsers.length} 人
             </div>
 

@@ -7,7 +7,7 @@ import {
 } from "@/lib/socket"
 import { createRequirementSchema } from "@/ds/requirement"
 import { z } from "zod"
-import { clientMessageSlice } from "@/ds/message"
+import { messageViewSelector } from "@/ds/message"
 
 export const taskRouter = createTRPCRouter({
   get: publicProcedure
@@ -43,7 +43,7 @@ export const taskRouter = createTRPCRouter({
               },
             },
           },
-          ...clientMessageSlice,
+          ...messageViewSelector,
         })
       })
 

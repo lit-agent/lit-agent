@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client"
-import { clientMessageSlice } from "@/ds/message"
+import { messageViewSelector } from "@/ds/message"
 import { userViewSelector } from "@/ds/user.base"
 import UserGetPayload = Prisma.UserGetPayload
 import validator = Prisma.validator
@@ -9,29 +9,33 @@ export const myUserSlice = validator<UserDefaultArgs>()({
   include: {
     honors: true,
     fromTasks: true,
+    toTasks: {
+      include: {
+        task: {
+          include: {
+            toUsers: {
+              include: {
+                user: userViewSelector,
+              },
+            },
+            room: {
+              include: {
+                messages: messageViewSelector,
+              },
+            },
+          },
+        },
+      },
+    },
     rooms: {
       include: {
-        messages: clientMessageSlice,
+        messages: messageViewSelector,
         users: userViewSelector,
       },
     },
     toRelations: {
       include: {
-        toUser: true,
-      },
-    },
-    toTasks: {
-      include: {
-        task: {
-          include: {
-            toUsers: true,
-            room: {
-              include: {
-                messages: true,
-              },
-            },
-          },
-        },
+        toUser: userViewSelector,
       },
     },
 
