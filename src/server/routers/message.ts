@@ -1,10 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from "../trpc"
 
-import {
-  getBroadcastChannelId,
-  pusherServer,
-  SocketEventType,
-} from "@/lib/socket"
+import { getBroadcastRoomId, pusherServer, SocketEventType } from "@/lib/socket"
 import { $Enums } from "@prisma/client"
 import { z } from "zod"
 import { MessageType } from "@/ds/message.base"
@@ -83,7 +79,7 @@ export const messageRouter = createTRPCRouter({
 export const fetchMessages = async (roomId: string) =>
   prisma.message.findMany({
     where: {
-      OR: [{ roomId: await getBroadcastChannelId() }, { roomId }],
+      OR: [{ roomId: await getBroadcastRoomId() }, { roomId }],
     },
     orderBy: { createdAt: "asc" },
     ...clientMessageSlice,

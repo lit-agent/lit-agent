@@ -16,7 +16,7 @@ import { signOut, useSession } from "next-auth/react"
 import UserPage from "./user/page_"
 import { ClientMessage } from "@/ds/message"
 
-export function Home({ user }: { user: MyUser }) {
+function Home({ user }: { user: MyUser }) {
   const tabInUrl = useSearchParams().get("tab")
   const {
     appTab,

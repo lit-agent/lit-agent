@@ -98,8 +98,8 @@ export default function TaskPage({ user }: { user: MyUser }) {
             </div>
 
             <div className={"text-gray-500 text-sm"}>
-              {taskRelation.task?.messages.length
-                ? JSON.stringify(last(taskRelation.task.messages)!.body)
+              {taskRelation.task?.room.messages.length
+                ? JSON.stringify(last(taskRelation.task.room.messages)!.body)
                 : "这个群还没有发送任何消息"}
             </div>
           </div>

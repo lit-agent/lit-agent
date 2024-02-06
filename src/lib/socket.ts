@@ -22,5 +22,5 @@ export enum SocketEventType {
 export const getChatRoomId = (...userIds: string[]) =>
   userIds.sort().join("-") + "_chat"
 
-export const getBroadcastChannelId = async () =>
+export const getBroadcastRoomId = async () =>
   (await getAdminUser())!.id + "_broadcast"
