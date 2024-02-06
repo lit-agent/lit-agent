@@ -66,7 +66,7 @@ export default function ValidationPage() {
             onClick={async () => {
               setValidating(true)
               console.log("-- answer: ", JSON.stringify(answer))
-              const { success, targetUserId } = await validate.mutateAsync({
+              const success = await validate.mutateAsync({
                 answer: JSON.stringify(answer),
               })
 
@@ -75,7 +75,6 @@ export default function ValidationPage() {
                 // 在错误的时候重新允许validate，正确的时候会直接飞走
                 setValidating(false)
               } else {
-                setTargetUserId(targetUserId)
                 toast.success(
                   "你果然是姑的friend，恭喜你获得火伴身份！",
                   // todo: 更友好的显示

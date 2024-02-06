@@ -34,7 +34,7 @@ export const registerUser = async ({
   return account
 }
 
-export const validateUser = async (userId: string) => {
+export const initUser = async (userId: string) => {
   const user = await prisma.user.update({
     where: { id: userId },
     data: { validated: true, status: "online" },

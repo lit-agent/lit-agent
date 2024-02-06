@@ -30,7 +30,7 @@ import { signIn } from "next-auth/react"
 import { useAppData } from "@/hooks/use-app-data"
 import { useUserPreference } from "@/hooks/use-user-preference"
 
-export default function GuidancePage() {
+export default function IntroPage() {
   // 1. Define your form.
   const formSchema = z.object({
     phone: z
@@ -55,7 +55,7 @@ export default function GuidancePage() {
 
   const [sendingSms, setSendingSms] = useState(false)
   const sendSms = api.sms.send.useMutation()
-  const router = useRouter()
+
   const onRequestingVerifyCode = async (event) => {
     event.preventDefault() // 防止触发form的验证
     setSendingSms(true)
@@ -69,10 +69,9 @@ export default function GuidancePage() {
     const msg = res?.SendStatusSet![0]!.Code
     if (msg === "Ok") {
       toast.success("验证码已发送！")
-      void router.push("/validation")
-      // void location.replace("/validation");
     } else toast.error(`验证码发送失败，原因：${msg}`)
 
+    // todo: 倒计时
     setSendingSms(false)
   }
 

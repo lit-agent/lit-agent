@@ -7,10 +7,10 @@
  * need to use are documented accordingly near the end.
  */
 
-import { initTRPC, TRPCError } from "@trpc/server";
-import superjson from "superjson";
-import { ZodError } from "zod";
-import { Context } from "@/server/context";
+import { initTRPC, TRPCError } from "@trpc/server"
+import superjson from "superjson"
+import { ZodError } from "zod"
+import { Context } from "@/server/context"
 
 /**
  * 2. INITIALIZATION
@@ -29,9 +29,9 @@ const t = initTRPC.context<Context>().create({
         zodError:
           error.cause instanceof ZodError ? error.cause.flatten() : null,
       },
-    };
+    }
   },
-});
+})
 
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
@@ -45,7 +45,7 @@ const t = initTRPC.context<Context>().create({
  *
  * @see https://trpc.io/docs/router
  */
-export const createTRPCRouter = t.router;
+export const createTRPCRouter = t.router
 
 /**
  * Public (unauthenticated) procedure
@@ -54,7 +54,7 @@ export const createTRPCRouter = t.router;
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const publicProcedure = t.procedure;
+export const publicProcedure = t.procedure
 
 /**
  * Protected (authenticated) procedure
@@ -65,18 +65,19 @@ export const publicProcedure = t.procedure;
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
-  const user = ctx.session?.user;
-  // console.log("-- user: ", user);
+  const { session } = ctx
+  const user = session?.user
 
-  if (!ctx.session || !user?.name) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
+  if (!ctx.session || !user?.phone) {
+    console.error("[trpc.protected]: ", { session })
+    throw new TRPCError({ code: "UNAUTHORIZED" })
   }
 
   return next({
     ctx: {
       // infers the `session` as non-nullable
-      session: ctx.session,
+      session,
       user,
     },
-  });
-});
+  })
+})

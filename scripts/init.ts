@@ -2,7 +2,7 @@ import { prisma } from "@/server/db"
 import { UserType } from "@prisma/client"
 
 import { ADMIN_PHONE, USER_JIUGU_AI_ID } from "@/const"
-import { fetchAdminUser, validateUser } from "@/server/user"
+import { fetchAdminUser, initUser } from "@/server/user"
 import { getAdminBroadcastId } from "@/lib/socket"
 
 const init = async () => {
@@ -33,7 +33,7 @@ const init = async () => {
   const users = await prisma.user.findMany()
   const result = await Promise.all(
     users.map(async (user) => {
-      return await validateUser(user.id)
+      return await initUser(user.id)
     }),
   )
   console.log("-- init all user: ", result)

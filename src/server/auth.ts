@@ -65,7 +65,7 @@ export const authOptions: NextAuthOptions = {
         token.iat = Date.now() / 1000
         // token.expires // todo: 可能修改 expires 就可以让 前台的 session 变得 unauthenticated 了
       }
-      // console.log("-- jwt: ", { token, user, userInDB, session })
+      console.log("[auth.jwt]: ", { token, user, userInDB, session })
       return token
     },
     /**
@@ -98,7 +98,7 @@ export const authOptions: NextAuthOptions = {
         }
       }
 
-      // console.log("-- session: ", { phone, user, userInDB, session })
+      console.log("[auth.session]: ", { phone, user, userInDB, session })
       return session
     },
   },
