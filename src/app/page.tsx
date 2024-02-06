@@ -1,61 +1,21 @@
 "use client"
 
 import { Tabs, TabsContent } from "@/components/ui/tabs"
-import { useEffect } from "react"
 import { AppTab } from "@/components/app-tab"
 import TaskPage from "@/app/task/page_"
 import { useSearchParams } from "next/navigation"
 import { MyUser } from "@/ds/user"
 import { useAppData } from "@/hooks/use-app-data"
-import {
-  getAdminBroadcastId,
-  getBroadcastId,
-  pusherClient,
-  SocketEventType,
-} from "@/lib/socket"
-import { UserType } from "@prisma/client"
 import ChatPage from "@/app/chat/home"
 import { NavBars } from "@/components/nav"
 import { FloatActionButton } from "@/components/float-action-button"
 import { signOut, useSession } from "next-auth/react"
 import UserPage from "./user/page_"
-import { IClientMessage } from "@/ds/message"
 import { toast } from "sonner"
 
 function Home({ user }: { user: MyUser }) {
   const tabInUrl = useSearchParams().get("tab")
-  const { appTab, setAppTab, targetUserId, setTargetUserId, setNewMessages } =
-    useAppData()
-
-  useEffect(() => {
-    const channels: string[] = []
-
-    // 监听自己（所有发给自己的消息）
-    channels.push(user.id)
-
-    // 监听所有的room
-    channels.push(...user.rooms.map((room) => room.id))
-
-    // 监听广播（博主监听这个，从而能在列表页实时收到最新的）
-    if (targetUserId) channels.push(getBroadcastId(targetUserId))
-
-    console.log("-- bound channels: ", channels)
-
-    channels.forEach((channelId) => pusherClient.subscribe(channelId))
-
-    pusherClient.bind(SocketEventType.Message, (message: IClientMessage) => {
-      console.log("-- received message: ", message)
-      // 倒序
-      setNewMessages((messages) => [message, ...messages])
-    })
-
-    return () => {
-      channels.forEach((channelId) => pusherClient.unsubscribe(channelId))
-      pusherClient.unbind(SocketEventType.Message)
-    }
-  }, [targetUserId])
-
-  // console.log("-- Home: ", { tabInUrl, appTab, user })
+  const { appTab, setAppTab } = useAppData()
 
   return (
     <Tabs

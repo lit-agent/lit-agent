@@ -9,8 +9,10 @@ import { Toaster } from "sonner"
 import MySessionProvider from "@/providers/session"
 import { TRPCReactProvider } from "@/providers/trpc"
 import { Metadata, Viewport } from "next"
-import { AppAutoMobileHeight } from "@/components/app-auto-mobile-height"
+import { AppAutoMobileHeightProvider } from "@/providers/app-auto-mobile-height-provider"
 import { getServerAuthSession } from "@/server/auth"
+import SocketProvider from "@/providers/socket"
+import BgProvider from "@/providers/bg"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -45,33 +47,19 @@ export default async function RootLayout({
         <MyThemeProvider>
           <MySessionProvider>
             <TRPCReactProvider>
-              <AppAutoMobileHeight />
+              <SocketProvider>
+                <AppAutoMobileHeightProvider>
+                  <main className={"relative w-screen"}>
+                    <BgProvider>{children}</BgProvider>
 
-              <Toaster richColors position={"top-right"} duration={1000} />
-
-              <main className={"relative w-screen"}>
-                <div
-                  className={cn(
-                    "fixed inset-0 z-0 h-full w-full",
-                    "pointer-events-none",
-                    bgModel === "mirror"
-                      ? "scale-125 blur-lg brightness-[15%]"
-                      : "bg-background",
-                  )}
-                >
-                  {bgModel === "plain" ? null : children}
-                </div>
-
-                <div
-                  className={
-                    "absolute inset-0 flex h-full w-full justify-center"
-                  }
-                >
-                  <div className={"bg-muted w-full max-w-screen-sm"}>
-                    {children}
-                  </div>
-                </div>
-              </main>
+                    <Toaster
+                      richColors
+                      position={"top-right"}
+                      duration={1000}
+                    />
+                  </main>
+                </AppAutoMobileHeightProvider>
+              </SocketProvider>
             </TRPCReactProvider>
           </MySessionProvider>
         </MyThemeProvider>
