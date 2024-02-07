@@ -22,8 +22,6 @@ export default function TaskDetail1({
 }) {
   const refTop = useRef<HTMLDivElement>(null)
 
-  // console.log("-- top: ", refTop.current?.getBoundingClientRect())
-
   return (
     <div>
       <div

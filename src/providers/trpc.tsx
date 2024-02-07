@@ -2,9 +2,9 @@
 
 import { useState } from "react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { getUrl, transformer } from "@/trpc/shared"
+import { getUrl, transformer } from "@/lib/trpc/shared"
 import { loggerLink, unstable_httpBatchStreamLink } from "@trpc/client"
-import { api } from "@/trpc/react"
+import { api } from "@/lib/trpc/react"
 
 export function TRPCReactProvider(props: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient())

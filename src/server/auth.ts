@@ -8,7 +8,7 @@ import { prisma } from "@/server/db"
 
 import CredentialsProvider from "next-auth/providers/credentials"
 import { validateSms } from "@/server/sms"
-import { MyUser, myUserSlice } from "@/ds/user"
+import { MyUser, myUserSlice } from "@/ds/user" // ref: https://next-auth.js.org/getting-started/typescript#submodules
 
 // ref: https://next-auth.js.org/getting-started/typescript#submodules
 declare module "next-auth/jwt" {
@@ -78,7 +78,6 @@ export const authOptions: NextAuthOptions = {
      * @param user
      */
     session: async ({ session, user, token, trigger, newSession }) => {
-      // console.log("-- session: ", { session, user, token });
       const phone = token.phone
 
       let userInDB
@@ -114,7 +113,7 @@ export const authOptions: NextAuthOptions = {
       },
 
       authorize: async (credentials) => {
-        console.log("-- authorize: ", credentials)
+        console.log("[Auth] authorizing: ", credentials)
         // Here you should verify the phone number and the code
         // For example, check against a database where you stored the code
         if (!credentials) throw new Error("验证信息为空！")

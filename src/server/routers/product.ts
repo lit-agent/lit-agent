@@ -28,7 +28,7 @@ export const productRouter = createTRPCRouter({
           fromUser: true,
         },
       })
-      console.log("-- created product: ", product)
+      console.log("[ProductRouter] created product: ", product)
 
       void pusherServer.trigger(ctx.user.id, SocketEventType.Message, product)
       return product

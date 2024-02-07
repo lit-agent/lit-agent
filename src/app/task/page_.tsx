@@ -20,7 +20,7 @@ export default function TaskPage({ user }: { user: MyUser }) {
     finishedUsers: Array(10).fill(userNew),
   }
 
-  console.log("-- task page: ", { user, data })
+  console.log("[TaskPage] data: ", { user, data })
 
   return (
     <div className={"bg-[#282232] p-2 min-h-full"}>

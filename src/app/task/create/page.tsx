@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
-import { api } from "@/trpc/react"
+import { api } from "@/lib/trpc/react"
 import { toast } from "sonner"
 import moment from "moment"
 import { Input } from "@/components/ui/input"
@@ -30,7 +30,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { TextChoicesInput } from "@/components/input-choices"
 import { useUserPreference } from "@/hooks/use-user-preference"
 
-import { uploadFiles } from "@/app/api/oss/upload/client"
+import { uploadFiles } from "@/lib/oss/upload/client"
 
 const schema = createRequirementSchema
 const FINISHED = 3
@@ -38,7 +38,6 @@ const FINISHED = 3
 export default function CreateTaskWithUserPage() {
   const { preferredMessageType: type, setPreferredMessageType } =
     useUserPreference()
-  // console.log("-- schema: ", { schema })
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof schema>>({
@@ -73,7 +72,7 @@ export default function CreateTaskWithUserPage() {
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof schema>) {
-    console.log("-- submit: ", values)
+    console.log("[TaskPage] create task: ", values)
     setSubmitting(true)
     createTask
       .mutateAsync(values)
@@ -96,8 +95,6 @@ export default function CreateTaskWithUserPage() {
       console.error(errors)
     }
   }, [JSON.stringify(errors)])
-
-  console.log("-- form: ", { type, state: form.getValues() })
 
   return (
     <div className={"h-full flex flex-col p-4 bg-black"}>
@@ -145,7 +142,6 @@ export default function CreateTaskWithUserPage() {
             className={"h-full flex gap-4 overflow-hidden"}
             value={type}
             onValueChange={(value) => {
-              console.log("-- message type changed into: ", value)
               form.setValue("body.type", value as SupportedMessageTypes)
               setPreferredMessageType(value as SupportedMessageTypes)
             }}
@@ -367,7 +363,6 @@ export default function CreateTaskWithUserPage() {
                           "YYYY-MM-DDThh:mm:ss",
                         )}
                         onChange={(event) => {
-                          // console.log("-- onChange: ", event.currentTarget.value);
                           field.onChange(
                             moment(event.currentTarget.value).toDate(),
                           )
@@ -392,7 +387,6 @@ export default function CreateTaskWithUserPage() {
                           "YYYY-MM-DDThh:mm:ss",
                         )}
                         onChange={(event) => {
-                          // console.log("-- onChange: ", event.currentTarget.value);
                           field.onChange(
                             moment(event.currentTarget.value).toDate(),
                           )

@@ -1,7 +1,7 @@
 "use client"
 
 import { MyUser } from "@/ds/user"
-import { api } from "@/trpc/react"
+import { api } from "@/lib/trpc/react"
 import { MessageContainer } from "@/components/message-item"
 import { Input } from "@/components/ui/input"
 import { useAppData } from "@/hooks/use-app-data"

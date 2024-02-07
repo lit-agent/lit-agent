@@ -1,15 +1,15 @@
-import { createTRPCNext } from "@trpc/next";
-import { AppRouter } from "src/server/routers";
+import { createTRPCNext } from "@trpc/next"
+import { AppRouter } from "@/server/routers"
 import {
   createWSClient,
   httpBatchLink,
   loggerLink,
   TRPCLink,
   wsLink,
-} from "@trpc/client";
-import superjson from "superjson";
-import { NextPageContext } from "next";
-import { env } from "@/env";
+} from "@trpc/client"
+import superjson from "superjson"
+import { NextPageContext } from "next"
+import { env } from "@/env"
 
 export function getEndingLink(
   ctx: NextPageContext | undefined,
@@ -19,22 +19,22 @@ export function getEndingLink(
       url: `${env.NEXT_PUBLIC_APP_URL}/api/trpc`,
       headers() {
         if (!ctx?.req?.headers) {
-          return {};
+          return {}
         }
         // on ssr, forward client's headers to the server
         return {
           ...ctx.req.headers,
           "x-ssr": "1",
-        };
+        }
       },
-    });
+    })
   }
   const client = createWSClient({
     url: env.NEXT_PUBLIC_WS_URL,
-  });
+  })
   return wsLink({
     client,
-  });
+  })
 }
 
 export const apiSocket = createTRPCNext<AppRouter>({
@@ -67,10 +67,10 @@ export const apiSocket = createTRPCNext<AppRouter>({
        * @link https://trpc.io/docs/v11/data-transformers
        */
       transformer: superjson,
-    };
+    }
   },
   /**
    * @link https://trpc.io/docs/v11/ssr
    */
   ssr: true,
-});
+})

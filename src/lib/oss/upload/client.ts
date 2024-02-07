@@ -16,10 +16,10 @@ export const uploadFiles = async (files: FileList) => {
   const data = (await res.json()) as IApi
   if (!data.success) {
     toast.error("上传失败")
-    console.error("-- ❌ uploaded: ", data)
+    console.error("[OSS] ❌ uploaded: ", data)
   } else {
     toast.success("上传成功！")
-    console.log("-- ✅ uploaded: ", data)
+    console.log("[OSS] ✅ uploaded: ", data)
   }
   return data
 }

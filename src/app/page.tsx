@@ -52,7 +52,7 @@ export default function HomePage() {
 
   const { targetUserId, setTargetUserId } = useAppData()
 
-  console.log("-- home: ", { session })
+  console.log("[HomePage] data: ", { session })
 
   // return JSON.stringify(session, null, 2)
   if (!user) return "loading user..."

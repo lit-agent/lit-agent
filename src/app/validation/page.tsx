@@ -8,7 +8,7 @@ import { Button } from "../../components/ui/button"
 import { useState } from "react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { api } from "@/trpc/react"
+import { api } from "@/lib/trpc/react"
 
 import { guidanceItems } from "@/config"
 import { JiuguImage } from "@/lib/assets"
@@ -65,7 +65,6 @@ export default function ValidationPage() {
             }
             onClick={async () => {
               setValidating(true)
-              console.log("-- answer: ", JSON.stringify(answer))
               const success = await validate.mutateAsync({
                 answer: JSON.stringify(answer),
               })

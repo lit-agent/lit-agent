@@ -1,18 +1,18 @@
-import "server-only";
+import "server-only"
 
 import {
   createTRPCProxyClient,
   loggerLink,
   TRPCClientError,
-} from "@trpc/client";
-import { callProcedure } from "@trpc/server";
-import { observable } from "@trpc/server/observable";
-import { type TRPCErrorResponse } from "@trpc/server/rpc";
-import { headers } from "next/headers";
+} from "@trpc/client"
+import { callProcedure } from "@trpc/server"
+import { observable } from "@trpc/server/observable"
+import { type TRPCErrorResponse } from "@trpc/server/rpc"
+import { headers } from "next/headers"
 
-import { appRouter, type AppRouter } from "src/server/routers";
-import { transformer } from "./shared";
-import { createTRPCContext } from "@/server/context";
+import { appRouter, type AppRouter } from "@/server/routers"
+import { transformer } from "./shared"
+import { createTRPCContext } from "@/server/context"
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
@@ -21,13 +21,13 @@ import { createTRPCContext } from "@/server/context";
 export const createServerContext =
   // cache(
   () => {
-    const heads = new Headers(headers());
-    heads.set("x-trpc-source", "rsc");
+    const heads = new Headers(headers())
+    heads.set("x-trpc-source", "rsc")
 
     return createTRPCContext({
       headers: heads,
-    });
-  };
+    })
+  }
 // );
 
 export const api = createTRPCProxyClient<AppRouter>({
@@ -53,15 +53,15 @@ export const api = createTRPCProxyClient<AppRouter>({
                 rawInput: op.input,
                 ctx,
                 type: op.type,
-              });
+              })
             })
             .then((data) => {
-              observer.next({ result: { data } });
-              observer.complete();
+              observer.next({ result: { data } })
+              observer.complete()
             })
             .catch((cause: TRPCErrorResponse) => {
-              observer.error(TRPCClientError.from(cause));
-            });
+              observer.error(TRPCClientError.from(cause))
+            })
         }),
   ],
-});
+})

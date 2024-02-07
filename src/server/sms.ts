@@ -3,15 +3,12 @@ import * as process from "process"
 import { prisma } from "@/server/db"
 
 import { SMS_EXPIRE_MINUTES } from "@/const"
-import { getTimeS } from "@/lib/utils"
-import { userViewSelector } from "@/ds/user.base"
-import { initUserWithSMS, initUserAfterValidation } from "@/server/user"
+import { initUserWithSMS } from "@/server/user"
 
 const SmsClient = tencentcloud.sms.v20210111.Client
 
 const secretId = process.env.TENCENTCLOUD_SECRET_ID
 const secretKey = process.env.TENCENTCLOUD_SECRET_KEY
-// console.log("-- tencent clout sdk: ", { secretId, secretKey });
 
 // 实例化要请求产品(以cvm为例)的client对象
 const client = new SmsClient({

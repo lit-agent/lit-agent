@@ -22,12 +22,12 @@ export const useSocket = () => {
     // 监听广播（博主监听这个，从而能在列表页实时收到最新的）
     if (targetUserId) channels.push(getBroadcastId(targetUserId))
 
-    console.log("-- bound channels: ", channels)
+    console.log("[Socket] bound channels: ", channels)
 
     channels.forEach((channelId) => pusherClient.subscribe(channelId))
 
     pusherClient.bind(SocketEventType.Message, (message: IClientMessage) => {
-      console.log("-- received message: ", message)
+      console.log("[Socket] received message: ", message)
       // 倒序
       setNewMessages((messages) => [message, ...messages])
     })

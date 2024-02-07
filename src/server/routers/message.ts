@@ -35,7 +35,7 @@ export const messageRouter = createTRPCRouter({
         },
         ...messageViewSelector,
       })
-      console.log("-- trigger: ", { input, message })
+      console.log("[MessageRouter] sending socket: ", { input, message })
       // room 和 toUser 必有一个
       void pusherServer.trigger(channelId, SocketEventType.Message, message)
 

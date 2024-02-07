@@ -25,7 +25,7 @@ import "react-phone-number-input/style.css"
 import { toast } from "sonner"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { api } from "@/trpc/react"
+import { api } from "@/lib/trpc/react"
 import { signIn } from "next-auth/react"
 import { useAppData } from "@/hooks/use-app-data"
 import { useUserPreference } from "@/hooks/use-user-preference"
@@ -61,10 +61,9 @@ export default function IntroPage() {
     setSendingSms(true)
 
     const phone = watch("phone")
-    console.log("-- phone: ", phone)
 
     const res = await sendSms.mutateAsync({ phone })
-    console.log("-- res: ", res)
+    console.log("[SMS] send response: ", res)
 
     const msg = res?.SendStatusSet![0]!.Code
     if (msg === "Ok") {
@@ -93,7 +92,7 @@ export default function IntroPage() {
       redirect: false,
       // callbackUrl: '/', // 感谢: https://github.com/sidebase/nuxt-auth/issues/469#issuecomment-1661909912
     })
-    console.log("-- res: ", res)
+    console.log("[Auth] signed res: ", res)
 
     if (res?.ok) {
       toast.success("登录成功！")

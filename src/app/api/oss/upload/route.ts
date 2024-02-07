@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { UPLOAD_FILES_FIELD } from "@/const"
-import { uploadFile } from "@/app/api/oss/upload/server"
+import { uploadFile } from "@/lib/oss/upload/server"
 import { IApi } from "@/ds/api"
 
 export async function POST(request: NextRequest): Promise<NextResponse<IApi>> {

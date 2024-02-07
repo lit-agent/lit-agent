@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
-import { api } from "@/trpc/react"
+import { api } from "@/lib/trpc/react"
 import { toast } from "sonner"
 import { createProductSchema } from "@/ds/product"
 import { IUserView } from "@/ds/user.base"
@@ -43,13 +43,12 @@ export default function CreateProductPage_({ user }: { user: IUserView }) {
   const createProduct = api.product.create.useMutation()
 
   const issuerId = user?.id
-  console.log("-- issuerId: ", issuerId)
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof createProductSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log("-- submit: ", { values, issuerId })
+    console.log("[Product] create: ", { values, issuerId })
 
     createProduct
       .mutateAsync(values)

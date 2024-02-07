@@ -36,9 +36,9 @@ const init = async () => {
       return await initUserAfterValidation(user.id)
     }),
   )
-  console.log("-- init all user: ", result)
+  console.log("[InitScript] init all user: ", result)
 
-  console.log("✅ initialized database.")
+  console.log("[InitScript] ✅ initialized database.")
 
   // todo: update honors for all users
   // await prisma.user.update({

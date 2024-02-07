@@ -1,6 +1,6 @@
 "use client"
 
-import { api } from "@/trpc/react"
+import { api } from "@/lib/trpc/react"
 import {
   Select,
   SelectContent,
@@ -34,8 +34,6 @@ export const SelectUser = ({
     { id: targetUserId! },
     { enabled: !!targetUserId },
   )
-
-  // console.log("-- target user: ", targetUser);
 
   if (!targetUserId) return "loading target user..."
 

@@ -40,7 +40,7 @@ export const initUserAfterValidation = async (userId: string) => {
     data: { validated: true, status: "online" },
   })
 
-  console.log("-- 正在发送欢迎语")
+  console.log("[User:Validated] 正在发送欢迎语")
   // 欢迎语不需要使用socket发，因为用户还没到房间
   await prisma.message.create({
     data: {

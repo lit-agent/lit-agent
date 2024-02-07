@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import { MyUser } from "@/ds/user"
-import { api } from "@/trpc/react"
+import { api } from "@/lib/trpc/react"
 import { SelectUser } from "@/components/select-user"
 import Message from "@/components/message-item"
 import { Input } from "@/components/ui/input"
@@ -37,7 +37,7 @@ export default function PrivateChatPage({
     if (!text) return
 
     const channelId = getChatId(user.id, toUser.id)
-    console.log("-- sending: ", { channelId, text })
+    console.log("[Chat] sending message: ", { channelId, text })
     setNewMessages([
       {
         fromUser: user,
@@ -61,8 +61,6 @@ export default function PrivateChatPage({
   useEffect(() => {
     refBottom.current?.scrollIntoView({ behavior: "smooth" })
   }, [newMessages.length])
-
-  // console.log(`-- chat page: `, {channelId,/* messages */});
 
   return (
     <div className={"flex h-full flex-col overflow-hidden"}>
@@ -186,7 +184,6 @@ export default function PrivateChatPage({
 //             className={"w-full"}
 //             size={"sm"}
 //             onClick={(event) => {
-//               console.log("-- clicked message: ", message);
 //
 //               if (!chosen) {
 //                 void toast.error("请先选择");

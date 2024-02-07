@@ -1,7 +1,6 @@
 "use client"
 
 import { BsThreeDots } from "react-icons/bs"
-import { MyUser } from "src/ds/user"
 import { MessageType } from "@/ds/message.base"
 import { cn } from "src/lib/utils"
 import { HTMLAttributes, useState } from "react"
@@ -11,7 +10,7 @@ import { Checkbox } from "src/components/ui/checkbox"
 import { MyMarkdown } from "@/containers/markdown"
 import { Label } from "@/components/ui/label"
 import { UserComp } from "@/components/user"
-import { IClientMessage, IMessageBody } from "@/ds/message"
+import { IMessageBody } from "@/ds/message"
 
 import "moment/locale/zh-cn"
 import RenderTask from "@/components/render-task"
@@ -19,7 +18,8 @@ import { IUserView } from "@/ds/user.base"
 import { ChevronRightIcon } from "lucide-react"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import Image from "next/image"
-import { getImagePath } from "@/lib/assets"
+
+import { getImagePath } from "@/lib/oss/read/helpers"
 
 export interface IMessageContainer {
   user: IUserView
@@ -47,8 +47,6 @@ export const MessageContainer = ({
   children,
   ...props
 }: { user: IUserView } & HTMLAttributes<HTMLDivElement>) => {
-  // console.log("-- user in chat item container: ", user);
-
   return (
     <div className={cn("relative flex gap-2 ", className)} {...props}>
       {user.type === "user" ? (
@@ -114,8 +112,6 @@ export const MessageBody = ({
                 checked={checks.includes(index)}
                 disabled={submitted}
                 onCheckedChange={(checked) => {
-                  // console.log("-- content: ", content);
-
                   const newChecks = !body.multiple
                     ? // 单选
                       [index]
@@ -124,7 +120,6 @@ export const MessageBody = ({
                       ? [...checks, index].sort()
                       : checks.filter((c) => c !== index)
 
-                  // console.log("-- newChecks: ", newChecks);
                   onValueChange && onValueChange(newChecks)
                   setChecks(newChecks)
                 }}

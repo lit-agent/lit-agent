@@ -11,17 +11,17 @@ import { MyMarkdown } from "@/containers/markdown"
 import { ICreateTaskRequirementBody, taskViewSelector } from "@/ds/requirement"
 import { UserAvatar } from "@/components/avatar"
 import { Prisma } from "@prisma/client"
-import TaskFromGetPayload = Prisma.TaskFromGetPayload
 import moment from "@/lib/moment"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { useCopyToClipboard } from "usehooks-ts"
 import { toast } from "sonner"
-import { api } from "@/trpc/react"
+import { api } from "@/lib/trpc/react"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
-import { uploadFiles } from "@/app/api/oss/upload/client"
+import { uploadFiles } from "@/lib/oss/upload/client"
 import { MessageType } from "@/ds/message.base"
 import { useAppData } from "@/hooks/use-app-data"
+import TaskFromGetPayload = Prisma.TaskFromGetPayload
 
 export default function TaskDetail2({
   task,
@@ -33,7 +33,6 @@ export default function TaskDetail2({
   const refTop = useRef<HTMLDivElement>(null)
   const { targetUserId } = useAppData()
 
-  // console.log("-- top: ", refTop.current?.getBoundingClientRect())
   const body = task.body as ICreateTaskRequirementBody
   const sendMessage = api.message.send.useMutation()
 

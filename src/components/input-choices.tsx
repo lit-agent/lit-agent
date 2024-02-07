@@ -18,8 +18,6 @@ export const TextChoicesInput = ({
     onChange(choices)
   }, [JSON.stringify(choices)])
 
-  console.log("-- input text choices: ", { value, choices })
-
   return (
     <div className={"flex flex-col gap-2"}>
       {choices.map((choice, index) => (

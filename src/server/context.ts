@@ -1,8 +1,10 @@
-import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
-import type { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
-import { getSession } from "next-auth/react";
-import { prisma } from "@/server/db";
-import { getServerAuthSession } from "@/server/auth";
+import type { CreateNextContextOptions } from "@trpc/server/adapters/next"
+import type { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws"
+import { getSession } from "next-auth/react"
+import { prisma } from "@/server/db"
+import { getServerAuthSession } from "@/server/auth" /**
+ * todo: unify 2 createContext
+ */
 /**
  * todo: unify 2 createContext
  */
@@ -20,14 +22,14 @@ import { getServerAuthSession } from "@/server/auth";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const session = await getServerAuthSession();
+  const session = await getServerAuthSession()
 
   return {
     session,
     prisma,
     // ...opts,
-  };
-};
+  }
+}
 
 /**
  * Creates context for an incoming request
@@ -36,15 +38,17 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
 export const createContext = async (
   opts: CreateNextContextOptions | CreateWSSContextFnOptions,
 ) => {
-  const session = await getSession(opts);
-  // console.log("-- session: ", session);
+  const session = await getSession(opts)
 
-  console.log("createContext for", session?.user?.name ?? "unknown user");
+  console.log(
+    "[TrpcContext] createContext for",
+    session?.user?.name ?? "unknown user",
+  )
 
   return {
     session,
     prisma,
-  };
-};
+  }
+}
 
-export type Context = Awaited<ReturnType<typeof createContext>>;
+export type Context = Awaited<ReturnType<typeof createContext>>

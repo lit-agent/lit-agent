@@ -19,7 +19,7 @@ const main = async () => {
   //     ],
   //   },
   // })
-  console.log("-- deleted: ", deleted.count)
+  console.log("[CleanScript] deleted: ", deleted.count)
 }
 
 main()

@@ -14,7 +14,6 @@ export default async function TaskDetailPage({
     ...taskViewSelector,
   })
 
-  // console.log("-- task detail page: ", { session, id, task })
   if (!session || !task) return
 
   return <TaskDetail2 user={session.user} task={task} />

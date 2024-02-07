@@ -1,6 +1,6 @@
 "use client"
 
-import { api } from "@/trpc/react"
+import { api } from "@/lib/trpc/react"
 import Image from "next/image"
 import { PropsWithChildren } from "react"
 import { FireIcon } from "@/lib/assets"
@@ -23,7 +23,7 @@ const Card = ({ children }: PropsWithChildren) => (
 export default function ProductPage() {
   const { data: products = [] } = api.product.list.useQuery()
 
-  console.log("-- products: ", products)
+  console.log("[ProductPage] products: ", products)
 
   const product = products[0]
 

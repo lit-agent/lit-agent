@@ -5,7 +5,7 @@ import { CoverSmImage, WechatMPIcon } from "@/lib/assets"
 import moment from "moment/moment"
 import { z } from "zod"
 import { createTaskRequirementBodySchema } from "@/ds/requirement"
-import { api } from "@/trpc/react"
+import { api } from "@/lib/trpc/react"
 
 export default function RenderTask({ taskId }: { taskId: string }) {
   const { data: task } = api.task.get.useQuery({ id: taskId })

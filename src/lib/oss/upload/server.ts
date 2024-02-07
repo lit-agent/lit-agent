@@ -7,7 +7,8 @@ export const uploadFile = async (file: File) => {
   const { name } = file
   const suffix = last(name.split(".")) ?? ""
   const id = `${v4()}.${suffix}`
-  console.log("-- uploading: ", { name, id })
+  console.log("[OSS] uploading: ", { name, id })
   await oss.put(id, Buffer.from(await file.arrayBuffer()))
+  console.log("[OSS] uploaded: ", { name, id })
   return OSS_DOMAIN + id
 }
