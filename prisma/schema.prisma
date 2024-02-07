@@ -72,20 +72,15 @@ model Bill {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  product   ProductFrom @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
 
   productCount Int
   // todo: 实际价格，或者未来支持多种模式
   price        Float
-  method       RedeemType
+  redeemType   RedeemType
 
   // userActions UserAction[]
-}
-
-enum RedeemType {
-  currency
-  fire
 }
 
 // 用户徽章，每个徽章可以有自己的一些信息，通过 id 与程序的UI对接
@@ -94,7 +89,7 @@ model Honor {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 }
 
@@ -124,14 +119,14 @@ model Message {
   channelId String?
 
   // 发送
-  fromUser   User   @relation("from", fields: [fromUserId], references: [id], onDelete: Cascade)
+  fromUser   User   @relation("from", fields: [fromUserId], references: [id], onDelete: NoAction)
   fromUserId String
 
   // 接收
   room   Room?   @relation(fields: [roomId], references: [id], onDelete: Cascade)
   roomId String?
 
-  toUser   User?   @relation("to", fields: [toUserId], references: [id])
+  toUser   User?   @relation("to", fields: [toUserId], references: [id], onDelete: NoAction)
   toUserId String?
 
   mentionUsers User[] @relation("mention")
@@ -144,39 +139,20 @@ model Message {
   userMessages UserMessage[]
 
   // 博主发布的任务到这
-  task TaskFrom?
+  task Task?
 }
 
-// // for test
-// model Post {
-//   id     String       @id @default(uuid())
-//   name   String
-//   text   String
-//   source PosterSource @default(RAW)
-//
-//   // To return `Date`s intact through the API we need to add data transformers
-//   // https://trpc.io/docs/v11/data-transformers
-//   createdAt DateTime @unique @default(now())
-//   updatedAt DateTime @unique @default(now())
-// }
-
-// // for test
-// enum PosterSource {
-//   RAW
-//   GITHUB
-// }
-
 // 博主发布的产品
-model ProductFrom {
+model Product {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  fromUser   User   @relation(fields: [fromUserId], references: [id])
+  fromUser   User   @relation(fields: [fromUserId], references: [id], onDelete: Cascade)
   fromUserId String
   // @Deprecated 本来是用来记录购买人的，后来改成基于bill了
 
-  toUsers ProductTo[]
+  toUsers UserProduct[]
 
   images      String[]
   title       String
@@ -196,23 +172,9 @@ model ProductFrom {
   bills Bill[]
 }
 
-// 消费者与博主开发的产品之间的关系
-model ProductTo {
-  id        String   @id @default(cuid())
-  createdAt DateTime @updatedAt
-  updatedAt DateTime @updatedAt
-
-  fromUser   ProductFrom @relation(fields: [fromUserId], references: [id])
-  fromUserId String
-
-  toUser   User   @relation(fields: [toUserId], references: [id])
-  toUserId String
-
-  isFavored Boolean @default(false)
-  inCar     Int     @default(0)
-  bought    Int     @default(0)
-
-  // userActions UserAction[]
+enum RedeemType {
+  currency
+  fire
 }
 
 model Room {
@@ -223,8 +185,8 @@ model Room {
   users User[]
 
   // room 可以 没有 task，但当对应的task删除时自身也该删除
-  task   TaskFrom? @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  taskId String?   @unique
+  task   Task?   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId String? @unique
 
   messages Message[]
 }
@@ -239,7 +201,7 @@ model Session {
 }
 
 // 博主发布的产品
-model TaskFrom {
+model Task {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -252,9 +214,9 @@ model TaskFrom {
   endTime   DateTime
   status    TaskStatus
 
-  fromUser   User     @relation(fields: [fromUserId], references: [id], onDelete: Cascade)
+  fromUser   User       @relation(fields: [fromUserId], references: [id], onDelete: Cascade)
   fromUserId String
-  toUsers    TaskTo[]
+  toUsers    UserTask[]
 
   // 包含发送到chat页的welcome，以及用户的评论
   sentMessage   Message @relation(fields: [sentMessageId], references: [id])
@@ -269,31 +231,6 @@ enum TaskStatus {
   pause
   cancelled
   finished
-}
-
-// 消费者与博主发布的任务之间的关系
-model TaskTo {
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
-
-  task   TaskFrom @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  taskId String
-
-  status  TaskToStatus @default(finished)
-  content String?
-  // actions UserAction[]
-
-  // todo: bind message with taskFrom, taskTo, room
-  @@id([taskId, userId])
-}
-
-enum TaskToStatus {
-  finished // 默认完成
-  goon
-  cancelled
 }
 
 /// most important
@@ -327,12 +264,12 @@ model User {
   mentionedMessages Message[]     @relation("mention")
 
   // tasks
-  fromTasks TaskFrom[]
-  toTasks   TaskTo[]
+  fromTasks Task[]
+  toTasks   UserTask[]
 
   // products
-  fromProducts ProductFrom[]
-  toProducts   ProductTo[]
+  fromProducts Product[]
+  toProducts   UserProduct[]
   bills        Bill[]
 
   // actions  UserAction[]
@@ -399,7 +336,7 @@ enum UserActionType {
 /// 这个表的重要性，在于聊天列表页，可以方便做通知和排序
 /// 但是成本太高了，每条消息会导致O(n)的建表，还是弃用了！
 model UserMessage {
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
   message   Message @relation(fields: [messageId], references: [id])
@@ -411,6 +348,25 @@ model UserMessage {
   isQuoted    Boolean
 
   @@id([userId, messageId])
+}
+
+// 消费者与博主开发的产品之间的关系
+model UserProduct {
+  id        String   @id @default(cuid())
+  createdAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  toUser   User   @relation(fields: [toUserId], references: [id])
+  toUserId String
+
+  isFavored Boolean @default(false)
+  inCar     Int     @default(0)
+  bought    Int     @default(0)
+
+  // userActions UserAction[]
 }
 
 model UserRelation {
@@ -436,6 +392,31 @@ enum UserStatus {
   online
   busy
   offline
+}
+
+// 消费者与博主发布的任务之间的关系
+model UserTask {
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId String
+
+  status  UserTaskStatus @default(finished)
+  content String?
+  // actions UserAction[]
+
+  // todo: bind message with taskFrom, taskTo, room
+  @@id([taskId, userId])
+}
+
+enum UserTaskStatus {
+  finished // 默认完成
+  goon
+  cancelled
 }
 
 enum UserType {

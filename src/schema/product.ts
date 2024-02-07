@@ -1,8 +1,8 @@
 import { z } from "zod"
 import { Prisma } from ".prisma/client"
 import validator = Prisma.validator
-import ProductFromDefaultArgs = Prisma.ProductFromDefaultArgs
-import ProductFromGetPayload = Prisma.ProductFromGetPayload
+import ProductDefaultArgs = Prisma.ProductDefaultArgs
+import ProductGetPayload = Prisma.ProductGetPayload
 
 export const createProductSchema = z.object({
   title: z.string(),
@@ -20,7 +20,7 @@ export const createProductSchema = z.object({
 })
 export type ICreateProduct = z.infer<typeof createProductSchema>
 
-export const productListViewSchema = validator<ProductFromDefaultArgs>()({
+export const productListViewSchema = validator<ProductDefaultArgs>()({
   include: {
     fromUser: true,
     bills: {
@@ -30,6 +30,4 @@ export const productListViewSchema = validator<ProductFromDefaultArgs>()({
     },
   },
 })
-export type IProductListView = ProductFromGetPayload<
-  typeof productListViewSchema
->
+export type IProductListView = ProductGetPayload<typeof productListViewSchema>

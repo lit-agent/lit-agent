@@ -15,14 +15,14 @@ export const productRouter = createTRPCRouter({
   get: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      return ctx.prisma.productFrom.findUniqueOrThrow({
+      return ctx.prisma.product.findUniqueOrThrow({
         where: { id: input.id },
         ...productListViewSchema,
       })
     }),
 
   list: publicProcedure.query(async ({ ctx, input }) => {
-    return ctx.prisma.productFrom.findMany({
+    return ctx.prisma.product.findMany({
       ...productListViewSchema,
     })
   }),
@@ -37,7 +37,7 @@ export const productRouter = createTRPCRouter({
        * 最后再基于socket发送消息，并返回消息即可
        */
 
-      const product = await ctx.prisma.productFrom.create({
+      const product = await ctx.prisma.product.create({
         data: input,
         ...productListViewSchema,
       })
@@ -52,17 +52,17 @@ export const productRouter = createTRPCRouter({
       z.object({
         productId: z.string(),
         productCount: z.number(),
-        method: z.nativeEnum(RedeemType),
+        redeemType: z.nativeEnum(RedeemType),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx
-      const { productId, productCount, method } = input
+      const { productId, productCount, redeemType } = input
 
       const user = await prisma.user.findUnique({ where: { id: ctx.user.id } })
       if (!user) return { success: false, message: "用户不存在！" }
 
-      const product = await prisma.productFrom.findUnique({
+      const product = await prisma.product.findUnique({
         where: { id: productId },
       })
       if (!product) return { success: false, message: "商品不存在！" }
@@ -77,7 +77,7 @@ export const productRouter = createTRPCRouter({
       let bill
       await prisma.$transaction(async (prisma) => {
         // 1. 产品库存减少 【锁单】
-        await prisma.productFrom.update({
+        await prisma.product.update({
           where: { id: productId },
           data: { total: { decrement: productCount } },
         })
@@ -95,7 +95,7 @@ export const productRouter = createTRPCRouter({
             productId: productId,
             productCount,
             price: product.price,
-            method,
+            redeemType,
           },
         })
 

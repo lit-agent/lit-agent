@@ -9,8 +9,8 @@ import { roomViewSelector } from "@/schema/room"
 
 export default async function ServerTaskPage() {
   const user = await ensureServerUser()
-  const fires = await prisma.taskFrom.findMany({ ...taskViewSelector })
+  const fires = await prisma.task.findMany({ ...taskViewSelector })
   console.log("[TaskPage]: ", { fires })
 
-  return <TaskList user={user} fires={fires} />
+  return <TaskList user={user} tasks={fires} />
 }

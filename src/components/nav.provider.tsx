@@ -27,7 +27,7 @@ export default function NavProvider({ children }: PropsWithChildren) {
           <Menu1Icon />
         </NavTabLink>
 
-        <NavTabLink href={"/fire"}>
+        <NavTabLink href={"/task"}>
           <FireIcon className={"scale-150"} />
         </NavTabLink>
 

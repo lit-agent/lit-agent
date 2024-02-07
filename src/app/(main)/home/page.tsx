@@ -9,9 +9,10 @@ import { RiFireFill } from "react-icons/ri"
 import { Separator } from "@/components/ui/separator"
 import { CgArrowsExchangeAlt } from "react-icons/cg"
 import ProductListView from "@/components/product-list-view"
-import { TaskToStatus } from "@prisma/client"
 import { HiDotsHorizontal } from "react-icons/hi"
 import Link from "next/link"
+import { $Enums } from ".prisma/client"
+import UserTaskStatus = $Enums.UserTaskStatus
 
 export default function UserHomePage() {
   const { data: products = [] } = api.product.list.useQuery()
@@ -75,10 +76,11 @@ export default function UserHomePage() {
 
         <Card1
           a={"当前任务"}
-          b={tasks.filter((task) => task.status === TaskToStatus.goon).length}
+          b={tasks.filter((task) => task.status === UserTaskStatus.goon).length}
           c={"已完成"}
           d={
-            tasks.filter((task) => task.status === TaskToStatus.finished).length
+            tasks.filter((task) => task.status === UserTaskStatus.finished)
+              .length
           }
           side={"R"}
         />

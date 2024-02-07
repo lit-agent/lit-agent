@@ -52,7 +52,7 @@ export default async function ListBillsPage() {
             <TableCell className="text-right">
               {bill.createdAt.toLocaleString()}
             </TableCell>
-            <TableCell className="text-right">{bill.method}</TableCell>
+            <TableCell className="text-right">{bill.redeemType}</TableCell>
             <TableCell className="text-right">{"-"}</TableCell>
             <TableCell className="text-right">{"-"}</TableCell>
             <TableCell className="text-right">{"-"}</TableCell>

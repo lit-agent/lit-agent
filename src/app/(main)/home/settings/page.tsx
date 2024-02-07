@@ -10,7 +10,8 @@ import { DEFAULT_USERNAME, TODO } from "@/config"
 import { signOut } from "next-auth/react"
 
 export default function SettingsPage() {
-  const user = useUser()!
+  const user = useUser()
+  if (!user) return
 
   return (
     <div className={"flex flex-col gap-2 p-2"}>

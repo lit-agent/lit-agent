@@ -6,8 +6,8 @@ import { basicBodySchema, MessageType } from "@/schema/message.base"
 import { Prisma } from "@prisma/client"
 import validator = Prisma.validator
 import { roomViewSelector } from "@/schema/room"
-import TaskFromDefaultArgs = Prisma.TaskFromDefaultArgs
-import TaskFromGetPayload = Prisma.TaskFromGetPayload
+import TaskDefaultArgs = Prisma.TaskDefaultArgs
+import TaskGetPayload = Prisma.TaskGetPayload
 
 export const createTaskRequirementBodySchema = basicBodySchema
   .extend({ type: z.literal(MessageType.Task) })
@@ -20,7 +20,7 @@ export type ICreateTaskRequirementBody = z.infer<
   typeof createTaskRequirementBodySchema
 >
 
-export const taskViewSelector = validator<TaskFromDefaultArgs>()({
+export const taskViewSelector = validator<TaskDefaultArgs>()({
   select: {
     id: true,
     fromUser: userListViewSchema,
@@ -36,4 +36,4 @@ export const taskViewSelector = validator<TaskFromDefaultArgs>()({
     room: roomViewSelector,
   },
 })
-export type ITaskView = TaskFromGetPayload<typeof taskViewSelector>
+export type ITaskView = TaskGetPayload<typeof taskViewSelector>

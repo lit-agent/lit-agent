@@ -8,18 +8,16 @@ import { ChevronDownIcon, ChevronRightIcon } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { last } from "lodash"
-import { TaskFrom } from ".prisma/client"
 import { maskName } from "@/lib/utils"
 
 import { ITaskView } from "@/schema/task"
-import { IRoomView } from "@/schema/room"
 
 export default function TaskList({
   user,
-  fires,
+  tasks,
 }: {
   user: IMainUser
-  fires: ITaskView[]
+  tasks: ITaskView[]
 }) {
   const userNew = admins.hading
 
@@ -32,7 +30,7 @@ export default function TaskList({
     finishedUsers: Array(10).fill(userNew),
   }
 
-  console.log("[TaskPage] data: ", { user, data, fires: fires })
+  console.log("[TaskPage] data: ", { user, data, tasks })
 
   return (
     <div className={"bg-[#282232] p-2 min-h-full"}>
@@ -92,11 +90,11 @@ export default function TaskList({
         </div>
       </div>
 
-      {fires
-        .filter((fire) => !!fire.room)
-        .map((fire, index) => (
+      {tasks
+        .filter((task) => !!task.room)
+        .map((task, index) => (
           <Link
-            href={`/fire/${fire.id}`}
+            href={`/task/${task.id}`}
             key={index}
             className={
               "rounded bg-[#373041] flex items-center justify-between p-3 my-2"
@@ -105,13 +103,13 @@ export default function TaskList({
             <div className={"flex flex-col gap-2"}>
               <div className={"flex items-center gap-2"}>
                 <div className={"w-2 h-2 bg-green-500 rounded-full"} />
-                <AvatarComp users={fire.room!.users} />
-                {fire.room!.users.length} 人
+                <AvatarComp users={task.room!.users} />
+                {task.room!.users.length} 人
               </div>
 
               <div className={"text-gray-500 text-sm"}>
-                {fire.room!.messages.length
-                  ? JSON.stringify(last(fire.room!.messages)!.body)
+                {task.room!.messages.length
+                  ? JSON.stringify(last(task.room!.messages)!.body)
                   : "这个群还没有发送任何消息"}
               </div>
             </div>

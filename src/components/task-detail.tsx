@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils"
 import { uploadFiles } from "@/lib/oss/upload/client"
 import { useAppData } from "@/lib/store/use-app-data"
 import { ICreateTaskRequirementBody } from "@/schema/task"
-import { TaskToStatus } from "@prisma/client"
+import { UserTaskStatus } from "@prisma/client"
 import Message from "@/components/message-item"
 
 export default function TaskDetailPage({
@@ -36,7 +36,7 @@ export default function TaskDetailPage({
   const { data: userTask } = api.task.getUserTask.useQuery({
     taskId,
   })
-  const hasFinished = userTask?.status === TaskToStatus.finished
+  const hasFinished = userTask?.status === UserTaskStatus.finished
 
   const submitTask = api.task.submitImages.useMutation()
 

@@ -158,7 +158,7 @@ export default function ProductPage({
               const res = await redeem.mutateAsync({
                 productId: product.id,
                 productCount: 1, // todo: support change count in dialog
-                method: RedeemType.fire,
+                redeemType: RedeemType.fire,
               })
               if (!res.success) {
                 toast.error(res.message)

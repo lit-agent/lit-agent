@@ -14,7 +14,7 @@ import { SocketEventType } from "@/lib/socket/events"
 
 export const taskRouter = createTRPCRouter({
   listUserTasks: protectedProcedure.query(async ({ ctx, input }) => {
-    return ctx.prisma.taskTo.findMany({
+    return ctx.prisma.userTask.findMany({
       where: { userId: ctx.user.id },
     })
   }),
@@ -22,7 +22,7 @@ export const taskRouter = createTRPCRouter({
   get: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      return ctx.prisma.taskFrom.findUniqueOrThrow({
+      return ctx.prisma.task.findUniqueOrThrow({
         where: input,
         ...taskViewSelector,
       })
@@ -71,7 +71,7 @@ export const taskRouter = createTRPCRouter({
   getUserTask: protectedProcedure
     .input(z.object({ taskId: z.string() }))
     .query(async ({ ctx, input }) => {
-      return await ctx.prisma.taskTo.findUnique({
+      return await ctx.prisma.userTask.findUnique({
         where: { taskId_userId: { userId: ctx.user.id, taskId: input.taskId } },
       })
     }),
@@ -87,7 +87,7 @@ export const taskRouter = createTRPCRouter({
       const { user, prisma } = ctx
       const { taskId, images } = input
 
-      const task = await prisma.taskFrom.findUniqueOrThrow({
+      const task = await prisma.task.findUniqueOrThrow({
         where: { id: taskId },
         ...taskViewSelector,
       })
@@ -95,7 +95,7 @@ export const taskRouter = createTRPCRouter({
 
       await prisma.$transaction(async (prisma) => {
         // 建立用户与任务之间的关系
-        await prisma.taskTo.create({
+        await prisma.userTask.create({
           data: {
             userId: ctx.user.id,
             taskId: task.id,
