@@ -260,7 +260,6 @@ enum TaskStatus {
 
 // 消费者与博主发布的任务之间的关系
 model TaskTo {
-  id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -273,6 +272,8 @@ model TaskTo {
   status  TaskToStatus @default(finished)
   content String?
   // actions UserAction[]
+
+  @@id([taskId, userId])
 }
 
 enum TaskToStatus {

@@ -20,7 +20,7 @@ export type ICreateTaskRequirementBody = z.infer<
   typeof createTaskRequirementBodySchema
 >
 
-export const taskViewSelector = validator<TaskFromDefaultArgs>()({
+export const fireViewSelector = validator<TaskFromDefaultArgs>()({
   select: {
     id: true,
     fromUser: userViewSelector,
@@ -36,4 +36,4 @@ export const taskViewSelector = validator<TaskFromDefaultArgs>()({
     room: roomViewSelector,
   },
 })
-export type ITaskView = TaskFromGetPayload<typeof taskViewSelector>
+export type IFireView = TaskFromGetPayload<typeof fireViewSelector>

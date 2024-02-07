@@ -1,8 +1,8 @@
 import { prisma } from "@/server/db"
 import { ensureServerUser } from "@/server/auth"
-import TaskDetail2 from "@/components/task-detail-2"
+import FireDetailPage from "@/components/fire-detail"
 
-import { taskViewSelector } from "@/ds/task"
+import { fireViewSelector } from "@/ds/task"
 
 export default async function TaskDetailPage({
   params: { id },
@@ -13,10 +13,10 @@ export default async function TaskDetailPage({
 
   const task = await prisma.taskFrom.findUnique({
     where: { id },
-    ...taskViewSelector,
+    ...fireViewSelector,
   })
 
   if (!user || !task) return
 
-  return <TaskDetail2 user={user} task={task} />
+  return <TaskDetailPage user={user} task={task} />
 }

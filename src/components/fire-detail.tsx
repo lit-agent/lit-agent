@@ -9,7 +9,6 @@ import { MyUser } from "@/ds/user"
 import { Hot } from "@/components/toolkits/fire-value"
 import { MyMarkdown } from "@/containers/markdown"
 import { UserAvatar } from "@/components/user-avatar"
-import { Prisma } from "@prisma/client"
 import moment from "@/lib/moment"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { useCopyToClipboard } from "usehooks-ts"
@@ -20,23 +19,29 @@ import { cn } from "@/lib/utils"
 import { uploadFiles } from "@/lib/oss/upload/client"
 import { MessageType } from "@/ds/message.base"
 import { useAppData } from "@/hooks/use-app-data"
-import TaskFromGetPayload = Prisma.TaskFromGetPayload
-import { ICreateTaskRequirementBody, taskViewSelector } from "@/ds/task"
+import { ICreateTaskRequirementBody, IFireView } from "@/ds/task"
+import { TaskTo, TaskToStatus, UserType } from "@prisma/client"
 
-export default function TaskDetail2({
-  task,
+export default function FireDetailPage({
+  fire,
   user,
+  userFire,
 }: {
   user: MyUser
-  task: TaskFromGetPayload<typeof taskViewSelector>
+  fire: IFireView
+  userFire: TaskTo | null
 }) {
   const refTop = useRef<HTMLDivElement>(null)
   const { targetUserId } = useAppData()
 
-  const body = task.body as ICreateTaskRequirementBody
+  const body = fire.body as ICreateTaskRequirementBody
   const sendMessage = api.message.send.useMutation()
 
   const [v, copy] = useCopyToClipboard()
+
+  const hasFinished =
+    // user.type === UserType.blogger ||
+    userFire?.status == TaskToStatus.finished
 
   return (
     <div className={"px-8 py-4 h-full flex flex-col overflow-hidden"}>
@@ -73,7 +78,7 @@ export default function TaskDetail2({
                 </div>
 
                 <div className={"text-muted-foreground text-xs"}>
-                  {moment(task.startTime).fromNow()}发布
+                  {moment(fire.startTime).fromNow()}发布
                 </div>
               </div>
             </div>
@@ -134,61 +139,63 @@ export default function TaskDetail2({
         </div>
 
         <div className={"flex flex-col items-center my-8"}>
-          <div>{task.toUsers.length} 人已参加</div>
+          <div>{fire.toUsers.length} 人已参加</div>
           <div className={"flex gap-2 flex-wrap"}>
-            {task.toUsers.map((userTask, index) => (
+            {fire.toUsers.map((userTask, index) => (
               <UserAvatar user={userTask.user} key={index} />
             ))}
           </div>
         </div>
       </div>
 
-      <div className={"flex flex-col w-full shrink-0 space-y-4 pt-4"}>
-        <Button
-          className={"bg-white text-primary hover:bg-white/90"}
-          onClick={async (event) => {
-            const url = location.href
-            try {
-              await navigator.clipboard.writeText(url)
-              toast.success("链接已拷贝：" + url)
-            } catch (error) {
-              toast.error("Failed to copy!" + error, { duration: 3000 })
-            }
-          }}
-        >
-          🔗复制作品链接
-        </Button>
-
-        <Label
-          className={cn(
-            buttonVariants(),
-            "bg-primary text-white cursor-pointer",
-          )}
-        >
-          上传截图，赚🔥火值
-          <input
-            hidden
-            type={"file"}
-            accept={"image/*"}
-            multiple
-            onChange={async (event) => {
-              if (!targetUserId) throw Error
-              const files = event.currentTarget.files
-              if (!files) return
-              const result = await uploadFiles(files)
-              if (result.success) {
-                await sendMessage.mutateAsync({
-                  body: {
-                    type: MessageType.Images,
-                    images: result.data,
-                  },
-                  toUserId: targetUserId,
-                })
+      {!hasFinished && (
+        <div className={"flex flex-col w-full shrink-0 space-y-4 pt-4"}>
+          <Button
+            className={"bg-white text-primary hover:bg-white/90"}
+            onClick={async (event) => {
+              const url = location.href
+              try {
+                await navigator.clipboard.writeText(url)
+                toast.success("链接已拷贝：" + url)
+              } catch (error) {
+                toast.error("Failed to copy!" + error, { duration: 3000 })
               }
             }}
-          />
-        </Label>
-      </div>
+          >
+            🔗复制作品链接
+          </Button>
+
+          <Label
+            className={cn(
+              buttonVariants(),
+              "bg-primary text-white cursor-pointer",
+            )}
+          >
+            上传截图，赚🔥火值
+            <input
+              hidden
+              type={"file"}
+              accept={"image/*"}
+              multiple
+              onChange={async (event) => {
+                if (!targetUserId) throw Error
+                const files = event.currentTarget.files
+                if (!files) return
+                const result = await uploadFiles(files)
+                if (result.success) {
+                  await sendMessage.mutateAsync({
+                    body: {
+                      type: MessageType.Images,
+                      images: result.data,
+                    },
+                    toUserId: targetUserId,
+                  })
+                }
+              }}
+            />
+          </Label>
+        </div>
+      )}
     </div>
   )
 }

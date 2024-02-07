@@ -13,7 +13,7 @@ import { UserComp } from "@/components/user"
 import { IMessageBody } from "@/ds/message"
 
 import "moment/locale/zh-cn"
-import RenderTask from "@/components/task"
+import RenderTask from "@/components/fire"
 import { IUserView } from "@/ds/user.base"
 import { ChevronRightIcon } from "lucide-react"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
@@ -162,7 +162,7 @@ export const MessageBody = ({
       )
 
     case MessageType.Task:
-      return taskId ? <RenderTask taskId={taskId} /> : "no task id"
+      return taskId ? <RenderTask fireId={taskId} /> : "no task id"
 
     case MessageType.GroupLink:
     // return (

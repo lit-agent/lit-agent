@@ -9,5 +9,6 @@ export const oss = new OSS({
   // yourRegion填写Bucket所在地域。以华东1（杭州）为例，Region填写为oss-cn-hangzhou。
   region: "oss-cn-hangzhou",
   // yourBucketName填写Bucket名称。
-  bucket: "mark-general-lf",
+  // bucket: "mark-general-lf",
+  bucket: "mark-vue-oss",
 })

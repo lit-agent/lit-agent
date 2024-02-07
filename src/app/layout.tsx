@@ -52,7 +52,7 @@ export default async function RootLayout({
             <TRPCReactProvider>
               <MyThemeProvider>
                 <BgProvider>
-                  <NavProvider>
+                  <NavProvider user={user}>
                     {children}
 
                     {user && (

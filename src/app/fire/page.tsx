@@ -1,15 +1,16 @@
 "use server"
 
 import { prisma } from "@/server/db"
-import RoomPage from "@/components/room-page"
+import FireList from "@/components/fire-list"
 import { ensureServerUser, getServerUser } from "@/server/auth"
 
-import { taskViewSelector } from "@/ds/task"
+import { fireViewSelector } from "@/ds/task"
 import { roomViewSelector } from "@/ds/room"
 
 export default async function ServerTaskPage() {
-  const rooms = await prisma.room.findMany({ ...roomViewSelector })
   const user = await ensureServerUser()
+  const fires = await prisma.taskFrom.findMany({ ...fireViewSelector })
+  console.log("[TaskPage]: ", { fires })
 
-  return <RoomPage user={user} rooms={rooms} />
+  return <FireList user={user} fires={fires} />
 }

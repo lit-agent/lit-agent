@@ -10,15 +10,15 @@ import { MessageContainer } from "@/components/message-item"
 import { UserComp } from "@/components/user"
 import { Input } from "@/components/ui/input"
 import { useRef } from "react"
-import { TaskFrom } from ".prisma/client"
 import { MyUser } from "@/ds/user"
+import { IFireView } from "@/ds/task"
 
-export default function TaskDetail1({
+export default function FireOk({
   task,
   user,
 }: {
   user: MyUser
-  task: TaskFrom
+  task: IFireView
 }) {
   const refTop = useRef<HTMLDivElement>(null)
 

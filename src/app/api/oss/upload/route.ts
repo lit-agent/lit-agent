@@ -19,5 +19,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<IApi>> {
     files.map(async (file) => await uploadFile(file)),
   )
 
+  console.log("[OSS] post result: ", data)
+
   return NextResponse.json({ success: true, data })
 }
