@@ -31,7 +31,7 @@ export default function NavProvider({ children }: PropsWithChildren) {
           <FireIcon className={"scale-150"} />
         </NavTabLink>
 
-        <NavTabLink href={"/user-home"}>
+        <NavTabLink href={"/home"}>
           <Menu3Icon />
         </NavTabLink>
       </div>

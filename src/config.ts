@@ -63,3 +63,5 @@ export const admins = {
     type: UserType.user,
   },
 }
+export const DEFAULT_USERNAME = "一位不愿透露姓名的神秘用户"
+export const TODO = "研发小哥正在加🍗中……"

@@ -1,10 +1,10 @@
 "use client"
 
-import { Avatar, AvatarImage } from "src/components/ui/avatar"
+import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import Message, { IMessageContainer } from "@/components/message-item"
 import { IoMenuOutline } from "react-icons/io5"
 import { BloggerContainer } from "@/components/blogger"
-import { Button } from "../../components/ui/button"
+import { Button } from "../../../components/ui/button"
 import { useState } from "react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
