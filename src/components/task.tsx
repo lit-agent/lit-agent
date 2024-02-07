@@ -1,11 +1,11 @@
 import Link from "next/link"
-import { Hot } from "@/components/toolkits/fire-value"
+import { Hot } from "@/components/fire-value"
 import Image from "next/image"
 import { CoverSmImage, WechatMPIcon } from "@/lib/assets"
 import { z } from "zod"
 import { api } from "@/lib/trpc/react"
-import { createTaskRequirementBodySchema } from "@/ds/task"
-import m from "@/lib/moment"
+import { createTaskRequirementBodySchema } from "@/schema/task"
+import moment from "@/lib/datetime"
 
 export default function RenderTask({ taskId }: { taskId: string }) {
   const { data: task } = api.task.get.useQuery({ id: taskId })
@@ -42,7 +42,7 @@ export default function RenderTask({ taskId }: { taskId: string }) {
               {body.platform}
             </div>
             <div className={"text-muted-foreground text-xs"}>
-              {m(task?.startTime ?? new Date())
+              {moment(task?.startTime ?? new Date())
                 .locale("zh")
                 .fromNow()}
               发布

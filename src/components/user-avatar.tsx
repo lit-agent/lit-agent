@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { IUserView } from "@/ds/user.base"
+import { IUserView } from "@/schema/user.base"
 
 /**
  * space-x 这个是控制子孩子距离，不用tailwind的话，要用 css 写，比较麻烦

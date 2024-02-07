@@ -1,5 +1,4 @@
-import { prisma } from "@/server/db"
-import { UserType } from "@prisma/client"
+import { prisma } from "@/lib/db"
 import * as process from "process"
 
 const args = process.argv
@@ -13,7 +12,7 @@ const main = async () => {
       [table]: await prisma[table].deleteMany({}),
     })),
   )
-  
+
   // const deleted = await prisma.follow.deleteMany({
   //   where: {
   //     OR: [

@@ -1,7 +1,7 @@
-import { IProductListView } from "@/ds/product"
+import { IProductListView } from "@/schema/product"
 import Link from "next/link"
 import Image from "next/image"
-import { Hot } from "@/components/toolkits/fire-value"
+import { Hot } from "@/components/fire-value"
 import { uniq } from "lodash"
 import { calculateProductBuyersCount } from "@/lib/utils"
 

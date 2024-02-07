@@ -5,19 +5,19 @@ import { BroadcastImage } from "@/lib/assets"
 import { RiDoubleQuotesL, RiWechatChannelsLine } from "react-icons/ri"
 import { Separator } from "@/components/ui/separator"
 import { useRef } from "react"
-import { MyUser } from "@/ds/user"
-import { Hot } from "@/components/toolkits/fire-value"
-import { MyMarkdown } from "@/containers/markdown"
+import { IMainUser } from "@/schema/user"
+import { Hot } from "@/components/fire-value"
+import { MyMarkdown } from "@/components/markdown"
 import { UserAvatar } from "@/components/user-avatar"
-import m from "@/lib/moment"
+import moment from "@/lib/datetime"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { toast } from "sonner"
 import { api } from "@/lib/trpc/react"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { uploadFiles } from "@/lib/oss/upload/client"
-import { useAppData } from "@/hooks/use-app-data"
-import { ICreateTaskRequirementBody } from "@/ds/task"
+import { useAppData } from "@/lib/store/use-app-data"
+import { ICreateTaskRequirementBody } from "@/schema/task"
 import { TaskToStatus } from "@prisma/client"
 import Message from "@/components/message-item"
 
@@ -25,7 +25,7 @@ export default function TaskDetailPage({
   user,
   taskId,
 }: {
-  user: MyUser
+  user: IMainUser
   taskId: string
 }) {
   const refTop = useRef<HTMLDivElement>(null)
@@ -80,7 +80,7 @@ export default function TaskDetailPage({
                 </div>
 
                 <div className={"text-muted-foreground text-xs"}>
-                  {m(task.startTime).fromNow()}发布
+                  {moment(task.startTime).fromNow()}发布
                 </div>
               </div>
             </div>

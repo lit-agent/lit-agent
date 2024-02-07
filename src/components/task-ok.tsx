@@ -4,20 +4,20 @@ import Image from "next/image"
 import { BgCircleImage, BroadcastImage, FireIcon } from "@/lib/assets"
 import { TrendingUpIcon } from "lucide-react"
 import { RiDoubleQuotesL, RiDoubleQuotesR } from "react-icons/ri"
-import { Indicator } from "@/components/toolkits/indicator"
+import { Indicator } from "@/components/indicator"
 import { Separator } from "@/components/ui/separator"
 import { MessageContainer } from "@/components/message-item"
 import { UserComp } from "@/components/user"
 import { Input } from "@/components/ui/input"
 import { useRef } from "react"
-import { MyUser } from "@/ds/user"
-import { ITaskView } from "@/ds/task"
+import { IMainUser } from "@/schema/user"
+import { ITaskView } from "@/schema/task"
 
 export default function TaskOk({
   task,
   user,
 }: {
-  user: MyUser
+  user: IMainUser
   task: ITaskView
 }) {
   const refTop = useRef<HTMLDivElement>(null)

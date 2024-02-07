@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
-import { UPLOAD_FILES_FIELD } from "@/const"
 import { uploadFile } from "@/lib/oss/upload/server"
-import { IApi } from "@/ds/api"
+import { IApi } from "@/schema/api"
+
+import { UPLOAD_FILES_FIELD } from "@/lib/oss/const"
 
 export async function POST(request: NextRequest): Promise<NextResponse<IApi>> {
   const formData = await request.formData()

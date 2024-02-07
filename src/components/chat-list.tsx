@@ -1,6 +1,6 @@
 import { Label } from "@/components/ui/label"
 import ChatListItem from "@/components/chat-list-item"
-import { IChatView } from "@/ds/message"
+import { IChatView } from "@/schema/message"
 
 export default function ChatList({ chats }: { chats: IChatView[] }) {
   return (

@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { IUserView } from "@/ds/user.base"
+import { IUserView } from "@/schema/user.base"
 
 export const UserComp = ({ user }: { user: IUserView }) => (
   <Avatar className={"h-8 w-8"}>

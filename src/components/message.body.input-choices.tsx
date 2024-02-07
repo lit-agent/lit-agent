@@ -1,4 +1,4 @@
-import { IChoiceItem } from "@/ds/message.base"
+import { IChoiceItem } from "@/schema/message.base"
 import { useEffect, useState } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"

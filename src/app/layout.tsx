@@ -1,18 +1,18 @@
 import "@/styles/globals.css"
 
 import { Inter } from "next/font/google"
-import MyThemeProvider from "@/providers/theme.provider"
+import MyThemeProvider from "@/components/theme.provider"
 import { Toaster } from "sonner"
-import MySessionProvider from "@/providers/session.provider"
-import { TRPCReactProvider } from "@/providers/trpc.provider"
+import MySessionProvider from "@/components/session.provider"
+import { TRPCReactProvider } from "@/components/trpc.provider"
 import { Metadata, Viewport } from "next"
-import { AutoHeightThread } from "@/providers/auto-height.thread"
-import SocketThread from "@/providers/socket.thread"
-import BgProvider from "@/providers/bg.provider"
-import NavProvider from "@/providers/nav.provider"
-import { prisma } from "@/server/db"
-import { messageViewSelector } from "@/ds/message.base"
-import { getServerUser } from "@/server/auth"
+import { AutoHeightThread } from "@/components/auto-height.thread"
+import SocketThread from "@/components/socket.thread"
+import BgProvider from "@/components/bg.provider"
+import NavProvider from "@/components/nav.provider"
+import { prisma } from "@/lib/db"
+import { messageViewSelector } from "@/schema/message.base"
+import { getServerUser } from "@/lib/auth"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -42,7 +42,6 @@ export default async function RootLayout({
     ...messageViewSelector,
     orderBy: { createdAt: "desc" },
   })
-  const user = await getServerUser()
 
   return (
     <html lang="zh" suppressHydrationWarning>
@@ -52,15 +51,10 @@ export default async function RootLayout({
             <TRPCReactProvider>
               <MyThemeProvider>
                 <BgProvider>
-                  <NavProvider user={user}>
+                  <NavProvider>
                     {children}
 
-                    {user && (
-                      <SocketThread
-                        serverMessages={serverMessages}
-                        user={user}
-                      />
-                    )}
+                    <SocketThread serverMessages={serverMessages} />
 
                     <AutoHeightThread />
 

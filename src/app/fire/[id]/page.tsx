@@ -1,5 +1,5 @@
 import TaskDetailPage from "@/components/task-detail"
-import { ensureServerUser } from "@/server/auth"
+import { ensureServerUser } from "@/lib/auth"
 
 export default async function TaskDetailServerPage({
   params: { id },

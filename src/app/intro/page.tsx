@@ -2,13 +2,12 @@
 
 import { CoverMdImage } from "@/lib/assets"
 import Image from "next/image"
-import { GiuguProfile } from "@/containers/blogger"
+import { GiuguProfile } from "@/components/blogger"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Input } from "@/components/ui/input"
 
 import { z } from "zod"
-import { PHONE_REGEX, SMS_EXPIRE_MINUTES } from "@/const"
 import { useForm } from "react-hook-form"
 import {
   Form,
@@ -24,19 +23,17 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import "react-phone-number-input/style.css"
 import { toast } from "sonner"
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { api } from "@/lib/trpc/react"
 import { signIn } from "next-auth/react"
-import { useAppData } from "@/hooks/use-app-data"
-import { useUserPreference } from "@/hooks/use-user-preference"
-import { AspectRatio } from "@/components/ui/aspect-ratio"
-import { cn } from "@/lib/utils"
+import { cn, PHONE_REGEX } from "@/lib/utils"
+import { SMS_EXPIRE_MINUTES } from "@/lib/sms"
+import { useCountdown } from "usehooks-ts"
 
 export default function IntroPage() {
   return (
     <div
       className={cn(
-        "flex  items-center h-full bg-[#2A2435]",
+        "flex items-center h-full bg-[#2A2435]",
         "flex-col-reverse", // 使用倒序保证页面布局稳定性，封面图是后出现的，todo:更好的办法
       )}
     >
@@ -86,25 +83,24 @@ const Comp3 = () => {
     formState: { errors },
   } = form
 
-  const [sendingSms, setSendingSms] = useState(false)
+  const [count, { startCountdown }] = useCountdown({
+    countStop: 0,
+    countStart: 3,
+    intervalMs: 1000,
+  })
+
   const sendSms = api.sms.send.useMutation()
 
   const onRequestingVerifyCode = async (event) => {
     event.preventDefault() // 防止触发form的验证
-    setSendingSms(true)
+    startCountdown()
 
     const phone = watch("phone")
 
-    const res = await sendSms.mutateAsync({ phone })
-    console.log("[SMS] send response: ", res)
-
-    const msg = res?.SendStatusSet![0]!.Code
-    if (msg === "Ok") {
+    const { success, message } = await sendSms.mutateAsync({ phone })
+    if (success) {
       toast.success("验证码已发送！")
-    } else toast.error(`验证码发送失败，原因：${msg}`)
-
-    // todo: 倒计时
-    setSendingSms(false)
+    } else toast.error(`验证码发送失败，原因：${message}`)
   }
 
   const getUserByPhone = api.user.getUserByPhone.useMutation()
@@ -188,11 +184,11 @@ const Comp3 = () => {
                         disabled={
                           !watch("phone") ||
                           !!errors.phone ||
-                          sendingSms ||
+                          !!count ||
                           submitting
                         }
                       >
-                        获取验证码
+                        获取验证码（{count}）
                       </Button>
                     </div>
                     <FormDescription>

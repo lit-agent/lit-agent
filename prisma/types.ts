@@ -1,7 +1,7 @@
-import { IMessageBody } from "@/ds/message";
+import { IMessageBody } from "@/schema/message"
 
 declare global {
   namespace PrismaJson {
-    type MessageBody = IMessageBody;
+    type MessageBody = IMessageBody
   }
 }

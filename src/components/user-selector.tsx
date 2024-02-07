@@ -15,16 +15,16 @@ import { ChevronLeftIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { UserType } from "@prisma/client"
 import { Separator } from "@/components/ui/separator"
-import { useAppData } from "@/hooks/use-app-data"
+import { useAppData } from "@/lib/store/use-app-data"
 import { Fragment } from "react"
-import { MyUser } from "@/ds/user"
+import { IMainUser } from "@/schema/user"
 
 export const UserSelector = ({
   withBack,
   user,
 }: {
   withBack?: boolean
-  user: MyUser
+  user: IMainUser
 }) => {
   const { data: users = [] } = api.user.list.useQuery()
   const { targetUserId, setTargetUserId } = useAppData()

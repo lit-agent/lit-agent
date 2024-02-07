@@ -1,4 +1,4 @@
-import { ensureServerUser } from "@/server/auth"
+import { ensureServerUser } from "@/lib/auth"
 import TaskDetailPage from "@/components/task-detail"
 
 export default async function TaskDetailServerPage({

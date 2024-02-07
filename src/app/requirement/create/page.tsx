@@ -18,8 +18,8 @@ import { toast } from "sonner"
 import { Input } from "@/components/ui/input"
 import { HomeIcon } from "lucide-react"
 import { useEffect, useState } from "react"
-import { createRequirementSchema } from "@/ds/requirement"
-import { MessageType, SupportedMessageTypes } from "@/ds/message.base"
+import { createRequirementSchema } from "@/schema/requirement"
+import { MessageType, SupportedMessageTypes } from "@/schema/message.base"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 import { Separator } from "@/components/ui/separator"
@@ -27,11 +27,10 @@ import Link from "next/link"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { TextChoicesInput } from "@/components/message.body.input-choices"
-import { useUserPreference } from "@/hooks/use-user-preference"
+import { useUserPreference } from "@/lib/store/use-user-preference"
 
 import { uploadFiles } from "@/lib/oss/upload/client"
-import m from "@/lib/moment"
-import { DATETIME_FORMAT } from "@/const"
+import moment, { DATETIME_FORMAT } from "@/lib/datetime"
 
 const schema = createRequirementSchema
 const FINISHED = 3
@@ -44,8 +43,8 @@ export default function CreateTaskWithUserPage() {
     resolver: zodResolver(schema),
     defaultValues: {
       value: 10,
-      startTime: m().toDate(),
-      endTime: m().add(1, "days").toDate(),
+      startTime: moment().toDate(),
+      endTime: moment().add(1, "days").toDate(),
       body: {
         type, // !important
         title:
@@ -365,9 +364,11 @@ export default function CreateTaskWithUserPage() {
                     <FormControl>
                       <Input
                         type={"datetime-local"}
-                        value={m(field.value).format(DATETIME_FORMAT)}
+                        value={moment(field.value).format(DATETIME_FORMAT)}
                         onChange={(event) => {
-                          field.onChange(m(event.currentTarget.value).toDate())
+                          field.onChange(
+                            moment(event.currentTarget.value).toDate(),
+                          )
                         }}
                       />
                     </FormControl>
@@ -385,9 +386,11 @@ export default function CreateTaskWithUserPage() {
                     <FormControl>
                       <Input
                         type={"datetime-local"}
-                        value={m(field.value).format(DATETIME_FORMAT)}
+                        value={moment(field.value).format(DATETIME_FORMAT)}
                         onChange={(event) => {
-                          field.onChange(m(event.currentTarget.value).toDate())
+                          field.onChange(
+                            moment(event.currentTarget.value).toDate(),
+                          )
                         }}
                       />
                     </FormControl>

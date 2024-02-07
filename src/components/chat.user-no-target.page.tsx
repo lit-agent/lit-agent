@@ -1,8 +1,8 @@
 import { UserAvatar } from "@/components/user-avatar"
 import { AwardFillIcon } from "@/lib/assets"
 import { UserType } from "@prisma/client"
-import { useAppData } from "@/hooks/use-app-data"
-import { IUserView } from "@/ds/user.base"
+import { useAppData } from "@/lib/store/use-app-data"
+import { IUserView } from "@/schema/user.base"
 
 export default function ChatUserNoTargetPage({
   users,

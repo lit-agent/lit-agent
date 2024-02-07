@@ -1,8 +1,8 @@
 "use client"
 
-import { MyUser } from "@/ds/user"
+import { IMainUser } from "@/schema/user"
 import { useForm } from "react-hook-form"
-import { createProductSchema, ICreateProduct } from "@/ds/product"
+import { createProductSchema, ICreateProduct } from "@/schema/product"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { api } from "@/lib/trpc/react"
 import { toast } from "sonner"
@@ -25,7 +25,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio"
 import Image from "next/image"
 import { PlusCircleIcon } from "lucide-react"
 
-export default function CreateProductPage({ user }: { user: MyUser }) {
+export default function CreateProductPage({ user }: { user: IMainUser }) {
   // 1. Define your form.
   const form = useForm<ICreateProduct>({
     resolver: zodResolver(createProductSchema),

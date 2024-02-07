@@ -1,6 +1,6 @@
 import { getMessageAbstract, MessageContainer } from "@/components/message-item"
-import { useAppData } from "@/hooks/use-app-data"
-import { IChatView } from "@/ds/message"
+import { useAppData } from "@/lib/store/use-app-data"
+import { IChatView } from "@/schema/message"
 
 export default function ChatListItem({ chat }: { chat: IChatView }) {
   const { setTargetUserId } = useAppData()

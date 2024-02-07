@@ -1,22 +1,27 @@
 "use client"
 
-import { MyUser } from "@/ds/user"
+import { IMainUser } from "@/schema/user"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ChevronRightIcon, SearchIcon } from "lucide-react"
 import { RiFireFill } from "react-icons/ri"
 import { Separator } from "@/components/ui/separator"
 import { CgArrowsExchangeAlt } from "react-icons/cg"
 import { honorDict } from "@/lib/assets"
-import { Card1 } from "./toolkits/card"
+import { Card1 } from "./card"
 import { api } from "@/lib/trpc/react"
 import Image from "next/image"
-import { Hot } from "@/components/toolkits/fire-value"
+import { Hot } from "@/components/fire-value"
 import Link from "next/link"
 import ProductListView from "@/components/product-list-view"
 import { UserAvatar } from "@/components/user-avatar"
+import { TaskStatus, TaskToStatus } from "@prisma/client"
 
-export default function UserHomePage({ user }: { user: MyUser }) {
+export default function UserHomePage({ user }: { user: IMainUser }) {
   const { data: products = [] } = api.product.list.useQuery()
+  const { data: bills = [] } = api.bill.list.useQuery()
+  const { data: tasks = [] } = api.task.listUserTasks.useQuery()
+
+  const billsCount = bills.filter((bill) => bill.userId === user.id).length
 
   return (
     <div className={"p-2 flex flex-col gap-4"}>
@@ -66,9 +71,11 @@ export default function UserHomePage({ user }: { user: MyUser }) {
 
         <Card1
           a={"当前任务"}
-          b={user.toTasks.filter((task) => task.status === "goon").length}
+          b={tasks.filter((task) => task.status === TaskToStatus.goon).length}
           c={"已完成"}
-          d={user.toTasks.filter((task) => task.status === "finished").length}
+          d={
+            tasks.filter((task) => task.status === TaskToStatus.finished).length
+          }
           side={"R"}
         />
       </div>
@@ -82,7 +89,7 @@ export default function UserHomePage({ user }: { user: MyUser }) {
         </div>
 
         <div className={"inline-flex"}>
-          共 18 条
+          共 {billsCount} 条
           <ChevronRightIcon />
         </div>
       </div>

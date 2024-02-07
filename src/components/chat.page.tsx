@@ -1,21 +1,21 @@
 "use client"
 
-import { MyUser } from "@/ds/user"
-import { useAppData } from "@/hooks/use-app-data"
+import { IMainUser } from "@/schema/user"
+import { useAppData } from "@/lib/store/use-app-data"
 import { useEffect, useState } from "react"
-import { getChatId } from "@/lib/socket"
 import ChatDetailPage from "@/components/chat-detail"
-import { IChatView } from "@/ds/message"
+import { IChatView } from "@/schema/message"
 import { UserType } from "@prisma/client"
-import { IUserView } from "@/ds/user.base"
+import { IUserView } from "@/schema/user.base"
 import ChatList from "@/components/chat-list"
 import ChatUserNoTargetPage from "@/components/chat.user-no-target.page"
+import { getChatId } from "@/lib/socket/helpers"
 
 export default function ChatListPage({
   user,
   users,
 }: {
-  user: MyUser
+  user: IMainUser
   users: IUserView[]
 }) {
   const { targetUserId, messages } = useAppData()

@@ -69,10 +69,10 @@ model Bill {
   createdAt DateTime @updatedAt
   updatedAt DateTime @updatedAt
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  product   ProductFrom @relation(fields: [productId], references: [id])
+  product   ProductFrom @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
 
   productCount Int

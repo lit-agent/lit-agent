@@ -6,17 +6,17 @@ import { FireIcon } from "@/lib/assets"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRightIcon, StarIcon } from "lucide-react"
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
-import { MyMarkdown } from "@/containers/markdown"
+import { MyMarkdown } from "@/components/markdown"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import { Separator } from "@/components/ui/separator"
 import { AvatarFallback } from "@radix-ui/react-avatar"
 
-import { PRIMARY_COLOR } from "@/const"
-import { Card2 } from "@/components/toolkits/card"
+import { Card2 } from "@/components/card"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { RedeemType } from "@prisma/client"
 import { calculateProductBuyersCount } from "@/lib/utils"
+import { PRIMARY_COLOR } from "@/config"
 
 export default function ProductPage({
   params: { id },

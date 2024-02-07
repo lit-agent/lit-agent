@@ -1,6 +1,7 @@
-import { UPLOAD_FILES_FIELD } from "@/const"
 import { toast } from "sonner"
-import { IApi } from "@/ds/api"
+import { IApi } from "@/schema/api"
+
+import { UPLOAD_FILES_FIELD } from "@/lib/oss/const"
 
 export const uploadFiles = async (files: FileList) => {
   const formData = new FormData()

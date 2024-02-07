@@ -1,6 +1,6 @@
 "use client"
 
-import { MyUser } from "@/ds/user"
+import { IMainUser } from "@/schema/user"
 import { admins } from "@/config"
 import AvatarComp, { UserAvatar } from "@/components/user-avatar"
 import { RiFireFill } from "react-icons/ri"
@@ -11,14 +11,14 @@ import { last } from "lodash"
 import { TaskFrom } from ".prisma/client"
 import { maskName } from "@/lib/utils"
 
-import { ITaskView } from "@/ds/task"
-import { IRoomView } from "@/ds/room"
+import { ITaskView } from "@/schema/task"
+import { IRoomView } from "@/schema/room"
 
 export default function TaskList({
   user,
   fires,
 }: {
-  user: MyUser
+  user: IMainUser
   fires: ITaskView[]
 }) {
   const userNew = admins.hading

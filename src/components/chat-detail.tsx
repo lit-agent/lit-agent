@@ -1,28 +1,28 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { MyUser } from "@/ds/user"
+import { IMainUser } from "@/schema/user"
 import { api } from "@/lib/trpc/react"
 import { UserSelector } from "@/components/user-selector"
 import Message from "@/components/message-item"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
-import { BloggerContainer } from "@/containers/blogger"
+import { BloggerContainer } from "@/components/blogger"
 import { IoMenuOutline } from "react-icons/io5"
-import { MessageType } from "@/ds/message.base"
-import { useAppData } from "@/hooks/use-app-data"
+import { MessageType } from "@/schema/message.base"
+import { useAppData } from "@/lib/store/use-app-data"
 import { UserType } from "@prisma/client"
 import { ChevronLeftIcon } from "lucide-react"
-import { getClientMessageId } from "@/ds/message"
-import { getChatId } from "@/lib/socket"
-import { IUserView } from "@/ds/user.base"
+import { getClientMessageId } from "@/schema/message"
+import { IUserView } from "@/schema/user.base"
+import { getChatId } from "@/lib/socket/helpers"
 
 export default function ChatDetailPage({
   user,
   toUser,
   withBack,
 }: {
-  user: MyUser
+  user: IMainUser
   toUser: IUserView
   // todo: room
   withBack?: boolean
