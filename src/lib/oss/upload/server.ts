@@ -1,6 +1,7 @@
 import { last } from "lodash"
 import { v4 } from "uuid"
-import { oss, OSS_DOMAIN } from "../config"
+import { oss } from "../config"
+import { OSS_DOMAIN } from "@/lib/oss/const"
 
 export const uploadFile = async (file: File) => {
   const { name } = file

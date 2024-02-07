@@ -11,9 +11,9 @@ export default function NavProvider({ children }: PropsWithChildren) {
   const isBlogger = useSession().data?.user.type === UserType.blogger
 
   return (
-    <div className={"w-full h-full overflow-hidden flex flex-col"}>
+    <div className={"h-full overflow-hidden flex flex-col"}>
       <div className={"grow overflow-hidden relative"}>
-        <div className={"h-full overflow-auto"}>{children}</div>
+        <div className={"h-full overflow-y-auto"}>{children}</div>
 
         {isBlogger && (
           <div className={"absolute right-4 bottom-4"}>

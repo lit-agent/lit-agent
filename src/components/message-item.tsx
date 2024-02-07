@@ -48,7 +48,7 @@ export const MessageContainer = ({
   ...props
 }: { user: IUserView } & HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className={cn("relative flex gap-2 ", className)} {...props}>
+    <div className={cn("relative flex gap-2", className)} {...props}>
       {user?.type === UserType.blogger ? (
         <BloggerContainer className={"flex items-start"}>
           <UserComp user={user} />
@@ -57,7 +57,7 @@ export const MessageContainer = ({
         <UserComp user={user} />
       )}
 
-      <div className={"flex grow flex-col gap-2"}>
+      <div className={"grow overflow-hidden flex flex-col gap-2"}>
         <div className={"flex items-center gap-1 text-xs text-gray-400"}>
           <span>{user?.name ?? "一位神秘的用户"}</span>
 
@@ -69,6 +69,7 @@ export const MessageContainer = ({
             </Badge>
           )}
         </div>
+
         {children}
       </div>
 

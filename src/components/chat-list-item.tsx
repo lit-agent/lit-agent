@@ -11,20 +11,11 @@ export default function ChatListItem({ chat }: { chat: IChatView }) {
     <div
       onClick={() => {
         setTargetUserId(targetUser.id)
-
-        // setNewMessages((um) =>
-        //   um.filter(
-        //     (m) =>
-        //       m.room?.id !== chat.roomId &&
-        //       m.toUser?.id !== chat.toUser?.id &&
-        //       m.fromUser.id !== user.id,
-        //   ),
-        // )
       }}
       className={"relative"}
     >
       <MessageContainer user={targetUser} className={"p-4 border-b relative"}>
-        <div className={"line-clamp-1"}>{getMessageAbstract(chat.message)}</div>
+        <div className={"truncate"}>{getMessageAbstract(chat.message)}</div>
       </MessageContainer>
 
       {!!chat.unreadCount && (

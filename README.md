@@ -7,6 +7,14 @@
 
 ## Tech
 
+## tailwind中文字溢出控制
+
+- 多行：
+	- `break-words line-clamp- *`
+- 单行:
+	- `truncate`
+	- `break-words line-clamp-1`
+
 ### 关于图片优化与写法
 
 参考：https://stackoverflow.com/questions/69230343/nextjs-image-component-with-fixed-witdth-and-auto-height
