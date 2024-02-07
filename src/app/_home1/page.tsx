@@ -13,7 +13,7 @@ import Image from "next/image"
 import { ArrowUpIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "next-auth/react"
-import { Dot } from "@/components/dot"
+import { Indicator } from "@/components/toolkits/indicator"
 
 import { PRIMARY_COLOR } from "@/const"
 import { tasks } from "@/config"
@@ -98,7 +98,7 @@ export default function Home1Page() {
             </div>
 
             <div className={"absolute right-4 top-2"}>
-              <Dot />
+              <Indicator />
             </div>
           </div>
         </div>
@@ -115,7 +115,7 @@ export default function Home1Page() {
               <span className={"text-lg font-medium"}>{name}</span>
 
               <div className={"inline-flex items-center gap-2"}>
-                {hasReminder && <Dot />}
+                {hasReminder && <Indicator />}
                 {cnt}个
               </div>
             </div>

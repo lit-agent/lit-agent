@@ -6,10 +6,9 @@ import { RiDoubleQuotesL, RiWechatChannelsLine } from "react-icons/ri"
 import { Separator } from "@/components/ui/separator"
 import { useRef } from "react"
 import { MyUser } from "@/ds/user"
-import { Hot } from "@/components/fire-value"
+import { Hot } from "@/components/toolkits/fire-value"
 import { MyMarkdown } from "@/containers/markdown"
-import { ICreateTaskRequirementBody, taskViewSelector } from "@/ds/requirement"
-import { UserAvatar } from "@/components/avatar"
+import { UserAvatar } from "@/components/user-avatar"
 import { Prisma } from "@prisma/client"
 import moment from "@/lib/moment"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -22,6 +21,7 @@ import { uploadFiles } from "@/lib/oss/upload/client"
 import { MessageType } from "@/ds/message.base"
 import { useAppData } from "@/hooks/use-app-data"
 import TaskFromGetPayload = Prisma.TaskFromGetPayload
+import { ICreateTaskRequirementBody, taskViewSelector } from "@/ds/task"
 
 export default function TaskDetail2({
   task,

@@ -6,7 +6,7 @@ import { MediasImage } from "@/lib/assets"
 import { Button } from "@/components/ui/button"
 import { TbMessageChatbot } from "react-icons/tb"
 import { cn } from "@/lib/utils"
-import { UserAvatar } from "@/components/avatar"
+import { UserAvatar } from "@/components/user-avatar"
 import { admins } from "@/config"
 
 export const GiuguProfile = ({

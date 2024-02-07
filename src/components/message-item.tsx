@@ -13,7 +13,7 @@ import { UserComp } from "@/components/user"
 import { IMessageBody } from "@/ds/message"
 
 import "moment/locale/zh-cn"
-import RenderTask from "@/components/render-task"
+import RenderTask from "@/components/task"
 import { IUserView } from "@/ds/user.base"
 import { ChevronRightIcon } from "lucide-react"
 import { AspectRatio } from "@/components/ui/aspect-ratio"

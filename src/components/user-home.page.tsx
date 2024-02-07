@@ -1,25 +1,13 @@
-"use client"
-
+import { MyUser } from "@/ds/user"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { $Enums } from ".prisma/client"
-import Image from "next/image"
 import { ChevronRightIcon, SearchIcon } from "lucide-react"
 import { RiFireFill } from "react-icons/ri"
-import { cn } from "@/lib/utils"
-import { ReactNode } from "react"
 import { Separator } from "@/components/ui/separator"
 import { CgArrowsExchangeAlt } from "react-icons/cg"
-import { MyUser } from "@/ds/user"
-import {
-  Honor1SVG,
-  Honor2SVG,
-  Honor3SVG,
-  Honor4SVG,
-  Honor5SVG,
-} from "@/lib/assets"
-import HonorType = $Enums.HonorType
+import { honorDict } from "@/lib/assets"
+import { HalfCard } from "./toolkits/half-card"
 
-export default function UserPage({ user }: { user: MyUser }) {
+export default function UserHomePage({ user }: { user: MyUser }) {
   return (
     <div className={"p-2 flex flex-col gap-4"}>
       <div className={"flex flex-col items-center gap-2"}>
@@ -107,34 +95,4 @@ export default function UserPage({ user }: { user: MyUser }) {
       </div>
     </div>
   )
-}
-
-const HalfCard = ({
-  a,
-  b,
-  c,
-  d,
-  side,
-}: {
-  a: ReactNode
-  b: number
-  c: ReactNode
-  d: number
-  side: "L" | "R"
-}) => (
-  <div className={cn("flex flex-col gap-2", side === "R" && "items-end")}>
-    <div className={"text-gray-300"}>{a}</div>
-    <div className={"text-white text-2xl font-medium"}>{b}</div>
-    <div className={"text-gray-300"}>{c}</div>
-    <div className={"text-gray-300"}>{d}</div>
-  </div>
-)
-
-const honorDict: Record<HonorType, string> = {
-  NewUser: Honor1SVG,
-  GoodFriend: Honor2SVG,
-  HotFriend: Honor3SVG,
-  GoodFriendEver: Honor4SVG,
-  HotFriendEver: Honor5SVG,
-  NewTask: Honor1SVG,
 }

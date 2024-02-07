@@ -26,6 +26,7 @@ import Honor2SVG from "../../public/image/honor/honor-2.svg"
 import Honor3SVG from "../../public/image/honor/honor-3.svg"
 import Honor4SVG from "../../public/image/honor/honor-4.svg"
 import Honor5SVG from "../../public/image/honor/honor-5.svg"
+import { HonorType } from "@prisma/client"
 
 export {
   BroadcastImage,
@@ -53,4 +54,13 @@ export {
   Honor3SVG,
   Honor4SVG,
   Honor5SVG,
+}
+
+export const honorDict: Record<HonorType, string> = {
+  NewUser: Honor1SVG,
+  GoodFriend: Honor2SVG,
+  HotFriend: Honor3SVG,
+  GoodFriendEver: Honor4SVG,
+  HotFriendEver: Honor5SVG,
+  NewTask: Honor1SVG,
 }

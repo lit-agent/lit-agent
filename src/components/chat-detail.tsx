@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react"
 import { MyUser } from "@/ds/user"
 import { api } from "@/lib/trpc/react"
-import { SelectUser } from "@/components/select-user"
+import { UserSelector } from "@/components/user-selector"
 import Message from "@/components/message-item"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -17,7 +17,7 @@ import { getClientMessageId } from "@/ds/message"
 import { getChatId } from "@/lib/socket"
 import { IUserView } from "@/ds/user.base"
 
-export default function PrivateChatPage({
+export default function ChatDetailPage({
   user,
   toUser,
   withBack,
@@ -29,7 +29,7 @@ export default function PrivateChatPage({
 }) {
   const refInput = useRef<HTMLInputElement>(null)
   const sendMessage = api.message.send.useMutation()
-  const { setTargetUserId, newMessages, setNewMessages } = useAppData()
+  const { setTargetUserId, messages, setMessages } = useAppData()
 
   const submitMessage = () => {
     if (!refInput.current || !user) return
@@ -38,7 +38,7 @@ export default function PrivateChatPage({
 
     const channelId = getChatId(user.id, toUser.id)
     console.log("[Chat] sending message: ", { channelId, text })
-    setNewMessages([
+    setMessages([
       {
         fromUser: user,
         toUser: toUser,
@@ -46,7 +46,7 @@ export default function PrivateChatPage({
         task: null,
         body: { type: MessageType.Plain, title: text },
       },
-      ...newMessages,
+      ...messages,
     ])
 
     sendMessage.mutate({
@@ -60,7 +60,7 @@ export default function PrivateChatPage({
   const refBottom = useRef<HTMLDivElement>(null)
   useEffect(() => {
     refBottom.current?.scrollIntoView({ behavior: "smooth" })
-  }, [newMessages.length])
+  }, [messages.length])
 
   return (
     <div className={"flex h-full flex-col overflow-hidden"}>
@@ -75,7 +75,7 @@ export default function PrivateChatPage({
           )}
         </div>
 
-        <SelectUser user={user} />
+        <UserSelector user={user} />
 
         {/*<UserComp user={targetUser} />*/}
 
@@ -85,7 +85,7 @@ export default function PrivateChatPage({
       <div className={"flex grow flex-col-reverse gap-4 overflow-auto p-4"}>
         <div ref={refBottom} />
 
-        {newMessages
+        {messages
           .filter(
             (m) =>
               (!m.toUser && !m.room) || // broadcast

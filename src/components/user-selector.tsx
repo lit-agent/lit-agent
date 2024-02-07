@@ -19,7 +19,7 @@ import { useAppData } from "@/hooks/use-app-data"
 import { Fragment } from "react"
 import { MyUser } from "@/ds/user"
 
-export const SelectUser = ({
+export const UserSelector = ({
   withBack,
   user,
 }: {

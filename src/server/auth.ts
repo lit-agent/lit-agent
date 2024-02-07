@@ -150,3 +150,8 @@ export const authOptions: NextAuthOptions = {
  */
 export const getServerAuthSession = () => getServerSession(authOptions)
 export const getServerUser = async () => (await getServerAuthSession())?.user
+export const ensureServerUser = async () => {
+  const user = await getServerUser()
+  if (!user) throw new Error("no user found")
+  return user
+}

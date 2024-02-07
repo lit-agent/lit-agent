@@ -27,7 +27,7 @@ import { Separator } from "@/components/ui/separator"
 import Link from "next/link"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
-import { TextChoicesInput } from "@/components/input-choices"
+import { TextChoicesInput } from "@/components/message.body.input-choices"
 import { useUserPreference } from "@/hooks/use-user-preference"
 
 import { uploadFiles } from "@/lib/oss/upload/client"

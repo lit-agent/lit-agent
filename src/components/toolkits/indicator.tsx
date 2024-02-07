@@ -1,11 +1,11 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
-export const Dot = ({
+export const Indicator = ({
   status = "online",
   size = "sm",
 }: {
-  status?: "online" | "offline" | "busy";
-  size?: "sm" | "lg";
+  status?: "online" | "offline" | "busy"
+  size?: "sm" | "lg"
 }) => {
   return (
     <div
@@ -18,5 +18,5 @@ export const Dot = ({
         size === "lg" && "h-6 w-6",
       )}
     />
-  );
-};
+  )
+}

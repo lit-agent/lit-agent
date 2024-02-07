@@ -7,8 +7,12 @@ import MySessionProvider from "@/providers/session"
 import { TRPCReactProvider } from "@/providers/trpc"
 import { Metadata, Viewport } from "next"
 import { AppAutoMobileHeightProvider } from "@/providers/app-auto-mobile-height-provider"
-import SocketProvider from "@/providers/socket"
+import SocketProvider from "@/providers/socket.provider"
 import BgProvider from "@/providers/bg"
+import NavProvider from "@/providers/nav.provider"
+import { prisma } from "@/server/db"
+import { messageViewSelector } from "@/ds/message.base"
+import { getServerUser } from "@/server/auth"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -34,16 +38,24 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const serverMessages = await prisma.message.findMany({
+    ...messageViewSelector,
+    orderBy: { createdAt: "desc" },
+  })
+  const user = await getServerUser()
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="zh" suppressHydrationWarning>
       <body className={`font-sans ${inter.variable}`}>
         <MySessionProvider>
           <TRPCReactProvider>
-            <SocketProvider>
+            <SocketProvider serverMessages={serverMessages} user={user}>
               <MyThemeProvider>
                 <AppAutoMobileHeightProvider>
                   <main className={"relative w-screen"}>
-                    <BgProvider>{children}</BgProvider>
+                    <BgProvider>
+                      <NavProvider>{children}</NavProvider>
+                    </BgProvider>
 
                     <Toaster
                       richColors

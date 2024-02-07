@@ -1,13 +1,10 @@
 import { createTRPCRouter, protectedProcedure } from "../trpc"
 
 import { pusherServer, SocketEventType } from "@/lib/socket"
-import {
-  messageViewSelector,
-  selectChatTarget,
-  sendMessageSchema,
-} from "@/ds/message"
+import { selectChatTarget, sendMessageSchema } from "@/ds/message"
 import { prisma } from "@/server/db"
 import { z } from "zod"
+import { messageViewSelector } from "@/ds/message.base"
 
 export const messageRouter = createTRPCRouter({
   triggerList: protectedProcedure

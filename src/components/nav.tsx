@@ -1,4 +1,4 @@
-import { AppTab, AppTabComp } from "@/components/app-tab"
+import { AppTab, AppTabComp } from "@/components/nav-tab"
 import { TabsList } from "@/components/ui/tabs"
 import { FireIcon, Menu1Icon, Menu3Icon } from "@/lib/assets"
 

@@ -1,11 +1,11 @@
 import Link from "next/link"
-import { Hot } from "@/components/fire-value"
+import { Hot } from "@/components/toolkits/fire-value"
 import Image from "next/image"
 import { CoverSmImage, WechatMPIcon } from "@/lib/assets"
 import moment from "moment/moment"
 import { z } from "zod"
-import { createTaskRequirementBodySchema } from "@/ds/requirement"
 import { api } from "@/lib/trpc/react"
+import { createTaskRequirementBodySchema } from "@/ds/task"
 
 export default function RenderTask({ taskId }: { taskId: string }) {
   const { data: task } = api.task.get.useQuery({ id: taskId })

@@ -1,12 +1,9 @@
 import { z } from "zod"
 import { createRequirementBodySchema } from "@/ds/requirement"
-import { Prisma } from "@prisma/client"
-import validator = Prisma.validator
-import MessageDefaultArgs = Prisma.MessageDefaultArgs
-import MessageGetPayload = Prisma.MessageGetPayload
 
-import { userViewSelector } from "@/ds/user.base"
+import { IUserView } from "@/ds/user.base"
 import { getChatId } from "@/lib/socket"
+import { IMessageView } from "@/ds/message.base"
 
 export const selectChatTarget = z.object({
   roomId: z.string().optional(),
@@ -24,23 +21,15 @@ export const sendMessageSchema = z
 
 export type IMessageBody = z.infer<typeof createRequirementBodySchema>
 
-export const messageViewSelector = validator<MessageDefaultArgs>()({
-  select: {
-    body: true,
-    fromUser: userViewSelector,
-    toUser: userViewSelector,
-    task: true,
-    room: {
-      select: {
-        id: true,
-        users: userViewSelector,
-      },
-    },
-  },
-})
-export type IClientMessage = MessageGetPayload<typeof messageViewSelector> & {
-  read?: boolean
-}
-
-export const getClientMessageId = (message: IClientMessage) =>
+export const getClientMessageId = (message: IMessageView) =>
   message.room?.id ?? getChatId(message.fromUser.id, message.toUser!.id)
+
+export type IChatView = {
+  message: IMessageView
+  unreadCount: number
+
+  roomId?: string
+  users?: IUserView[] // 群
+
+  targetUser?: IUserView // 个人
+}

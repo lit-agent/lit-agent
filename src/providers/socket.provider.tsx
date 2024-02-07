@@ -1,12 +1,24 @@
-import { useUser } from "@/hooks/use-user"
-import { useAppData } from "@/hooks/use-app-data"
-import { useEffect } from "react"
-import { getBroadcastId, pusherClient, SocketEventType } from "@/lib/socket"
-import { IClientMessage } from "@/ds/message"
+"use client"
 
-export const useSocket = () => {
-  const user = useUser()
-  const { targetUserId, setNewMessages } = useAppData()
+import { PropsWithChildren, useEffect } from "react"
+import { useAppData } from "@/hooks/use-app-data"
+import { getBroadcastId, pusherClient, SocketEventType } from "@/lib/socket"
+import { IMessageView } from "@/ds/message.base"
+import { MyUser } from "@/ds/user"
+
+export default function SocketProvider({
+  children,
+  serverMessages,
+  user,
+}: PropsWithChildren & {
+  serverMessages: IMessageView[]
+  user?: MyUser
+}) {
+  const { targetUserId, setMessages } = useAppData()
+
+  useEffect(() => {
+    setMessages(serverMessages)
+  }, [serverMessages])
 
   useEffect(() => {
     if (!user) return
@@ -26,10 +38,10 @@ export const useSocket = () => {
 
     channels.forEach((channelId) => pusherClient.subscribe(channelId))
 
-    pusherClient.bind(SocketEventType.Message, (message: IClientMessage) => {
+    pusherClient.bind(SocketEventType.Message, (message: IMessageView) => {
       console.log("[Socket] received message: ", message)
       // 倒序
-      setNewMessages((messages) => [message, ...messages])
+      setMessages((messages) => [message, ...messages])
     })
 
     return () => {
@@ -37,4 +49,6 @@ export const useSocket = () => {
       pusherClient.unbind(SocketEventType.Message)
     }
   }, [targetUserId, user])
+
+  return <>{children}</>
 }

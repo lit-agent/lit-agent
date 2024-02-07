@@ -4,7 +4,7 @@ import Image from "next/image"
 import { BgCircleImage, BroadcastImage, FireIcon } from "@/lib/assets"
 import { TrendingUpIcon } from "lucide-react"
 import { RiDoubleQuotesL, RiDoubleQuotesR } from "react-icons/ri"
-import { Dot } from "@/components/dot"
+import { Indicator } from "@/components/toolkits/indicator"
 import { Separator } from "@/components/ui/separator"
 import { MessageContainer } from "@/components/message-item"
 import { UserComp } from "@/components/user"
@@ -75,7 +75,7 @@ export default function TaskDetail1({
       >
         <div className={"flex flex-col gap-2 items-center"}>
           <div className={"flex items-center gap-2"}>
-            <Dot /> 183 人限时群聊
+            <Indicator /> 183 人限时群聊
           </div>
           <div className={"text-xs text-muted-foreground tracking-widest"}>
             剩余1天17小时

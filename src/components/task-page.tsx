@@ -1,14 +1,25 @@
-import { RiFireFill } from "react-icons/ri"
-import { Avatar, AvatarImage } from "@/components/ui/avatar"
-import { ChevronDownIcon, ChevronRightIcon } from "lucide-react"
-import AvatarComp, { UserAvatar } from "@/components/avatar"
-import Link from "next/link"
-import { Label } from "../../components/ui/label"
-import { MyUser } from "@/ds/user"
-import { last } from "lodash"
-import { admins } from "@/config"
+"use client"
 
-export default function TaskPage({ user }: { user: MyUser }) {
+import { MyUser } from "@/ds/user"
+import { admins } from "@/config"
+import AvatarComp, { UserAvatar } from "@/components/user-avatar"
+import { RiFireFill } from "react-icons/ri"
+import { ChevronDownIcon, ChevronRightIcon } from "lucide-react"
+import { Label } from "@/components/ui/label"
+import Link from "next/link"
+import { last } from "lodash"
+import { TaskFrom } from ".prisma/client"
+import { maskName } from "@/lib/utils"
+
+import { ITaskView } from "@/ds/task"
+
+export default function TaskPage({
+  user,
+  tasks,
+}: {
+  user: MyUser
+  tasks: ITaskView[]
+}) {
   const userNew = admins.hading
 
   // todo: db data
@@ -20,7 +31,7 @@ export default function TaskPage({ user }: { user: MyUser }) {
     finishedUsers: Array(10).fill(userNew),
   }
 
-  console.log("[TaskPage] data: ", { user, data })
+  console.log("[TaskPage] data: ", { user, data, tasks })
 
   return (
     <div className={"bg-[#282232] p-2 min-h-full"}>
@@ -80,9 +91,9 @@ export default function TaskPage({ user }: { user: MyUser }) {
         </div>
       </div>
 
-      {user?.toTasks.map((taskRelation, index) => (
+      {tasks.map((task, index) => (
         <Link
-          href={`/task/${taskRelation.task.id}`}
+          href={`/task/${task.id}`}
           key={index}
           className={
             "rounded bg-[#373041] flex items-center justify-between p-3 my-2"
@@ -91,15 +102,13 @@ export default function TaskPage({ user }: { user: MyUser }) {
           <div className={"flex flex-col gap-2"}>
             <div className={"flex items-center gap-2"}>
               <div className={"w-2 h-2 bg-green-500 rounded-full"} />
-              <AvatarComp
-                users={taskRelation.task.toUsers.map((u) => u.user)}
-              />
-              {taskRelation.task.toUsers.length} 人
+              <AvatarComp users={task.toUsers.map((u) => u.user)} />
+              {task.toUsers.length} 人
             </div>
 
             <div className={"text-gray-500 text-sm"}>
-              {taskRelation.task?.room?.messages.length
-                ? JSON.stringify(last(taskRelation.task.room.messages)!.body)
+              {task?.room?.messages.length
+                ? JSON.stringify(last(task.room.messages)!.body)
                 : "这个群还没有发送任何消息"}
             </div>
           </div>
@@ -108,5 +117,3 @@ export default function TaskPage({ user }: { user: MyUser }) {
     </div>
   )
 }
-
-const maskName = (s: string) => s[0] + s.slice(1).replace(/./g, "*")

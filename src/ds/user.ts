@@ -1,9 +1,9 @@
 import { Prisma } from "@prisma/client"
-import { messageViewSelector } from "@/ds/message"
 import { userViewSelector } from "@/ds/user.base"
 import UserGetPayload = Prisma.UserGetPayload
 import validator = Prisma.validator
 import UserDefaultArgs = Prisma.UserDefaultArgs
+import { messageViewSelector } from "@/ds/message.base"
 
 export const myUserSlice = validator<UserDefaultArgs>()({
   include: {
