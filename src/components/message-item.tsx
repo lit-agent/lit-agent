@@ -142,13 +142,14 @@ export const MessageBody = ({
           >
             <div className={"flex items-center gap-4"}>
               {body.images.map((s, index) => (
-                <div className={"w-12"} key={index}>
+                <div className={"w-16"} key={index}>
                   <AspectRatio ratio={1}>
                     <Image
-                      src={getImagePath(s)}
+                      src={getImagePath(s, { width: 64, height: 64 })}
                       alt={s}
                       fill
-                      className={"rounded"}
+                      sizes={"100%"}
+                      className={"rounded "}
                     />
                   </AspectRatio>
                 </div>

@@ -8,11 +8,14 @@ import { OSS_DOMAIN } from "@/const"
  */
 export const getImagePath = (
   s: string,
-  { width, height }: { width?: number; height?: number },
+  params?: { width?: number; height?: number },
 ) => {
   if (!/^(?:\/|http)/.test(s)) {
     s = OSS_DOMAIN + s
   }
+
+  let width = params?.width
+  let height = params?.height
 
   let prefix = "?x-oss-process=image/resize,"
   // 最常用，固定画幅

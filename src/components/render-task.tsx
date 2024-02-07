@@ -30,9 +30,8 @@ export default function RenderTask({ taskId }: { taskId: string }) {
         <Image
           src={CoverSmImage}
           alt={"cover"}
-          width={120}
-          height={160}
-          className={"shrink-0"}
+          // loading={"lazy"}
+          className={"shrink-0 w-[120px] h-auto"}
         />
         <div className={"flex grow flex-col justify-between bg-[#2A2434] p-3"}>
           <div>{body.title}</div>
