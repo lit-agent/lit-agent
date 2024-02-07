@@ -1,9 +1,12 @@
 "use client"
 
-import { Label } from "@/components/ui/label"
-import { z } from "zod"
+import { MyUser } from "@/ds/user"
 import { useForm } from "react-hook-form"
+import { createProductSchema, ICreateProduct } from "@/ds/product"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { api } from "@/lib/trpc/react"
+import { toast } from "sonner"
+import { Label } from "@/components/ui/label"
 import {
   Form,
   FormControl,
@@ -14,27 +17,28 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
-import { api } from "@/lib/trpc/react"
-import { toast } from "sonner"
-import { createProductSchema } from "@/ds/product"
-import { IUserView } from "@/ds/user.base"
+import { Button } from "@/components/ui/button"
+import { uploadFiles } from "@/lib/oss/upload/client"
+import { AspectRatio } from "@/components/ui/aspect-ratio"
+import Image from "next/image"
+import { PlusCircleIcon } from "lucide-react"
 
-export default function CreateProductPage_({ user }: { user: IUserView }) {
+export default function CreateProductPage({ user }: { user: MyUser }) {
   // 1. Define your form.
-  const form = useForm<z.infer<typeof createProductSchema>>({
+  const form = useForm<ICreateProduct>({
     resolver: zodResolver(createProductSchema),
     defaultValues: {
-      title: "# test",
-      description: "# test",
+      title: "# title",
+      description: "# description",
       images: [],
+      detail: "# detail",
+      price: 100,
       isOnsite: false,
+      isSelfOperating: true,
       isReturnable: true,
       isReservationRequired: true,
-      isSelfOperating: true,
-      price: 100,
       total: 10,
       fromUserId: user.id,
     },
@@ -42,13 +46,9 @@ export default function CreateProductPage_({ user }: { user: IUserView }) {
 
   const createProduct = api.product.create.useMutation()
 
-  const issuerId = user?.id
-
   // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof createProductSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log("[Product] create: ", { values, issuerId })
+  function onSubmit(values: ICreateProduct) {
+    console.log("[Product] create: ", { values })
 
     createProduct
       .mutateAsync(values)
@@ -65,7 +65,7 @@ export default function CreateProductPage_({ user }: { user: IUserView }) {
     <div className={"flex flex-col p-8 bg-black"}>
       <Label className={"my-8 text-xl"}>发布产品</Label>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8">
           <FormField
             control={form.control}
             name="title"
@@ -75,6 +75,64 @@ export default function CreateProductPage_({ user }: { user: IUserView }) {
                 <FormControl>
                   <Input placeholder="" {...field} />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>描述</FormLabel>
+                <FormControl>
+                  <Textarea placeholder="" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="images"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>图片列表</FormLabel>
+                <FormControl>
+                  <div className={"flex flex-col gap-2"}>
+                    <Input
+                      type={"file"}
+                      accept={"image/*"}
+                      multiple
+                      onChange={async (event) => {
+                        const files = event.currentTarget.files
+                        if (!files) return
+                        const res = await uploadFiles(files)
+                        field.onChange(res.data)
+                        // todo: bind field
+                      }}
+                    />
+
+                    <div className={"flex items-center gap-2"}>
+                      {field.value?.map((image, index) => (
+                        <div className={"w-12"} key={index}>
+                          <AspectRatio ratio={1}>
+                            <Image
+                              src={image}
+                              alt={`${index}`}
+                              fill
+                              sizes={"100%"}
+                              className={"rounded"}
+                            />
+                          </AspectRatio>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </FormControl>
+
                 <FormMessage />
               </FormItem>
             )}
@@ -113,10 +171,10 @@ export default function CreateProductPage_({ user }: { user: IUserView }) {
 
           <FormField
             control={form.control}
-            name="description"
+            name="detail"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>描述</FormLabel>
+                <FormLabel>详情</FormLabel>
                 <FormControl>
                   <Textarea placeholder="" {...field} />
                 </FormControl>
@@ -219,6 +277,10 @@ export default function CreateProductPage_({ user }: { user: IUserView }) {
           <Button type="submit" className={"w-full"}>
             提交
           </Button>
+
+          {/*<div className={"p-2 bg-cyan-500"}>*/}
+          {/*  {JSON.stringify(form.formState.errors, null, 2)}*/}
+          {/*</div>*/}
         </form>
       </Form>
     </div>

@@ -215,7 +215,7 @@ export default function CreateTaskWithUserPage() {
                 name="body.cover"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>封面（todo）</FormLabel>
+                    <FormLabel>封面</FormLabel>
                     <FormControl>
                       <Input
                         type={"file"}

@@ -11,8 +11,8 @@ export default async function NavProvider({
 }: PropsWithChildren & { user?: MyUser }) {
   return (
     <div className={"h-full overflow-hidden flex flex-col"}>
-      <div className={"grow overflow-auto relative"}>
-        {children}
+      <div className={"grow overflow-hidden relative"}>
+        <div className={"h-full overflow-auto"}>{children}</div>
 
         {user?.type === UserType.blogger && (
           <div className={"absolute right-4 bottom-4"}>

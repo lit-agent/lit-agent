@@ -37,7 +37,7 @@ export default function ChatListPage({
 
       const channelId = getChatId(m.fromUser.id, m.toUser!.id)
 
-      // todo: !!!!!!!!!!drop duplications ()
+      // todo: !!!!!!!!!!drop duplicates
       if (seenChannels.has(channelId)) return
 
       seenChannels.add(channelId)
