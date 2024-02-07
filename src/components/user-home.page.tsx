@@ -1,3 +1,5 @@
+"use client"
+
 import { MyUser } from "@/ds/user"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ChevronRightIcon, SearchIcon } from "lucide-react"
@@ -6,8 +8,13 @@ import { Separator } from "@/components/ui/separator"
 import { CgArrowsExchangeAlt } from "react-icons/cg"
 import { honorDict } from "@/lib/assets"
 import { HalfCard } from "./toolkits/half-card"
+import { api } from "@/lib/trpc/react"
+import Image from "next/image"
+import { Hot } from "@/components/toolkits/fire-value"
 
 export default function UserHomePage({ user }: { user: MyUser }) {
+  const { data: products = [] } = api.product.list.useQuery()
+
   return (
     <div className={"p-2 flex flex-col gap-4"}>
       <div className={"flex flex-col items-center gap-2"}>
@@ -85,13 +92,35 @@ export default function UserHomePage({ user }: { user: MyUser }) {
       </div>
 
       <div className={"columns-2 gap-2"}>
-        {user.toTasks
-          .filter((task) => task.status === "goon")
-          .map((task, index) => (
+        {products.map((product, index) => {
+          const cover = product.images[0]
+
+          return (
             <div className={"rounded w-full"} key={index}>
-              task: {task.id}
+              {cover && (
+                <Image
+                  src={cover}
+                  alt={cover}
+                  className={"w-full h-auto rounded"}
+                  width={120}
+                  height={160}
+                />
+              )}
+
+              <div>{product.title}</div>
+
+              {!cover && <div>{product.description}</div>}
+
+              <div className={"flex justify-between"}>
+                <Hot value={product.price} />
+
+                <div className={"text-muted-foreground"}>
+                  {product.toUsers.length} 人兑换
+                </div>
+              </div>
             </div>
-          ))}
+          )
+        })}
       </div>
     </div>
   )

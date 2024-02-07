@@ -1,14 +1,11 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
 import { pusherServer, SocketEventType } from "@/lib/socket"
-import { createProductSchema } from "@/ds/product"
+import { createProductSchema, productListViewSchema } from "@/ds/product"
 
 export const productRouter = createTRPCRouter({
   list: publicProcedure.query(async ({ ctx, input }) => {
     return ctx.prisma.productFrom.findMany({
-      include: {
-        fromUser: true,
-        toUsers: true,
-      },
+      ...productListViewSchema,
     })
   }),
 
@@ -24,9 +21,7 @@ export const productRouter = createTRPCRouter({
 
       const product = await ctx.prisma.productFrom.create({
         data: input,
-        include: {
-          fromUser: true,
-        },
+        ...productListViewSchema,
       })
       console.log("[ProductRouter] created product: ", product)
 

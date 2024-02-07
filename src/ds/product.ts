@@ -1,4 +1,8 @@
 import { z } from "zod"
+import { Prisma } from ".prisma/client"
+import validator = Prisma.validator
+import ProductFromDefaultArgs = Prisma.ProductFromDefaultArgs
+import ProductFromGetPayload = Prisma.ProductFromGetPayload
 
 export const createProductSchema = z.object({
   title: z.string(),
@@ -15,3 +19,13 @@ export const createProductSchema = z.object({
   fromUserId: z.string(),
 })
 export type ICreateProduct = z.infer<typeof createProductSchema>
+
+export const productListViewSchema = validator<ProductFromDefaultArgs>()({
+  include: {
+    fromUser: true,
+    toUsers: true,
+  },
+})
+export type IProductListView = ProductFromGetPayload<
+  typeof productListViewSchema
+>
