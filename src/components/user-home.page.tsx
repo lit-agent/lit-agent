@@ -13,6 +13,7 @@ import Image from "next/image"
 import { Hot } from "@/components/toolkits/fire-value"
 import Link from "next/link"
 import ProductListView from "@/components/product-list-view"
+import { UserAvatar } from "@/components/user-avatar"
 
 export default function UserHomePage({ user }: { user: MyUser }) {
   const { data: products = [] } = api.product.list.useQuery()
@@ -20,20 +21,21 @@ export default function UserHomePage({ user }: { user: MyUser }) {
   return (
     <div className={"p-2 flex flex-col gap-4"}>
       <div className={"flex flex-col items-center gap-2"}>
-        <Avatar>
-          <AvatarImage src={user.image ?? undefined} />
-          <AvatarFallback>{(user.name ?? user.id)[0]}</AvatarFallback>
-        </Avatar>
+        <UserAvatar user={user} />
 
         <div>{user.name ?? "Unnamed"}</div>
 
-        <div className={"flex items-center gap-1"}>
-          {user.honors.map((Honor, index) => {
-            const Item = honorDict[Honor.id]
-            return <Item key={index} />
-          })}
-          <ChevronRightIcon className={"w-4 h-4"} />
-        </div>
+        {user.honors.length ? (
+          <div className={"flex items-center gap-1"}>
+            {user.honors.map((Honor, index) => {
+              const Item = honorDict[Honor.id]
+              return <Item key={index} />
+            })}
+            <ChevronRightIcon className={"w-4 h-4"} />
+          </div>
+        ) : (
+          <div className={"text-muted-foreground text-xs"}>暂无勋章</div>
+        )}
       </div>
 
       <div

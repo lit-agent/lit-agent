@@ -3,6 +3,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Hot } from "@/components/toolkits/fire-value"
 import { uniq } from "lodash"
+import { calculateProductBuyersCount } from "@/lib/utils"
 
 export default function ProductListView({
   product,
@@ -31,7 +32,7 @@ export default function ProductListView({
         <Hot value={product.price} />
 
         <div className={"text-muted-foreground"}>
-          {uniq(product.bills.map((bill) => bill.userId)).length} 人兑换
+          {calculateProductBuyersCount(product)} 人兑换
         </div>
       </div>
     </Link>

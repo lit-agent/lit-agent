@@ -172,9 +172,11 @@ model ProductFrom {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  fromUser   User        @relation(fields: [fromUserId], references: [id])
+  fromUser   User   @relation(fields: [fromUserId], references: [id])
   fromUserId String
-  toUsers    ProductTo[]
+  // @Deprecated 本来是用来记录购买人的，后来改成基于bill了
+
+  toUsers ProductTo[]
 
   images      String[]
   title       String
@@ -184,6 +186,7 @@ model ProductFrom {
   price Int // 火值
   // total - buyers.length = 库存
   total Int
+  sold  Int @default(0)
 
   isOnsite              Boolean? // 是否线下运营
   isSelfOperating       Boolean? // 是否自营

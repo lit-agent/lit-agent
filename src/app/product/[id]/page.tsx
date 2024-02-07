@@ -16,6 +16,7 @@ import { Card2 } from "@/components/toolkits/card"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { RedeemType } from "@prisma/client"
+import { calculateProductBuyersCount } from "@/lib/utils"
 
 export default function ProductPage({
   params: { id },
@@ -30,7 +31,7 @@ export default function ProductPage({
 
   if (!product) return "loading product..."
 
-  const surplus = product.total - product.toUsers.length
+  const surplus = product.total - product.sold
 
   return (
     <div className={"flex flex-col px-2 py-4 h-full"}>
@@ -75,7 +76,7 @@ export default function ProductPage({
             <Separator orientation={"horizontal"} className={"bg-gray-600"} />
 
             <div className={"flex items-center"}>
-              <span> {product.toUsers.length} 人兑换</span>
+              <span> {calculateProductBuyersCount(product)} 人兑换</span>
 
               <ArrowRightIcon className={"ml-auto"} />
             </div>
