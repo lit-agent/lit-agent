@@ -1,28 +1,24 @@
 import { PropsWithChildren } from "react"
 import { FireIcon, Menu1Icon, Menu3Icon } from "@/lib/assets"
-import { AppTabLinkComp } from "@/components/nav-tab"
-import { getServerUser } from "@/server/auth"
+import { NavTabLink } from "@/components/nav-tab"
 
 export default async function NavProvider({ children }: PropsWithChildren) {
-  const user = await getServerUser()
-  if (!user) return "[NavProvider]: no user yet"
-
   return (
     <div className={"h-full overflow-hidden flex flex-col"}>
       <div className={"grow overflow-auto"}>{children}</div>
 
       <div className="w-full shrink-0 grid grid-cols-3 p-2 bg-black gap-2">
-        <AppTabLinkComp href={"/chat"}>
+        <NavTabLink href={"/chat"}>
           <Menu1Icon />
-        </AppTabLinkComp>
+        </NavTabLink>
 
-        <AppTabLinkComp href={"/task"}>
+        <NavTabLink href={"/room"}>
           <FireIcon className={"scale-150"} />
-        </AppTabLinkComp>
+        </NavTabLink>
 
-        <AppTabLinkComp href={"/user-home"}>
+        <NavTabLink href={"/user-home"}>
           <Menu3Icon />
-        </AppTabLinkComp>
+        </NavTabLink>
       </div>
     </div>
   )

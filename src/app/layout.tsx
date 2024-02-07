@@ -1,14 +1,14 @@
 import "@/styles/globals.css"
 
 import { Inter } from "next/font/google"
-import MyThemeProvider from "@/providers/theme"
+import MyThemeProvider from "@/providers/theme.provider"
 import { Toaster } from "sonner"
-import MySessionProvider from "@/providers/session"
-import { TRPCReactProvider } from "@/providers/trpc"
+import MySessionProvider from "@/providers/session.provider"
+import { TRPCReactProvider } from "@/providers/trpc.provider"
 import { Metadata, Viewport } from "next"
-import { AppAutoMobileHeightProvider } from "@/providers/app-auto-mobile-height-provider"
-import SocketProvider from "@/providers/socket.provider"
-import BgProvider from "@/providers/bg"
+import { AutoHeightThread } from "@/providers/auto-height.thread"
+import SocketThread from "@/providers/socket.thread"
+import BgProvider from "@/providers/bg.provider"
 import NavProvider from "@/providers/nav.provider"
 import { prisma } from "@/server/db"
 import { messageViewSelector } from "@/ds/message.base"
@@ -47,27 +47,34 @@ export default async function RootLayout({
   return (
     <html lang="zh" suppressHydrationWarning>
       <body className={`font-sans ${inter.variable}`}>
-        <MySessionProvider>
-          <TRPCReactProvider>
-            <SocketProvider serverMessages={serverMessages} user={user}>
+        <main className={"relative w-screen"}>
+          <MySessionProvider>
+            <TRPCReactProvider>
               <MyThemeProvider>
-                <AppAutoMobileHeightProvider>
-                  <main className={"relative w-screen"}>
-                    <BgProvider>
-                      <NavProvider>{children}</NavProvider>
-                    </BgProvider>
+                <BgProvider>
+                  <NavProvider>
+                    {children}
+
+                    {user && (
+                      <SocketThread
+                        serverMessages={serverMessages}
+                        user={user}
+                      />
+                    )}
+
+                    <AutoHeightThread />
 
                     <Toaster
                       richColors
                       position={"top-right"}
                       duration={1000}
                     />
-                  </main>
-                </AppAutoMobileHeightProvider>
+                  </NavProvider>
+                </BgProvider>
               </MyThemeProvider>
-            </SocketProvider>
-          </TRPCReactProvider>
-        </MySessionProvider>
+            </TRPCReactProvider>
+          </MySessionProvider>
+        </main>
       </body>
     </html>
   )

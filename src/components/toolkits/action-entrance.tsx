@@ -4,7 +4,7 @@ import { PlusIcon } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
 
-export const FloatActionButton = () => (
+export const ActionEntrance = () => (
   <Dialog>
     <DialogTrigger asChild>
       <Button className={"bg-primary rounded-full w-fit h-fit p-1 text-white"}>
@@ -14,8 +14,8 @@ export const FloatActionButton = () => (
 
     <DialogContent>
       <Label>发布</Label>
-      <Link href={"/task/create"}>
-        <Button className={"w-full"}>发布新任务</Button>
+      <Link href={"/requirement/create"}>
+        <Button className={"w-full"}>发布新需求</Button>
       </Link>
 
       <Link href={"/product/create"}>
@@ -23,18 +23,19 @@ export const FloatActionButton = () => (
       </Link>
 
       <Label>管理</Label>
-      <Link href={"/task/create"}>
+      <Link href={"/fans/manage"}>
         <Button className={"w-full"} disabled>
           管理用户
         </Button>
       </Link>
-      <Link href={"/task/create"}>
+
+      <Link href={"/requirement/manage"}>
         <Button className={"w-full"} disabled>
-          管理新任务
+          管理需求
         </Button>
       </Link>
 
-      <Link href={"/product/create"}>
+      <Link href={"/product/manage"}>
         <Button className={"w-full"} disabled>
           管理产品/服务
         </Button>

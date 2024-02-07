@@ -209,6 +209,7 @@ model Room {
 
   users User[]
 
+  // room 可以 没有 task，但当对应的task删除时自身也该删除
   task   TaskFrom? @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId String?   @unique
 
@@ -243,10 +244,10 @@ model TaskFrom {
   toUsers    TaskTo[]
 
   // 包含发送到chat页的welcome，以及用户的评论
-  room Room?
-
   sentMessage   Message @relation(fields: [sentMessageId], references: [id])
   sentMessageId String  @unique
+
+  room Room?
 }
 
 enum TaskStatus {

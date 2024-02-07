@@ -1,18 +1,17 @@
 "use client"
 
-import { PropsWithChildren, useEffect } from "react"
+import { useEffect } from "react"
 import { useAppData } from "@/hooks/use-app-data"
 import { getBroadcastId, pusherClient, SocketEventType } from "@/lib/socket"
 import { IMessageView } from "@/ds/message.base"
 import { MyUser } from "@/ds/user"
 
-export default function SocketProvider({
-  children,
+export default function SocketThread({
   serverMessages,
   user,
-}: PropsWithChildren & {
+}: {
   serverMessages: IMessageView[]
-  user?: MyUser
+  user: MyUser
 }) {
   const { targetUserId, setMessages } = useAppData()
 
@@ -21,8 +20,6 @@ export default function SocketProvider({
   }, [serverMessages])
 
   useEffect(() => {
-    if (!user) return
-
     const channels: string[] = []
 
     // 监听自己（所有发给自己的消息）
@@ -50,5 +47,5 @@ export default function SocketProvider({
     }
   }, [targetUserId, user])
 
-  return <>{children}</>
+  return null
 }

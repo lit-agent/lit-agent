@@ -1,3 +1,7 @@
 export default async function DefaultPage() {
-  return "Welcome to Lit Agent !"
+  return (
+    <div className={"h-full flex items-center justify-center"}>
+      Welcome to Lit Agent !
+    </div>
+  )
 }

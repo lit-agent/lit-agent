@@ -1,14 +1,11 @@
 // 任务
 import { userViewSelector } from "@/ds/user.base"
 import { z } from "zod"
-import {
-  basicBodySchema,
-  MessageType,
-  messageViewSelector,
-} from "@/ds/message.base"
+import { basicBodySchema, MessageType } from "@/ds/message.base"
 
 import { Prisma } from "@prisma/client"
 import validator = Prisma.validator
+import { roomViewSelector } from "@/ds/room"
 import TaskFromDefaultArgs = Prisma.TaskFromDefaultArgs
 import TaskFromGetPayload = Prisma.TaskFromGetPayload
 
@@ -36,11 +33,7 @@ export const taskViewSelector = validator<TaskFromDefaultArgs>()({
     value: true,
     startTime: true,
     endTime: true,
-    room: {
-      select: {
-        messages: messageViewSelector,
-      },
-    },
+    room: roomViewSelector,
   },
 })
 export type ITaskView = TaskFromGetPayload<typeof taskViewSelector>

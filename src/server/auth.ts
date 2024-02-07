@@ -8,7 +8,7 @@ import { prisma } from "@/server/db"
 
 import CredentialsProvider from "next-auth/providers/credentials"
 import { validateSms } from "@/server/sms"
-import { MyUser, myUserSlice } from "@/ds/user" // ref: https://next-auth.js.org/getting-started/typescript#submodules
+import { MyUser, myUserSlice } from "@/ds/user"
 
 // ref: https://next-auth.js.org/getting-started/typescript#submodules
 declare module "next-auth/jwt" {
@@ -54,18 +54,25 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     jwt: async ({ token, user, session, trigger, account, profile }) => {
-      const userInDB = await prisma.user.findUnique({
-        where: { id: token.sub },
-      })
-      if (userInDB) {
-        console.log("✅ JWT authenticated")
-        token.phone = userInDB.phone
-      } else {
-        console.warn("❌ JWT invalidating")
-        token.iat = Date.now() / 1000
-        // token.expires // todo: 可能修改 expires 就可以让 前台的 session 变得 unauthenticated 了
+      let message = ""
+
+      if (token.phone) message += "✅ cached by phone"
+      else {
+        const userInDB = await prisma.user.findUnique({
+          where: { id: token.sub },
+        })
+        if (userInDB) {
+          message = "✅ authenticated"
+          token.phone = userInDB.phone
+        } else {
+          message = "❌ invalidated"
+          token.iat = Date.now() / 1000
+          // token.expires // todo: 可能修改 expires 就可以让 前台的 session 变得 unauthenticated 了
+        }
       }
-      console.log("[auth.jwt]: ", { token, user, userInDB, session })
+      console.log("[auth.jwt]: ", message)
+
+      // console.log("[auth.jwt]: ", { token, user, userInDB, session })
       return token
     },
     /**
@@ -79,25 +86,34 @@ export const authOptions: NextAuthOptions = {
      */
     session: async ({ session, user, token, trigger, newSession }) => {
       const phone = token.phone
+      console.log("[auth.session]: ", {
+        sessionUser: session.user,
+        user,
+        token,
+      })
 
-      let userInDB
-      if (phone) {
-        userInDB = await prisma.user.findUnique({
+      if (!phone)
+        console.error(
+          "[auth.session] ❌ no phone in token (todo: how to invalidate user) ",
+        )
+      else {
+        const userInDB = await prisma.user.findUnique({
           where: {
             phone,
           },
           ...myUserSlice,
         })
 
-        if (userInDB) {
-          session.user = {
-            ...session.user,
-            ...userInDB,
-          }
+        if (!userInDB) {
+          console.error(
+            "[auth.session] ❌ no user in db (todo: how to invalidate user) ",
+          )
+        } else {
+          session = { ...session, user: userInDB }
+          console.log("[auth.session] update session's user from db")
         }
       }
 
-      console.log("[auth.session]: ", { phone, user, userInDB, session })
       return session
     },
   },
@@ -149,7 +165,9 @@ export const authOptions: NextAuthOptions = {
  * @see https://next-auth.js.org/configuration/nextjs
  */
 export const getServerAuthSession = () => getServerSession(authOptions)
+
 export const getServerUser = async () => (await getServerAuthSession())?.user
+
 export const ensureServerUser = async () => {
   const user = await getServerUser()
   if (!user) throw new Error("no user found")

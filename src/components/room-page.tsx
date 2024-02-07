@@ -12,13 +12,14 @@ import { TaskFrom } from ".prisma/client"
 import { maskName } from "@/lib/utils"
 
 import { ITaskView } from "@/ds/task"
+import { IRoomView } from "@/ds/room"
 
-export default function TaskPage({
+export default function RoomPage({
   user,
-  tasks,
+  rooms,
 }: {
   user: MyUser
-  tasks: ITaskView[]
+  rooms: IRoomView[]
 }) {
   const userNew = admins.hading
 
@@ -31,7 +32,7 @@ export default function TaskPage({
     finishedUsers: Array(10).fill(userNew),
   }
 
-  console.log("[TaskPage] data: ", { user, data, tasks })
+  console.log("[TaskPage] data: ", { user, data, rooms })
 
   return (
     <div className={"bg-[#282232] p-2 min-h-full"}>
@@ -91,9 +92,9 @@ export default function TaskPage({
         </div>
       </div>
 
-      {tasks.map((task, index) => (
+      {rooms.map((room, index) => (
         <Link
-          href={`/task/${task.id}`}
+          href={`/room/${room.id}`}
           key={index}
           className={
             "rounded bg-[#373041] flex items-center justify-between p-3 my-2"
@@ -102,13 +103,13 @@ export default function TaskPage({
           <div className={"flex flex-col gap-2"}>
             <div className={"flex items-center gap-2"}>
               <div className={"w-2 h-2 bg-green-500 rounded-full"} />
-              <AvatarComp users={task.toUsers.map((u) => u.user)} />
-              {task.toUsers.length} 人
+              <AvatarComp users={room.users} />
+              {room.users.length} 人
             </div>
 
             <div className={"text-gray-500 text-sm"}>
-              {task?.room?.messages.length
-                ? JSON.stringify(last(task.room.messages)!.body)
+              {room.messages.length
+                ? JSON.stringify(last(room.messages)!.body)
                 : "这个群还没有发送任何消息"}
             </div>
           </div>
