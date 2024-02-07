@@ -1,12 +1,19 @@
 import { prisma } from "@/server/db"
 import { UserType } from "@prisma/client"
+import * as process from "process"
+
+const args = process.argv
+console.log("[CleanScript] process args: ", args)
 
 const main = async () => {
-  // const deleted = await prisma.message.deleteMany({})
-  // const deleted = await prisma.taskFrom.deleteMany({})
-  // const deleted = await prisma.room.deleteMany({})
-  const deleted = await prisma.user.deleteMany({})
+  const tables = process.argv[2]?.split(",")
 
+  const deleted = await Promise.all(
+    (tables ?? []).map(async (table) => ({
+      [table]: await prisma[table].deleteMany({}),
+    })),
+  )
+  
   // const deleted = await prisma.follow.deleteMany({
   //   where: {
   //     OR: [
@@ -19,7 +26,7 @@ const main = async () => {
   //     ],
   //   },
   // })
-  console.log("[CleanScript] deleted: ", deleted.count)
+  console.log("[CleanScript] deleted: ", JSON.stringify(deleted, null, 2))
 }
 
 main()

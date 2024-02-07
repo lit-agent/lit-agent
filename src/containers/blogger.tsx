@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef } from "react"
+import { ComponentPropsWithoutRef, HTMLAttributes } from "react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import Image from "next/image"
@@ -9,9 +9,15 @@ import { cn } from "@/lib/utils"
 import { UserAvatar } from "@/components/avatar"
 import { admins } from "@/config"
 
-export const GiuguProfile = () => {
+export const GiuguProfile = ({
+  className,
+  ...props
+}: HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className={"flex flex-col items-center gap-2 "}>
+    <div
+      className={cn("flex flex-col items-center gap-2 ", className)}
+      {...props}
+    >
       <div className={"relative"}>
         <UserAvatar user={admins.jiugu} />
         <div
@@ -25,7 +31,7 @@ export const GiuguProfile = () => {
 
       <div>全网粉丝 62.2w</div>
 
-      <Image src={MediasImage.src} alt={"medias"} width={120} height={30} />
+      <Image src={MediasImage} alt={"medias"} className={"h-8 w-auto"} />
     </div>
   )
 }
