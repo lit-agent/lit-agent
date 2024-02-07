@@ -145,7 +145,13 @@ export default function CreateProductPage({ user }: { user: MyUser }) {
               <FormItem>
                 <FormLabel>定价</FormLabel>
                 <FormControl>
-                  <Input type={"number"} {...field} />
+                  <Input
+                    type={"number"}
+                    {...field}
+                    onChange={(event) => {
+                      field.onChange(parseInt(event.currentTarget.value))
+                    }}
+                  />
                 </FormControl>
                 <FormDescription>
                   以火值（整数）定价（为人民币的10倍）

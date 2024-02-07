@@ -101,7 +101,7 @@ export default function TaskDetailPage({
               <div className={"flex flex-col items-center"}>
                 <div>任务奖励</div>
                 <div>
-                  <Hot value={2} />
+                  <Hot value={task.value} />
                 </div>
               </div>
 

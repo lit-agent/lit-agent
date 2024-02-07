@@ -23,7 +23,11 @@ export type ICreateProduct = z.infer<typeof createProductSchema>
 export const productListViewSchema = validator<ProductFromDefaultArgs>()({
   include: {
     fromUser: true,
-    toUsers: true,
+    bills: {
+      select: {
+        userId: true,
+      },
+    },
   },
 })
 export type IProductListView = ProductFromGetPayload<

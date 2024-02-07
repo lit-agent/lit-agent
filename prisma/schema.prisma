@@ -75,7 +75,17 @@ model Bill {
   product   ProductFrom @relation(fields: [productId], references: [id])
   productId String
 
+  productCount Int
+  // todo: 实际价格，或者未来支持多种模式
+  price        Float
+  method       RedeemType
+
   // userActions UserAction[]
+}
+
+enum RedeemType {
+  currency
+  fire
 }
 
 // 用户徽章，每个徽章可以有自己的一些信息，通过 id 与程序的UI对接
@@ -304,10 +314,6 @@ model User {
   status UserStatus @default(offline)
   type   UserType   @default(user)
 
-  // balance
-  currentBalance Int @default(0)
-  historyBalance Int @default(0)
-
   // platform
   honors Honor[]
 
@@ -332,6 +338,11 @@ model User {
   toRelations   UserRelation[] @relation("from")
 
   rooms Room[]
+
+  // balance
+  totalEarnedFire   Int @default(0)
+  currentEarnedFire Int @default(0)
+  balance           Int @default(0)
 }
 
 // model UserAction {

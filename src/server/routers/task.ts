@@ -11,7 +11,7 @@ export const taskRouter = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       return ctx.prisma.taskFrom.findUniqueOrThrow({
-        where: { id: input.id },
+        where: input,
         ...taskViewSelector,
       })
     }),
@@ -94,8 +94,9 @@ export const taskRouter = createTRPCRouter({
         await prisma.user.update({
           where: { id: user.id },
           data: {
-            currentBalance: { increment: value },
-            historyBalance: { increment: value },
+            totalEarnedFire: { increment: value },
+            currentEarnedFire: { increment: value },
+            balance: { increment: value },
           },
         })
 

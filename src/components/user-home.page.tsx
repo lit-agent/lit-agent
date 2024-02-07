@@ -7,10 +7,12 @@ import { RiFireFill } from "react-icons/ri"
 import { Separator } from "@/components/ui/separator"
 import { CgArrowsExchangeAlt } from "react-icons/cg"
 import { honorDict } from "@/lib/assets"
-import { HalfCard } from "./toolkits/half-card"
+import { Card1 } from "./toolkits/card"
 import { api } from "@/lib/trpc/react"
 import Image from "next/image"
 import { Hot } from "@/components/toolkits/fire-value"
+import Link from "next/link"
+import ProductListView from "@/components/product-list-view"
 
 export default function UserHomePage({ user }: { user: MyUser }) {
   const { data: products = [] } = api.product.list.useQuery()
@@ -37,21 +39,21 @@ export default function UserHomePage({ user }: { user: MyUser }) {
       <div
         className={"bg-[#FF7A44] text-white rounded p-2 flex justify-between"}
       >
-        <HalfCard
+        <Card1
           a={
             <div className={"inline-flex"}>
               <RiFireFill />
               持有火值
             </div>
           }
-          b={user.currentBalance}
+          b={user.balance}
           c={
             <div className={"inline-flex"}>
               <RiFireFill />
               历史火值
             </div>
           }
-          d={user.historyBalance}
+          d={user.totalEarnedFire}
           side={"L"}
         />
 
@@ -60,7 +62,7 @@ export default function UserHomePage({ user }: { user: MyUser }) {
           className={"h-[120px] bg-white/25 w-[1px]"}
         />
 
-        <HalfCard
+        <Card1
           a={"当前任务"}
           b={user.toTasks.filter((task) => task.status === "goon").length}
           c={"已完成"}
@@ -92,35 +94,9 @@ export default function UserHomePage({ user }: { user: MyUser }) {
       </div>
 
       <div className={"columns-2 gap-2"}>
-        {products.map((product, index) => {
-          const cover = product.images[0]
-
-          return (
-            <div className={"rounded w-full"} key={index}>
-              {cover && (
-                <Image
-                  src={cover}
-                  alt={cover}
-                  className={"w-full h-auto rounded"}
-                  width={120}
-                  height={160}
-                />
-              )}
-
-              <div>{product.title}</div>
-
-              {!cover && <div>{product.description}</div>}
-
-              <div className={"flex justify-between"}>
-                <Hot value={product.price} />
-
-                <div className={"text-muted-foreground"}>
-                  {product.toUsers.length} 人兑换
-                </div>
-              </div>
-            </div>
-          )
-        })}
+        {products.map((product, index) => (
+          <ProductListView product={product} key={index} />
+        ))}
       </div>
     </div>
   )

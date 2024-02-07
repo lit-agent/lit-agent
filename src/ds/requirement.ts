@@ -30,15 +30,19 @@ export const createRequirementBodySchema = z.discriminatedUnion("type", [
   createImageChoicesRequirementBodySchema,
   createTaskRequirementBodySchema,
 
+  z.object({ type: z.literal(MessageType.Images) }).extend({
+    images: z.array(z.string()).min(1),
+  }),
+
+  z.object({ type: z.literal(MessageType.BillLink) }).extend({
+    value: z.string(), // 用户订单的ID
+  }),
+
   // todo: create task 和 message 有区别
   // 邀请之类
   basicBodySchema.extend({
     type: z.literal(MessageType.GroupLink),
     groupId: z.string(),
-  }),
-
-  z.object({ type: z.literal(MessageType.Images) }).extend({
-    images: z.array(z.string()).min(1),
   }),
 
   // todo: 需要细化

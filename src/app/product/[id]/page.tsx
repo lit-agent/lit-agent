@@ -2,7 +2,6 @@
 
 import { api } from "@/lib/trpc/react"
 import Image from "next/image"
-import { PropsWithChildren } from "react"
 import { FireIcon } from "@/lib/assets"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRightIcon, StarIcon } from "lucide-react"
@@ -13,26 +12,28 @@ import { Separator } from "@/components/ui/separator"
 import { AvatarFallback } from "@radix-ui/react-avatar"
 
 import { PRIMARY_COLOR } from "@/const"
+import { Card2 } from "@/components/toolkits/card"
+import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
+import { RedeemType } from "@prisma/client"
 
-const Card = ({ children }: PropsWithChildren) => (
-  <div className={"m-2 bg-[#2A2435]"}>
-    <div className={"rounded p-2 bg-[#3D3847]"}>{children}</div>
-  </div>
-)
+export default function ProductPage({
+  params: { id },
+}: {
+  params: {
+    id: string
+  }
+}) {
+  const { data: product } = api.product.get.useQuery({ id })
+  const redeem = api.product.redeem.useMutation()
+  const utils = api.useUtils()
 
-export default function ProductPage() {
-  const { data: products = [] } = api.product.list.useQuery()
-
-  console.log("[ProductPage] products: ", products)
-
-  const product = products[0]
-
-  if (!product) return "商品不存在！"
+  if (!product) return "loading product..."
 
   const surplus = product.total - product.toUsers.length
 
   return (
-    <div className={"flex flex-col"}>
+    <div className={"flex flex-col px-2 py-4 h-full"}>
       <div className={"grow overflow-auto"}>
         <AspectRatio ratio={3 / 2} className={"w-full"}>
           <Image
@@ -42,7 +43,7 @@ export default function ProductPage() {
           />
         </AspectRatio>
 
-        <Card>
+        <Card2>
           <div className={"flex flex-col gap-2"}>
             <div className={"flex items-center gap-2"}>
               <div
@@ -79,9 +80,9 @@ export default function ProductPage() {
               <ArrowRightIcon className={"ml-auto"} />
             </div>
           </div>
-        </Card>
+        </Card2>
 
-        <Card>
+        <Card2>
           <div className={"flex items-center"}>
             {product.isReturnable ? "可退换" : "不可退换"}
             <span className={"mx-2"}>·</span>
@@ -97,9 +98,9 @@ export default function ProductPage() {
               )}
             </span>
           </div>
-        </Card>
+        </Card2>
 
-        <Card>
+        <Card2>
           <div className={"flex gap-2 items-start"}>
             <Avatar>
               <AvatarImage src={product.fromUser.image!} />
@@ -110,16 +111,18 @@ export default function ProductPage() {
               <div>{product.description}</div>
             </div>
           </div>
-        </Card>
+        </Card2>
 
-        <Card>
+        <Card2>
           <div className={"flex items-center text-lg"}>商品详情</div>
 
           <MyMarkdown>{product.detail}</MyMarkdown>
-        </Card>
+        </Card2>
       </div>
 
-      <div className={"shrink-0 flex items-center justify-between"}>
+      <div
+        className={"shrink-0 flex items-center justify-between px-2 gap-4 p-2"}
+      >
         <div>
           <Avatar className={"w-6 h-6"}>
             <AvatarImage src={product.fromUser.image ?? undefined} />
@@ -133,13 +136,37 @@ export default function ProductPage() {
           收藏
         </div>
 
-        <div className={"grid grid-cols-2"}>
-          <div className={"flex items-center bg-[#4D3130] text-[#FF854F]"}>
+        <div className={"grow grid grid-cols-2"}>
+          <Button
+            className={
+              "flex items-center bg-[#4D3130] text-[#FF854F] rounded-r-none rounded-l-3xl"
+            }
+            onClick={() => {
+              toast.error("暂不支持现金购买，敬请稍候！")
+            }}
+          >
             <div>¥{product.price / 10}</div>
             <div>现金购买</div>
-          </div>
+          </Button>
 
-          <div className={"flex items-center bg-[#FF854F] text-white"}>
+          <Button
+            className={
+              "flex items-center bg-[#FF854F] text-white rounded-l-none rounded-r-3xl"
+            }
+            onClick={async (event) => {
+              const res = await redeem.mutateAsync({
+                productId: product.id,
+                productCount: 1, // todo: support change count in dialog
+                method: RedeemType.fire,
+              })
+              if (!res.success) {
+                toast.error(res.message)
+              } else {
+                toast.success("购买成功！")
+                utils.product.invalidate()
+              }
+            }}
+          >
             <div className={"flex items-center gap-1"}>
               <span className={"w-4 h-4"}>
                 <FireIcon />
@@ -147,7 +174,7 @@ export default function ProductPage() {
               {product.price}
             </div>
             <div>火值兑换</div>
-          </div>
+          </Button>
         </div>
       </div>
     </div>

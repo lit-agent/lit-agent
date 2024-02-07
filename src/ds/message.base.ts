@@ -9,12 +9,12 @@ export enum MessageType {
   Task = "Task",
   Plain = "Plain",
   TextChoices = "TextChoices",
-
-  GroupLink = "GroupLink",
-  ProductLink = "ProductLink",
-  ImageChoices = "ImageChoices",
-
   Images = "Images",
+  BillLink = "BillLink",
+
+  ProductLink = "ProductLink",
+  GroupLink = "GroupLink",
+  ImageChoices = "ImageChoices",
   Sheet = "Sheet",
 
   Others = "Others",
