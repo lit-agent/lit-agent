@@ -12,5 +12,9 @@ export const ADMIN_PHONE = "17766091857"
 export type BgModel = "plain" | "mirror"
 export const UPLOAD_FILES_FIELD = "files"
 
-export const OSS_DOMAIN =
-  "https://mark-general-lf.oss-cn-hangzhou.aliyuncs.com/"
+// export const OSS_BUCKET_NAME = "mark-general-lf"
+export const OSS_BUCKET_NAME = "mark-vue-oss"
+export const OSS_REGION = "oss-cn-hangzhou"
+export const OSS_DOMAIN = `https://${OSS_BUCKET_NAME}.${OSS_REGION}.aliyuncs.com/`
+// export const DATETIME_FORMAT = "YYYY-MM-DDThh:mm:ss.SSS"
+export const DATETIME_FORMAT = "YYYY-MM-DDThh:mm"

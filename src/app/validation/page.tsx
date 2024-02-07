@@ -12,9 +12,6 @@ import { api } from "@/lib/trpc/react"
 
 import { guidanceItems } from "@/config"
 import { JiuguImage } from "@/lib/assets"
-import { useAppData } from "@/hooks/use-app-data"
-
-type Validation = Record<number, number[]>
 
 export default function ValidationPage() {
   const [validating, setValidating] = useState(false)
@@ -32,7 +29,6 @@ export default function ValidationPage() {
   const validate = api.user.validate.useMutation()
 
   const router = useRouter()
-  const { setTargetUserId } = useAppData()
 
   return (
     <div className={"flex h-full flex-col"}>
@@ -106,3 +102,5 @@ enum ValidationResult {
   ok,
   failed,
 }
+
+type Validation = Record<number, number[]>

@@ -1,4 +1,4 @@
-import { MessageContainer } from "@/components/message-item"
+import { getMessageAbstract, MessageContainer } from "@/components/message-item"
 import { useAppData } from "@/hooks/use-app-data"
 import { IChatView } from "@/ds/message"
 
@@ -24,9 +24,7 @@ export default function ChatListItem({ chat }: { chat: IChatView }) {
       className={"relative"}
     >
       <MessageContainer user={targetUser} className={"p-4 border-b relative"}>
-        <div className={"line-clamp-2"}>
-          {JSON.stringify(chat.message.body)}
-        </div>
+        <div className={"line-clamp-1"}>{getMessageAbstract(chat.message)}</div>
       </MessageContainer>
 
       {!!chat.unreadCount && (

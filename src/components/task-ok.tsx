@@ -11,14 +11,14 @@ import { UserComp } from "@/components/user"
 import { Input } from "@/components/ui/input"
 import { useRef } from "react"
 import { MyUser } from "@/ds/user"
-import { IFireView } from "@/ds/task"
+import { ITaskView } from "@/ds/task"
 
-export default function FireOk({
+export default function TaskOk({
   task,
   user,
 }: {
   user: MyUser
-  task: IFireView
+  task: ITaskView
 }) {
   const refTop = useRef<HTMLDivElement>(null)
 

@@ -273,6 +273,7 @@ model TaskTo {
   content String?
   // actions UserAction[]
 
+  // todo: bind message with taskFrom, taskTo, room
   @@id([taskId, userId])
 }
 

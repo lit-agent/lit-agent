@@ -4,36 +4,6 @@ import { MessageType } from "@/ds/message.base"
 import { ADMIN_PHONE, USER_JIUGU_AI_ID } from "@/const"
 import { admins } from "@/config"
 
-export const initUserWithSMS = async ({
-  phone,
-  code,
-}: {
-  phone: string
-  code: string
-}) => {
-  const admin = Object.values(admins).find((admin) => admin.phone === phone)
-
-  const account = await prisma.account.upsert({
-    where: {
-      provider_providerAccountId: { provider: "sms", providerAccountId: phone },
-    },
-    create: {
-      provider: "sms",
-      providerAccountId: phone,
-      type: "credentials",
-      access_token: code,
-      user: {
-        connectOrCreate: {
-          where: { phone },
-          create: admin ?? { phone },
-        },
-      },
-    },
-    update: { access_token: code },
-  })
-  return account
-}
-
 export const initUserAfterValidation = async (userId: string) => {
   const user = await prisma.user.update({
     where: { id: userId },

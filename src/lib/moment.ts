@@ -2,6 +2,7 @@ import moment from "moment"
 // @ts-ignore
 import locale from "moment/locale/zh-cn"
 
-moment.locale("zh")
+const m = moment
+m.locale("zh")
 
-export default moment
+export default m

@@ -27,35 +27,33 @@ export default function ChatListPage({
   useEffect(() => {
     const chats: IChatView[] = []
     const seenChannels = new Set<string>()
+
     messages.forEach((m) => {
       const isBroadcast = !m.room && !m.toUser
       if (isBroadcast) return
 
-      const channelId =
-        // group
-        m.room?.id ??
-        // chat
-        getChatId(m.fromUser.id, m.toUser!.id)
+      // todo: 不支持群聊，要保证 targetUserId
+      if (m.room) return
 
+      const channelId = getChatId(m.fromUser.id, m.toUser!.id)
+
+      // todo: !!!!!!!!!!drop duplications ()
       if (seenChannels.has(channelId)) return
 
       seenChannels.add(channelId)
+
+      console.log("[Chat] pushing chat with channelId=", channelId)
       chats.push({
-        roomId: m.room?.id,
-        targetUser: m.room
-          ? undefined
-          : m.fromUser.id === user.id
-            ? m.toUser!
-            : m.fromUser,
-        users: m.room?.users,
+        targetUser: m.fromUser.id === user.id ? m.toUser! : m.fromUser,
         message: m,
         unreadCount: 0,
       })
     })
+
     setChats(chats)
   }, [messages.length])
 
-  console.log("[ChatHomePage]: ", { newMessages: messages, chats })
+  console.log("[ChatHomePage]: ", { messages, chats })
 
   if (user.type === UserType.blogger && !targetUserId)
     return <ChatList chats={chats} />

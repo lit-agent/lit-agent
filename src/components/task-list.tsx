@@ -11,15 +11,15 @@ import { last } from "lodash"
 import { TaskFrom } from ".prisma/client"
 import { maskName } from "@/lib/utils"
 
-import { IFireView } from "@/ds/task"
+import { ITaskView } from "@/ds/task"
 import { IRoomView } from "@/ds/room"
 
-export default function FireList({
+export default function TaskList({
   user,
   fires,
 }: {
   user: MyUser
-  fires: IFireView[]
+  fires: ITaskView[]
 }) {
   const userNew = admins.hading
 

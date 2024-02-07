@@ -15,7 +15,6 @@ import {
 import { Button } from "@/components/ui/button"
 import { api } from "@/lib/trpc/react"
 import { toast } from "sonner"
-import moment from "moment"
 import { Input } from "@/components/ui/input"
 import { HomeIcon } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -31,6 +30,8 @@ import { TextChoicesInput } from "@/components/message.body.input-choices"
 import { useUserPreference } from "@/hooks/use-user-preference"
 
 import { uploadFiles } from "@/lib/oss/upload/client"
+import m from "@/lib/moment"
+import { DATETIME_FORMAT } from "@/const"
 
 const schema = createRequirementSchema
 const FINISHED = 3
@@ -39,13 +40,12 @@ export default function CreateTaskWithUserPage() {
   const { preferredMessageType: type, setPreferredMessageType } =
     useUserPreference()
 
-  // 1. Define your form.
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
       value: 10,
-      startTime: new Date(),
-      endTime: moment().add(1, "days").toDate(),
+      startTime: m().toDate(),
+      endTime: m().add(1, "days").toDate(),
       body: {
         type, // !important
         title:
@@ -62,6 +62,7 @@ export default function CreateTaskWithUserPage() {
       },
     },
   })
+
   const {
     formState: { errors },
   } = form
@@ -109,7 +110,9 @@ export default function CreateTaskWithUserPage() {
                 <HomeIcon className={"text-primary w-4 h-4"} />
               </Link>
               <Label className={"text-xl"}>发布新任务️</Label>
-              <Label className={"text-xs text-muted-foreground`"}>
+              <Label
+                className={"text-xs text-muted-foreground hidden sm:block"}
+              >
                 （仅博主可见）️
               </Label>
             </div>
@@ -117,11 +120,14 @@ export default function CreateTaskWithUserPage() {
             <div className={"grow"} />
 
             <Button
-              type="submit"
               disabled={submitting}
               size={"sm"}
               className={"h-fit px-6 py-1 "}
               variant={"outline"}
+              onClick={(event) => {
+                event.preventDefault()
+                toast.info("todo ~")
+              }}
             >
               预览
             </Button>
@@ -359,13 +365,9 @@ export default function CreateTaskWithUserPage() {
                     <FormControl>
                       <Input
                         type={"datetime-local"}
-                        value={moment(field.value).format(
-                          "YYYY-MM-DDThh:mm:ss",
-                        )}
+                        value={m(field.value).format(DATETIME_FORMAT)}
                         onChange={(event) => {
-                          field.onChange(
-                            moment(event.currentTarget.value).toDate(),
-                          )
+                          field.onChange(m(event.currentTarget.value).toDate())
                         }}
                       />
                     </FormControl>
@@ -383,13 +385,9 @@ export default function CreateTaskWithUserPage() {
                     <FormControl>
                       <Input
                         type={"datetime-local"}
-                        value={moment(field.value).format(
-                          "YYYY-MM-DDThh:mm:ss",
-                        )}
+                        value={m(field.value).format(DATETIME_FORMAT)}
                         onChange={(event) => {
-                          field.onChange(
-                            moment(event.currentTarget.value).toDate(),
-                          )
+                          field.onChange(m(event.currentTarget.value).toDate())
                         }}
                       />
                     </FormControl>

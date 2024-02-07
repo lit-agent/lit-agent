@@ -5,6 +5,7 @@ import { useAppData } from "@/hooks/use-app-data"
 import { getBroadcastId, pusherClient, SocketEventType } from "@/lib/socket"
 import { IMessageView } from "@/ds/message.base"
 import { MyUser } from "@/ds/user"
+import { signOut } from "next-auth/react"
 
 export default function SocketThread({
   serverMessages,
@@ -21,6 +22,8 @@ export default function SocketThread({
 
   useEffect(() => {
     const channels: string[] = []
+
+    // if (!user?.rooms?.length) signOut()
 
     // 监听自己（所有发给自己的消息）
     channels.push(user.id)

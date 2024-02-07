@@ -9,39 +9,42 @@ import { MyUser } from "@/ds/user"
 import { Hot } from "@/components/toolkits/fire-value"
 import { MyMarkdown } from "@/containers/markdown"
 import { UserAvatar } from "@/components/user-avatar"
-import moment from "@/lib/moment"
+import m from "@/lib/moment"
 import { Button, buttonVariants } from "@/components/ui/button"
-import { useCopyToClipboard } from "usehooks-ts"
 import { toast } from "sonner"
 import { api } from "@/lib/trpc/react"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { uploadFiles } from "@/lib/oss/upload/client"
-import { MessageType } from "@/ds/message.base"
 import { useAppData } from "@/hooks/use-app-data"
-import { ICreateTaskRequirementBody, IFireView } from "@/ds/task"
-import { TaskTo, TaskToStatus, UserType } from "@prisma/client"
+import { ICreateTaskRequirementBody } from "@/ds/task"
+import { TaskToStatus } from "@prisma/client"
+import Message from "@/components/message-item"
 
-export default function FireDetailPage({
-  fire,
+export default function TaskDetailPage({
   user,
-  userFire,
+  taskId,
 }: {
   user: MyUser
-  fire: IFireView
-  userFire: TaskTo | null
+  taskId: string
 }) {
   const refTop = useRef<HTMLDivElement>(null)
   const { targetUserId } = useAppData()
 
-  const body = fire.body as ICreateTaskRequirementBody
-  const sendMessage = api.message.send.useMutation()
+  const utils = api.useUtils()
+  const { data: task } = api.task.get.useQuery({ id: taskId })
+  const { data: userTask } = api.task.getUserTask.useQuery({
+    taskId,
+  })
+  const hasFinished = userTask?.status === TaskToStatus.finished
 
-  const [v, copy] = useCopyToClipboard()
+  const submitTask = api.task.submitImages.useMutation()
 
-  const hasFinished =
-    // user.type === UserType.blogger ||
-    userFire?.status == TaskToStatus.finished
+  const { messages } = useAppData()
+
+  if (!task) return "loading task..."
+
+  const body = task.body as ICreateTaskRequirementBody
 
   return (
     <div className={"px-8 py-4 h-full flex flex-col overflow-hidden"}>
@@ -54,9 +57,8 @@ export default function FireDetailPage({
             <Image
               src={BroadcastImage}
               alt={"broadcast"}
-              width={160}
-              height={240}
-              className={"shrink-0 z-0 relative"}
+              priority
+              className={"shrink-0 z-0 relative w-40 h-auto"}
             />
 
             <div
@@ -78,7 +80,7 @@ export default function FireDetailPage({
                 </div>
 
                 <div className={"text-muted-foreground text-xs"}>
-                  {moment(fire.startTime).fromNow()}发布
+                  {m(task.startTime).fromNow()}发布
                 </div>
               </div>
             </div>
@@ -139,13 +141,20 @@ export default function FireDetailPage({
         </div>
 
         <div className={"flex flex-col items-center my-8"}>
-          <div>{fire.toUsers.length} 人已参加</div>
+          <div>{task.toUsers.length} 人已参加</div>
           <div className={"flex gap-2 flex-wrap"}>
-            {fire.toUsers.map((userTask, index) => (
+            {task.toUsers.map((userTask, index) => (
               <UserAvatar user={userTask.user} key={index} />
             ))}
           </div>
         </div>
+
+        {messages
+          .filter((message) => message.room?.id === task.room?.id)
+          .map((message, index) => (
+            // <div key={index}>{JSON.stringify(message.body)}</div>
+            <Message user={message.fromUser} body={message.body} key={index} />
+          ))}
       </div>
 
       {!hasFinished && (
@@ -182,15 +191,23 @@ export default function FireDetailPage({
                 const files = event.currentTarget.files
                 if (!files) return
                 const result = await uploadFiles(files)
-                if (result.success) {
-                  await sendMessage.mutateAsync({
-                    body: {
-                      type: MessageType.Images,
-                      images: result.data,
-                    },
-                    toUserId: targetUserId,
+                if (!result.success) return
+
+                submitTask
+                  .mutateAsync({
+                    taskId: task.id,
+                    images: result.data as string[],
                   })
-                }
+                  .catch((e) => {
+                    console.error(e)
+                    toast.error("执行任务失败！")
+                  })
+                  .then((res) => {
+                    toast.success("执行任务成功！")
+                    // 刷新最新的状态，因为后台已经更新了
+                    // invalidate: 1. task.get 2. task.getUserTask
+                    utils.task.invalidate()
+                  })
               }}
             />
           </Label>

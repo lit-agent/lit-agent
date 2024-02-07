@@ -86,11 +86,8 @@ export const authOptions: NextAuthOptions = {
      */
     session: async ({ session, user, token, trigger, newSession }) => {
       const phone = token.phone
-      console.log("[auth.session]: ", {
-        sessionUser: session.user,
-        user,
-        token,
-      })
+      const sessionUser = session.user
+      // console.log("[auth.session]: ", { sessionUser, user, token })
 
       if (!phone)
         console.error(

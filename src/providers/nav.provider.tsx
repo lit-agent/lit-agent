@@ -9,14 +9,12 @@ export default async function NavProvider({
   children,
   user,
 }: PropsWithChildren & { user?: MyUser }) {
-  if (!user) return "no user now"
-
   return (
     <div className={"h-full overflow-hidden flex flex-col"}>
       <div className={"grow overflow-auto relative"}>
         {children}
 
-        {user.type === UserType.blogger && (
+        {user?.type === UserType.blogger && (
           <div className={"absolute right-4 bottom-4"}>
             <ActionEntrance />
           </div>

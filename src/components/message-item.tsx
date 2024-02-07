@@ -12,14 +12,14 @@ import { Label } from "@/components/ui/label"
 import { UserComp } from "@/components/user"
 import { IMessageBody } from "@/ds/message"
 
-import "moment/locale/zh-cn"
-import RenderTask from "@/components/fire"
+import RenderTask from "@/components/task"
 import { IUserView } from "@/ds/user.base"
 import { ChevronRightIcon } from "lucide-react"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import Image from "next/image"
 
 import { getImagePath } from "@/lib/oss/read/helpers"
+import { UserType } from "@prisma/client"
 
 export interface IMessageContainer {
   user: IUserView
@@ -49,18 +49,19 @@ export const MessageContainer = ({
 }: { user: IUserView } & HTMLAttributes<HTMLDivElement>) => {
   return (
     <div className={cn("relative flex gap-2 ", className)} {...props}>
-      {user.type === "user" ? (
-        <UserComp user={user} />
-      ) : (
+      {user?.type === UserType.blogger ? (
         <BloggerContainer className={"flex items-start"}>
           <UserComp user={user} />
         </BloggerContainer>
+      ) : (
+        <UserComp user={user} />
       )}
 
       <div className={"flex grow flex-col gap-2"}>
         <div className={"flex items-center gap-1 text-xs text-gray-400"}>
-          {user.name}
-          {user.type === "blogger" && (
+          <span>{user?.name ?? "一位神秘的用户"}</span>
+
+          {user?.type === "blogger" && (
             <Badge
               className={"rounded-sm bg-green-800 px-1 py-0 text-gray-200"}
             >
@@ -71,11 +72,33 @@ export const MessageContainer = ({
         {children}
       </div>
 
-      {user.type === "assistant" && (
+      {user?.type === "assistant" && (
         <BsThreeDots className={cn("text-muted-foreground absolute right-2")} />
       )}
     </div>
   )
+}
+
+export const getMessageAbstract = ({ body }: { body: IMessageBody }) => {
+  switch (body.type) {
+    case "Plain":
+      return body.title
+
+    case "Task":
+      return "[任务]" + body.title
+
+    case "Images":
+      return `[图片] (${body.images.length})`
+
+    case "GroupLink":
+    case "ImageChoices":
+    case "Others":
+    case "ProductLink":
+    case "Sheet":
+    case "TextChoices":
+    default:
+      return JSON.stringify(body)
+  }
 }
 
 export const MessageBody = ({
@@ -162,7 +185,7 @@ export const MessageBody = ({
       )
 
     case MessageType.Task:
-      return taskId ? <RenderTask fireId={taskId} /> : "no task id"
+      return taskId ? <RenderTask taskId={taskId} /> : "no task id"
 
     case MessageType.GroupLink:
     // return (

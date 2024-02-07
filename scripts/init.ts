@@ -1,9 +1,12 @@
 import { prisma } from "@/server/db"
 import { UserType } from "@prisma/client"
 
-import { ADMIN_PHONE, USER_JIUGU_AI_ID } from "@/const"
+import { USER_JIUGU_AI_ID } from "@/const"
 import { fetchAdminUser, initUserAfterValidation } from "@/server/user"
-import { getAdminBroadcastId } from "@/lib/socket"
+import { getBroadcastId } from "@/lib/socket"
+
+const getAdminBroadcastId = async () =>
+  getBroadcastId((await fetchAdminUser())!.id)
 
 const init = async () => {
   console.log("⏰ initializing database...")

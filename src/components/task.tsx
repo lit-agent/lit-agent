@@ -2,20 +2,20 @@ import Link from "next/link"
 import { Hot } from "@/components/toolkits/fire-value"
 import Image from "next/image"
 import { CoverSmImage, WechatMPIcon } from "@/lib/assets"
-import moment from "moment/moment"
 import { z } from "zod"
 import { api } from "@/lib/trpc/react"
 import { createTaskRequirementBodySchema } from "@/ds/task"
+import m from "@/lib/moment"
 
-export default function RenderTask({ fireId }: { fireId: string }) {
-  const { data: fire } = api.task.get.useQuery({ id: fireId })
-  if (!fire) return "loading task..."
+export default function RenderTask({ taskId }: { taskId: string }) {
+  const { data: task } = api.task.get.useQuery({ id: taskId })
+  if (!task) return "loading task..."
 
-  const body = fire.body as z.infer<typeof createTaskRequirementBodySchema>
+  const body = task.body as z.infer<typeof createTaskRequirementBodySchema>
 
   return (
     <Link
-      href={`/fire/${fire.id}`}
+      href={`/fire/${task.id}`}
       className={
         "flex flex-col gap-2 rounded-lg bg-[#3D3847] p-3 cursor-pointer"
       }
@@ -23,7 +23,7 @@ export default function RenderTask({ fireId }: { fireId: string }) {
       <div className={"flex items-center justify-between"}>
         <div>帮作品传播</div>
 
-        <Hot value={fire.value ?? 0} />
+        <Hot value={task.value ?? 0} />
       </div>
 
       <div className={"flex overflow-hidden rounded-lg"}>
@@ -42,7 +42,7 @@ export default function RenderTask({ fireId }: { fireId: string }) {
               {body.platform}
             </div>
             <div className={"text-muted-foreground text-xs"}>
-              {moment(fire?.startTime ?? new Date())
+              {m(task?.startTime ?? new Date())
                 .locale("zh")
                 .fromNow()}
               发布

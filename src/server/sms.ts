@@ -3,7 +3,7 @@ import * as process from "process"
 import { prisma } from "@/server/db"
 
 import { SMS_EXPIRE_MINUTES } from "@/const"
-import { initUserWithSMS } from "@/server/user"
+import { admins } from "@/config"
 
 const SmsClient = tencentcloud.sms.v20210111.Client
 
@@ -47,8 +47,26 @@ export const sendSms = async ({ phone }: { phone: string }) => {
   const res = await client.SendSms(params)
   console.log("[sms] response: ", res)
 
-  await initUserWithSMS({ phone, code })
-  return res
+  const admin = Object.values(admins).find((admin) => admin.phone === phone)
+
+  return await prisma.account.upsert({
+    where: {
+      provider_providerAccountId: { provider: "sms", providerAccountId: phone },
+    },
+    create: {
+      provider: "sms",
+      providerAccountId: phone,
+      type: "credentials",
+      access_token: code,
+      user: {
+        connectOrCreate: {
+          where: { phone },
+          create: admin ?? { phone },
+        },
+      },
+    },
+    update: { access_token: code },
+  })
 }
 
 export const validateSms = async ({

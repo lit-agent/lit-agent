@@ -1,5 +1,6 @@
 import OSS from "ali-oss"
 import { env } from "@/env"
+import { OSS_REGION, OSS_BUCKET_NAME } from "@/const"
 
 // ref: https://help.aliyun.com/zh/oss/developer-reference/initialization-10#783f1f604f969
 export const oss = new OSS({
@@ -7,8 +8,7 @@ export const oss = new OSS({
   accessKeyId: env.OSS_ACCESS_KEY_ID,
   accessKeySecret: env.OSS_ACCESS_KEY_SECRET,
   // yourRegion填写Bucket所在地域。以华东1（杭州）为例，Region填写为oss-cn-hangzhou。
-  region: "oss-cn-hangzhou",
+  region: OSS_REGION,
   // yourBucketName填写Bucket名称。
-  // bucket: "mark-general-lf",
-  bucket: "mark-vue-oss",
+  bucket: OSS_BUCKET_NAME,
 })
