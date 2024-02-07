@@ -27,7 +27,8 @@ import { api } from "@/lib/trpc/react"
 import { signIn } from "next-auth/react"
 import { cn, PHONE_REGEX } from "@/lib/utils"
 import { SMS_EXPIRE_MINUTES } from "@/lib/sms"
-import { useCountdown } from "usehooks-ts"
+import { useCountdown } from "@/hooks/use-countdown"
+import { CgSpinner } from "react-icons/cg"
 
 export default function IntroPage() {
   return (
@@ -83,20 +84,15 @@ const Comp3 = () => {
     formState: { errors },
   } = form
 
-  const [count, { startCountdown }] = useCountdown({
-    countStop: 0,
-    countStart: 3,
-    intervalMs: 1000,
-  })
+  const { count, start, ticking } = useCountdown({ startValue: 3 })
 
   const sendSms = api.sms.send.useMutation()
 
   const onRequestingVerifyCode = async (event) => {
     event.preventDefault() // 防止触发form的验证
-    startCountdown()
+    start()
 
     const phone = watch("phone")
-
     const { success, message } = await sendSms.mutateAsync({ phone })
     if (success) {
       toast.success("验证码已发送！")
@@ -181,14 +177,21 @@ const Comp3 = () => {
                       </FormControl>
                       <Button
                         onClick={onRequestingVerifyCode}
+                        className={"w-32"}
                         disabled={
+                          ticking ||
                           !watch("phone") ||
                           !!errors.phone ||
-                          !!count ||
                           submitting
                         }
                       >
-                        获取验证码（{count}）
+                        {ticking ? (
+                          <>
+                            <CgSpinner className={"animate-spin"} />（{count}）
+                          </>
+                        ) : (
+                          "获取验证码"
+                        )}
                       </Button>
                     </div>
                     <FormDescription>

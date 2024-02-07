@@ -1,7 +1,5 @@
 # Lit Agent
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
-
 ## todo
 
 - [ ] [next-auth] customize callback url after signing in based on the `activated` property
@@ -18,21 +16,21 @@ This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3
 ```tsx
 // 自行决定尺寸，需要写好 w、h，否则会报尺寸失调问题
 <Image
-    src={CoverSmImage}
-    alt={"cover"}
-    className={"shrink-0 w-[120px] h-auto"}
+  src={CoverSmImage}
+  alt={"cover"}
+  className={"shrink-0 w-[120px] h-auto"}
 />
 
 // 使用 fill 基于容器决定尺寸，需要加上 sizes，否则会报性能问题
 <div className={"w-16"}>
-    <AspectRatio ratio={1}>
-        <Image
-            src={getImagePath(s, {width: 64, height: 64})}
-            alt={s}
-            fill
-            sizes={"100%"}
-        />
-    </AspectRatio>
+  <AspectRatio ratio={1}>
+    <Image
+      src={getImagePath(s, { width: 64, height: 64 })}
+      alt={s}
+      fill
+      sizes={"100%"}
+    />
+  </AspectRatio>
 </div>
 ```
 
