@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { IMainUser } from "@/schema/user"
+import { IUserMainView } from "@/schema/user"
 import { api } from "@/lib/trpc/react"
 import { UserSelector } from "@/components/user-selector"
 import Message from "@/components/message-item"
@@ -14,7 +14,7 @@ import { useAppData } from "@/lib/store/use-app-data"
 import { UserType } from "@prisma/client"
 import { ChevronLeftIcon } from "lucide-react"
 import { getClientMessageId } from "@/schema/message"
-import { IUserView } from "@/schema/user.base"
+import { IUserListView } from "@/schema/user.base"
 import { getChatId } from "@/lib/socket/helpers"
 
 export default function ChatDetailPage({
@@ -22,8 +22,8 @@ export default function ChatDetailPage({
   toUser,
   withBack,
 }: {
-  user: IMainUser
-  toUser: IUserView
+  user: IUserMainView
+  toUser: IUserListView
   // todo: room
   withBack?: boolean
 }) {

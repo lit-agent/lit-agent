@@ -13,7 +13,7 @@ import { UserComp } from "@/components/user"
 import { IMessageBody } from "@/schema/message"
 
 import RenderTask from "@/components/task"
-import { IUserView } from "@/schema/user.base"
+import { IUserListView } from "@/schema/user.base"
 import { ChevronRightIcon } from "lucide-react"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import Image from "next/image"
@@ -22,7 +22,7 @@ import { getImagePath } from "@/lib/oss/read/helpers"
 import { UserType } from "@prisma/client"
 
 export interface IMessageContainer {
-  user: IUserView
+  user: IUserListView
   body: IMessageBody
   taskId?: string
   onValueChange?: (v: any) => void
@@ -46,7 +46,7 @@ export const MessageContainer = ({
   className,
   children,
   ...props
-}: { user: IUserView } & HTMLAttributes<HTMLDivElement>) => {
+}: { user: IUserListView } & HTMLAttributes<HTMLDivElement>) => {
   return (
     <div className={cn("relative flex gap-2", className)} {...props}>
       {user?.type === UserType.blogger ? (

@@ -5,7 +5,7 @@ import { BroadcastImage } from "@/lib/assets"
 import { RiDoubleQuotesL, RiWechatChannelsLine } from "react-icons/ri"
 import { Separator } from "@/components/ui/separator"
 import { useRef } from "react"
-import { IMainUser } from "@/schema/user"
+import { IUserMainView } from "@/schema/user"
 import { Hot } from "@/components/fire-value"
 import { MyMarkdown } from "@/components/markdown"
 import { UserAvatar } from "@/components/user-avatar"
@@ -25,7 +25,7 @@ export default function TaskDetailPage({
   user,
   taskId,
 }: {
-  user: IMainUser
+  user: IUserMainView
   taskId: string
 }) {
   const refTop = useRef<HTMLDivElement>(null)

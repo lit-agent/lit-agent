@@ -2,30 +2,41 @@
 
 import { useEffect } from "react"
 import { useAppData } from "@/lib/store/use-app-data"
-import { useSession } from "next-auth/react"
 import { pusherClient } from "@/lib/socket/config"
 import { getBroadcastId } from "@/lib/socket/helpers"
 import { SocketEventType } from "@/lib/socket/events"
 import { IMessageView } from "@/schema/message.base"
+import { useAuthedUser } from "@/hooks/use-user"
+import { api } from "@/lib/trpc/react"
 
-export default function SocketThread({
-  serverMessages,
-}: {
-  serverMessages: IMessageView[]
-}) {
-  const { targetUserId, setMessages } = useAppData()
-  const user = useSession().data?.user
+export default function MessagesProvider({}: {}) {
+  useInitMessages()
+  useBindChannels()
+  return null
+}
+
+const useInitMessages = () => {
+  const { setMessages } = useAppData()
+  const user = useAuthedUser()
+
+  const { data: serverMessages = [] } = api.message.list.useQuery(
+    {},
+    { enabled: !!user },
+  )
 
   useEffect(() => {
-    setMessages(serverMessages)
-  }, [serverMessages])
+    if (serverMessages.length) setMessages(serverMessages)
+  }, [serverMessages.length])
+}
+
+const useBindChannels = () => {
+  const { targetUserId, setMessages } = useAppData()
+  const user = useAuthedUser()
 
   useEffect(() => {
     if (!user) return
 
     const channels: string[] = []
-
-    // if (!user?.rooms?.length) signOut()
 
     // 监听自己（所有发给自己的消息）
     channels.push(user.id)
@@ -51,6 +62,4 @@ export default function SocketThread({
       pusherClient.unbind(SocketEventType.Message)
     }
   }, [targetUserId, user])
-
-  return null
 }

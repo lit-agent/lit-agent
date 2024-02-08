@@ -2,12 +2,12 @@ import { UserAvatar } from "@/components/user-avatar"
 import { AwardFillIcon } from "@/lib/assets"
 import { UserType } from "@prisma/client"
 import { useAppData } from "@/lib/store/use-app-data"
-import { IUserView } from "@/schema/user.base"
+import { IUserListView } from "@/schema/user.base"
 
 export default function ChatUserNoTargetPage({
   users,
 }: {
-  users: IUserView[]
+  users: IUserListView[]
 }) {
   const { setTargetUserId } = useAppData()
 

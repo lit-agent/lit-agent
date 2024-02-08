@@ -5,7 +5,7 @@ import validator = Prisma.validator
 import UserDefaultArgs = Prisma.UserDefaultArgs
 import { messageViewSelector } from "@/schema/message.base"
 
-export const mainUserSlice = validator<UserDefaultArgs>()({
+export const userMainViewSchema = validator<UserDefaultArgs>()({
   include: {
     honors: true,
     fromTasks: true,
@@ -44,4 +44,4 @@ export const mainUserSlice = validator<UserDefaultArgs>()({
     bills: true,
   },
 })
-export type IMainUser = UserGetPayload<typeof mainUserSlice>
+export type IUserMainView = UserGetPayload<typeof userMainViewSchema>

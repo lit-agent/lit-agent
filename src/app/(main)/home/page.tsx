@@ -19,6 +19,9 @@ export default function UserHomePage() {
   const { data: bills = [] } = api.bill.list.useQuery()
   const { data: tasks = [] } = api.task.listUserTasks.useQuery()
   const user = useSession().data?.user
+  const { data: userDetail } = api.user.getSelf.useQuery(undefined, {
+    enabled: !!user,
+  })
 
   if (!user) return "loading user..."
 
@@ -58,14 +61,14 @@ export default function UserHomePage() {
               持有火值
             </div>
           }
-          b={user.balance}
+          b={userDetail?.balance ?? "?"}
           c={
             <div className={"inline-flex"}>
               <RiFireFill />
               历史火值
             </div>
           }
-          d={user.totalEarnedFire}
+          d={userDetail?.totalEarnedFire ?? "?"}
           side={"L"}
         />
 

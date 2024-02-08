@@ -1,12 +1,12 @@
 "use client"
 
-import { IMainUser } from "@/schema/user"
+import { IUserMainView } from "@/schema/user"
 import { useAppData } from "@/lib/store/use-app-data"
 import { useEffect, useState } from "react"
 import ChatDetailPage from "@/components/chat-detail"
 import { IChatView } from "@/schema/message"
 import { UserType } from "@prisma/client"
-import { IUserView } from "@/schema/user.base"
+import { IUserListView } from "@/schema/user.base"
 import ChatList from "@/components/chat-list"
 import ChatUserNoTargetPage from "@/components/chat.user-no-target.page"
 import { getChatId } from "@/lib/socket/helpers"
@@ -15,8 +15,8 @@ export default function ChatListPage({
   user,
   users,
 }: {
-  user: IMainUser
-  users: IUserView[]
+  user: IUserMainView
+  users: IUserListView[]
 }) {
   const { targetUserId, messages } = useAppData()
 

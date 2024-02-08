@@ -10,14 +10,14 @@ import { MessageContainer } from "@/components/message-item"
 import { UserComp } from "@/components/user"
 import { Input } from "@/components/ui/input"
 import { useRef } from "react"
-import { IMainUser } from "@/schema/user"
+import { IUserMainView } from "@/schema/user"
 import { ITaskView } from "@/schema/task"
 
 export default function TaskOk({
   task,
   user,
 }: {
-  user: IMainUser
+  user: IUserMainView
   task: ITaskView
 }) {
   const refTop = useRef<HTMLDivElement>(null)

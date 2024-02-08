@@ -12,6 +12,16 @@ export const userListViewSchema = validator<UserDefaultArgs>()({
     validated: true,
     status: true,
     phone: true,
+    rooms: {
+      select: {
+        id: true,
+      },
+    },
+    honors: {
+      select: {
+        id: true,
+      },
+    },
   },
 })
-export type IUserView = UserGetPayload<typeof userListViewSchema>
+export type IUserListView = UserGetPayload<typeof userListViewSchema>

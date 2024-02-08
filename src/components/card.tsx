@@ -9,9 +9,9 @@ export const Card1 = ({
   side,
 }: {
   a: ReactNode
-  b: number
+  b: number | string
   c: ReactNode
-  d: number
+  d: number | string
   side: "L" | "R"
 }) => (
   <div className={cn("flex flex-col gap-2", side === "R" && "items-end")}>

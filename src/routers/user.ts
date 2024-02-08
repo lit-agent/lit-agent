@@ -7,20 +7,29 @@ import { z } from "zod"
 import { initUserAfterValidation } from "@/lib/user"
 
 import { userListViewSchema } from "@/schema/user.base"
+import { userMainViewSchema } from "@/schema/user"
+import { prisma } from "@/lib/db"
 
 export const userRouter = createTRPCRouter({
   list: publicProcedure.query(async ({ ctx, input }) => {
-    return ctx.prisma.user.findMany({ ...userListViewSchema })
+    return prisma.user.findMany({ ...userListViewSchema })
   }),
 
   getUserByPhone: publicProcedure
     .input(z.object({ phone: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      return ctx.prisma.user.findUnique({
+      return prisma.user.findUnique({
         where: input,
         ...userListViewSchema,
       })
     }),
+
+  getSelf: protectedProcedure.query(async ({ ctx, input }) => {
+    return prisma.user.findUnique({
+      where: { id: ctx.user.id },
+      ...userMainViewSchema,
+    })
+  }),
 
   get: publicProcedure
     .input(
@@ -29,7 +38,7 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      return ctx.prisma.user.findUnique({
+      return prisma.user.findUnique({
         where: input,
         ...userListViewSchema,
       })

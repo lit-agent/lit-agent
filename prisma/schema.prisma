@@ -126,7 +126,7 @@ model Message {
   room   Room?   @relation(fields: [roomId], references: [id], onDelete: Cascade)
   roomId String?
 
-  toUser   User?   @relation("to", fields: [toUserId], references: [id], onDelete: NoAction)
+  toUser   User?   @relation("to", fields: [toUserId], references: [id], onDelete: SetNull)
   toUserId String?
 
   mentionUsers User[] @relation("mention")

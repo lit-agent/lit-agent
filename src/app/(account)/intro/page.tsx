@@ -22,13 +22,15 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import "react-phone-number-input/style.css"
 import { toast } from "sonner"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { api } from "@/lib/trpc/react"
 import { signIn } from "next-auth/react"
 import { cn, PHONE_REGEX } from "@/lib/utils"
 import { SMS_EXPIRE_MINUTES } from "@/lib/sms"
 import { useCountdown } from "@/hooks/use-countdown"
 import { CgSpinner } from "react-icons/cg"
+import { useUser } from "@/hooks/use-user"
+import { useRouter } from "next/navigation"
 
 export default function IntroPage() {
   return (
@@ -84,7 +86,7 @@ const Comp3 = () => {
     formState: { errors },
   } = form
 
-  const { count, start, ticking } = useCountdown({ startValue: 3 })
+  const { count, start, ticking } = useCountdown({ startValue: 60 })
 
   const sendSms = api.sms.send.useMutation()
 
@@ -99,14 +101,9 @@ const Comp3 = () => {
     } else toast.error(`验证码发送失败，原因：${message}`)
   }
 
-  const getUserByPhone = api.user.getUserByPhone.useMutation()
-
   const [submitting, setSubmitting] = useState(false)
 
-  // 2. Define a submit handler.
   async function onSubmit() {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     setSubmitting(true)
 
     const phone = watch("phone")
@@ -119,20 +116,19 @@ const Comp3 = () => {
     })
     console.log("[Auth] signed res: ", res)
 
-    if (res?.ok) {
-      toast.success("登录成功！")
+    if (res?.ok) toast.success("登录成功！")
+    else toast.error(res?.error ?? "登录失败", { duration: 3000 })
 
-      // todo: directly got validated info from signIn
-      const user = await getUserByPhone.mutateAsync({ phone })
-      // void router.push('/'); // todo: why 这个不行
-      void location.replace(user?.validated ? "/" : "/validation") // 这个可以，ref: https://stackoverflow.com/a/77209617
-      return
-    }
-
-    // 仅在不成功的时候重新允许提交
     setSubmitting(false)
-    toast.error(res?.error ?? "没有返回")
   }
+
+  const router = useRouter()
+  const user = useUser()
+  useEffect(() => {
+    console.log("[IntroPage] user: ", user)
+    if (!user) return
+    router.push(user.validated ? "/" : "/validation")
+  }, [user])
 
   return (
     <div className={"mt-auto flex flex-col items-center pb-8 gap-4"}>

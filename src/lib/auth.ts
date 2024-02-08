@@ -7,16 +7,17 @@ import {
 import { prisma } from "@/lib/db"
 
 import CredentialsProvider from "next-auth/providers/credentials"
-import { IMainUser, mainUserSlice } from "@/schema/user"
 
 import { SMS_PROVIDER_ID } from "@/lib/sms"
+import { IUserListView, userListViewSchema } from "@/schema/user.base"
+
+export type SessionError = "NoPhone" | "NoUserInDB"
 
 // ref: https://next-auth.js.org/getting-started/typescript#submodules
 declare module "next-auth/jwt" {
   /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
-  interface JWT {
-    /** OpenID ID Token */
-    phone: string | null
+  interface JWT extends IUserListView {
+    name: string | null // JWT 的 name 还支持 undefined，我们要限制一下
   }
 }
 
@@ -28,13 +29,13 @@ declare module "next-auth/jwt" {
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: DefaultSession["user"] & IMainUser
+    user: DefaultSession["user"] & IUserListView
+    error?: SessionError
   }
 
   // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  //   phone?: string
+  //   phone: string | null
+  //   type: UserType
   // }
 }
 
@@ -54,64 +55,72 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
-    jwt: async ({ token, user, session, trigger, account, profile }) => {
-      let message = ""
+    /**
+     * 【user --> token（JWT）】
+     * signIn（首次登录）会触发 CredentialProvider.authorize()
+     * 在那里，验证完用户信息（phone+sms）后返回 user 传到 jwt 函数里
+     * 我们再把它传给 token
+     * token 会持久化在浏览器里（基于某种编码）
+     *
+     * @param token
+     * @param user
+     * @param session
+     * @param trigger
+     * @param account
+     * @param profile
+     */
+    jwt: async ({
+      token,
+      user,
+      session,
+      trigger,
+      account,
+      profile,
+      isNewUser,
+    }) => {
+      console.log("[auth.jwt]: ", {
+        token,
+        user,
+        session,
+        account,
+        profile,
+        isNewUser,
+      })
 
-      if (token.phone) message += "✅ cached by phone"
-      else {
-        const userInDB = await prisma.user.findUnique({
-          where: { id: token.sub },
-        })
-        if (userInDB) {
-          message = "✅ authenticated"
-          token.phone = userInDB.phone
-        } else {
-          message = "❌ invalidated"
-          token.iat = Date.now() / 1000
-          // token.expires // todo: 可能修改 expires 就可以让 前台的 session 变得 unauthenticated 了
-        }
-      }
-      console.log("[auth.jwt]: ", message)
-
-      // console.log("[auth.jwt]: ", { token, user, userInDB, session })
+      // token 是加解密可信安全的，不用担心被篡改！
+      if (user) token = { ...token, ...user }
       return token
     },
+
     /**
-     *  参考：https://stackoverflow.com/a/77018015
-     *   session: {
-     *     user: { name: '17766091857', email: null, image: null },
-     *     expires: '2024-02-08T07:38:45.489Z'
-     *   },
+     * 【token --> db --> session】
+     * 每次都会从 jwt 函数拿回 token 塞给 session
+     * 客户端基于 session.user 拿到用户的限权数据
+     * 同时我们在 SafeSessionProvider 里全局监控 session.error
+     * 一旦出现问题，我们就强制用户在客户端退出登录
+     *
      * @param session
      * @param user
+     * @param token
+     * @param trigger
+     * @param newSession
      */
     session: async ({ session, user, token, trigger, newSession }) => {
-      const phone = token.phone
-      const sessionUser = session.user
-      // console.log("[auth.session]: ", { sessionUser, user, token })
+      console.log("[auth.session]: ", {
+        session,
+        user,
+        token,
+        newSession,
+        trigger,
+      })
 
-      if (!phone)
-        console.error(
-          "[auth.session] ❌ no phone in token (todo: how to invalidate user) ",
-        )
+      const { phone } = token
+      if (!phone) session.error = "NoPhone"
       else {
-        const userInDB = await prisma.user.findUnique({
-          where: {
-            phone,
-          },
-          ...mainUserSlice,
-        })
-
-        if (!userInDB) {
-          console.error(
-            "[auth.session] ❌ no user in db (todo: how to invalidate user) ",
-          )
-        } else {
-          session = { ...session, user: userInDB }
-          console.log("[auth.session] update session's user from db")
-        }
+        const userInDB = await prisma.user.findUnique({ where: { phone } })
+        if (!userInDB) session.error = "NoUserInDB"
+        else session.user = token
       }
-
       return session
     },
   },
@@ -126,15 +135,17 @@ export const authOptions: NextAuthOptions = {
         code: { label: "Verification Code", type: "text" },
       },
 
+      /**
+       * 登录的时候会调用这个函数，返回的结果会存入 jwt 回调的 user 内
+       */
       authorize: async (credentials) => {
         console.log("[Auth] authorizing: ", credentials)
-        // Here you should verify the phone number and the code
-        // For example, check against a database where you stored the code
-        if (!credentials) throw new Error("验证信息为空！")
+        if (!credentials) throw new Error("验证信息不能为空（1）！")
 
         const { phone, code } = credentials
-        if (!phone || !code) throw new Error("验证信息错误！")
+        if (!phone || !code) throw new Error("验证信息不能为空（2）！")
 
+        // 在发送验证码的时候，手机号与验证码等信息已经入表，此时只要验证账号是否存在即可
         const account = await prisma.account.findUnique({
           where: {
             provider_providerAccountId: {
@@ -143,10 +154,10 @@ export const authOptions: NextAuthOptions = {
             },
           },
           include: {
-            user: mainUserSlice,
+            user: userListViewSchema,
           },
         })
-        console.log("[sms] validating account: ", account)
+        console.log("[sms] account: ", account)
 
         if (
           // 不存在

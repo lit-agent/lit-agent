@@ -1,18 +1,15 @@
 import "@/styles/globals.css"
 
 import { Inter } from "next/font/google"
-import MyThemeProvider from "@/components/theme.provider"
+import MyThemeProvider from "@/app/providers/theme.provider"
 import { Toaster } from "sonner"
-import MySessionProvider from "@/components/session.provider"
-import { TRPCReactProvider } from "@/components/trpc.provider"
+import { TRPCReactProvider } from "@/app/providers/trpc.provider"
 import { Metadata, Viewport } from "next"
 import { AutoHeightThread } from "@/components/auto-height.thread"
-import SocketThread from "@/components/socket.thread"
-import BgProvider from "@/components/bg.provider"
-import NavProvider from "@/components/nav.provider"
-import { prisma } from "@/lib/db"
-import { messageViewSelector } from "@/schema/message.base"
-import { getServerUser } from "@/lib/auth"
+import MessagesProvider from "@/app/providers/messages.provider"
+import BgProvider from "@/app/providers/bg.provider"
+import NavProvider from "@/app/providers/nav.provider"
+import StableSessionProvider from "./providers/session.provider"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -38,23 +35,18 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const serverMessages = await prisma.message.findMany({
-    ...messageViewSelector,
-    orderBy: { createdAt: "desc" },
-  })
-
   return (
-    <html lang="zh" suppressHydrationWarning>
-      <body className={`font-sans ${inter.variable}`}>
-        <main className={"relative w-screen"}>
-          <MySessionProvider>
-            <TRPCReactProvider>
+    <StableSessionProvider>
+      <TRPCReactProvider>
+        <html lang="zh" suppressHydrationWarning>
+          <body className={`font-sans ${inter.variable}`}>
+            <main className={"relative w-screen"}>
               <MyThemeProvider>
                 <BgProvider>
                   <NavProvider>
                     {children}
 
-                    <SocketThread serverMessages={serverMessages} />
+                    <MessagesProvider />
 
                     <AutoHeightThread />
 
@@ -66,10 +58,10 @@ export default async function RootLayout({
                   </NavProvider>
                 </BgProvider>
               </MyThemeProvider>
-            </TRPCReactProvider>
-          </MySessionProvider>
-        </main>
-      </body>
-    </html>
+            </main>
+          </body>
+        </html>
+      </TRPCReactProvider>
+    </StableSessionProvider>
   )
 }

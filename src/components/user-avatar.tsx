@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { IUserView } from "@/schema/user.base"
+import { IUserListView } from "@/schema/user.base"
 
 /**
  * space-x 这个是控制子孩子距离，不用tailwind的话，要用 css 写，比较麻烦
@@ -15,7 +15,7 @@ export default function AvatarComp({
   maxN = 6,
   size = "sm",
 }: {
-  users: IUserView[]
+  users: IUserListView[]
   maxN?: number
   size?: "sm" | "lg"
 }) {
@@ -54,7 +54,7 @@ export const UserAvatar = ({
   user,
   size = "lg",
 }: {
-  user: IUserView
+  user: IUserListView
   size?: "sm" | "lg"
 }) => (
   <Avatar
