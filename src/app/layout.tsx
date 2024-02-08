@@ -1,15 +1,15 @@
 import "@/styles/globals.css"
 
 import { Inter } from "next/font/google"
-import MyThemeProvider from "@/app/providers/theme.provider"
+import MyThemeProvider from "@/providers/theme.provider"
 import { Toaster } from "sonner"
-import { TRPCReactProvider } from "@/app/providers/trpc.provider"
+import { TRPCReactProvider } from "@/providers/trpc.provider"
 import { Metadata, Viewport } from "next"
 import { AutoHeightThread } from "@/components/auto-height.thread"
-import MessagesProvider from "@/app/providers/messages.provider"
-import BgProvider from "@/app/providers/bg.provider"
-import NavProvider from "@/app/providers/nav.provider"
-import StableSessionProvider from "./providers/session.provider"
+import MessagesProvider from "@/providers/messages.provider"
+import BgProvider from "@/providers/bg.provider"
+import NavProvider from "@/providers/nav.provider"
+import StableSessionProvider from "@/providers/session.provider"
 
 const inter = Inter({
   subsets: ["latin"],

@@ -6,14 +6,14 @@ import {
 import { z } from "zod"
 import { initUserAfterValidation } from "@/lib/user"
 
-import { userListViewSchema } from "@/schema/user.base"
+import { userViewSchema } from "@/schema/user.base"
 import { userMainViewSchema } from "@/schema/user"
 import { prisma } from "@/lib/db"
 
 export const userRouter = createTRPCRouter({
   list: publicProcedure.query(async ({ ctx, input }) => {
     return prisma.user.findMany({
-      ...userListViewSchema,
+      ...userViewSchema,
       orderBy: { totalEarnedFire: "desc" },
     })
   }),
@@ -23,7 +23,7 @@ export const userRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       return prisma.user.findUnique({
         where: input,
-        ...userListViewSchema,
+        ...userViewSchema,
       })
     }),
 
@@ -43,7 +43,7 @@ export const userRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       return prisma.user.findUnique({
         where: input,
-        ...userListViewSchema,
+        ...userViewSchema,
       })
     }),
 

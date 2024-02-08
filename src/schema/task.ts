@@ -1,7 +1,11 @@
 // 任务
-import { userListViewSchema } from "@/schema/user.base"
+import { userViewSchema } from "@/schema/user.base"
 import { z } from "zod"
-import { basicBodySchema, MessageType } from "@/schema/message.base"
+import {
+  basicBodySchema,
+  MessageType,
+  messageViewSchema,
+} from "@/schema/message.base"
 
 import { Prisma } from "@prisma/client"
 import validator = Prisma.validator
@@ -27,11 +31,17 @@ export type ICreateTask = z.infer<typeof createTaskSchema>
 
 export const taskViewSchema = validator<TaskDefaultArgs>()({
   include: {
-    fromUser: userListViewSchema,
-    room: true,
+    fromUser: userViewSchema,
+    room: {
+      select: {
+        id: true,
+        messages: messageViewSchema,
+        users: userViewSchema,
+      },
+    },
     toUsers: {
       select: {
-        user: userListViewSchema,
+        user: userViewSchema,
       },
     },
   },

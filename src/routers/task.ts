@@ -6,7 +6,7 @@ import {
 import { createRequirementSchema } from "@/schema/requirement"
 import { z } from "zod"
 
-import { MessageType, messageViewSelector } from "@/schema/message.base"
+import { MessageType, messageViewSchema } from "@/schema/message.base"
 import {
   createTaskSchema,
   taskViewSchema,
@@ -72,7 +72,7 @@ export const taskRouter = createTRPCRouter({
               id: task.id,
             },
           },
-          ...messageViewSelector,
+          ...messageViewSchema,
         })
 
         await prisma.userTask.create({

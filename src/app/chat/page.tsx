@@ -2,13 +2,13 @@
 
 import { useAppData } from "@/lib/store/use-app-data"
 import { useEffect, useState } from "react"
-import ChatDetailPage from "@/components/chat-detail"
 import { IChatView } from "@/schema/message"
 import { UserType } from "@prisma/client"
 import ChatList from "@/components/chat-list"
 import ChatUserNoTargetPage from "@/components/chat.user-no-target.page"
 import { getChatId } from "@/lib/socket/helpers"
 import { useUser } from "@/hooks/use-user"
+import ChatDetailPage from "@/app/chat/[id]/page"
 
 export default function ChatListPage() {
   const user = useUser()
@@ -52,6 +52,6 @@ export default function ChatListPage() {
   }, [messages.length])
 
   console.log("[ChatHomePage]: ", { messages, chats })
-  
+
   return <ChatList chats={chats} />
 }

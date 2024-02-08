@@ -23,21 +23,12 @@ export const ActionEntrance = () => {
       <DialogContent>
         <Label>发布</Label>
         <Link
-          href={"/task/create"}
+          href={"/create"}
           onClick={() => {
             setOpen(false)
           }}
         >
-          <Button className={"w-full"}>发布新需求</Button>
-        </Link>
-
-        <Link
-          href={"/product/create"}
-          onClick={() => {
-            setOpen(false)
-          }}
-        >
-          <Button className={"w-full"}>发布新产品/服务</Button>
+          <Button className={"w-full"}>发布产品/服务</Button>
         </Link>
 
         <Label>管理</Label>
@@ -59,7 +50,7 @@ export const ActionEntrance = () => {
           }}
         >
           <Button className={"w-full"} disabled>
-            管理需求
+            管理任务
           </Button>
         </Link>
 
@@ -69,7 +60,7 @@ export const ActionEntrance = () => {
             setOpen(false)
           }}
         >
-          <Button className={"w-full"}>管理产品/服务</Button>
+          <Button className={"w-full"}>管理订单</Button>
         </Link>
       </DialogContent>
     </Dialog>

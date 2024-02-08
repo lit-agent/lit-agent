@@ -1,30 +1,26 @@
 "use client"
 
-import { IUserMainView } from "@/schema/user"
 import { useAppData } from "@/lib/store/use-app-data"
 import { useEffect, useState } from "react"
-import ChatDetailPage from "@/components/chat-detail"
 import { IChatView } from "@/schema/message"
 import { UserType } from "@prisma/client"
-import { IUserListView } from "@/schema/user.base"
 import ChatList from "@/components/chat-list"
-import ChatUserNoTargetPage from "@/components/chat.user-no-target.page"
 import { getChatId } from "@/lib/socket/helpers"
+import ChatDetailPage from "@/app/chat/[id]/page"
+import { USER_JIUGU_ID } from "@/config"
+import { useUser } from "@/hooks/use-user"
 
-export default function ChatListPage({
-  user,
-  users,
-}: {
-  user: IUserMainView
-  users: IUserListView[]
-}) {
-  const { targetUserId, messages } = useAppData()
+export default function ChatListPage() {
+  const user = useUser()
+  const { messages } = useAppData()
 
   const [chats, setChats] = useState<IChatView[]>([])
 
   // todo: chats 按照对象 而非聊天记录
   // 对消息进行分组排序成会话列表
   useEffect(() => {
+    if (!user) return
+
     const chats: IChatView[] = []
     const seenChannels = new Set<string>()
 
@@ -55,10 +51,7 @@ export default function ChatListPage({
 
   console.log("[ChatHomePage]: ", { messages, chats })
 
-  if (user.type === UserType.blogger && !targetUserId)
-    return <ChatList chats={chats} />
+  if (user?.type === UserType.blogger) return <ChatList chats={chats} />
 
-  if (!targetUserId) return <ChatUserNoTargetPage />
-
-  return <ChatDetailPage />
+  return <ChatDetailPage params={{ id: USER_JIUGU_ID }} />
 }

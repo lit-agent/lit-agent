@@ -9,7 +9,6 @@ import { BloggerContainer } from "@/components/blogger"
 import { Checkbox } from "src/components/ui/checkbox"
 import { MyMarkdown } from "@/components/markdown"
 import { Label } from "@/components/ui/label"
-import { UserComp } from "@/components/user"
 import { IMessageBody } from "@/schema/message"
 
 import RenderTask from "@/components/task"
@@ -20,6 +19,7 @@ import Image from "next/image"
 
 import { getImagePath } from "@/lib/oss/read/helpers"
 import { UserType } from "@prisma/client"
+import { UserAvatarWithName } from "@/components/user-avatar"
 
 export interface IMessageContainer {
   user: IUserListView
@@ -51,10 +51,10 @@ export const MessageContainer = ({
     <div className={cn("relative flex gap-2", className)} {...props}>
       {user?.type === UserType.blogger ? (
         <BloggerContainer className={"flex items-start"}>
-          <UserComp user={user} />
+          <UserAvatarWithName user={user} />
         </BloggerContainer>
       ) : (
-        <UserComp user={user} />
+        <UserAvatarWithName user={user} />
       )}
 
       <div className={"grow overflow-hidden flex flex-col gap-2"}>
@@ -85,11 +85,11 @@ export const getMessageAbstract = ({ body }: { body: IMessageBody }) => {
     case "Plain":
       return body.title
 
-    case "Task":
-      return "[任务]" + body.title
-
     case "Images":
-      return `[图片] (${body.images.length})`
+      return `[图片] (${body.images.length}张)`
+
+    case "BillLink":
+      return `[订单] id: ${body.value}`
 
     case "GroupLink":
     case "ImageChoices":
@@ -97,6 +97,7 @@ export const getMessageAbstract = ({ body }: { body: IMessageBody }) => {
     case "ProductLink":
     case "Sheet":
     case "TextChoices":
+    case "Task":
     default:
       return JSON.stringify(body)
   }

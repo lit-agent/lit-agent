@@ -1,20 +1,17 @@
 import { getMessageAbstract, MessageContainer } from "@/components/message-item"
 import { useAppData } from "@/lib/store/use-app-data"
 import { IChatView } from "@/schema/message"
+import Link from "next/link"
 
 export default function ChatListItem({ chat }: { chat: IChatView }) {
-  const { setTargetUserId } = useAppData()
-  // todo: 支持群聊
-  const targetUser = chat.targetUser!
+  if (!chat.targetUser) return "loading chat item"
 
   return (
-    <div
-      onClick={() => {
-        setTargetUserId(targetUser.id)
-      }}
-      className={"relative"}
-    >
-      <MessageContainer user={targetUser} className={"p-4 border-b relative"}>
+    <Link href={`/chat/${chat.targetUser.id}`} className={"relative"}>
+      <MessageContainer
+        user={chat.targetUser}
+        className={"py-4 border-b relative"}
+      >
         <div className={"truncate"}>{getMessageAbstract(chat.message)}</div>
       </MessageContainer>
 
@@ -27,6 +24,6 @@ export default function ChatListItem({ chat }: { chat: IChatView }) {
           {chat.unreadCount}
         </div>
       )}
-    </div>
+    </Link>
   )
 }

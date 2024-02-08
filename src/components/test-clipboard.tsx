@@ -5,7 +5,6 @@ import { useEffect } from "react"
 import { toast } from "sonner"
 import { useCopyToClipboard as useCopyToClipboardUseHooksTS } from "usehooks-ts/dist/cjs"
 import { useCopyToClipboard } from "@uidotdev/usehooks"
-import { useNavigatorPermissions } from "@/hooks/use-clipboard"
 import { Button } from "@/components/ui/button"
 
 export default function TestClipboard() {
@@ -71,4 +70,15 @@ export default function TestClipboard() {
       </Button>
     </div>
   )
+}
+
+const useNavigatorPermissions = () => {
+  useEffect(() => {
+    navigator.permissions
+      // @ts-ignore
+      .query({ name: "clipboard-read", allowWithoutGesture: false })
+      .then((res) => {
+        console.log("[permissionStatus]: ", res.state)
+      })
+  })
 }

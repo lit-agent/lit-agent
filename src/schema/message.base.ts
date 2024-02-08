@@ -3,7 +3,7 @@ import { Prisma } from ".prisma/client"
 import MessageDefaultArgs = Prisma.MessageDefaultArgs
 import MessageGetPayload = Prisma.MessageGetPayload
 import validator = Prisma.validator
-import { userListViewSchema } from "./user.base"
+import { userViewSchema } from "./user.base"
 
 export enum MessageType {
   Task = "Task",
@@ -49,20 +49,20 @@ export const choicesBodySchema = basicBodySchema.extend({
 })
 export type IChoiceBody = z.infer<typeof choicesBodySchema>
 
-export const messageViewSelector = validator<MessageDefaultArgs>()({
+export const messageViewSchema = validator<MessageDefaultArgs>()({
   select: {
     body: true,
-    fromUser: userListViewSchema,
-    toUser: userListViewSchema,
+    fromUser: userViewSchema,
+    toUser: userViewSchema,
     task: true,
     room: {
       select: {
         id: true,
-        users: userListViewSchema,
+        users: userViewSchema,
       },
     },
   },
 })
-export type IMessageView = MessageGetPayload<typeof messageViewSelector> & {
+export type IMessageView = MessageGetPayload<typeof messageViewSchema> & {
   read?: boolean
 }

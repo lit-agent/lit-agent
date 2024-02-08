@@ -73,7 +73,7 @@ export default function CreateFormPage<T = any>({
               <FormField
                 key={index}
                 control={form.control}
-                name={formField.name}
+                name={formField.name as string}
                 render={({ field }) => (
                   <FormItem
                     className={cn(

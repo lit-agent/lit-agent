@@ -7,12 +7,12 @@ import { RiDoubleQuotesL, RiDoubleQuotesR } from "react-icons/ri"
 import { Indicator } from "@/components/indicator"
 import { Separator } from "@/components/ui/separator"
 import { MessageContainer } from "@/components/message-item"
-import { UserComp } from "@/components/user"
 import { Input } from "@/components/ui/input"
 import { useRef } from "react"
 import { ITaskView } from "@/schema/task"
 import { IUserListView } from "@/schema/user.base"
 import moment from "@/lib/datetime"
+import { UserAvatarWithName } from "@/components/user-avatar"
 
 export default function TaskOk({
   task,
@@ -94,7 +94,7 @@ export default function TaskOk({
           "fixed bottom-0 left-0 z-50 w-full p-2 flex items-center gap-2 bg-[#3D3847]"
         }
       >
-        <UserComp user={user} />
+        <UserAvatarWithName user={user} />
         <Input
           placeholder={"观点碰撞产生共鸣💥"}
           className={
