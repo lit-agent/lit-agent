@@ -28,6 +28,7 @@ export type ICreateTask = z.infer<typeof createTaskSchema>
 export const taskViewSchema = validator<TaskDefaultArgs>()({
   include: {
     fromUser: userListViewSchema,
+    room: true,
     toUsers: {
       select: {
         user: userListViewSchema,

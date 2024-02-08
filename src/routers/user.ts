@@ -12,7 +12,10 @@ import { prisma } from "@/lib/db"
 
 export const userRouter = createTRPCRouter({
   list: publicProcedure.query(async ({ ctx, input }) => {
-    return prisma.user.findMany({ ...userListViewSchema })
+    return prisma.user.findMany({
+      ...userListViewSchema,
+      orderBy: { totalEarnedFire: "desc" },
+    })
   }),
 
   getUserByPhone: publicProcedure

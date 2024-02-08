@@ -22,6 +22,9 @@ import { api } from "@/lib/trpc/react"
 import TaskItem from "@/components/task-item"
 import { useState } from "react"
 import { UserTaskStatus } from "@prisma/client"
+import { orderBy, sum, sumBy } from "lodash"
+import { useUser } from "@/hooks/use-user"
+import moment from "moment"
 
 const navs = [
   { Icon: Menu1Icon, alt: "1" },
@@ -33,6 +36,19 @@ export default function HomePage() {
   const { data: userTasks = [] } = api.task.listUserTasks.useQuery()
   const [taskFilter, setTaskFilter] = useState<UserTaskStatus | undefined>(
     "goon",
+  )
+  const { data: users = [] } = api.user.list.useQuery()
+  const user = useUser()
+  const { data: sensitiveUser } = api.user.getSelf.useQuery()
+
+  const myRank =
+    orderBy(users, "totalEarnedFire", "desc").findIndex(
+      (u) => u.id === user?.id,
+    ) + 1
+  const { data: tasks = [] } = api.task.listTasks.useQuery()
+  const currentReward = sumBy(
+    tasks.filter((t) => +t.createdAt >= +moment().startOf("month").toDate()),
+    "value",
   )
 
   return (
@@ -55,16 +71,18 @@ export default function HomePage() {
 
           <div className={"flex gap-4"}>
             <div> 昨日收益</div>
-            <div className={"text-red-500"}>+ 0.5</div>
+            <div className={"text-red-500"}>+ ??</div>
           </div>
 
           <div className={"flex items-center gap-4"}>
-            <div className={"text-3xl font-medium"}>4224.23</div>
+            <div className={"text-3xl font-medium"}>
+              {sensitiveUser?.balance}
+            </div>
             <FireIcon color={PRIMARY_COLOR} className={"w-6 h-6"} />
           </div>
 
           <div className={"flex items-center gap-4"}>
-            <div className={"text-gray-500"}>GDFRIENDXO0001</div>
+            <div className={"text-gray-500"}>{user?.id}</div>
             <Badge>好火伴</Badge>
             <Badge>Hot火伴</Badge>
           </div>
@@ -91,12 +109,12 @@ export default function HomePage() {
               </div>
               <AwardFillIcon />
               <ArrowUpIcon />
-              <div>5</div>
+              <div>??</div>
             </div>
 
             <div className={"flex items-center gap-2"}>
-              <div className={"text-lg font-medium"}>253</div>
-              <div className={"text-gray-500"}>/ 102293</div>
+              <div className={"text-lg font-medium"}>{myRank}</div>
+              <div className={"text-gray-500"}>/ {users.length}</div>
             </div>
           </div>
 
@@ -113,7 +131,7 @@ export default function HomePage() {
             </div>
 
             <div className={"flex items-center gap-2"}>
-              <div className={"text-lg font-medium"}>423.15</div>
+              <div className={"text-lg font-medium"}>{currentReward}</div>
               <FireIcon color={PRIMARY_COLOR} className={"w-4 h-4"} />
             </div>
 
