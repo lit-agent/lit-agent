@@ -9,12 +9,13 @@ export const initUserAfterValidation = async (userId: string) => {
     data: { validated: true, status: "online" },
   })
 
-  const { rooms, honors, ...jiuguAi } = admins.jiuguAi
+  const { rooms, honors, ...jiugu } = admins.jiugu
 
   console.log("[User:Validated] 正在发送欢迎语")
   // 欢迎语不需要使用socket发，因为用户还没到房间
   await prisma.message.create({
     data: {
+      isAI: true,
       body: {
         type: MessageType.Plain,
         title:
@@ -29,7 +30,7 @@ export const initUserAfterValidation = async (userId: string) => {
       fromUser: {
         connectOrCreate: {
           where: { id: USER_JIUGU_ID },
-          create: jiuguAi,
+          create: jiugu,
         },
       },
       toUser: {
