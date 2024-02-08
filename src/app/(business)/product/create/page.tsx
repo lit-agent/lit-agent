@@ -18,6 +18,8 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { formFieldControlMap, FormFieldType } from "@/lib/form"
 import { zipObject } from "lodash"
+import { ChevronLeftIcon } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 const createProductData: {
   name: keyof ICreateProduct
@@ -89,9 +91,17 @@ export default function CreateProductPage() {
       })
   }
 
+  const router = useRouter()
+
   return (
     <div className={"flex flex-col p-8 bg-black"}>
-      <Label className={"my-8 text-xl"}>发布产品</Label>
+      <Label
+        className={"my-8 text-xl text-primary flex items-centre gap-2"}
+        onClick={router.back}
+      >
+        <ChevronLeftIcon /> 发布产品
+      </Label>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8">
           {createProductData.map((formField, index) => {

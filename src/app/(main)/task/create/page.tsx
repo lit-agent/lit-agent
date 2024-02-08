@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button"
 import { api } from "@/lib/trpc/react"
 import { toast } from "sonner"
 import { Input } from "@/components/ui/input"
-import { HomeIcon } from "lucide-react"
+import { ChevronLeftIcon, HomeIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import { createRequirementSchema } from "@/schema/requirement"
 import { MessageType, SupportedMessageTypes } from "@/schema/message.base"
@@ -31,6 +31,7 @@ import { useUserPreference } from "@/lib/store/use-user-preference"
 
 import { uploadFiles } from "@/lib/oss/upload/client"
 import moment, { DATETIME_FORMAT } from "@/lib/datetime"
+import { useRouter } from "next/navigation"
 
 const schema = createRequirementSchema
 const FINISHED = 3
@@ -96,6 +97,8 @@ export default function CreateTaskWithUserPage() {
     }
   }, [JSON.stringify(errors)])
 
+  const router = useRouter()
+
   return (
     <div className={"h-full flex flex-col p-4 bg-black"}>
       <Form {...form}>
@@ -103,18 +106,17 @@ export default function CreateTaskWithUserPage() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="h-full overflow-hidden flex flex-col gap-2"
         >
-          <div className={"flex gap-2 py-2"}>
-            <div className={"inline-flex items-center"}>
-              <Link href={"/"} className={"p-2"}>
-                <HomeIcon className={"text-primary w-4 h-4"} />
-              </Link>
-              <Label className={"text-xl"}>发布新任务️</Label>
-              <Label
-                className={"text-xs text-muted-foreground hidden sm:block"}
-              >
-                （仅博主可见）️
-              </Label>
-            </div>
+          <div className={"flex gap-2 py-2 items-center"}>
+            <Label
+              className={"my-8 text-xl text-primary flex items-centre gap-2"}
+              onClick={router.back}
+            >
+              <ChevronLeftIcon /> 发布新任务️
+            </Label>
+
+            <Label className={"text-xs text-muted-foreground hidden sm:block"}>
+              （仅博主可见）️
+            </Label>
 
             <div className={"grow"} />
 
