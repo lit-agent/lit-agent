@@ -141,6 +141,8 @@ model Message {
   // 博主发布的任务到这
   task   Task?   @relation(fields: [taskId], references: [id], onDelete: SetNull)
   taskId String? @unique
+
+  isAI Boolean @default(false)
 }
 
 // 博主发布的产品

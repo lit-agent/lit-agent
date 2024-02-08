@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db"
 import { MessageType } from "@/schema/message.base"
 
-import { ADMIN_PHONE, admins, USER_JIUGU_AI_ID } from "@/config"
+import { ADMIN_PHONE, admins, USER_JIUGU_ID } from "@/config"
 
 export const initUserAfterValidation = async (userId: string) => {
   const user = await prisma.user.update({
@@ -28,7 +28,7 @@ export const initUserAfterValidation = async (userId: string) => {
       },
       fromUser: {
         connectOrCreate: {
-          where: { id: USER_JIUGU_AI_ID },
+          where: { id: USER_JIUGU_ID },
           create: jiuguAi,
         },
       },

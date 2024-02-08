@@ -1,10 +1,8 @@
 import { prisma } from "@/lib/db"
-import { UserType } from "@prisma/client"
 
 import { fetchAdminUser, initUserAfterValidation } from "@/lib/user"
 
 import { getBroadcastId } from "@/lib/socket/helpers"
-import { USER_JIUGU_AI_ID } from "@/config"
 
 const getAdminBroadcastId = async () =>
   getBroadcastId((await fetchAdminUser())!.id)

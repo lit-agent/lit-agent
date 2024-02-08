@@ -125,24 +125,26 @@ const guidanceItems: IMessageContainer[] = [
   },
 
   {
-    user: admins.jiuguAi,
+    user: admins.jiugu,
     body: {
       type: MessageType.Plain,
       title:
         "Hi 我是姑的AI助理。如果我回答不了你的问题，我会收集整理告诉姑。如果你想直接迅速找到姑，可以花一些火值。你可以通过帮姑把内容转评赞、或完成一些指定任务来获得火值。火值也可以用来兑换其他姑提供的产品和服务。",
     },
+    isAI: true,
   },
 
   {
-    user: admins.jiuguAi,
+    user: admins.jiugu,
     body: {
       type: MessageType.Plain,
       title: "首先我先帮姑筛选一下真正的姑的friend。请回答以下几个问题：",
     },
+    isAI: true,
   },
 
   {
-    user: admins.jiuguAi,
+    user: admins.jiugu,
     body: {
       type: MessageType.TextChoices,
       title: "玖姑为什么不化妆？（多选）",
@@ -153,10 +155,11 @@ const guidanceItems: IMessageContainer[] = [
         { value: "挑战公众对女性的束缚", checked: true },
       ],
     },
+    isAI: true,
   },
 
   {
-    user: admins.jiuguAi,
+    user: admins.jiugu,
     body: {
       type: MessageType.TextChoices,
       title: "玖姑的立场是？",
@@ -167,9 +170,10 @@ const guidanceItems: IMessageContainer[] = [
         { value: "厌蠢", checked: false },
       ],
     },
+    isAI: true,
   },
   {
-    user: admins.jiuguAi,
+    user: admins.jiugu,
     body: {
       type: MessageType.TextChoices,
       title: "玖姑是否支持彩礼？",
@@ -182,7 +186,7 @@ const guidanceItems: IMessageContainer[] = [
     },
   },
   {
-    user: admins.jiuguAi,
+    user: admins.jiugu,
     body: {
       type: MessageType.TextChoices,
       title: "玖姑的目标是什么？",
@@ -193,5 +197,6 @@ const guidanceItems: IMessageContainer[] = [
         { value: "环游世界", checked: false },
       ],
     },
+    isAI: true,
   },
 ]

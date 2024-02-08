@@ -3,8 +3,7 @@ import { IUserListView } from "@/schema/user.base"
 import UserStatus = $Enums.UserStatus
 
 export const PRIMARY_COLOR = "hsla(17, 100%, 64%, 1)"
-export const USER_AI_FOR_ALL_ID = "ai"
-export const USER_JIUGU_AI_ID = "jiugu-ai"
+
 export const USER_JIUGU_AI_NAME = "玖姑的AI助手"
 export const USER_JIUGU_ID = "jiugu"
 export const ADMIN_PHONE = "17766091857"
@@ -22,7 +21,7 @@ const userBase: IUserListView = {
 }
 
 export const admins: Record<
-  "jiugu" | "mark" | "shuyu" | "hading" | "jiuguAi",
+  "jiugu" | "mark" | "shuyu" | "hading",
   IUserListView
 > = {
   jiugu: {
@@ -48,14 +47,6 @@ export const admins: Record<
     name: "舒昱",
     image: "/image/user/shuyu-wx.png",
     type: UserType.blogger,
-  },
-  jiuguAi: {
-    ...userBase,
-    id: USER_JIUGU_AI_ID,
-    phone: "",
-    name: "玖姑的AI助手",
-    image: "/image/user/jiugu-avatar.png",
-    type: UserType.assistant,
   },
   hading: {
     ...userBase,

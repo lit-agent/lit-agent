@@ -26,6 +26,7 @@ export interface IMessageContainer {
   body: IMessageBody
   taskId?: string
   onValueChange?: (v: any) => void
+  isAI?: boolean
 }
 
 export default function Message({
