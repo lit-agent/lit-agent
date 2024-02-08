@@ -17,15 +17,10 @@ import { UserType } from "@prisma/client"
 import { Separator } from "@/components/ui/separator"
 import { useAppData } from "@/lib/store/use-app-data"
 import { Fragment } from "react"
-import { IUserMainView } from "@/schema/user"
+import { useUser } from "@/hooks/use-user"
 
-export const UserSelector = ({
-  withBack,
-  user,
-}: {
-  withBack?: boolean
-  user: IUserMainView
-}) => {
+export const UserSelector = ({ withBack }: { withBack?: boolean }) => {
+  const user = useUser()!
   const { data: users = [] } = api.user.list.useQuery()
   const { targetUserId, setTargetUserId } = useAppData()
   const router = useRouter()

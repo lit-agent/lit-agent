@@ -1,6 +1,5 @@
 "use client"
 
-import { IUserMainView } from "@/schema/user"
 import { admins } from "@/config"
 import AvatarComp, { UserAvatar } from "@/components/user-avatar"
 import { RiFireFill } from "react-icons/ri"
@@ -11,12 +10,13 @@ import { last } from "lodash"
 import { maskName } from "@/lib/utils"
 
 import { ITaskView } from "@/schema/task"
+import { IUserListView } from "@/schema/user.base"
 
 export default function TaskList({
   user,
   tasks,
 }: {
-  user: IUserMainView
+  user: IUserListView
   tasks: ITaskView[]
 }) {
   const userNew = admins.hading

@@ -2,14 +2,11 @@ import { UserAvatar } from "@/components/user-avatar"
 import { AwardFillIcon } from "@/lib/assets"
 import { UserType } from "@prisma/client"
 import { useAppData } from "@/lib/store/use-app-data"
-import { IUserListView } from "@/schema/user.base"
+import { api } from "@/lib/trpc/react"
 
-export default function ChatUserNoTargetPage({
-  users,
-}: {
-  users: IUserListView[]
-}) {
+export default function ChatUserNoTargetPage() {
   const { setTargetUserId } = useAppData()
+  const { data: users = [] } = api.user.list.useQuery()
 
   return (
     <div className={"h-full flex flex-col gap-4 justify-center items-center"}>

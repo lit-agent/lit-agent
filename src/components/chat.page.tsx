@@ -58,12 +58,7 @@ export default function ChatListPage({
   if (user.type === UserType.blogger && !targetUserId)
     return <ChatList chats={chats} />
 
-  if (!targetUserId) return <ChatUserNoTargetPage users={users} />
+  if (!targetUserId) return <ChatUserNoTargetPage />
 
-  return (
-    <ChatDetailPage
-      user={user}
-      toUser={users.find((u) => u.id === targetUserId)!}
-    />
-  )
+  return <ChatDetailPage />
 }

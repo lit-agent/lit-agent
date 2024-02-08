@@ -23,7 +23,7 @@ export const ActionEntrance = () => {
       <DialogContent>
         <Label>发布</Label>
         <Link
-          href={"/requirement/create"}
+          href={"/task/create"}
           onClick={() => {
             setOpen(false)
           }}
@@ -53,7 +53,7 @@ export const ActionEntrance = () => {
         </Link>
 
         <Link
-          href={"/requirement/manage"}
+          href={"/task/manage"}
           onClick={() => {
             setOpen(false)
           }}

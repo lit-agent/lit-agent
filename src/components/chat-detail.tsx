@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { IUserMainView } from "@/schema/user"
 import { api } from "@/lib/trpc/react"
 import { UserSelector } from "@/components/user-selector"
 import Message from "@/components/message-item"
@@ -14,25 +13,23 @@ import { useAppData } from "@/lib/store/use-app-data"
 import { UserType } from "@prisma/client"
 import { ChevronLeftIcon } from "lucide-react"
 import { getClientMessageId } from "@/schema/message"
-import { IUserListView } from "@/schema/user.base"
 import { getChatId } from "@/lib/socket/helpers"
+import { useUser } from "@/hooks/use-user"
 
-export default function ChatDetailPage({
-  user,
-  toUser,
-  withBack,
-}: {
-  user: IUserMainView
-  toUser: IUserListView
-  // todo: room
-  withBack?: boolean
-}) {
+export default function ChatDetailPage() {
+  const user = useUser()!
+  const { targetUserId: toUserId } = useAppData()
+
   const refInput = useRef<HTMLInputElement>(null)
   const sendMessage = api.message.send.useMutation()
   const { setTargetUserId, messages, setMessages } = useAppData()
+  const { data: toUser } = api.user.get.useQuery(
+    { id: toUserId! },
+    { enabled: !!toUserId },
+  )
 
   const submitMessage = () => {
-    if (!refInput.current || !user) return
+    if (!refInput.current || !user || !toUser) return
     const text = refInput.current.value
     if (!text) return
 
@@ -41,7 +38,7 @@ export default function ChatDetailPage({
     setMessages([
       {
         fromUser: user,
-        toUser: toUser,
+        toUser,
         room: null,
         task: null,
         body: { type: MessageType.Plain, title: text },
@@ -75,7 +72,7 @@ export default function ChatDetailPage({
           )}
         </div>
 
-        <UserSelector user={user} />
+        <UserSelector />
 
         {/*<UserComp user={targetUser} />*/}
 
@@ -85,20 +82,21 @@ export default function ChatDetailPage({
       <div className={"flex grow flex-col-reverse gap-4 overflow-auto p-4"}>
         <div ref={refBottom} />
 
-        {messages
-          .filter(
-            (m) =>
-              (!m.toUser && !m.room) || // broadcast
-              getClientMessageId(m) === getChatId(user.id, toUser.id), // user chat
-          )
-          .map((message, index) => (
-            <Message
-              body={message.body}
-              key={index}
-              taskId={message.task?.id}
-              user={message.fromUser}
-            />
-          ))}
+        {toUserId &&
+          messages
+            .filter(
+              (m) =>
+                (!m.toUser && !m.room) || // broadcast
+                getClientMessageId(m) === getChatId(user.id, toUserId), // user chat
+            )
+            .map((message, index) => (
+              <Message
+                body={message.body}
+                key={index}
+                taskId={message.task?.id}
+                user={message.fromUser}
+              />
+            ))}
       </div>
 
       <div className={"relative px-4 py-2"}>
