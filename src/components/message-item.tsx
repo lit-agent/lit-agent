@@ -19,7 +19,7 @@ import Image from "next/image"
 
 import { getImagePath } from "@/lib/oss/read/helpers"
 import { UserType } from "@prisma/client"
-import { UserAvatarWithName } from "@/components/user-avatar"
+import { UserAvatar, UserAvatarWithName } from "@/components/user-avatar"
 
 export interface IMessageContainer {
   user: IUserListView
@@ -52,10 +52,10 @@ export const MessageContainer = ({
     <div className={cn("relative flex gap-2", className)} {...props}>
       {user?.type === UserType.blogger ? (
         <BloggerContainer className={"flex items-start"}>
-          <UserAvatarWithName user={user} />
+          <UserAvatar user={user} />
         </BloggerContainer>
       ) : (
-        <UserAvatarWithName user={user} />
+        <UserAvatar user={user} />
       )}
 
       <div className={"grow overflow-hidden flex flex-col gap-2"}>

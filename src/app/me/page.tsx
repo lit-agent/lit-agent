@@ -87,9 +87,9 @@ export default function HomePage() {
           </div>
 
           <div className={"flex items-center gap-4"}>
-            <div className={"text-gray-500"}>{user?.id}</div>
-            <Badge>好火伴</Badge>
-            <Badge>Hot火伴</Badge>
+            <div className={"text-gray-500 truncate"}>{user?.id}</div>
+            <Badge className={"shrink-0"}>好火伴</Badge>
+            <Badge className={"shrink-0"}>Hot火伴</Badge>
           </div>
 
           <div className={"absolute right-2 top-0"}>

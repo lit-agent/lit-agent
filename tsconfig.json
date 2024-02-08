@@ -48,7 +48,8 @@
     ".eslintrc.json",
     "next-env.d.ts",
     ".build/types/**/*.ts",
-    ".serve/types/**/*.ts"
+    ".serve/types/**/*.ts",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
