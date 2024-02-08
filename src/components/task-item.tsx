@@ -13,6 +13,8 @@ export default function TaskItem({ task }: { task: ITaskView }) {
   const utils = api.useUtils()
   const deleteTask = api.task.delete.useMutation()
   const user = useUser()
+  const joinTask = api.task.joinTask.useMutation()
+  const { data: userTask } = api.task.getUserTask.useQuery({ taskId: task.id })
 
   return (
     <div>
@@ -65,13 +67,24 @@ export default function TaskItem({ task }: { task: ITaskView }) {
             )
           }
 
-          <Link href={`/task/${task.id}`}>
+          <Link
+            href={`/task/${task.id}`}
+            onClick={() => {
+              joinTask.mutate({ taskId: task.id })
+            }}
+          >
             <div
               className={
                 "gradient-border px-4 py-1 flex items-center justify-center"
               }
             >
-              <span className={"gradient-text"}>立即参加</span>
+              <span className={"gradient-text"}>
+                {userTask?.status === "finished"
+                  ? "已完成"
+                  : userTask?.status === "goon"
+                    ? "正在参加"
+                    : "立即参加"}
+              </span>
             </div>
           </Link>
         </div>

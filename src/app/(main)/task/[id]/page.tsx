@@ -20,6 +20,7 @@ import { UserTaskStatus } from "@prisma/client"
 import Message from "@/components/message-item"
 import { useUser } from "@/hooks/use-user"
 import { useCopyToClipboard } from "@uidotdev/usehooks"
+import TaskOk from "@/components/task-ok"
 
 export default function TaskDetailPage({
   params: { id },
@@ -42,6 +43,8 @@ export default function TaskDetailPage({
   const { messages } = useAppData()
 
   const [copied, copyFn] = useCopyToClipboard()
+
+  if (hasFinished && user && task) return <TaskOk user={user} task={task} />
 
   return (
     <div className={"px-8 py-4 h-full flex flex-col overflow-hidden"}>

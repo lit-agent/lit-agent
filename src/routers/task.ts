@@ -16,6 +16,7 @@ import { pusherServer } from "@/lib/socket/config"
 import { getBroadcastId } from "@/lib/socket/helpers"
 import { SocketEventType } from "@/lib/socket/events"
 import { prisma } from "@/lib/db"
+import { UserTaskStatus } from "@prisma/client"
 
 export const taskRouter = createTRPCRouter({
   listTasks: protectedProcedure.query(async ({ ctx, input }) => {
@@ -100,6 +101,16 @@ export const taskRouter = createTRPCRouter({
       })
     }),
 
+  joinTask: protectedProcedure
+    .input(z.object({ taskId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return await prisma.userTask.upsert({
+        where: { taskId_userId: { userId: ctx.user.id, taskId: input.taskId } },
+        create: { userId: ctx.user.id, taskId: input.taskId, status: "goon" },
+        update: {},
+      })
+    }),
+
   submitImages: protectedProcedure
     .input(
       z.object({
@@ -118,11 +129,16 @@ export const taskRouter = createTRPCRouter({
       const { value } = task
 
       await prisma.$transaction(async (prisma) => {
-        // 建立用户与任务之间的关系
-        await prisma.userTask.create({
+        // 用户完成任务
+        await prisma.userTask.update({
+          where: {
+            taskId_userId: {
+              userId: ctx.user.id,
+              taskId: task.id,
+            },
+          },
           data: {
-            userId: ctx.user.id,
-            taskId: task.id,
+            status: UserTaskStatus.finished,
           },
         })
 

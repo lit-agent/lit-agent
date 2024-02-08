@@ -10,14 +10,15 @@ import { MessageContainer } from "@/components/message-item"
 import { UserComp } from "@/components/user"
 import { Input } from "@/components/ui/input"
 import { useRef } from "react"
-import { IUserMainView } from "@/schema/user"
 import { ITaskView } from "@/schema/task"
+import { IUserListView } from "@/schema/user.base"
+import moment from "@/lib/datetime"
 
 export default function TaskOk({
   task,
   user,
 }: {
-  user: IUserMainView
+  user: IUserListView
   task: ITaskView
 }) {
   const refTop = useRef<HTMLDivElement>(null)
@@ -44,7 +45,7 @@ export default function TaskOk({
 
           <div className={"flex items-center gap-1 text-primary"}>
             <FireIcon className={"w-4 h-4"} />
-            10
+            {task.value}
           </div>
         </div>
 
@@ -57,32 +58,34 @@ export default function TaskOk({
 
         <div className={"flex justify-center items-center gap-2"}>
           <RiDoubleQuotesL />
-          <span className={"w-2/3"}>
-            {"我会在我的社群如实分享更多律师咨询的细节，欢迎去同名公众号..."}
-          </span>
+          <span className={"w-2/3"}>{task.title}</span>
           <RiDoubleQuotesR />
         </div>
       </div>
 
       <div
         className={
-          "absolute w-full rounded-3xl flex flex-col gap-4 border shadow-lg p-2 bg-[#3D3847]"
+          "absolute w-full rounded-3xl flex flex-col gap-4 border shadow-lg p-2 bg-[#3D3847] overflow-auto"
         }
         style={{
           top: refTop.current?.getBoundingClientRect().height,
-          // left: 0
         }}
       >
         <div className={"flex flex-col gap-2 items-center"}>
           <div className={"flex items-center gap-2"}>
-            <Indicator /> 183 人限时群聊
+            <Indicator /> {task.toUsers.length} 人限时群聊
           </div>
           <div className={"text-xs text-muted-foreground tracking-widest"}>
-            剩余1天17小时
+            {moment().to(task.endTime)}
           </div>
         </div>
         <Separator orientation={"horizontal"} className={"bg-white/10"} />
-        <MessageContainer user={user}>hello</MessageContainer>
+
+        <MessageContainer user={user}>我刚刚完成了任务！</MessageContainer>
+        <MessageContainer user={user}>todo: group messages</MessageContainer>
+        <MessageContainer user={user}>todo: group messages</MessageContainer>
+        <MessageContainer user={user}>todo: group messages</MessageContainer>
+
         <Separator orientation={"horizontal"} className={"bg-white/10 mb-12"} />
       </div>
 
