@@ -14,7 +14,7 @@ import {
   RingIcon,
 } from "@/lib/assets"
 import { ArrowUpIcon } from "lucide-react"
-import { PRIMARY_COLOR } from "@/config"
+import { PRIMARY_COLOR, TODO } from "@/config"
 import { Indicator } from "@/components/indicator"
 import { prisma } from "@/lib/db"
 import { taskViewSchema } from "@/schema/task"
@@ -25,6 +25,7 @@ import { UserTaskStatus } from "@prisma/client"
 import { orderBy, sum, sumBy } from "lodash"
 import { useUser } from "@/hooks/use-user"
 import moment from "moment"
+import { toast } from "sonner"
 
 const navs = [
   { Icon: Menu1Icon, alt: "1" },
@@ -58,7 +59,11 @@ export default function HomePage() {
           "bg-background flex w-full grow flex-col gap-6 overflow-auto p-6 sm:p-8"
         }
       >
-        <div id={"ring"} className={"ml-auto rounded-full bg-white p-2"}>
+        <div
+          id={"ring"}
+          className={"ml-auto rounded-full bg-white p-2"}
+          onClick={() => toast.info(TODO)}
+        >
           <RingIcon />
         </div>
 

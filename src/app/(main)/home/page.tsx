@@ -14,83 +14,35 @@ import Link from "next/link"
 import { $Enums } from ".prisma/client"
 import UserTaskStatus = $Enums.UserTaskStatus
 import { useUser } from "@/hooks/use-user"
+import { toast } from "sonner"
+import { TODO } from "@/config"
+import { Button } from "@/components/ui/button"
 
 export default function UserHomePage() {
   const { data: products = [] } = api.product.list.useQuery()
   const { data: bills = [] } = api.bill.list.useQuery()
-  const { data: tasks = [] } = api.task.listUserTasks.useQuery()
   const user = useUser()
-  const { data: userDetail } = api.user.getSelf.useQuery(undefined, {
-    enabled: !!user,
-  })
 
-  if (!user) return "loading user..."
-
-  const billsCount = bills.filter((bill) => bill.userId === user.id).length
+  const billsCount = bills.filter((bill) => bill.userId === user?.id).length
 
   return (
-    <div className={"p-4 flex flex-col gap-4"}>
-      <div className={"flex flex-col items-center gap-2 relative"}>
-        <Link href={"/home/settings"}>
-          <HiDotsHorizontal className={"absolute top-4 left-2"} />
-        </Link>
+    <div className={"w-full p-4 relative flex flex-col gap-4"}>
+      <div className={"flex items-baseline gap-4"}>
+        <div className={"text-white font-medium"}>姑的商城</div>
 
-        <UserAvatar user={user} />
-
-        <div>{user.name ?? "Unnamed"}</div>
-
-        {user.honors.length ? (
-          <div className={"flex items-center gap-1"}>
-            {user.honors.map((Honor, index) => {
-              const Item = honorDict[Honor.id]
-              return <Item key={index} />
-            })}
-            <ChevronRightIcon className={"w-4 h-4"} />
-          </div>
-        ) : (
-          <div className={"text-muted-foreground text-xs"}>暂无勋章</div>
-        )}
+        <Button
+          variant={"ghost"}
+          className={"flex items-centre text-primary text-xs"}
+          onClick={() => toast.info(TODO)}
+        >
+          切换 <ChevronRightIcon className={"w-4 h-4"} />
+        </Button>
       </div>
 
-      <div
-        className={"bg-[#FF7A44] text-white rounded p-2 flex justify-between"}
+      <Link
+        href={"/me/bill"}
+        className={"w-ful bg-[#3D3847] rounded flex justify-between p-2"}
       >
-        <Card1
-          a={
-            <div className={"inline-flex"}>
-              <RiFireFill />
-              持有火值
-            </div>
-          }
-          b={userDetail?.balance ?? "?"}
-          c={
-            <div className={"inline-flex"}>
-              <RiFireFill />
-              历史火值
-            </div>
-          }
-          d={userDetail?.totalEarnedFire ?? "?"}
-          side={"L"}
-        />
-
-        <Separator
-          orientation={"vertical"}
-          className={"h-[120px] bg-white/25 w-[1px]"}
-        />
-
-        <Card1
-          a={"当前任务"}
-          b={tasks.filter((task) => task.status === UserTaskStatus.goon).length}
-          c={"已完成"}
-          d={
-            tasks.filter((task) => task.status === UserTaskStatus.finished)
-              .length
-          }
-          side={"R"}
-        />
-      </div>
-
-      <div className={"bg-[#3D3847] p-2 rounded flex justify-between"}>
         <div className={"inline-flex gap-2"}>
           <div className={"rounded-full p-1 bg-white text-[#3D3847]"}>
             <CgArrowsExchangeAlt />
@@ -98,21 +50,21 @@ export default function UserHomePage() {
           兑换记录
         </div>
 
-        <div className={"inline-flex"}>
+        <div className={"inline-flex text-muted-foreground"}>
           共 {billsCount} 条
           <ChevronRightIcon />
         </div>
+      </Link>
+
+      <div className={"w-full flex gap-2 text-muted-foreground"}>
+        <div onClick={() => toast.info(TODO)}>全部</div>
+        <div onClick={() => toast.info(TODO)}>热门</div>
+        <div onClick={() => toast.info(TODO)}>实物商品</div>
+        <div onClick={() => toast.info(TODO)}>虚拟服务</div>
+        <SearchIcon className={"ml-auto"} onClick={() => toast.info(TODO)} />
       </div>
 
-      <div className={"flex gap-2"}>
-        <div>全部</div>
-        <div>热门</div>
-        <div>实物商品</div>
-        <div>虚拟服务</div>
-        <SearchIcon className={"ml-auto"} />
-      </div>
-
-      <div className={"columns-2 gap-4"}>
+      <div className={"w-full columns-2 gap-4"}>
         {products.map((product, index) => (
           <ProductListView product={product} key={index} />
         ))}
