@@ -16,7 +16,6 @@ export const createProductSchema = z.object({
   isReturnable: z.boolean(),
   isReservationRequired: z.boolean(),
   total: z.number(),
-  fromUserId: z.string(),
 })
 export type ICreateProduct = z.infer<typeof createProductSchema>
 

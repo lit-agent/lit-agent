@@ -10,19 +10,20 @@ import RedeemType = $Enums.RedeemType
 import { MessageType } from "@/schema/message.base"
 import { pusherServer } from "@/lib/socket/config"
 import { SocketEventType } from "@/lib/socket/events"
+import { prisma } from "@/lib/db"
 
 export const productRouter = createTRPCRouter({
   get: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      return ctx.prisma.product.findUniqueOrThrow({
+      return prisma.product.findUniqueOrThrow({
         where: { id: input.id },
         ...productListViewSchema,
       })
     }),
 
   list: publicProcedure.query(async ({ ctx, input }) => {
-    return ctx.prisma.product.findMany({
+    return prisma.product.findMany({
       ...productListViewSchema,
     })
   }),
@@ -37,8 +38,8 @@ export const productRouter = createTRPCRouter({
        * 最后再基于socket发送消息，并返回消息即可
        */
 
-      const product = await ctx.prisma.product.create({
-        data: input,
+      const product = await prisma.product.create({
+        data: { ...input, fromUserId: ctx.user.id },
         ...productListViewSchema,
       })
       console.log("[ProductRouter] created product: ", product)
@@ -56,7 +57,6 @@ export const productRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { prisma } = ctx
       const { productId, productCount, redeemType } = input
 
       const user = await prisma.user.findUnique({ where: { id: ctx.user.id } })
