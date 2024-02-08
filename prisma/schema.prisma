@@ -139,7 +139,8 @@ model Message {
   userMessages UserMessage[]
 
   // 博主发布的任务到这
-  task Task?
+  task   Task?   @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  taskId String? @unique
 }
 
 // 博主发布的产品
@@ -200,27 +201,30 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// 博主发布的产品
+// 博主发布的任务
 model Task {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  /// [MessageBody]
-  body Json
-
-  value     Int // 每个任务价值多少火币
-  startTime DateTime   @default(now())
-  endTime   DateTime
-  status    TaskStatus
+  title       String     @default("Untitled")
+  images      String[]
+  description String?
+  detail      String?
+  value       Int // 每个任务价值多少火币
+  startTime   DateTime   @default(now())
+  endTime     DateTime
+  status      TaskStatus
+  platform    String?    @default("不孤岛")
+  target      String? // 目标群体
+  purpose     String? // 目标结果
 
   fromUser   User       @relation(fields: [fromUserId], references: [id], onDelete: Cascade)
   fromUserId String
   toUsers    UserTask[]
 
   // 包含发送到chat页的welcome，以及用户的评论
-  sentMessage   Message @relation(fields: [sentMessageId], references: [id])
-  sentMessageId String  @unique
+  sentMessage Message?
 
   room Room?
 }

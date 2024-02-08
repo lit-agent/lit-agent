@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { uploadFiles } from "@/lib/oss/upload/client"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import Image from "next/image"
+import moment, { DATETIME_FORMAT } from "@/lib/datetime"
 
 export const NumberControl = ({ field }) => {
   return (
@@ -55,18 +56,33 @@ export const ImagesControl = ({ field }) => {
     </FormControl>
   )
 }
+
 export const InputControl = ({ field }) => (
   <FormControl>
     <Input placeholder="" {...field} />
   </FormControl>
 )
+
 export const TextareaControl = ({ field }) => (
   <FormControl>
     <Textarea placeholder="" {...field} />
   </FormControl>
 )
+
 export const SwitchControl = ({ field }) => (
   <FormControl className={"bg-magenta-500"}>
     <Switch checked={field.value} onCheckedChange={field.onChange} />
+  </FormControl>
+)
+
+export const DateControl = ({ field }) => (
+  <FormControl>
+    <Input
+      type={"datetime-local"}
+      value={moment(field.value).format(DATETIME_FORMAT)}
+      onChange={(event) => {
+        field.onChange(moment(event.currentTarget.value).toDate())
+      }}
+    />
   </FormControl>
 )

@@ -13,7 +13,7 @@ import { useUser } from "@/hooks/use-user"
 export default function ChatListPage() {
   const user = useUser()
 
-  const { targetUserId, messages } = useAppData()
+  const { messages } = useAppData()
 
   const [chats, setChats] = useState<IChatView[]>([])
 
@@ -52,11 +52,6 @@ export default function ChatListPage() {
   }, [messages.length])
 
   console.log("[ChatHomePage]: ", { messages, chats })
-
-  if (user?.type === UserType.blogger && !targetUserId)
-    return <ChatList chats={chats} />
-
-  if (!targetUserId) return <ChatUserNoTargetPage />
-
-  return <ChatDetailPage />
+  
+  return <ChatList chats={chats} />
 }

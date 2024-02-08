@@ -1,5 +1,6 @@
 import { ElementType } from "react"
 import {
+  DateControl,
   ImagesControl,
   InputControl,
   NumberControl,
@@ -7,12 +8,19 @@ import {
   TextareaControl,
 } from "@/components/controls"
 
-export type FormFieldType = "string" | "text" | "images" | "number" | "boolean"
+export type FormFieldType =
+  | "string"
+  | "text"
+  | "images"
+  | "number"
+  | "boolean"
+  | "date"
 
-export const formFieldControlMap: Record<FormFieldType, ElementType> = {
+export const FormFieldControlMap: Record<FormFieldType, ElementType> = {
   string: InputControl,
   images: ImagesControl,
   text: TextareaControl,
   boolean: SwitchControl,
   number: NumberControl,
+  date: DateControl,
 }

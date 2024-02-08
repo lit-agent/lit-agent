@@ -1,6 +1,6 @@
-import { $Enums, User, UserType } from "@prisma/client"
-import UserStatus = $Enums.UserStatus
+import { $Enums, UserType } from "@prisma/client"
 import { IUserListView } from "@/schema/user.base"
+import UserStatus = $Enums.UserStatus
 
 export const PRIMARY_COLOR = "hsla(17, 100%, 64%, 1)"
 export const USER_AI_FOR_ALL_ID = "ai"

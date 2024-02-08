@@ -13,12 +13,13 @@ import { HiDotsHorizontal } from "react-icons/hi"
 import Link from "next/link"
 import { $Enums } from ".prisma/client"
 import UserTaskStatus = $Enums.UserTaskStatus
+import { useUser } from "@/hooks/use-user"
 
 export default function UserHomePage() {
   const { data: products = [] } = api.product.list.useQuery()
   const { data: bills = [] } = api.bill.list.useQuery()
   const { data: tasks = [] } = api.task.listUserTasks.useQuery()
-  const user = useSession().data?.user
+  const user = useUser()
   const { data: userDetail } = api.user.getSelf.useQuery(undefined, {
     enabled: !!user,
   })

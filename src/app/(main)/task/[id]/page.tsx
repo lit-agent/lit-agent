@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { uploadFiles } from "@/lib/oss/upload/client"
 import { useAppData } from "@/lib/store/use-app-data"
-import { ICreateTaskRequirementBody } from "@/schema/task"
+import { ICreateTask } from "@/schema/task"
 import { UserTaskStatus } from "@prisma/client"
 import Message from "@/components/message-item"
 import { useUser } from "@/hooks/use-user"
@@ -44,7 +44,7 @@ export default function TaskDetailPage({
 
   if (!task) return "loading task..."
 
-  const body = task.body as ICreateTaskRequirementBody
+  const body = task.body as ICreateTask
 
   return (
     <div className={"px-8 py-4 h-full flex flex-col overflow-hidden"}>

@@ -7,29 +7,41 @@ import { createRequirementSchema } from "@/schema/requirement"
 import { z } from "zod"
 
 import { MessageType, messageViewSelector } from "@/schema/message.base"
-import { taskViewSelector } from "@/schema/task"
+import {
+  createTaskSchema,
+  taskViewSchema,
+  userTaskViewSchema,
+} from "@/schema/task"
 import { pusherServer } from "@/lib/socket/config"
 import { getBroadcastId } from "@/lib/socket/helpers"
 import { SocketEventType } from "@/lib/socket/events"
+import { prisma } from "@/lib/db"
 
 export const taskRouter = createTRPCRouter({
+  listTasks: protectedProcedure.query(async ({ ctx, input }) => {
+    return prisma.task.findMany({
+      ...taskViewSchema,
+    })
+  }),
+
   listUserTasks: protectedProcedure.query(async ({ ctx, input }) => {
-    return ctx.prisma.userTask.findMany({
+    return prisma.userTask.findMany({
       where: { userId: ctx.user.id },
+      ...userTaskViewSchema,
     })
   }),
 
   get: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      return ctx.prisma.task.findUniqueOrThrow({
+      return prisma.task.findUniqueOrThrow({
         where: input,
-        ...taskViewSelector,
+        ...taskViewSchema,
       })
     }),
 
   create: protectedProcedure
-    .input(createRequirementSchema)
+    .input(createTaskSchema)
     .mutation(async ({ ctx, input }) => {
       /**
        * 因为每个新发布的任务必然同步到全局聊天室产生一条消息
@@ -41,37 +53,49 @@ export const taskRouter = createTRPCRouter({
       const userId = ctx.user.id
 
       let message
-      await ctx.prisma.$transaction(async (prisma) => {
+      await prisma.$transaction(async (prisma) => {
+        const task = await prisma.task.create({
+          data: {
+            ...input,
+            fromUserId: userId,
+            status: "on",
+          },
+        })
+
         message = await prisma.message.create({
           data: {
-            body: input.body,
             fromUserId: userId,
-            task: {
-              create: {
-                ...input,
-                fromUserId: userId,
-                room: {
-                  create: {},
-                },
-              },
+            taskId: task.id,
+            body: {
+              type: MessageType.Task,
+              id: task.id,
             },
           },
           ...messageViewSelector,
         })
+
+        await prisma.userTask.create({
+          data: {
+            userId,
+            taskId: task.id,
+            status: "goon",
+          },
+        })
+
+        void pusherServer.trigger(
+          getBroadcastId(userId),
+          SocketEventType.Message,
+          message,
+        )
       })
 
-      void pusherServer.trigger(
-        getBroadcastId(userId),
-        SocketEventType.Message,
-        message,
-      )
       return message
     }),
 
   getUserTask: protectedProcedure
     .input(z.object({ taskId: z.string() }))
     .query(async ({ ctx, input }) => {
-      return await ctx.prisma.userTask.findUnique({
+      return await prisma.userTask.findUnique({
         where: { taskId_userId: { userId: ctx.user.id, taskId: input.taskId } },
       })
     }),
@@ -84,12 +108,12 @@ export const taskRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { user, prisma } = ctx
+      const { user } = ctx
       const { taskId, images } = input
 
       const task = await prisma.task.findUniqueOrThrow({
         where: { id: taskId },
-        ...taskViewSelector,
+        ...taskViewSchema,
       })
       const { value } = task
 

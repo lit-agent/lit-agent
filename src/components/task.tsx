@@ -4,14 +4,14 @@ import Image from "next/image"
 import { CoverSmImage, WechatMPIcon } from "@/lib/assets"
 import { z } from "zod"
 import { api } from "@/lib/trpc/react"
-import { createTaskRequirementBodySchema } from "@/schema/task"
+import { createTaskSchema } from "@/schema/task"
 import moment from "@/lib/datetime"
 
 export default function RenderTask({ taskId }: { taskId: string }) {
   const { data: task } = api.task.get.useQuery({ id: taskId })
   if (!task) return "loading task..."
 
-  const body = task.body as z.infer<typeof createTaskRequirementBodySchema>
+  const body = task.body as z.infer<typeof createTaskSchema>
 
   return (
     <Link

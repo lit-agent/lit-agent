@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Form,
-  FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -15,25 +15,21 @@ import {
 import { Button } from "@/components/ui/button"
 import { api } from "@/lib/trpc/react"
 import { toast } from "sonner"
-import { Input } from "@/components/ui/input"
-import { ChevronLeftIcon, HomeIcon } from "lucide-react"
+import { ChevronLeftIcon } from "lucide-react"
 import { useEffect, useState } from "react"
-import { createRequirementSchema } from "@/schema/requirement"
 import { MessageType, SupportedMessageTypes } from "@/schema/message.base"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 import { Separator } from "@/components/ui/separator"
-import Link from "next/link"
-import { Switch } from "@/components/ui/switch"
-import { Textarea } from "@/components/ui/textarea"
-import { TextChoicesInput } from "@/components/message.body.input-choices"
 import { useUserPreference } from "@/lib/store/use-user-preference"
-
-import { uploadFiles } from "@/lib/oss/upload/client"
-import moment, { DATETIME_FORMAT } from "@/lib/datetime"
+import moment from "@/lib/datetime"
 import { useRouter } from "next/navigation"
+import { FormFieldControlMap } from "@/lib/form"
+import { createTaskSchema } from "@/schema/task"
 
-const schema = createRequirementSchema
+import { createTaskData } from "@/app/(business)/create/config"
+
+const schema = createTaskSchema
 const FINISHED = 3
 
 export default function CreateTaskWithUserPage() {
@@ -196,210 +192,31 @@ export default function CreateTaskWithUserPage() {
             <Separator orientation={"vertical"} />
 
             <div className={"grow space-y-4 overflow-auto"}>
-              <FormField
-                control={form.control}
-                name="body.title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>标题</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="body.cover"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>封面</FormLabel>
-                    <FormControl>
-                      <Input
-                        type={"file"}
-                        accept={"image/*"}
-                        onChange={async (event) => {
-                          const files = event.currentTarget.files
-                          if (!files) return
-                          await uploadFiles(files)
-                          // todo: bind field
-                        }}
-                      />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <TabsContent value={MessageType.Task} className={"space-y-4"}>
-                <FormField
-                  control={form.control}
-                  name="body.purpose"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>任务目标</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="body.targetUsers"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>目标群体</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="body.platform"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>平台渠道</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </TabsContent>
-
-              <TabsContent
-                value={MessageType.TextChoices}
-                className={"space-y-4"}
-              >
-                <FormField
-                  control={form.control}
-                  name="body.choices"
-                  render={({ field: questionField }) => (
-                    <FormItem>
-                      <FormLabel>
-                        选项
-                        <span className={"text-muted-foreground text-xs"}>
-                          （至少两个）
-                        </span>
-                      </FormLabel>
-                      <FormControl>
-                        <TextChoicesInput
-                          value={questionField.value}
-                          onChange={questionField.onChange}
-                        />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="body.multiple"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className={"flex items-center gap-2"}>
-                        <FormLabel>是否多选</FormLabel>
-                        <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </TabsContent>
-
-              <FormField
-                control={form.control}
-                name="value"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      价值
-                      <span className={"text-muted-foreground text-xs"}>
-                        （单位：火币）
-                      </span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type={"number"}
-                        {...field}
-                        onChange={(event) => {
-                          field.onChange(
-                            Math.floor(parseFloat(event.currentTarget.value)),
-                          )
-                        }}
-                      />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="startTime"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>开始时间</FormLabel>
-                    <FormControl>
-                      <Input
-                        type={"datetime-local"}
-                        value={moment(field.value).format(DATETIME_FORMAT)}
-                        onChange={(event) => {
-                          field.onChange(
-                            moment(event.currentTarget.value).toDate(),
-                          )
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="endTime"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>截止时间</FormLabel>
-                    <FormControl>
-                      <Input
-                        type={"datetime-local"}
-                        value={moment(field.value).format(DATETIME_FORMAT)}
-                        onChange={(event) => {
-                          field.onChange(
-                            moment(event.currentTarget.value).toDate(),
-                          )
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {createTaskData.map((formField, index) => {
+                const Comp = FormFieldControlMap[formField.type]
+                return (
+                  <FormField
+                    key={index}
+                    control={form.control}
+                    name={formField.name}
+                    render={({ field }) => (
+                      <FormItem
+                        className={cn(
+                          formField.type === "boolean" &&
+                            "space-y-0 flex items-center gap-4",
+                        )}
+                      >
+                        <FormLabel>{formField.label}</FormLabel>
+                        <Comp field={field} />
+                        <FormDescription>
+                          {formField.description}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )
+              })}
             </div>
           </Tabs>
         </form>

@@ -90,3 +90,32 @@
         list-style-position: inside;
     }
 }
+
+
+/* 参考：使用CSS实现渐变圆角边框的效果_CSS教程_CSS_网页制作_脚本之家, https://www.jb51.net/css/906031.html */
+.gradient-border {
+    /*padding: 2px 4px;*/
+    cursor: pointer;
+    position: relative;
+}
+
+.gradient-border::before { /* 1 */
+    display: block;
+    content: '';
+    /* 只能在伪类里加 */
+    border-radius: 30px;
+    border: 2px solid transparent;
+    background: linear-gradient(90deg, orangered, yellow) border-box; /* 2 */
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0); /* 3 */
+    -webkit-mask-composite: xor; /* 4 */
+    mask-composite: exclude;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.gradient-text {
+    background: -webkit-linear-gradient(0deg, orangered, yellow);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

@@ -5,7 +5,7 @@ import {
   choicesBodySchema,
   MessageType,
 } from "@/schema/message.base"
-import { createTaskRequirementBodySchema } from "@/schema/task"
+import { createTaskSchema } from "@/schema/task"
 
 // 纯图文
 export const createPlainRequirementBodySchema = basicBodySchema.extend({
@@ -28,7 +28,10 @@ export const createRequirementBodySchema = z.discriminatedUnion("type", [
   createPlainRequirementBodySchema,
   createTextChoicesRequirementBodySchema,
   createImageChoicesRequirementBodySchema,
-  createTaskRequirementBodySchema,
+  z.object({
+    type: z.literal(MessageType.Task),
+    id: z.string(), // id
+  }),
 
   z.object({ type: z.literal(MessageType.Images) }).extend({
     images: z.array(z.string()).min(1),
