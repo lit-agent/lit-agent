@@ -23,6 +23,7 @@ import { uploadFiles } from "@/lib/oss/upload/client"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import Image from "next/image"
 import { useUser } from "@/hooks/use-user"
+import { useEffect } from "react"
 
 export default function CreateProductPage() {
   const user = useUser()
@@ -62,11 +63,22 @@ export default function CreateProductPage() {
       })
   }
 
+  useEffect(() => {
+    if (user?.id) form.setValue("fromUserId", user.id)
+  }, [user])
+
   return (
     <div className={"flex flex-col p-8 bg-black"}>
       <Label className={"my-8 text-xl"}>发布产品</Label>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8">
+          <FormField
+            render={({ field }) => {
+              return <div></div>
+            }}
+            name={"fromUserId"}
+          />
+
           <FormField
             control={form.control}
             name="title"
@@ -190,20 +202,20 @@ export default function CreateProductPage() {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="images"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>图片列表</FormLabel>
-                <FormControl>
-                  <Input type={"file"} accept={"image/*"} />
-                </FormControl>
-                <FormDescription>（待开发）第一张会作为封面</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {/*<FormField*/}
+          {/*  control={form.control}*/}
+          {/*  name="images"*/}
+          {/*  render={({ field }) => (*/}
+          {/*    <FormItem>*/}
+          {/*      <FormLabel>图片列表</FormLabel>*/}
+          {/*      <FormControl>*/}
+          {/*        <Input type={"file"} accept={"image/*"} />*/}
+          {/*      </FormControl>*/}
+          {/*      <FormDescription>（待开发）第一张会作为封面</FormDescription>*/}
+          {/*      <FormMessage />*/}
+          {/*    </FormItem>*/}
+          {/*  )}*/}
+          {/*/>*/}
 
           <FormField
             control={form.control}
@@ -285,9 +297,9 @@ export default function CreateProductPage() {
             提交
           </Button>
 
-          {/*<div className={"p-2 bg-cyan-500"}>*/}
-          {/*  {JSON.stringify(form.formState.errors, null, 2)}*/}
-          {/*</div>*/}
+          <div className={"p-2 bg-cyan-500"}>
+            {JSON.stringify(form.formState.errors, null, 2)}
+          </div>
         </form>
       </Form>
     </div>
