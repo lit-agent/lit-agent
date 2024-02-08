@@ -4,7 +4,7 @@ import Image from "next/image"
 import { BroadcastImage } from "@/lib/assets"
 import { RiDoubleQuotesL, RiWechatChannelsLine } from "react-icons/ri"
 import { Separator } from "@/components/ui/separator"
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 import { Hot } from "@/components/fire-value"
 import { MyMarkdown } from "@/components/markdown"
 import { UserAvatar } from "@/components/user-avatar"
@@ -16,20 +16,19 @@ import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { uploadFiles } from "@/lib/oss/upload/client"
 import { useAppData } from "@/lib/store/use-app-data"
-import { ICreateTask } from "@/schema/task"
 import { UserTaskStatus } from "@prisma/client"
 import Message from "@/components/message-item"
 import { useUser } from "@/hooks/use-user"
+import { useCopyToClipboard } from "@uidotdev/usehooks"
 
 export default function TaskDetailPage({
   params: { id },
 }: {
   params: { id: string }
 }) {
-  const user = useUser()!
+  const user = useUser()
 
   const refTop = useRef<HTMLDivElement>(null)
-  const { targetUserId } = useAppData()
 
   const utils = api.useUtils()
   const { data: task } = api.task.get.useQuery({ id })
@@ -42,9 +41,7 @@ export default function TaskDetailPage({
 
   const { messages } = useAppData()
 
-  if (!task) return "loading task..."
-
-  const body = task.body as ICreateTask
+  const [copied, copyFn] = useCopyToClipboard()
 
   return (
     <div className={"px-8 py-4 h-full flex flex-col overflow-hidden"}>
@@ -67,7 +64,7 @@ export default function TaskDetailPage({
               }
             >
               <RiDoubleQuotesL className={"w-10 h-10 text-gray-500"} />
-              <span>{body.title}</span>
+              <span>{task?.title}</span>
 
               <div
                 className={"w-full flex justify-between items-center mt-auto"}
@@ -76,11 +73,11 @@ export default function TaskDetailPage({
                   <RiWechatChannelsLine
                     className={"text-primary bg-white rounded"}
                   />
-                  {body.platform}
+                  {task?.platform}
                 </div>
 
                 <div className={"text-muted-foreground text-xs"}>
-                  {moment(task.startTime).fromNow()}发布
+                  {moment(task?.startTime).fromNow()}发布
                 </div>
               </div>
             </div>
@@ -101,7 +98,7 @@ export default function TaskDetailPage({
               <div className={"flex flex-col items-center"}>
                 <div>任务奖励</div>
                 <div>
-                  <Hot value={task.value} />
+                  <Hot value={task?.value} />
                 </div>
               </div>
 
@@ -121,7 +118,7 @@ export default function TaskDetailPage({
             <div className={"flex flex-col items-center"}>
               <div className={"font-semibold"}>任务目的</div>
 
-              <MyMarkdown>{body.purpose}</MyMarkdown>
+              <MyMarkdown>{task?.purpose ?? ""}</MyMarkdown>
 
               <Separator orientation={"horizontal"} />
 
@@ -130,27 +127,29 @@ export default function TaskDetailPage({
                   "w-full flex items-center justify-between my-4 text-[#B0AFB4] px-2 "
                 }
               >
-                <div>to {body.targetUsers}</div>
-                <div className={"inline-flex items-center gap-1"}>
-                  <UserAvatar user={user} size={"sm"} />
-                  {user.name}
-                </div>
+                <div>to {task?.target}</div>
+                {user && (
+                  <div className={"inline-flex items-center gap-1"}>
+                    <UserAvatar user={user} size={"sm"} />
+                    {user.name}
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
 
         <div className={"flex flex-col items-center my-8"}>
-          <div>{task.toUsers.length} 人已参加</div>
+          <div>{task?.toUsers.length} 人已参加</div>
           <div className={"flex gap-2 flex-wrap"}>
-            {task.toUsers.map((userTask, index) => (
+            {task?.toUsers.map((userTask, index) => (
               <UserAvatar user={userTask.user} key={index} />
             ))}
           </div>
         </div>
 
         {messages
-          .filter((message) => message.room?.id === task.room?.id)
+          .filter((message) => message.room?.id === task?.room?.id)
           .map((message, index) => (
             // <div key={index}>{JSON.stringify(message.body)}</div>
             <Message user={message.fromUser} body={message.body} key={index} />
@@ -161,14 +160,9 @@ export default function TaskDetailPage({
         <div className={"flex flex-col w-full shrink-0 space-y-4 pt-4"}>
           <Button
             className={"bg-white text-primary hover:bg-white/90"}
-            onClick={async (event) => {
-              const url = location.href
-              try {
-                await navigator.clipboard.writeText(url)
-                toast.success("链接已拷贝：" + url)
-              } catch (error) {
-                toast.error("Failed to copy!" + error, { duration: 3000 })
-              }
+            onClick={async () => {
+              await copyFn(location.href)
+              await toast.success("复制成功！")
             }}
           >
             🔗复制作品链接
@@ -187,12 +181,11 @@ export default function TaskDetailPage({
               accept={"image/*"}
               multiple
               onChange={async (event) => {
-                if (!targetUserId) throw Error
+                if (!task) return
                 const files = event.currentTarget.files
                 if (!files) return
                 const result = await uploadFiles(files)
                 if (!result.success) return
-
                 submitTask
                   .mutateAsync({
                     taskId: task.id,

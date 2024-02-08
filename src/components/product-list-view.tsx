@@ -13,12 +13,12 @@ export default function ProductListView({
   const cover = product.images[0]
 
   return (
-    <Link href={`/product/${product.id}`} className={"rounded w-full"}>
+    <Link href={`/product/${product.id}`} className={"rounded w-full "}>
       {cover && (
         <Image
           src={cover}
           alt={cover}
-          className={"w-full h-auto rounded"}
+          className={"w-full h-auto rounded-lg"}
           width={120}
           height={160}
         />

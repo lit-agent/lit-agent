@@ -7,6 +7,7 @@ import { DeleteIcon } from "lucide-react"
 import { toast } from "sonner"
 import { api } from "@/lib/trpc/react"
 import { useUser } from "@/hooks/use-user"
+import Link from "next/link"
 
 export default function TaskItem({ task }: { task: ITaskView }) {
   const utils = api.useUtils()
@@ -64,13 +65,15 @@ export default function TaskItem({ task }: { task: ITaskView }) {
             )
           }
 
-          <div
-            className={
-              "gradient-border px-4 py-1 flex items-center justify-center"
-            }
-          >
-            <span className={"gradient-text"}>立即参加</span>
-          </div>
+          <Link href={`/task/${task.id}`}>
+            <div
+              className={
+                "gradient-border px-4 py-1 flex items-center justify-center"
+              }
+            >
+              <span className={"gradient-text"}>立即参加</span>
+            </div>
+          </Link>
         </div>
       </div>
     </div>

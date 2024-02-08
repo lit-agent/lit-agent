@@ -112,7 +112,7 @@ export default function UserHomePage() {
         <SearchIcon className={"ml-auto"} />
       </div>
 
-      <div className={"columns-2 gap-2"}>
+      <div className={"columns-2 gap-4"}>
         {products.map((product, index) => (
           <ProductListView product={product} key={index} />
         ))}

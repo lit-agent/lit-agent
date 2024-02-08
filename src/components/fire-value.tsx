@@ -4,12 +4,12 @@ import { FireIcon } from "@/lib/assets"
 
 import { PRIMARY_COLOR } from "@/config"
 
-export const Hot = ({ value }: { value: number }) => (
+export const Hot = ({ value }: { value?: number }) => (
   <div className={"text-primary flex items-center"} color={PRIMARY_COLOR}>
     <div className={"h-4 w-4"}>
       <FireIcon />
     </div>
 
-    {value}
+    {value ?? "??"}
   </div>
 )
