@@ -30,7 +30,7 @@ export default function UserHomePage() {
   return (
     <div className={"p-4 flex flex-col gap-4"}>
       <div className={"flex flex-col items-center gap-2 relative"}>
-        <Link href={"/settings"}>
+        <Link href={"/home/settings"}>
           <HiDotsHorizontal className={"absolute top-4 left-2"} />
         </Link>
 
