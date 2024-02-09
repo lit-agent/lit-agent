@@ -151,7 +151,7 @@ const Comp3 = () => {
                   <FormItem>
                     <FormLabel className={"text-primary"}>手机号</FormLabel>
                     <FormControl>
-                      <Input placeholder={"+86"} {...field} />
+                      <Input autoFocus placeholder={"+86"} {...field} />
                     </FormControl>
                     <FormDescription>
                       该号码将会是您的唯一ID标识
