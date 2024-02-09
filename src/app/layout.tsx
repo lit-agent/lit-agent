@@ -41,10 +41,8 @@ export default async function RootLayout({
       <TRPCReactProvider>
         <html lang="zh" suppressHydrationWarning>
           <head>
-            <meta
-              httpEquiv="Content-Security-Policy"
-              content="upgrade-insecure-requests"
-            />
+            {/* todo: 这个不能开，开了之后本地的服务资源就都挂了 */}
+            {/*<meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" />*/}
           </head>
 
           <body className={`font-sans ${inter.variable}`}>

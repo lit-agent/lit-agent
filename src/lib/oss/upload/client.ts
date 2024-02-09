@@ -18,7 +18,11 @@ export const uploadFilesV2 = async (files: FileList): Promise<IApi> => {
       })
       if (!resPut.ok) return
 
-      return signatureUrl.split("?")[0] ?? signatureUrl
+      const url = signatureUrl.split("?")[0] ?? signatureUrl
+
+      // todo: cleaner approach
+      const isHttps = location.href.includes("https")
+      return isHttps ? url.replace("http://", "https://") : url
     }),
   )
 
