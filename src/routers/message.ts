@@ -23,19 +23,22 @@ export const messageRouter = createTRPCRouter({
   send: protectedProcedure
     .input(sendMessageSchema)
     .mutation(async ({ ctx, input }) => {
+      const fromUserId = ctx.user.id
       const channelId = input.roomId ?? input.toUserId
       if (!channelId) throw new Error("should have either roomId or toUserId")
 
       const message = await ctx.prisma.message.create({
         data: {
           ...input,
-          fromUserId: ctx.user.id,
+          fromUserId,
         },
         ...messageViewSchema,
       })
       console.log("[MessageRouter] sending socket: ", { input, message })
-      // room 和 toUser 必有一个
-      void pusherServer.trigger(channelId, SocketEventType.Message, message)
+
+      // 自己不能发给自己
+      if (fromUserId !== input.toUserId)
+        void pusherServer.trigger(channelId, SocketEventType.Message, message)
 
       return message
     }),

@@ -3,7 +3,7 @@ import { z } from "zod"
 import { getChatId } from "@/lib/socket/helpers"
 import { createRequirementBodySchema } from "./requirement"
 import { IMessageView } from "./message.base"
-import { IUserListView } from "./user.base"
+import { IUserView } from "./user.base"
 
 export const selectChatTarget = z.object({
   roomId: z.string().optional(),
@@ -29,7 +29,7 @@ export type IChatView = {
   unreadCount: number
 
   roomId?: string
-  users?: IUserListView[] // 群
+  users?: IUserView[] // 群
 
-  targetUser?: IUserListView // 个人
+  targetUser?: IUserView // 个人
 }

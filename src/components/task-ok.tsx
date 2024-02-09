@@ -10,7 +10,7 @@ import { MessageContainer } from "@/components/message-item"
 import { Input } from "@/components/ui/input"
 import { useRef } from "react"
 import { ITaskView } from "@/schema/task"
-import { IUserListView } from "@/schema/user.base"
+import { IUserView } from "@/schema/user.base"
 import moment from "@/lib/datetime"
 import { UserAvatarWithName } from "@/components/user-avatar"
 
@@ -18,7 +18,7 @@ export default function TaskOk({
   task,
   user,
 }: {
-  user: IUserListView
+  user: IUserView
   task: ITaskView
 }) {
   const refTop = useRef<HTMLDivElement>(null)

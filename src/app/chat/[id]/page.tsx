@@ -41,6 +41,8 @@ export default function ChatDetailPage({ params: { id } }: { params: { id } }) {
         room: null,
         task: null,
         body: { type: MessageType.Plain, title: text },
+        isAI: false,
+        read: true,
       },
       ...messages,
     ])
@@ -95,6 +97,7 @@ export default function ChatDetailPage({ params: { id } }: { params: { id } }) {
                 key={index}
                 taskId={message.task?.id}
                 user={message.fromUser}
+                message={message}
               />
             ))}
       </div>

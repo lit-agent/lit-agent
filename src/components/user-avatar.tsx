@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { IUserListView } from "@/schema/user.base"
+import { IUserView } from "@/schema/user.base"
 
 /**
  * space-x 这个是控制子孩子距离，不用tailwind的话，要用 css 写，比较麻烦
@@ -15,7 +15,7 @@ export default function UserAvatars({
   maxN = 6,
   size = "sm",
 }: {
-  users: IUserListView[]
+  users: IUserView[]
   maxN?: number
   size?: "sm" | "lg"
 }) {
@@ -54,7 +54,7 @@ export const UserAvatar = ({
   user,
   size = "lg",
 }: {
-  user?: IUserListView
+  user?: IUserView
   size?: "sm" | "lg"
 }) => (
   <Avatar
@@ -71,7 +71,7 @@ export const UserAvatar = ({
   </Avatar>
 )
 
-export const UserAvatarWithName = ({ user }: { user: IUserListView }) => (
+export const UserAvatarWithName = ({ user }: { user: IUserView }) => (
   <div className={"inline-flex items-center gap-2"}>
     <UserAvatar user={user} size={"sm"} />
     <span>{user.name}</span>

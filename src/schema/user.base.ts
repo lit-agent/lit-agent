@@ -24,4 +24,4 @@ export const userViewSchema = validator<UserDefaultArgs>()({
     },
   },
 })
-export type IUserListView = UserGetPayload<typeof userViewSchema>
+export type IUserView = UserGetPayload<typeof userViewSchema>

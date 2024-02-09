@@ -10,13 +10,13 @@ import { last } from "lodash"
 import { maskName } from "@/lib/utils"
 
 import { ITaskView } from "@/schema/task"
-import { IUserListView } from "@/schema/user.base"
+import { IUserView } from "@/schema/user.base"
 
 export default function TaskList({
   user,
   tasks,
 }: {
-  user: IUserListView
+  user: IUserView
   tasks: ITaskView[]
 }) {
   const userNew = admins.hading

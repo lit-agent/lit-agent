@@ -51,6 +51,7 @@ export type IChoiceBody = z.infer<typeof choicesBodySchema>
 
 export const messageViewSchema = validator<MessageDefaultArgs>()({
   select: {
+    isAI: true,
     body: true,
     fromUser: userViewSchema,
     toUser: userViewSchema,

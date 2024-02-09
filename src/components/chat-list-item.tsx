@@ -10,6 +10,7 @@ export default function ChatListItem({ chat }: { chat: IChatView }) {
     <Link href={`/chat/${chat.targetUser.id}`} className={"relative"}>
       <MessageContainer
         user={chat.targetUser}
+        message={chat.message}
         className={"py-4 border-b relative"}
       >
         <div className={"truncate"}>{getMessageAbstract(chat.message)}</div>

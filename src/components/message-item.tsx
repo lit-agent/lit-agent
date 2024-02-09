@@ -1,7 +1,7 @@
 "use client"
 
 import { BsThreeDots } from "react-icons/bs"
-import { MessageType } from "@/schema/message.base"
+import { IMessageView, MessageType } from "@/schema/message.base"
 import { cn } from "src/lib/utils"
 import { HTMLAttributes, useState } from "react"
 import { Badge } from "src/components/ui/badge"
@@ -12,21 +12,22 @@ import { Label } from "@/components/ui/label"
 import { IMessageBody } from "@/schema/message"
 
 import RenderTask from "@/components/task"
-import { IUserListView } from "@/schema/user.base"
+import { IUserView } from "@/schema/user.base"
 import { ChevronRightIcon } from "lucide-react"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import Image from "next/image"
 
 import { getImagePath } from "@/lib/oss/read/helpers"
 import { UserType } from "@prisma/client"
-import { UserAvatar, UserAvatarWithName } from "@/components/user-avatar"
+import { UserAvatar } from "@/components/user-avatar"
 
 export interface IMessageContainer {
-  user: IUserListView
+  user: IUserView
   body: IMessageBody
   taskId?: string
   onValueChange?: (v: any) => void
   isAI?: boolean
+  message?: IMessageView
 }
 
 export default function Message({
@@ -34,20 +35,25 @@ export default function Message({
   body,
   taskId,
   onValueChange,
+  message,
 }: IMessageContainer) {
   return (
-    <MessageContainer user={user}>
+    <MessageContainer user={user} message={message}>
       <MessageBody body={body} taskId={taskId} onValueChange={onValueChange} />
     </MessageContainer>
   )
 }
 
 export const MessageContainer = ({
+  message,
   user,
   className,
   children,
   ...props
-}: { user: IUserListView } & HTMLAttributes<HTMLDivElement>) => {
+}: {
+  user?: IUserView
+  message?: IMessageView
+} & HTMLAttributes<HTMLDivElement>) => {
   return (
     <div className={cn("relative flex gap-2", className)} {...props}>
       {user?.type === UserType.blogger ? (
@@ -67,6 +73,12 @@ export const MessageContainer = ({
               className={"rounded-sm bg-green-800 px-1 py-0 text-gray-200"}
             >
               博主
+            </Badge>
+          )}
+
+          {message?.isAI && (
+            <Badge className={"rounded-sm bg-blue-800 px-1 py-0 text-gray-200"}>
+              AI
             </Badge>
           )}
         </div>
