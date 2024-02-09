@@ -3,12 +3,15 @@
 import { useAppData } from "@/lib/store/use-app-data"
 import { useEffect, useState } from "react"
 import { IChatView } from "@/schema/message"
-import { UserType } from "@prisma/client"
-import ChatList from "@/components/chat-list"
-import ChatUserNoTargetPage from "@/components/chat.user-no-target.page"
 import { getChatId } from "@/lib/socket/helpers"
 import { useUser } from "@/hooks/use-user"
-import ChatDetailPage from "@/app/chat/[id]/page"
+import { UserAvatar } from "@/components/user-avatar"
+import { Label } from "@/components/ui/label"
+import ChatListItem from "@/components/chat-list-item"
+import { Input } from "@/components/ui/input"
+import { LogOutIcon } from "lucide-react"
+import { signOut } from "next-auth/react"
+import Link from "next/link"
 
 export default function ChatListPage() {
   const user = useUser()
@@ -53,5 +56,28 @@ export default function ChatListPage() {
 
   console.log("[ChatHomePage]: ", { messages, chats })
 
-  return <ChatList chats={chats} />
+  return (
+    <div
+      className={"h-full overflow-hidden flex flex-col p-4 gap-4 bg-[#212121]"}
+    >
+      <Link href={"/settings"} className={"flex items-center gap-2"}>
+        <UserAvatar user={user} />
+        <Label className={"text-2xl font-medium tracking-wider"}>
+          {user?.name}
+        </Label>
+      </Link>
+
+      <Input
+        type={"search"}
+        className={"bg-[#181818] placeholder:text-center"}
+        placeholder={"🔍 搜索"}
+      />
+
+      <div className={"grow overflow-auto"}>
+        {chats.map((chat, index) => (
+          <ChatListItem chat={chat} key={index} />
+        ))}
+      </div>
+    </div>
+  )
 }

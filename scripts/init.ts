@@ -1,55 +1,15 @@
 import { prisma } from "@/lib/db"
-
-import { initUserAfterValidation } from "@/lib/user"
-
-import { getBroadcastId } from "@/lib/socket/helpers"
-import { fetchAdminUser } from "./_general"
-
-const getAdminBroadcastId = async () =>
-  getBroadcastId((await fetchAdminUser())!.id)
+import { admins } from "@/config"
 
 const init = async () => {
-  console.log("⏰ initializing database...")
-
-  // const data = {
-  //   type: UserType.assistant,
-  //   name: "玖姑的AI助手",
-  // }
-  // await prisma.user.upsert({
-  //   where: { id: USER_JIUGU_AI_ID },
-  //   create: {
-  //     id: USER_JIUGU_AI_ID,
-  //     ...data,
-  //   },
-  //   update: data,
-  // })
-
-  const users = await prisma.user.findMany()
-  const result = await Promise.all(
-    users.map(async (user) => {
-      return await initUserAfterValidation(user.id)
-    }),
-  )
-  console.log("[InitScript] init all user: ", result)
-
-  console.log("[InitScript] ✅ initialized database.")
-
-  // todo: update honors for all users
-  // await prisma.user.update({
-  //   where: { honors: {} },
-  //   data: {
-  //     honors: {
-  //       connectOrCreate: {
-  //         where: {
-  //           id: "NewUser",
-  //         },
-  //         create: {
-  //           id: "NewUser",
-  //         },
-  //       },
-  //     },
-  //   },
-  // })
+  const phone = admins.jiugu.phone!
+  const user = await prisma.user.findUnique({ where: { phone } })
+  if (!user) {
+    const { honors, rooms, ...data } = admins.jiugu
+    console.log("[init] creating user: ", data)
+    const id = await prisma.user.create({ data })
+    console.log("[init] created user of id: ", id)
+  }
 }
 
-void init()
+init()

@@ -1,7 +1,7 @@
 "use client"
 
 import { admins } from "@/config"
-import AvatarComp, { UserAvatar } from "@/components/user-avatar"
+import UserAvatars, { UserAvatar } from "@/components/user-avatar"
 import { RiFireFill } from "react-icons/ri"
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-react"
 import { Label } from "@/components/ui/label"
@@ -69,7 +69,7 @@ export default function TaskList({
           人平分奖励 <ChevronRightIcon size={12} className={"ml-1"} />
         </div>
 
-        <AvatarComp users={data.finishedUsers} />
+        <UserAvatars users={data.finishedUsers} />
 
         <div
           className={
@@ -103,7 +103,7 @@ export default function TaskList({
             <div className={"flex flex-col gap-2"}>
               <div className={"flex items-center gap-2"}>
                 <div className={"w-2 h-2 bg-green-500 rounded-full"} />
-                <AvatarComp users={task.room!.users} />
+                <UserAvatars users={task.room!.users} />
                 {task.room!.users.length} 人
               </div>
 

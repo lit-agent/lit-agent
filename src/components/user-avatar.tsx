@@ -10,7 +10,7 @@ import { IUserListView } from "@/schema/user.base"
  * @param size
  * @constructor
  */
-export default function AvatarComp({
+export default function UserAvatars({
   users,
   maxN = 6,
   size = "sm",
@@ -54,7 +54,7 @@ export const UserAvatar = ({
   user,
   size = "lg",
 }: {
-  user: IUserListView
+  user?: IUserListView
   size?: "sm" | "lg"
 }) => (
   <Avatar
@@ -64,9 +64,9 @@ export const UserAvatar = ({
       size === "sm" && "w-6 h-6",
     )}
   >
-    <AvatarImage src={user.image ?? undefined} />
+    <AvatarImage src={user?.image ?? undefined} />
     <AvatarFallback className={"bg-gray-500"}>
-      {(user.name ?? "U")[0]}
+      {(user?.name ?? "U")[0]}
     </AvatarFallback>
   </Avatar>
 )
