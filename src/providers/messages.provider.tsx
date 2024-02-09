@@ -8,6 +8,7 @@ import { SocketEventType } from "@/lib/socket/events"
 import { IMessageView } from "@/schema/message.base"
 import { useAuthedUser } from "@/hooks/use-user"
 import { api } from "@/lib/trpc/react"
+import { UserType } from "@prisma/client"
 
 export default function MessagesProvider({}: {}) {
   useInitMessages()
@@ -30,8 +31,9 @@ const useInitMessages = () => {
 }
 
 const useBindChannels = () => {
-  const { targetUserId, setMessages } = useAppData()
+  const { setMessages } = useAppData()
   const user = useAuthedUser()
+  const { data: users = [] } = api.user.list.useQuery()
 
   useEffect(() => {
     if (!user) return
@@ -45,7 +47,11 @@ const useBindChannels = () => {
     channels.push(...user.rooms.map((room) => room.id))
 
     // 监听广播（博主监听这个，从而能在列表页实时收到最新的）
-    if (targetUserId) channels.push(getBroadcastId(targetUserId))
+    channels.push(
+      ...users
+        .filter((user) => user.type === UserType.blogger)
+        .map((user) => getBroadcastId(user.id)),
+    )
 
     console.log("[Socket] bound channels: ", channels)
 
@@ -61,5 +67,5 @@ const useBindChannels = () => {
       channels.forEach((channelId) => pusherClient.unsubscribe(channelId))
       pusherClient.unbind(SocketEventType.Message)
     }
-  }, [targetUserId, user])
+  }, [user, JSON.stringify(users)])
 }
