@@ -4,7 +4,7 @@ prisma.user
   .delete({
     where: {
       // id: "jiugu-ai" ,
-      phone: "13121363847",
+      phone: "17777777777",
     },
   })
   .then((res) => {

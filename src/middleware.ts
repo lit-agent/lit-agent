@@ -5,7 +5,7 @@ export { default } from "next-auth/middleware"
 export const config = {
   matcher: [
     "/",
-    "/((?:room|validation|task|chat).*)",
+    "/((?:room|validation|task|product|chat|settings).*)",
     // "/(api|trpc)(.*)"
     // "/((?!.+\\.[\\w]+$|_next).*)",
   ],

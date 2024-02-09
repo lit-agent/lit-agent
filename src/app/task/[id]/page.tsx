@@ -152,7 +152,9 @@ export default function TaskDetailPage({
         </div>
 
         {messages
-          .filter((message) => message.room?.id === task?.room?.id)
+          .filter(
+            (message) => !!task?.room && message.room?.id === task?.room?.id,
+          )
           .map((message, index) => (
             // <div key={index}>{JSON.stringify(message.body)}</div>
             <Message user={message.fromUser} body={message.body} key={index} />
