@@ -1,26 +1,33 @@
 import { toast } from "sonner"
 import { IApi } from "@/schema/api"
 
-import { UPLOAD_FILES_FIELD } from "@/lib/oss/const"
+export const uploadFilesV2 = async (files: FileList): Promise<IApi> => {
+  const images = await Promise.all(
+    Object.values(files).map(async (file) => {
+      const resGetId = await fetch("/api/oss/upload")
+      if (!resGetId.ok) return
 
-export const uploadFiles = async (files: FileList) => {
-  const formData = new FormData()
-  Array.from(files).forEach((file) => {
-    formData.append(UPLOAD_FILES_FIELD, file)
-  })
+      const dataGetId = await resGetId.json()
+      const signatureUrl = dataGetId.data.signatureUrl
+      const resPut = await fetch(signatureUrl, {
+        method: "PUT",
+        headers: new Headers({
+          "Content-Type": "image/png",
+        }),
+        body: file,
+      })
+      if (!resPut.ok) return
 
-  const res = await fetch("/api/oss/upload", {
-    method: "POST",
-    body: formData,
-  })
+      return signatureUrl.split("?")[0] ?? signatureUrl
+    }),
+  )
 
-  const data = (await res.json()) as IApi
-  if (!data.success) {
-    toast.error("上传失败")
-    console.error("[OSS] ❌ uploaded: ", data)
-  } else {
+  console.log("response: ", images)
+  if (images.every((s) => !!s)) {
     toast.success("上传成功！")
-    console.log("[OSS] ✅ uploaded: ", data)
+    return { success: true, data: images }
+  } else {
+    toast.error("上传失败！")
+    return { success: false, data: images }
   }
-  return data
 }

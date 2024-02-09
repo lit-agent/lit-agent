@@ -1,5 +1,6 @@
 import { fetchMessages } from "@/routers/message"
-import { fetchAdminUser } from "@/lib/user"
+
+import { fetchAdminUser } from "./_general"
 
 fetchAdminUser().then((user) => {
   if (!user) throw new Error("user should exist")

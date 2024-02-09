@@ -4,7 +4,7 @@ import Image from "next/image"
 import { BroadcastImage } from "@/lib/assets"
 import { RiDoubleQuotesL, RiWechatChannelsLine } from "react-icons/ri"
 import { Separator } from "@/components/ui/separator"
-import { useEffect, useRef } from "react"
+import { useRef } from "react"
 import { Hot } from "@/components/fire-value"
 import { MyMarkdown } from "@/components/markdown"
 import { UserAvatar } from "@/components/user-avatar"
@@ -14,7 +14,7 @@ import { toast } from "sonner"
 import { api } from "@/lib/trpc/react"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
-import { uploadFiles } from "@/lib/oss/upload/client"
+import { uploadFilesV2 } from "@/lib/oss/upload/client"
 import { useAppData } from "@/lib/store/use-app-data"
 import { UserTaskStatus } from "@prisma/client"
 import Message from "@/components/message-item"
@@ -186,8 +186,10 @@ export default function TaskDetailPage({
               onChange={async (event) => {
                 if (!task) return
                 const files = event.currentTarget.files
+
                 if (!files) return
-                const result = await uploadFiles(files)
+                const result = await uploadFilesV2(files)
+
                 if (!result.success) return
                 submitTask
                   .mutateAsync({

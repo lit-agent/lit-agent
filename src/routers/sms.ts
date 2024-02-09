@@ -9,6 +9,7 @@ import {
   smsClient,
 } from "@/lib/sms"
 import { prisma } from "@/lib/db"
+import { admins } from "@/config"
 
 export const smsRouter = createTRPCRouter({
   send: publicProcedure
@@ -33,6 +34,15 @@ export const smsRouter = createTRPCRouter({
       const success = message === "Ok"
 
       if (success) {
+        const adminUser = Object.values(admins).find(
+          (user) => user.phone === phone,
+        )
+        let adminData
+        if (adminUser) {
+          const { honors, rooms, ...otherData } = adminUser
+          adminData = otherData
+        }
+
         await prisma.account.upsert({
           where: {
             provider_providerAccountId: {
@@ -48,7 +58,7 @@ export const smsRouter = createTRPCRouter({
             user: {
               connectOrCreate: {
                 where: { phone },
-                create: { phone },
+                create: adminData ?? { phone },
               },
             },
           },

@@ -1,8 +1,9 @@
 import { prisma } from "@/lib/db"
 
-import { fetchAdminUser, initUserAfterValidation } from "@/lib/user"
+import { initUserAfterValidation } from "@/lib/user"
 
 import { getBroadcastId } from "@/lib/socket/helpers"
+import { fetchAdminUser } from "./_general"
 
 const getAdminBroadcastId = async () =>
   getBroadcastId((await fetchAdminUser())!.id)

@@ -27,7 +27,7 @@ export const admins: Record<
   jiugu: {
     ...userBase,
     id: USER_JIUGU_ID,
-    phone: "",
+    phone: "13121363847",
     name: "玖姑",
     image: "/image/user/jiugu-avatar.png",
     type: UserType.blogger,

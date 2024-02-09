@@ -119,7 +119,7 @@ model Message {
   channelId String?
 
   // 发送
-  fromUser   User   @relation("from", fields: [fromUserId], references: [id], onDelete: NoAction)
+  fromUser   User   @relation("from", fields: [fromUserId], references: [id], onDelete: Cascade)
   fromUserId String
 
   // 接收

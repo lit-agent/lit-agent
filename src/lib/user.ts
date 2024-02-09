@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db"
 import { MessageType } from "@/schema/message.base"
 
-import { ADMIN_PHONE, admins, USER_JIUGU_ID } from "@/config"
+import { USER_JIUGU_ID } from "@/config"
 
 export const initUserAfterValidation = async (userId: string) => {
   const user = await prisma.user.update({
@@ -9,13 +9,15 @@ export const initUserAfterValidation = async (userId: string) => {
     data: { validated: true, status: "online" },
   })
 
-  const { rooms, honors, ...jiugu } = admins.jiugu
-
   console.log("[User:Validated] 正在发送欢迎语")
   // 欢迎语不需要使用socket发，因为用户还没到房间
   await prisma.message.create({
     data: {
       isAI: true,
+      // 玖姑必存在，在user那步就存在了
+      fromUserId: USER_JIUGU_ID,
+      toUserId: userId,
+
       body: {
         type: MessageType.Plain,
         title:
@@ -27,23 +29,7 @@ export const initUserAfterValidation = async (userId: string) => {
           "[如何直接联系玖姑本人？](https://baidu.com)\n" +
           "[什么是火值？如何赚火值？](https://baidu.com)",
       },
-      fromUser: {
-        connectOrCreate: {
-          where: { id: USER_JIUGU_ID },
-          create: jiugu,
-        },
-      },
-      toUser: {
-        connect: {
-          id: userId,
-        },
-      },
     },
   })
   return user
 }
-
-export const fetchAdminUser = () =>
-  prisma.user.findUnique({
-    where: { phone: ADMIN_PHONE },
-  })

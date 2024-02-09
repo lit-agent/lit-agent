@@ -7,6 +7,14 @@
 
 ## Tech
 
+### oss文件上传问题
+
+- 阿里云OSS文件上传几种方法（主要是前端） - 会飞的一棵树 -
+  博客园, https://www.cnblogs.com/flytree/p/16833447.html#tid-7TaCS4
+- 在客户端直接上传文件到OSS_对象存储(OSS)
+  -阿里云帮助中心, https://help.aliyun.com/zh/oss/use-cases/uploading-objects-to-oss-directly-from-clients#36c322a137x9q
+-
+
 ## tailwind中文字溢出控制
 
 - 多行：
@@ -26,7 +34,7 @@
 <Image
   src={CoverSmImage}
   alt={"cover"}
-  className={"shrink-0 w-[120px] h-auto"}
+  className={"w-[120px] h-auto"}
 />
 
 // 使用 fill 基于容器决定尺寸，需要加上 sizes，否则会报性能问题

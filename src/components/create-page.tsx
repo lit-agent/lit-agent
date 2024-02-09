@@ -1,12 +1,7 @@
 import { useForm } from "react-hook-form"
-import { createProductSchema, ICreateProduct } from "@/schema/product"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { zipObject } from "lodash"
-import { api } from "@/lib/trpc/react"
 import { toast } from "sonner"
-import { useRouter } from "next/navigation"
-import { Label } from "@/components/ui/label"
-import { ChevronLeftIcon } from "lucide-react"
 import {
   Form,
   FormDescription,

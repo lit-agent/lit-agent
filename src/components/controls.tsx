@@ -2,10 +2,10 @@ import { FormControl } from "@/components/ui/form"
 import { Switch } from "@/components/ui/switch"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { uploadFiles } from "@/lib/oss/upload/client"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import Image from "next/image"
 import moment, { DATETIME_FORMAT } from "@/lib/datetime"
+import { uploadFilesV2 } from "@/lib/oss/upload/client"
 
 export const NumberControl = ({ field }) => {
   return (
@@ -30,10 +30,10 @@ export const ImagesControl = ({ field }) => {
           multiple
           onChange={async (event) => {
             const files = event.currentTarget.files
-            if (!files) return
-            const res = await uploadFiles(files)
-            field.onChange(res.data)
-            // todo: bind field
+            if (!files?.length) return
+            const result = await uploadFilesV2(files)
+            console.log("-- result: ", result)
+            if (result.success) field.onChange(result.data)
           }}
         />
 
