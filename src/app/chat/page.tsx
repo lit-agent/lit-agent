@@ -9,8 +9,6 @@ import { UserAvatar } from "@/components/user-avatar"
 import { Label } from "@/components/ui/label"
 import ChatListItem from "@/components/chat-list-item"
 import { Input } from "@/components/ui/input"
-import { LogOutIcon } from "lucide-react"
-import { signOut } from "next-auth/react"
 import Link from "next/link"
 
 export default function ChatListPage() {

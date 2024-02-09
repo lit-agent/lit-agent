@@ -33,7 +33,7 @@ export default function NavProvider({ children }: PropsWithChildren) {
         </NavTabLink>
 
         <NavTabLink
-          href={"/me"}
+          href={"/"}
           onClick={() => setSelected(2)}
           isSelected={selected === 2}
         >

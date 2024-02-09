@@ -40,7 +40,7 @@ export default function UserHomePage() {
       </div>
 
       <Link
-        href={"/me/bill"}
+        href={"/bill"}
         className={"w-ful bg-[#3D3847] rounded flex justify-between p-2"}
       >
         <div className={"inline-flex gap-2"}>
