@@ -42,5 +42,6 @@ export async function GET(request: NextRequest): Promise<NextResponse<IApi>> {
     method: "PUT",
     "Content-Type": "image/png",
   })
+  console.log("[OSS] get signature url: ", signatureUrl)
   return NextResponse.json({ success: true, data: { signatureUrl } })
 }
