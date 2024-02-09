@@ -21,6 +21,7 @@ export const metadata: Metadata = {
   description: "Developed by github@markshawn2020",
   icons: [{ rel: "Icon", url: "/favicon.ico" }],
 }
+// <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
 
 // ref: https://nextjs.org/docs/app/building-your-application/upgrading/codemods#use-viewport-export
 export const viewport: Viewport = {
@@ -39,6 +40,13 @@ export default async function RootLayout({
     <StableSessionProvider>
       <TRPCReactProvider>
         <html lang="zh" suppressHydrationWarning>
+          <head>
+            <meta
+              httpEquiv="Content-Security-Policy"
+              content="upgrade-insecure-requests"
+            />
+          </head>
+
           <body className={`font-sans ${inter.variable}`}>
             <main className={"relative w-screen"}>
               <MyThemeProvider>

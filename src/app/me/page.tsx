@@ -21,7 +21,7 @@ import { taskViewSchema } from "@/schema/task"
 import { api } from "@/lib/trpc/react"
 import TaskItem from "@/components/task-item"
 import { useState } from "react"
-import { UserTaskStatus } from "@prisma/client"
+import { TaskStatus, UserTaskStatus } from "@prisma/client"
 import { orderBy, sum, sumBy } from "lodash"
 import { useUser } from "@/hooks/use-user"
 import moment from "moment"
@@ -35,9 +35,11 @@ const navs = [
 
 export default function HomePage() {
   const { data: userTasks = [] } = api.task.listUserTasks.useQuery()
-  const [taskFilter, setTaskFilter] = useState<UserTaskStatus | undefined>(
-    "goon",
-  )
+  const [userTaskFilter, setUserTaskFilter] = useState<
+    UserTaskStatus | undefined
+  >("goon")
+  const [taskFilter, setTaskFilter] = useState<TaskStatus | undefined>("on")
+
   const { data: users = [] } = api.user.list.useQuery()
   const user = useUser()
   const { data: sensitiveUser } = api.user.getSelf.useQuery()
@@ -152,14 +154,65 @@ export default function HomePage() {
           <div className={"flex items-center gap-2"}>
             <span
               onClick={() => {
-                setTaskFilter("goon")
+                setUserTaskFilter("goon")
               }}
               className={cn(
                 "hover:text-white/75 cursor-pointer",
-                taskFilter === "goon" && " border-primary border-b-2",
+                userTaskFilter === "goon" && " border-primary border-b-2",
               )}
             >
               正在参与
+            </span>
+            <span
+              onClick={() => {
+                setUserTaskFilter("finished")
+              }}
+              className={cn(
+                "hover:text-white/75 cursor-pointer",
+                userTaskFilter === "finished" && " border-primary border-b-2",
+              )}
+            >
+              已完成
+            </span>
+            <span
+              onClick={() => {
+                setUserTaskFilter(undefined)
+              }}
+              className={cn(
+                "hover:text-white/75 cursor-pointer",
+                !userTaskFilter && " border-primary border-b-2",
+              )}
+            >
+              全部
+            </span>
+          </div>
+        </div>
+
+        <div className={"flex flex-col gap-4"}>
+          {userTasks
+            .filter(
+              (userTask) =>
+                !userTaskFilter || userTask.status === userTaskFilter,
+            )
+            .map((userTask, index) => (
+              <TaskItem task={userTask.task} key={index} />
+            ))}
+        </div>
+
+        <div className={"flex justify-between"}>
+          <Label className={"text-2xl"}>任务广场</Label>
+
+          <div className={"flex items-center gap-2"}>
+            <span
+              onClick={() => {
+                setTaskFilter("on")
+              }}
+              className={cn(
+                "hover:text-white/75 cursor-pointer",
+                taskFilter === "on" && " border-primary border-b-2",
+              )}
+            >
+              正在进行
             </span>
             <span
               onClick={() => {
@@ -170,7 +223,7 @@ export default function HomePage() {
                 taskFilter === "finished" && " border-primary border-b-2",
               )}
             >
-              已完成
+              已结束
             </span>
             <span
               onClick={() => {
@@ -185,13 +238,12 @@ export default function HomePage() {
             </span>
           </div>
         </div>
-        <div className={"flex flex-col gap-4"}>
-          {userTasks
-            .filter((userTask) => !taskFilter || userTask.status === taskFilter)
-            .map((userTask, index) => (
-              <TaskItem task={userTask.task} key={index} />
-            ))}
-        </div>
+
+        {tasks
+          .filter((task) => !taskFilter || task.status === taskFilter)
+          .map((task, index) => (
+            <TaskItem task={task} key={index} />
+          ))}
       </div>
 
       <div
