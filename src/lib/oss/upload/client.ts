@@ -2,13 +2,18 @@ import { toast } from "sonner"
 import { IApi } from "@/schema/api"
 
 export const uploadFilesV2 = async (files: FileList): Promise<IApi> => {
+  // todo: cleaner approach
+  const isHttps = location.href.includes("https")
+
   const images = await Promise.all(
     Object.values(files).map(async (file) => {
       const resGetId = await fetch("/api/oss/upload")
       if (!resGetId.ok) return
 
       const dataGetId = await resGetId.json()
-      const signatureUrl = dataGetId.data.signatureUrl
+      let signatureUrl = dataGetId.data.signatureUrl
+      if (isHttps) signatureUrl = signatureUrl.replace("http://", "https://")
+
       const resPut = await fetch(signatureUrl, {
         method: "PUT",
         headers: new Headers({
@@ -18,11 +23,7 @@ export const uploadFilesV2 = async (files: FileList): Promise<IApi> => {
       })
       if (!resPut.ok) return
 
-      const url = signatureUrl.split("?")[0] ?? signatureUrl
-
-      // todo: cleaner approach
-      const isHttps = location.href.includes("https")
-      return isHttps ? url.replace("http://", "https://") : url
+      return signatureUrl.split("?")[0] ?? signatureUrl
     }),
   )
 
