@@ -59,7 +59,7 @@ export const UserAvatar = ({
 }) => (
   <Avatar
     className={cn(
-      "border",
+      "border shrink-0",
       size === "lg" && "w-12 h-12",
       size === "sm" && "w-6 h-6",
     )}

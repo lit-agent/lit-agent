@@ -8,7 +8,7 @@ import { z } from "zod"
 import { MessageType, messageViewSchema } from "@/schema/message.base"
 import {
   createTaskSchema,
-  taskViewSchema,
+  taskListViewSchema,
   userTaskViewSchema,
 } from "@/schema/task"
 import { pusherServer } from "@/lib/socket/config"
@@ -20,7 +20,7 @@ import { UserTaskStatus } from "@prisma/client"
 export const taskRouter = createTRPCRouter({
   listTasks: protectedProcedure.query(async ({ ctx, input }) => {
     return prisma.task.findMany({
-      ...taskViewSchema,
+      ...taskListViewSchema,
     })
   }),
 
@@ -31,12 +31,21 @@ export const taskRouter = createTRPCRouter({
     })
   }),
 
+  listUserTasksByTask: protectedProcedure
+    .input(z.object({ taskId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return prisma.userTask.findMany({
+        where: { taskId: input.taskId },
+        ...userTaskViewSchema,
+      })
+    }),
+
   get: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       return prisma.task.findUniqueOrThrow({
         where: input,
-        ...taskViewSchema,
+        ...taskListViewSchema,
       })
     }),
 
@@ -133,9 +142,8 @@ export const taskRouter = createTRPCRouter({
 
       const task = await prisma.task.findUniqueOrThrow({
         where: { id: taskId },
-        ...taskViewSchema,
+        ...taskListViewSchema,
       })
-      const { value } = task
 
       await prisma.$transaction(async (prisma) => {
         // 用户完成任务
@@ -148,6 +156,7 @@ export const taskRouter = createTRPCRouter({
           },
           data: {
             status: UserTaskStatus.finished,
+            images,
           },
         })
 
@@ -185,6 +194,36 @@ export const taskRouter = createTRPCRouter({
       })
 
       return true
+    }),
+
+  bloggerVerifyUserTask: protectedProcedure
+    .input(
+      z.object({ taskId: z.string(), userId: z.string(), passed: z.boolean() }),
+    )
+    .mutation(async ({ input }) => {
+      const { userId, taskId, passed } = input
+
+      const task = await prisma.task.findUniqueOrThrow({
+        where: { id: taskId },
+      })
+
+      await prisma.$transaction(async (prisma) => {
+        await prisma.userTask.update({
+          where: { taskId_userId: { userId, taskId } },
+          data: { passed },
+        })
+
+        if (passed) {
+          await prisma.user.update({
+            where: { id: userId },
+            data: {
+              currentEarnedFire: { increment: task.value },
+              totalEarnedFire: { increment: task.value },
+              balance: { increment: task.value },
+            },
+          })
+        }
+      })
     }),
 
   delete: protectedProcedure

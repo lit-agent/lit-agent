@@ -30,7 +30,7 @@ export const createTaskSchema = z.object({
 })
 export type ICreateTask = z.infer<typeof createTaskSchema>
 
-export const taskViewSchema = validator<TaskDefaultArgs>()({
+export const taskListViewSchema = validator<TaskDefaultArgs>()({
   include: {
     fromUser: userListViewSchema,
     room: {
@@ -47,12 +47,12 @@ export const taskViewSchema = validator<TaskDefaultArgs>()({
     },
   },
 })
-export type ITaskView = TaskGetPayload<typeof taskViewSchema>
+export type ITaskView = TaskGetPayload<typeof taskListViewSchema>
 
 export const userTaskViewSchema = validator<UserTaskDefaultArgs>()({
-  select: {
-    task: taskViewSchema,
-    status: true,
+  include: {
+    user: userListViewSchema,
+    task: taskListViewSchema,
   },
 })
 export type IUserTaskView = UserTaskGetPayload<typeof userTaskViewSchema>

@@ -119,3 +119,34 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+/*原文链接：https://blog.csdn.net/hdp134793/article/details/132586294*/
+
+
+.son4 {
+    /* 左上角飘带 */
+    background-color: #1890FF;
+    /* 左上角飘带的背景颜色 */
+    overflow: hidden;
+    white-space: nowrap;
+    /* 文字不换行*/
+    position: absolute;
+    /* 绝对定位 */
+    right: -45px;
+    top: 20px;
+    transform: rotate(45deg);
+    /* 旋转45°*/
+    box-shadow: 0 0 10px #888;
+    /* 飘带的阴影*/
+}
+
+.son4 span {
+    border: 1px solid #1890FF;
+    color: #fff;
+    display: block;
+    font: bold 100% 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 1px 0;
+    padding: 5px 50px;
+    text-align: center;
+    text-shadow: 0 0 5px #444;
+}

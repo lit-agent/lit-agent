@@ -415,8 +415,13 @@ model UserTask {
   task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId String
 
-  status  UserTaskStatus @default(finished)
+  status UserTaskStatus @default(finished)
+
   content String?
+  // 提交的图片
+  images  String[]
+  passed  Boolean?
+
   // actions UserAction[]
 
   // todo: bind message with taskFrom, taskTo, room

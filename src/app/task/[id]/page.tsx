@@ -30,6 +30,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import Link from "next/link"
 
 export default function TaskDetailPage({
   params: { id },
@@ -189,8 +190,18 @@ export default function TaskDetailPage({
           </div>
         </div>
 
-        <div className={"flex flex-col items-center my-8"}>
+        <div className={"flex flex-col items-center gap-2 my-8"}>
           <div>{task?.toUsers.length} 人已参加</div>
+
+          {user?.type === "blogger" && (
+            <Link
+              className={"text-primary underline"}
+              href={`/task/${id}/manage`}
+            >
+              点击查看与审核（仅博主可见）
+            </Link>
+          )}
+
           <div className={"flex gap-2 flex-wrap"}>
             {task?.toUsers.map((userTask, index) => (
               <UserAvatar user={userTask.user} key={index} />
@@ -270,15 +281,21 @@ export default function TaskDetailPage({
                 {!task?.result ? (
                   "该任务暂无群聊"
                 ) : (
+                  // todo: support more type of result
                   <>
                     <div>欢迎加入限时群聊</div>
-                    <Image
-                      src={task.result.value}
-                      alt={"group"}
-                      width={240}
-                      height={320}
-                      className={"h-auto"}
-                    />
+                    {task.result.value.map((item, index) => {
+                      return (
+                        <Image
+                          key={index}
+                          src={item}
+                          alt={"group"}
+                          width={240}
+                          height={320}
+                          className={"h-auto"}
+                        />
+                      )
+                    })}
                   </>
                 )}
               </div>
@@ -287,27 +304,5 @@ export default function TaskDetailPage({
         )}
       </div>
     </div>
-  )
-}
-
-const useTaskDialog = () => {
-  const [open, setOpen] = useState(false)
-
-  return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
-      {/*<AlertDialogTrigger>Open</AlertDialogTrigger>*/}
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>任务结果</AlertDialogTitle>
-          <AlertDialogDescription>
-            提交成功，请耐心等待48H内审核通过后火值发放！
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          {/*<AlertDialogCancel>Cancel</AlertDialogCancel>*/}
-          <AlertDialogAction>确认</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
   )
 }
