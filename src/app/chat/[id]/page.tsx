@@ -7,16 +7,16 @@ import { api } from "@/lib/trpc/react"
 import { getChatId } from "@/lib/socket/helpers"
 import { MessageType } from "@/schema/message.base"
 import { ChevronLeftIcon } from "lucide-react"
-import { UserSelector } from "@/components/user-selector"
 import { getClientMessageId } from "@/schema/message"
-import Message from "@/components/message-item"
+import Message from "@/components/chat/message-item"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
-import { BloggerContainer } from "@/components/blogger"
 import { IoMenuOutline } from "react-icons/io5"
 import { UserType } from "@prisma/client"
 import { useRouter } from "next/navigation"
-import { UserAvatarWithName } from "@/components/user-avatar"
+
+import { UserAvatarWithName } from "@/components/user/user-avatar-with-name"
+import { BloggerContainer } from "@/components/user/blogger-container"
 
 export default function ChatDetailPage({ params: { id } }: { params: { id } }) {
   const user = useUser()

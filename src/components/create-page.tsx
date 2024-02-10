@@ -10,10 +10,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { FormFieldControlMap, FormFieldType } from "@/lib/form"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { z } from "zod"
+import { FormFieldControlMap, FormFieldType } from "@/schema/form"
 
 export default function CreateFormPage<T = any>({
   data,

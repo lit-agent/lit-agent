@@ -362,21 +362,21 @@ model UserMessage {
 
 // 消费者与博主开发的产品之间的关系
 model UserProduct {
-  id        String   @id @default(cuid())
   createdAt DateTime @updatedAt
   updatedAt DateTime @updatedAt
 
   product   Product @relation(fields: [productId], references: [id])
   productId String
 
-  toUser   User   @relation(fields: [toUserId], references: [id])
-  toUserId String
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 
   isFavored Boolean @default(false)
   inCar     Int     @default(0)
   bought    Int     @default(0)
 
   // userActions UserAction[]
+  @@id([userId, productId])
 }
 
 model UserRelation {

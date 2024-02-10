@@ -5,9 +5,7 @@ import { BroadcastImage } from "@/lib/assets"
 import { RiDoubleQuotesL, RiWechatChannelsLine } from "react-icons/ri"
 import { Separator } from "@/components/ui/separator"
 import { useRef, useState } from "react"
-import { Hot } from "@/components/fire-value"
-import { MyMarkdown } from "@/components/markdown"
-import { UserAvatar } from "@/components/user-avatar"
+import { FireValue } from "@/components/_universal/fire-value"
 import moment from "@/lib/datetime"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { toast } from "sonner"
@@ -17,7 +15,7 @@ import { cn } from "@/lib/utils"
 import { uploadFilesV2 } from "@/lib/oss/upload/client"
 import { useAppData } from "@/lib/store/use-app-data"
 import { UserTaskStatus } from "@prisma/client"
-import Message from "@/components/message-item"
+import Message from "@/components/chat/message-item"
 import { useUser } from "@/hooks/use-user"
 import { useCopyToClipboard } from "@uidotdev/usehooks"
 import {
@@ -32,6 +30,8 @@ import {
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
+import { UserAvatar } from "@/components/user/user-avatar"
+import { MarkdownContainer } from "@/providers/containers"
 
 export default function TaskDetailPage({
   params: { id },
@@ -122,7 +122,7 @@ export default function TaskDetailPage({
               <div className={"flex flex-col items-center"}>
                 <div>任务奖励</div>
                 <div>
-                  <Hot value={task?.value} />
+                  <FireValue value={task?.value} />
                 </div>
               </div>
 
@@ -152,7 +152,9 @@ export default function TaskDetailPage({
             <div className={"flex flex-col gap-2 items-center"}>
               <div className={"font-semibold text-lg"}>任务描述</div>
 
-              <MyMarkdown>{task?.purpose || "该任务没有任何描述~"}</MyMarkdown>
+              <MarkdownContainer>
+                {task?.purpose || "该任务没有任何描述~"}
+              </MarkdownContainer>
 
               <div
                 className={"text-muted-foreground text-sm text-center w-1/2"}

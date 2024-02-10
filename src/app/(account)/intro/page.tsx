@@ -2,7 +2,6 @@
 
 import { CoverMdImage, CoverTextBigImage } from "@/lib/assets"
 import Image from "next/image"
-import { GiuguProfile } from "@/components/blogger"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Input } from "@/components/ui/input"
@@ -31,6 +30,7 @@ import { useCountdown } from "@/hooks/use-countdown"
 import { CgSpinner } from "react-icons/cg"
 import { useUser } from "@/hooks/use-user"
 import { useRouter } from "next/navigation"
+import { GiuguProfile } from "@/components/user/jiugu-profile"
 
 export default function IntroPage() {
   return (

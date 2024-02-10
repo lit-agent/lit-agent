@@ -3,17 +3,15 @@
 import { useAppData } from "@/lib/store/use-app-data"
 import { useEffect, useState } from "react"
 import { IChatView } from "@/schema/message"
+import { UserType } from "@prisma/client"
+import ChatList from "@/components/chat/chat-list"
 import { getChatId } from "@/lib/socket/helpers"
+import ChatDetailPage from "@/app/chat/[id]/page"
+import { USER_JIUGU_ID } from "@/config"
 import { useUser } from "@/hooks/use-user"
-import { Label } from "@/components/ui/label"
-import ChatListItem from "@/components/chat/chat-list-item"
-import { Input } from "@/components/ui/input"
-import Link from "next/link"
-import { UserAvatar } from "@/components/user/user-avatar"
 
 export default function ChatListPage() {
   const user = useUser()
-
   const { messages } = useAppData()
 
   const [chats, setChats] = useState<IChatView[]>([])
@@ -27,7 +25,6 @@ export default function ChatListPage() {
     const seenChannels = new Set<string>()
 
     messages.forEach((m) => {
-      // todo: 不稳定，比如用户被删除后，因为现在写了置空策略
       const isBroadcast = !m.room && !m.toUser
       if (isBroadcast) return
 
@@ -54,21 +51,7 @@ export default function ChatListPage() {
 
   console.log("[ChatHomePage]: ", { messages, chats })
 
-  return (
-    <div
-      className={"h-full overflow-hidden flex flex-col p-4 gap-4 bg-[#212121]"}
-    >
-      <Input
-        type={"search"}
-        className={"bg-[#181818] placeholder:text-center"}
-        placeholder={"🔍 搜索"}
-      />
+  if (user?.type === UserType.blogger) return <ChatList chats={chats} />
 
-      <div className={"grow overflow-auto"}>
-        {chats.map((chat, index) => (
-          <ChatListItem chat={chat} key={index} />
-        ))}
-      </div>
-    </div>
-  )
+  return <ChatDetailPage params={{ id: USER_JIUGU_ID }} />
 }

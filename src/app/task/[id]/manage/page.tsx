@@ -2,12 +2,12 @@
 
 import { api } from "@/lib/trpc/react"
 import { IUserTaskView } from "@/schema/task"
-import { UserAvatar } from "@/components/user-avatar"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ChevronLeftIcon } from "lucide-react"
+import { UserAvatar } from "@/components/user/user-avatar"
 
 export default function VerifyTaskPage({
   params: { id },

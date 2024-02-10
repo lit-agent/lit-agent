@@ -1,9 +1,8 @@
 "use client"
 
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
-import Message, { IMessageContainer } from "@/components/message-item"
+import Message, { IMessageContainer } from "@/components/chat/message-item"
 import { IoMenuOutline } from "react-icons/io5"
-import { BloggerContainer } from "@/components/blogger"
 import { Button } from "../../../components/ui/button"
 import { useState } from "react"
 import { toast } from "sonner"
@@ -13,6 +12,7 @@ import { api } from "@/lib/trpc/react"
 import { JiuguImage } from "@/lib/assets"
 import { MessageType } from "@/schema/message.base"
 import { admins } from "@/config"
+import { BloggerContainer } from "@/components/user/blogger-container"
 
 export default function ValidationPage() {
   const [validating, setValidating] = useState(false)

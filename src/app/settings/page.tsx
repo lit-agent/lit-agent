@@ -4,17 +4,20 @@ import { Button } from "@/components/ui/button"
 import { ComponentProps, PropsWithChildren } from "react"
 import { cn, maskPhone } from "@/lib/utils"
 import { ChevronRightIcon } from "lucide-react"
-import { UserAvatar } from "@/components/user-avatar"
 import { useUser } from "@/hooks/use-user"
 import { DEFAULT_USERNAME, TODO } from "@/config"
 import { signOut } from "next-auth/react"
+import { Label } from "@/components/ui/label"
+import { UserAvatar } from "@/components/user/user-avatar"
 
 export default function SettingsPage() {
   const user = useUser()
   if (!user) return
 
   return (
-    <div className={"flex flex-col gap-2 p-2"}>
+    <div className={"flex flex-col gap-4 p-6"}>
+      <Label className={"text-xl"}>系统设置</Label>
+
       <GrayCard>
         <MenuItem name={"头像"}>
           <UserAvatar user={user} />

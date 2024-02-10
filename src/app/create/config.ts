@@ -1,7 +1,8 @@
 import { ICreateProduct } from "@/schema/product"
-import { FormFieldType } from "@/lib/form"
 import { ICreateTask } from "@/schema/task"
 import moment from "@/lib/datetime"
+
+import { FormFieldType } from "@/schema/form"
 
 export const createTaskData: {
   name: keyof ICreateTask

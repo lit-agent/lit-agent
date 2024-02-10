@@ -3,7 +3,11 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@/lib/trpc/trpc"
-import { createProductSchema, productListViewSchema } from "@/schema/product"
+import {
+  createProductSchema,
+  productListViewSchema,
+  userProductListViewSchema,
+} from "@/schema/product"
 import { z } from "zod"
 import { $Enums } from ".prisma/client"
 import RedeemType = $Enums.RedeemType
@@ -25,6 +29,36 @@ export const productRouter = createTRPCRouter({
   list: publicProcedure.query(async ({ ctx, input }) => {
     return prisma.product.findMany({
       ...productListViewSchema,
+    })
+  }),
+
+  favor: protectedProcedure
+    .input(z.object({ productId: z.string(), isFavored: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.user.id
+      const { productId, isFavored } = input
+      return prisma.userProduct.upsert({
+        where: { userId_productId: { userId, productId } },
+        create: { userId, productId, isFavored },
+        update: { isFavored },
+      })
+    }),
+
+  getMyUserProduct: protectedProcedure
+    .input(z.object({ productId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return prisma.userProduct.findUnique({
+        where: {
+          userId_productId: { userId: ctx.user.id, productId: input.productId },
+        },
+        ...userProductListViewSchema,
+      })
+    }),
+
+  listMyUserProducts: protectedProcedure.query(async ({ ctx, input }) => {
+    return prisma.userProduct.findMany({
+      where: { userId: ctx.user.id },
+      ...userProductListViewSchema,
     })
   }),
 
@@ -57,6 +91,7 @@ export const productRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const userId = ctx.user.id
       const { productId, productCount, redeemType } = input
 
       const user = await prisma.user.findUnique({ where: { id: ctx.user.id } })
@@ -84,22 +119,27 @@ export const productRouter = createTRPCRouter({
 
         // 更新用户的钱
         await prisma.user.update({
-          where: { id: user.id },
+          where: { id: userId },
           data: { balance: { decrement: cost } },
         })
 
         // 用户获得产品 （订单）
         bill = await prisma.bill.create({
           data: {
-            userId: user.id,
-            productId: productId,
+            userId,
+            productId,
             productCount,
             price: product.price,
             redeemType,
           },
         })
 
-        // 建立用户的关系（不需要，直接基于bill找人）
+        // 更新用户购买关系
+        await prisma.userProduct.upsert({
+          where: { userId_productId: { userId, productId } },
+          create: { userId, productId, bought: productCount },
+          update: { bought: { increment: productCount } },
+        })
 
         // 在频道里通知博主 todo: 先用文字，后续用封面
         await prisma.message.create({

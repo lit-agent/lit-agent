@@ -5,10 +5,8 @@ import MyThemeProvider from "@/providers/theme.provider"
 import { Toaster } from "sonner"
 import { TRPCReactProvider } from "@/providers/trpc.provider"
 import { Metadata, Viewport } from "next"
-import { AutoHeightThread } from "@/components/auto-height.thread"
-import MessagesProvider from "@/providers/messages.provider"
 import BgProvider from "@/providers/bg.provider"
-import NavProvider from "@/providers/nav.provider"
+import MainProvider from "@/providers/main.provider"
 import StableSessionProvider from "@/providers/session.provider"
 
 const inter = Inter({
@@ -49,19 +47,15 @@ export default async function RootLayout({
             <main className={"relative w-screen"}>
               <MyThemeProvider>
                 <BgProvider>
-                  <NavProvider>
+                  <MainProvider>
                     {children}
-
-                    <MessagesProvider />
-
-                    <AutoHeightThread />
 
                     <Toaster
                       richColors
                       position={"top-right"}
                       duration={1000}
                     />
-                  </NavProvider>
+                  </MainProvider>
                 </BgProvider>
               </MyThemeProvider>
             </main>

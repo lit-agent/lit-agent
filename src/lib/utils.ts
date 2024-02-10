@@ -15,8 +15,8 @@ export const maskPhone = (s: string) =>
   s.slice(3, s.length - 2).replace(/./g, "*") +
   s.slice(s.length - 2)
 
-export const calculateProductBuyersCount = (product: IProductListView) => {
-  return uniq(product.bills.map((bill) => bill.userId)).length
+export const calculateProductBuyersCount = (product?: IProductListView) => {
+  return product ? uniq(product.bills.map((bill) => bill.userId)).length : 0
 }
 
 export const PHONE_REGEX = new RegExp(

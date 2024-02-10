@@ -4,6 +4,8 @@ import { userListViewSchema } from "@/schema/user.base"
 import validator = Prisma.validator
 import ProductDefaultArgs = Prisma.ProductDefaultArgs
 import ProductGetPayload = Prisma.ProductGetPayload
+import UserProductDefaultArgs = Prisma.UserProductDefaultArgs
+import UserProductGetPayload = Prisma.UserProductGetPayload
 
 export const createProductSchema = z.object({
   title: z.string(),
@@ -31,3 +33,13 @@ export const productListViewSchema = validator<ProductDefaultArgs>()({
   },
 })
 export type IProductListView = ProductGetPayload<typeof productListViewSchema>
+
+export const userProductListViewSchema = validator<UserProductDefaultArgs>()({
+  include: {
+    user: userListViewSchema,
+    product: productListViewSchema,
+  },
+})
+export type IUserProductListView = UserProductGetPayload<
+  typeof userProductListViewSchema
+>
