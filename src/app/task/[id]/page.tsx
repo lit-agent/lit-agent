@@ -170,7 +170,7 @@ export default function TaskDetailPage({
               await toast.success("复制成功！")
             }}
           >
-            🔗复制作品链接
+            🔗复制任务链接
           </Button>
 
           <Label
