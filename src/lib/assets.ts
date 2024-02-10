@@ -9,11 +9,16 @@ import DirectBoxSendIcon from "../../public/image/icon/directbox-send.svg"
 import WechatMPIcon from "../../public/image/icon/wechat-mp.svg"
 import NotificationIcon from "../../public/image/icon/notification.svg"
 import CallIcon from "../../public/image/icon/call.svg"
+import Honor1SVG from "../../public/image/honor/honor-1.svg"
+import Honor2SVG from "../../public/image/honor/honor-2.svg"
+import Honor3SVG from "../../public/image/honor/honor-3.svg"
+import Honor4SVG from "../../public/image/honor/honor-4.svg"
+import Honor5SVG from "../../public/image/honor/honor-5.svg"
+import TaskCardSVG from "../../public/image/bg/task-card.svg"
 
 import BrandImage from "../../public/image/icon/brand.png"
 import CoverSmImage from "../../public/image/user/jiugu-cover-sm.png"
 import CoverMdImage from "../../public/image/user/jiugu-cover-md.png"
-import MediasImage from "../../public/image/icon/medias.png"
 import JiuguImage from "../../public/image/user/jiugu-avatar.png"
 import HadingImage from "../../public/image/user/hading-avatar.png"
 import SampleUser1Image from "../../public/image/user/example-avatar.png"
@@ -21,12 +26,10 @@ import BgCircleImage from "../../public/image/icon/bg-circle.png"
 import BroadcastImage from "../../public/image/icon/broadcast.png"
 import Choice1Image from "../../public/image/example/image-choices-1.png"
 import Choice2Image from "../../public/image/example/image-choices-2.png"
-import Honor1SVG from "../../public/image/honor/honor-1.svg"
-import Honor2SVG from "../../public/image/honor/honor-2.svg"
-import Honor3SVG from "../../public/image/honor/honor-3.svg"
-import Honor4SVG from "../../public/image/honor/honor-4.svg"
-import Honor5SVG from "../../public/image/honor/honor-5.svg"
-import TaskCardSVG from "../../public/image/bg/task-card.svg"
+import XiaohongshuBrandImage from "../../public/image/brand/xiaohongshu.png"
+import DouyinBrandImage from "../../public/image/brand/douyin.png"
+import ShipinhaoBrandImage from "../../public/image/brand/shipinhao.png"
+import KuaishouBrandImage from "../../public/image/brand/kuaishou.png"
 
 import { HonorType } from "@prisma/client"
 
@@ -44,7 +47,6 @@ export {
   BrandImage,
   CoverSmImage,
   CoverMdImage,
-  MediasImage,
   JiuguImage,
   HadingImage,
   BgCircleImage,
@@ -57,6 +59,10 @@ export {
   Honor4SVG,
   Honor5SVG,
   TaskCardSVG,
+  ShipinhaoBrandImage,
+  DouyinBrandImage,
+  KuaishouBrandImage,
+  XiaohongshuBrandImage,
 }
 
 export const honorDict: Record<HonorType, string> = {

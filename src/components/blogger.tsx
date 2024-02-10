@@ -1,13 +1,11 @@
 import { ComponentPropsWithoutRef, HTMLAttributes } from "react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Avatar, AvatarImage } from "@/components/ui/avatar"
-import Image from "next/image"
-import { MediasImage } from "@/lib/assets"
 import { Button } from "@/components/ui/button"
 import { TbMessageChatbot } from "react-icons/tb"
 import { cn } from "@/lib/utils"
 import { UserAvatar } from "@/components/user-avatar"
 import { admins } from "@/config"
+import { Platforms } from "@/components/platforms"
 
 export const GiuguProfile = ({
   className,
@@ -31,7 +29,7 @@ export const GiuguProfile = ({
 
       <div>全网粉丝 62.2w</div>
 
-      <Image src={MediasImage} alt={"medias"} className={"h-8 w-auto"} />
+      <Platforms />
     </div>
   )
 }
