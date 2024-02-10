@@ -27,7 +27,7 @@ export const GiuguProfile = ({
 
       <div className={"text-2xl font-semibold"}>{admins.jiugu.name}</div>
 
-      <div>全网粉丝 62.2w</div>
+      <div>全网粉丝 60w+</div>
 
       <Platforms />
     </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { CoverMdImage } from "@/lib/assets"
+import { CoverMdImage, CoverTextBigImage } from "@/lib/assets"
 import Image from "next/image"
 import { GiuguProfile } from "@/components/blogger"
 import { Button } from "@/components/ui/button"
@@ -36,34 +36,30 @@ export default function IntroPage() {
   return (
     <div
       className={cn(
-        "flex items-center h-full bg-[#2A2435]",
-        "flex-col-reverse", // 使用倒序保证页面布局稳定性，封面图是后出现的，todo:更好的办法
+        "flex items-center h-full bg-[#2A2435] relative",
+        "flex-col", // 使用倒序保证页面布局稳定性，封面图是后出现的，todo:更好的办法
       )}
     >
-      <Comp3 />
-      <Comp2 />
-      <Comp1 />
+      <Image
+        src={CoverTextBigImage}
+        alt={"landing cover"}
+        fill
+        className={"object-fill"}
+        priority
+      />
+
+      <div className={"mt-auto z-50 bg-black/75 w-full"}>
+        <GiuguProfile className={"-mt-6 mb-6"} />
+
+        <Comp3 />
+      </div>
     </div>
   )
 }
 
-const Comp1 = () => (
-  <div className={"w-full h-[60%] relative"}>
-    <Image
-      src={CoverMdImage}
-      alt={"cover"}
-      priority
-      className={"h-full w-full"}
-      style={{
-        objectFit: "cover",
-      }}
-    />
-  </div>
-)
-
-const Comp2 = () => <GiuguProfile className={"-mt-6 z-10"} />
-
 const Comp3 = () => {
+  const { data: users = [] } = api.user.list.useQuery()
+
   const formSchema = z.object({
     phone: z
       .string()
@@ -133,7 +129,7 @@ const Comp3 = () => {
   return (
     <div className={"mt-auto flex flex-col items-center pb-8 gap-4"}>
       <div className={"text-muted-foreground text-sm"}>
-        <span className={"text-primary"}>13891</span> 人已加入玖姑私域
+        <span className={"text-primary"}>{users.length}</span> 人已加入玖姑私域
       </div>
 
       <Sheet>
