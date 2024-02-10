@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import Link from "next/link"
+import { Badge } from "@/components/ui/badge"
 
 export default function TaskDetailPage({
   params: { id },
@@ -64,22 +65,6 @@ export default function TaskDetailPage({
 
   return (
     <div className={"px-8 py-4 h-full flex flex-col overflow-hidden"}>
-      <AlertDialog open={open} onOpenChange={setOpen}>
-        {/*<AlertDialogTrigger>Open</AlertDialogTrigger>*/}
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>任务结果</AlertDialogTitle>
-            <AlertDialogDescription>
-              提交成功，请耐心等待48H内审核通过后火值发放！
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            {/*<AlertDialogCancel>Cancel</AlertDialogCancel>*/}
-            <AlertDialogAction>确认</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
       <div className={"grow overflow-auto"}>
         <div
           ref={refTop}
@@ -98,7 +83,11 @@ export default function TaskDetailPage({
                 "grow h-full flex flex-col justify-center items-start gap-2"
               }
             >
-              <RiDoubleQuotesL className={"w-10 h-10 text-gray-500"} />
+              <div className={"w-full flex justify-between items-center"}>
+                <RiDoubleQuotesL className={"w-10 h-10 text-gray-500"} />
+
+                {userTask?.passed && <Badge>火值已发放！</Badge>}
+              </div>
               <span>{task?.title}</span>
 
               <div
@@ -303,6 +292,22 @@ export default function TaskDetailPage({
           </Dialog>
         )}
       </div>
+
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        {/*<AlertDialogTrigger>Open</AlertDialogTrigger>*/}
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>任务结果</AlertDialogTitle>
+            <AlertDialogDescription>
+              提交成功，请耐心等待48H内审核通过后火值发放！
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            {/*<AlertDialogCancel>Cancel</AlertDialogCancel>*/}
+            <AlertDialogAction>确认</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
