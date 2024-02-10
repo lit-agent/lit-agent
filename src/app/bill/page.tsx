@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/db"
-import { ensureServerUser } from "@/lib/auth"
+"use client"
+
 import {
   Card,
   CardContent,
@@ -8,17 +8,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { billListViewSchema } from "@/schema/bill"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { TODO } from "@/config"
+import { api } from "@/lib/trpc/react"
 
-export default async function RedeemPage() {
-  const user = await ensureServerUser()
-  const bills = await prisma.bill.findMany({
-    where: { userId: user.id },
-    ...billListViewSchema,
-  })
+export default function RedeemPage() {
+  const { data: bills = [] } = api.bill.listMyBills.useQuery()
+
   return (
     <div className={"flex flex-col gap-2 p-4"}>
       {bills.map((bill, index) => (

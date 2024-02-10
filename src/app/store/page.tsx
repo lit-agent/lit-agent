@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button"
 
 export default function UserHomePage() {
   const { data: products = [] } = api.product.list.useQuery()
-  const { data: bills = [] } = api.bill.list.useQuery()
+  const { data: bills = [] } = api.bill.listMyBills.useQuery()
   const user = useUser()
 
   const billsCount = bills.filter((bill) => bill.userId === user?.id).length
@@ -29,14 +29,6 @@ export default function UserHomePage() {
     <div className={"w-full p-4 relative flex flex-col gap-4"}>
       <div className={"flex items-baseline gap-4"}>
         <div className={"text-white font-medium"}>姑的商城</div>
-
-        <Button
-          variant={"ghost"}
-          className={"flex items-centre text-primary text-xs"}
-          onClick={() => toast.info(TODO)}
-        >
-          切换 <ChevronRightIcon className={"w-4 h-4"} />
-        </Button>
       </div>
 
       <Link

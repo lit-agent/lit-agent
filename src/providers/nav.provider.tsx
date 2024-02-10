@@ -8,6 +8,13 @@ import { ActionEntrance } from "@/components/action-entrance"
 import { useSession } from "next-auth/react"
 import { toast } from "sonner"
 import { TODO } from "@/config"
+import { BiGame } from "react-icons/bi"
+import { GoPerson } from "react-icons/go"
+import { GrAppleAppStore } from "react-icons/gr"
+import { PiSnapchatLogoThin } from "react-icons/pi"
+import { PiSnapchatLogoBold } from "react-icons/pi"
+import { PiSnapchatLogo } from "react-icons/pi"
+import { IoChatbubbleEllipsesOutline } from "react-icons/io5"
 
 export default function NavProvider({ children }: PropsWithChildren) {
   const isBlogger = useSession().data?.user.type === UserType.blogger
@@ -25,7 +32,7 @@ export default function NavProvider({ children }: PropsWithChildren) {
         )}
       </div>
 
-      <div className="w-full shrink-0 grid grid-cols-3 p-2 bg-black gap-2">
+      <div className="w-full shrink-0 grid grid-cols-4 p-2 bg-black gap-2">
         <NavTabLink
           href={""}
           onClick={() => {
@@ -35,23 +42,31 @@ export default function NavProvider({ children }: PropsWithChildren) {
           }}
           isSelected={selected === 1}
         >
-          <Menu1Icon />
+          <IoChatbubbleEllipsesOutline />
+        </NavTabLink>
+
+        <NavTabLink
+          href={"/playground"}
+          onClick={() => setSelected(2)}
+          isSelected={selected === 2}
+        >
+          <BiGame />
+        </NavTabLink>
+
+        <NavTabLink
+          href={"/store"}
+          onClick={() => setSelected(3)}
+          isSelected={selected === 3}
+        >
+          <GrAppleAppStore />
         </NavTabLink>
 
         <NavTabLink
           href={"/"}
-          onClick={() => setSelected(2)}
-          isSelected={selected === 2}
+          onClick={() => setSelected(4)}
+          isSelected={selected === 4}
         >
-          <FireIcon className={"scale-150"} />
-        </NavTabLink>
-
-        <NavTabLink
-          href={"/home"}
-          onClick={() => setSelected(3)}
-          isSelected={selected === 3}
-        >
-          <Menu3Icon />
+          <GoPerson />
         </NavTabLink>
       </div>
     </div>

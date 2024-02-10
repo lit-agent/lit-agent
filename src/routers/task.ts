@@ -24,7 +24,7 @@ export const taskRouter = createTRPCRouter({
     })
   }),
 
-  listUserTasks: protectedProcedure.query(async ({ ctx, input }) => {
+  listMyUserTasks: protectedProcedure.query(async ({ ctx, input }) => {
     return prisma.userTask.findMany({
       where: { userId: ctx.user.id },
       ...userTaskViewSchema,

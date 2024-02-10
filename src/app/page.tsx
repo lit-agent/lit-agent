@@ -32,11 +32,10 @@ const navs = [
 ]
 
 export default function HomePage() {
-  const { data: userTasks = [] } = api.task.listUserTasks.useQuery()
+  const { data: userTasks = [] } = api.task.listMyUserTasks.useQuery()
   const [userTaskFilter, setUserTaskFilter] = useState<
     UserTaskStatus | undefined
   >("goon")
-  const [taskFilter, setTaskFilter] = useState<TaskStatus | undefined>("on")
 
   const { data: users = [] } = api.user.list.useQuery()
   const user = useUser()
@@ -197,52 +196,6 @@ export default function HomePage() {
               <TaskItem task={userTask.task} key={index} />
             ))}
         </div>
-
-        <div className={"flex justify-between"}>
-          <Label className={"text-2xl"}>任务广场</Label>
-
-          <div className={"flex items-center gap-2"}>
-            <span
-              onClick={() => {
-                setTaskFilter("on")
-              }}
-              className={cn(
-                "hover:text-white/75 cursor-pointer",
-                taskFilter === "on" && " border-primary border-b-2",
-              )}
-            >
-              正在进行
-            </span>
-            <span
-              onClick={() => {
-                setTaskFilter("finished")
-              }}
-              className={cn(
-                "hover:text-white/75 cursor-pointer",
-                taskFilter === "finished" && " border-primary border-b-2",
-              )}
-            >
-              已结束
-            </span>
-            <span
-              onClick={() => {
-                setTaskFilter(undefined)
-              }}
-              className={cn(
-                "hover:text-white/75 cursor-pointer",
-                !taskFilter && " border-primary border-b-2",
-              )}
-            >
-              全部
-            </span>
-          </div>
-        </div>
-
-        {tasks
-          .filter((task) => !taskFilter || task.status === taskFilter)
-          .map((task, index) => (
-            <TaskItem task={task} key={index} />
-          ))}
       </div>
 
       <div

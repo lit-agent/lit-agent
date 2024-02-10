@@ -1,9 +1,10 @@
-import { createTRPCRouter, publicProcedure } from "@/lib/trpc/trpc"
+import { createTRPCRouter, protectedProcedure } from "@/lib/trpc/trpc"
 import { billListViewSchema } from "@/schema/bill"
 
 export const billRouter = createTRPCRouter({
-  list: publicProcedure.query(async ({ ctx, input }) => {
+  listMyBills: protectedProcedure.query(async ({ ctx, input }) => {
     return ctx.prisma.bill.findMany({
+      where: { userId: ctx.user.id },
       ...billListViewSchema,
     })
   }),
