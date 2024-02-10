@@ -1,5 +1,5 @@
 import { ITaskView } from "@/schema/task"
-import { BrandImage, TaskCardSVG } from "@/lib/assets"
+import { LitBrandImage, TaskCardSVG } from "@/lib/assets"
 import Image from "next/image"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import { Button } from "@/components/ui/button"
@@ -25,7 +25,7 @@ export default function TaskItem({ task }: { task: ITaskView }) {
           <div className="absolute inset-0 flex items-center p-[3%] pr-[10%] gap-[3%] w-full h-full overflow-hidden">
             <div className={"w-[21%] shrink-0 relative h-full"}>
               <Image
-                src={task.images[0] ?? BrandImage}
+                src={task.images[0] ?? LitBrandImage}
                 alt={""}
                 className={"w-full h-full"}
                 fill

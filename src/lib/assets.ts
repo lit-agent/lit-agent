@@ -16,7 +16,6 @@ import Honor4SVG from "../../public/image/honor/honor-4.svg"
 import Honor5SVG from "../../public/image/honor/honor-5.svg"
 import TaskCardSVG from "../../public/image/bg/task-card.svg"
 
-import BrandImage from "../../public/image/icon/brand.png"
 import CoverSmImage from "../../public/image/user/jiugu-cover-sm.png"
 import CoverMdImage from "../../public/image/user/jiugu-cover-md.png"
 import JiuguImage from "../../public/image/user/jiugu-avatar.png"
@@ -31,6 +30,7 @@ import DouyinBrandImage from "../../public/image/brand/douyin.png"
 import ShipinhaoBrandImage from "../../public/image/brand/shipinhao.png"
 import KuaishouBrandImage from "../../public/image/brand/kuaishou.png"
 import CoverTextBigImage from "../../public/image/landing/cover-text-big.jpg"
+import LitBrandImage from "../../public/image/brand/lit.png"
 
 import { HonorType } from "@prisma/client"
 
@@ -45,7 +45,6 @@ export {
   WechatMPIcon,
   NotificationIcon,
   CallIcon,
-  BrandImage,
   CoverSmImage,
   CoverMdImage,
   JiuguImage,
@@ -65,6 +64,7 @@ export {
   KuaishouBrandImage,
   XiaohongshuBrandImage,
   CoverTextBigImage,
+  LitBrandImage,
 }
 
 export const honorDict: Record<HonorType, string> = {

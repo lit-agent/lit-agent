@@ -6,26 +6,24 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import {
   AwardFillIcon,
-  BrandImage,
   DirectBoxSendIcon,
   FireIcon,
+  LitBrandImage,
   Menu1Icon,
   Menu3Icon,
   RingIcon,
 } from "@/lib/assets"
-import { ArrowUpIcon } from "lucide-react"
 import { PRIMARY_COLOR, TODO } from "@/config"
 import { Indicator } from "@/components/indicator"
-import { prisma } from "@/lib/db"
-import { taskListViewSchema } from "@/schema/task"
 import { api } from "@/lib/trpc/react"
 import TaskItem from "@/components/task-item"
 import { useState } from "react"
 import { TaskStatus, UserTaskStatus } from "@prisma/client"
-import { orderBy, sum, sumBy } from "lodash"
+import { orderBy, sumBy } from "lodash"
 import { useUser } from "@/hooks/use-user"
 import moment from "moment"
 import { toast } from "sonner"
+import { AspectRatio } from "@/components/ui/aspect-ratio"
 
 const navs = [
   { Icon: Menu1Icon, alt: "1" },
@@ -96,30 +94,31 @@ export default function HomePage() {
             <Badge className={"shrink-0"}>Hot火伴</Badge>
           </div>
 
-          <div className={"absolute right-2 top-0"}>
-            <Image
-              priority
-              src={BrandImage}
-              alt={""}
-              className={"w-30 h-auto"}
-            />
+          <div className={"absolute right-2 -top-4 w-[45%]"}>
+            <AspectRatio ratio={1}>
+              <Image
+                priority
+                src={LitBrandImage}
+                alt={""}
+                fill
+                className={"object-fill"}
+              />
+            </AspectRatio>
           </div>
         </div>
 
         <div className={"grid grid-cols-2 gap-2"}>
           <div
             className={
-              "flex flex-col gap-2 rounded-3xl bg-white p-4  text-black"
+              "flex flex-col gap-2 rounded-3xl bg-white p-4 text-black"
             }
           >
-            <div className={"flex items-center "}>
-              <div className={"mr-2 text-xs font-thin text-gray-950"}>
-                世界排名
-              </div>
+            <div className={"flex items-center gap-2"}>
               <AwardFillIcon />
+              <div className={"text-xs font-thin text-gray-950"}>世界排名</div>
             </div>
 
-            <div className={"flex items-center gap-2"}>
+            <div className={"flex items-center gap-2 ml-2"}>
               <div className={"text-lg font-medium"}>{myRank}</div>
               <div className={"text-gray-500"}>/ {users.length}</div>
             </div>

@@ -3,13 +3,10 @@
 import { api } from "@/lib/trpc/react"
 import { IUserTaskView } from "@/schema/task"
 import { UserAvatar } from "@/components/user-avatar"
-import moment from "moment"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
 import Link from "next/link"
-import { DATETIME_FORMAT } from "@/lib/datetime"
 import { ChevronLeftIcon } from "lucide-react"
 
 export default function VerifyTaskPage({
