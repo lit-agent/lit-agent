@@ -142,15 +142,16 @@ export const taskRouter = createTRPCRouter({
           },
         })
 
+        // 2024-02-10：更新火值要由博主端审核
         // 更新用户的火值
-        await prisma.user.update({
-          where: { id: user.id },
-          data: {
-            totalEarnedFire: { increment: value },
-            currentEarnedFire: { increment: value },
-            balance: { increment: value },
-          },
-        })
+        // await prisma.user.update({
+        //   where: { id: user.id },
+        //   data: {
+        //     totalEarnedFire: { increment: value },
+        //     currentEarnedFire: { increment: value },
+        //     balance: { increment: value },
+        //   },
+        // })
 
         // 发送消息到博主频道
         await prisma.message.create({

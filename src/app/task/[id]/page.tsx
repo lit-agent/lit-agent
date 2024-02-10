@@ -4,7 +4,7 @@ import Image from "next/image"
 import { BroadcastImage } from "@/lib/assets"
 import { RiDoubleQuotesL, RiWechatChannelsLine } from "react-icons/ri"
 import { Separator } from "@/components/ui/separator"
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import { Hot } from "@/components/fire-value"
 import { MyMarkdown } from "@/components/markdown"
 import { UserAvatar } from "@/components/user-avatar"
@@ -20,7 +20,15 @@ import { UserTaskStatus } from "@prisma/client"
 import Message from "@/components/message-item"
 import { useUser } from "@/hooks/use-user"
 import { useCopyToClipboard } from "@uidotdev/usehooks"
-import TaskOk from "@/components/task-ok"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export default function TaskDetailPage({
   params: { id },
@@ -44,10 +52,32 @@ export default function TaskDetailPage({
 
   const [copied, copyFn] = useCopyToClipboard()
 
-  if (hasFinished && user && task) return <TaskOk user={user} task={task} />
+  const [open, setOpen] = useState(false)
+
+  // if (hasFinished && user && task) return <TaskOk user={user} task={task} />
+
+  const toTime = task?.endTime
+    ? moment(task.endTime).diff(moment(), "minutes")
+    : 0
 
   return (
     <div className={"px-8 py-4 h-full flex flex-col overflow-hidden"}>
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        {/*<AlertDialogTrigger>Open</AlertDialogTrigger>*/}
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>任务结果</AlertDialogTitle>
+            <AlertDialogDescription>
+              提交成功，请耐心等待48H内审核通过后火值发放！
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            {/*<AlertDialogCancel>Cancel</AlertDialogCancel>*/}
+            <AlertDialogAction>确认</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <div className={"grow overflow-auto"}>
         <div
           ref={refTop}
@@ -107,21 +137,37 @@ export default function TaskDetailPage({
 
               <div className={"flex flex-col items-center"}>
                 <div>任务时限</div>
-                <div>
-                  <span className={"text-primary font-medium"}>{23}</span>
-                  <span>时</span>
-                  <span className={"text-primary font-medium"}>{47}</span>
-                  <span>分</span>
+                <div className={"flex gap-1 text-muted-foreground"}>
+                  {toTime < 0 ? (
+                    "已过期"
+                  ) : (
+                    <>
+                      <span className={"text-primary font-medium"}>
+                        {Math.floor(toTime / 60)}
+                      </span>
+                      <span>时</span>
+                      <span className={"text-primary font-medium"}>
+                        {toTime % 60}
+                      </span>
+                      <span>分</span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
 
             <Separator orientation={"horizontal"} />
 
-            <div className={"flex flex-col items-center"}>
-              <div className={"font-semibold"}>任务描述</div>
+            <div className={"flex flex-col gap-2 items-center"}>
+              <div className={"font-semibold text-lg"}>任务描述</div>
 
-              <MyMarkdown>{task?.purpose ?? ""}</MyMarkdown>
+              <MyMarkdown>{task?.purpose || "该任务没有任何描述~"}</MyMarkdown>
+
+              <div
+                className={"text-muted-foreground text-sm text-center w-1/2"}
+              >
+                注意：提交后，我们会在48H内审核并发放对应火值，若多次虚假提交，我们可能会采取对应的封禁措施。
+              </div>
 
               <Separator orientation={"horizontal"} />
 
@@ -164,6 +210,7 @@ export default function TaskDetailPage({
       {!hasFinished && (
         <div className={"flex flex-col w-full shrink-0 space-y-4 pt-4"}>
           <Button
+            disabled={toTime <= 0}
             className={"bg-white text-primary hover:bg-white/90"}
             onClick={async () => {
               await copyFn(location.href)
@@ -173,46 +220,74 @@ export default function TaskDetailPage({
             🔗复制任务链接
           </Button>
 
-          <Label
-            className={cn(
-              buttonVariants(),
-              "bg-primary text-white cursor-pointer",
-            )}
-          >
-            上传截图，赚🔥火值
-            <input
-              hidden
-              type={"file"}
-              accept={"image/*"}
-              multiple
-              onChange={async (event) => {
-                if (!task) return
-                const files = event.currentTarget.files
+          {!hasFinished ? (
+            <Label
+              className={cn(
+                buttonVariants(),
+                "bg-primary text-white cursor-pointer",
+              )}
+            >
+              上传截图，赚🔥火值
+              <input
+                hidden
+                type={"file"}
+                accept={"image/*"}
+                multiple
+                onChange={async (event) => {
+                  if (!task) return
+                  const files = event.currentTarget.files
 
-                if (!files) return
-                const result = await uploadFilesV2(files)
+                  if (!files) return
+                  const result = await uploadFilesV2(files)
 
-                if (!result.success) return
-                submitTask
-                  .mutateAsync({
-                    taskId: task.id,
-                    images: result.data as string[],
-                  })
-                  .catch((e) => {
-                    console.error(e)
-                    toast.error("执行任务失败！")
-                  })
-                  .then((res) => {
-                    toast.success("执行任务成功！")
-                    // 刷新最新的状态，因为后台已经更新了
-                    // invalidate: 1. task.get 2. task.getUserTask
-                    utils.task.invalidate()
-                  })
-              }}
-            />
-          </Label>
+                  if (!result.success) return
+
+                  submitTask
+                    .mutateAsync({
+                      taskId: task.id,
+                      images: result.data as string[],
+                    })
+                    .catch((e) => {
+                      console.error(e)
+                      toast.error("执行任务失败！")
+                    })
+                    .then((res) => {
+                      setOpen(true)
+                      // toast.success("执行任务成功！")
+                      // 刷新最新的状态，因为后台已经更新了
+                      // invalidate: 1. task.get 2. task.getUserTask
+                      utils.task.invalidate()
+                    })
+                }}
+              />
+            </Label>
+          ) : (
+            <Button onClick={() => {}}>去限时群聊</Button>
+          )}
         </div>
       )}
     </div>
+  )
+}
+
+const useTaskDialog = () => {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      {/*<AlertDialogTrigger>Open</AlertDialogTrigger>*/}
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>任务结果</AlertDialogTitle>
+          <AlertDialogDescription>
+            提交成功，请耐心等待48H内审核通过后火值发放！
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          {/*<AlertDialogCancel>Cancel</AlertDialogCancel>*/}
+          <AlertDialogAction>确认</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }
