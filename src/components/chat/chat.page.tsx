@@ -6,7 +6,7 @@ import { IChatView } from "@/schema/message"
 import { UserType } from "@prisma/client"
 import ChatList from "@/components/chat/chat-list"
 import { getChatId } from "@/lib/socket/helpers"
-import ChatDetailPage from "@/app/chat/[id]/page"
+import ChatDetailPage from "@/app/(main)/chat/[id]/page"
 import { USER_JIUGU_ID } from "@/config"
 import { useUser } from "@/hooks/use-user"
 

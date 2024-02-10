@@ -27,6 +27,8 @@ const useInitMessages = () => {
   useEffect(() => {
     if (serverMessages.length) setMessages(serverMessages)
   }, [serverMessages.length])
+
+  console.log("[Message] user: ", user)
 }
 
 const useBindChannels = () => {

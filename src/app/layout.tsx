@@ -6,7 +6,6 @@ import { Toaster } from "sonner"
 import { TRPCReactProvider } from "@/providers/trpc.provider"
 import { Metadata, Viewport } from "next"
 import BgProvider from "@/providers/bg.provider"
-import MainProvider from "@/providers/main.provider"
 import StableSessionProvider from "@/providers/session.provider"
 
 const inter = Inter({
@@ -45,19 +44,13 @@ export default async function RootLayout({
 
           <body className={`font-sans ${inter.variable}`}>
             <main className={"relative w-screen"}>
-              <MyThemeProvider>
-                <BgProvider>
-                  <MainProvider>
-                    {children}
+              <BgProvider>
+                <MyThemeProvider>
+                  {children}
 
-                    <Toaster
-                      richColors
-                      position={"top-right"}
-                      duration={1000}
-                    />
-                  </MainProvider>
-                </BgProvider>
-              </MyThemeProvider>
+                  <Toaster richColors position={"top-right"} duration={2000} />
+                </MyThemeProvider>
+              </BgProvider>
             </main>
           </body>
         </html>

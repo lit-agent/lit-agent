@@ -135,7 +135,7 @@ export const MessageBody = ({
 
     case MessageType.TextChoices:
       return (
-        <div className={"flex w-full flex-col"}>
+        <div className={"flex w-full flex-col gap-2"}>
           {body.title && <MarkdownContainer>{body.title}</MarkdownContainer>}
 
           {body.choices.map(({ value }, index) => (

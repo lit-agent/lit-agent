@@ -1,7 +1,12 @@
+"use client"
+
 import { PropsWithChildren } from "react"
 import { cn } from "@/lib/utils"
+import { useAutoHeight } from "@/hooks/use-auto-height"
 
 export default function BgProvider({ children }: PropsWithChildren) {
+  useAutoHeight()
+
   return (
     <>
       <div

@@ -113,6 +113,7 @@ const MainCard = () => {
             src={LitBrandImage}
             alt={""}
             fill
+            sizes={"100%"}
             className={"object-fill"}
           />
         </AspectRatio>

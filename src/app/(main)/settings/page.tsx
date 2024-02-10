@@ -15,7 +15,7 @@ export default function SettingsPage() {
   if (!user) return
 
   return (
-    <div className={"flex flex-col gap-4 p-6"}>
+    <div className={"flex flex-col gap-4"}>
       <Label className={"text-xl"}>系统设置</Label>
 
       <GrayCard>

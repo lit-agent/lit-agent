@@ -1,7 +1,7 @@
 "use client"
 
 import CreateFormPage from "@/components/create-page"
-import { createProductData, createTaskData } from "@/app/create/config"
+import { createProductData, createTaskData } from "@/app/(main)/create/config"
 import { api } from "@/lib/trpc/react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { createProductSchema } from "@/schema/product"

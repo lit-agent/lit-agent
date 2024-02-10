@@ -2,18 +2,11 @@ import { ITaskView } from "@/schema/task"
 import { LitBrandImage, TaskCardSVG } from "@/lib/assets"
 import Image from "next/image"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
-import { Button } from "@/components/ui/button"
-import { DeleteIcon } from "lucide-react"
-import { toast } from "sonner"
 import { api } from "@/lib/trpc/react"
-import { useUser } from "@/hooks/use-user"
 import Link from "next/link"
 import UserAvatars from "@/components/user/user-avatars"
 
 export default function TaskListView({ task }: { task: ITaskView }) {
-  const utils = api.useUtils()
-  const deleteTask = api.task.delete.useMutation()
-  const user = useUser()
   const joinTask = api.task.joinTask.useMutation()
   const { data: userTask } = api.task.getUserTask.useQuery({ taskId: task.id })
 
@@ -67,6 +60,7 @@ const TaskMain = ({ task }: { task: ITaskView }) => {
             <Image
               src={task.images[0] ?? LitBrandImage}
               alt={""}
+              sizes={"100%"}
               className={"w-full h-full"}
               fill
             />

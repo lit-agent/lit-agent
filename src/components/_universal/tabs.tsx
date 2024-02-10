@@ -25,7 +25,7 @@ export const UniversalTabs = <T extends string>({
   children: ReactNode
 }) => {
   return (
-    <Tabs className={"flex flex-col gap-2 py-4"} value={filter}>
+    <Tabs className={"flex flex-col gap-2"} value={filter}>
       <div className={"flex justify-between items-center"}>
         <Label className={"text-primary text-2xl shrink-0"}>{title}</Label>
 

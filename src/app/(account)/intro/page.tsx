@@ -36,7 +36,7 @@ export default function IntroPage() {
   return (
     <div
       className={cn(
-        "flex items-center h-full bg-[#2A2435] relative",
+        "flex flex-col justify-end items-center h-full bg-[#2A2435] relative",
         "flex-col", // 使用倒序保证页面布局稳定性，封面图是后出现的，todo:更好的办法
       )}
     >
@@ -48,7 +48,7 @@ export default function IntroPage() {
         priority
       />
 
-      <div className={"mt-auto z-50 bg-black/75 w-full"}>
+      <div className={"z-50 bg-black/75 w-full"}>
         <GiuguProfile className={"-mt-6 mb-6"} />
 
         <Comp3 />

@@ -1,30 +1,26 @@
 "use client"
-
 import { ComponentProps, PropsWithChildren, useState } from "react"
-import { UserType } from "@prisma/client"
-import { ActionEntrance } from "@/components/_universal/action-entrance"
 import { useSession } from "next-auth/react"
+import { cn } from "@/lib/utils"
+import { ActionEntrance } from "@/components/_universal/action-entrance"
+import { useGlobalMessages } from "@/hooks/use-messages"
 import { toast } from "sonner"
 import { TODO } from "@/config"
-import { BiGame } from "react-icons/bi"
-import { GoPerson } from "react-icons/go"
-import { GrAppleAppStore } from "react-icons/gr"
 import { IoChatbubbleEllipsesOutline } from "react-icons/io5"
+import { BiGame } from "react-icons/bi"
+import { GrAppleAppStore } from "react-icons/gr"
+import { GoPerson } from "react-icons/go"
 import Link from "next/link"
-import { cn } from "@/lib/utils"
-import { useAutoHeight } from "@/hooks/use-auto-height"
-import { useGlobalMessages } from "@/hooks/use-messages"
+import { UserType } from "@prisma/client"
 
-export default function MainProvider({ children }: PropsWithChildren) {
-  useGlobalMessages()
-
-  useAutoHeight()
-
+export default function MainLayout({ children }: PropsWithChildren) {
+  console.log("[MainLayout]")
+  
   return (
     <div className={"h-full overflow-hidden flex flex-col"}>
       <ContentArea>{children}</ContentArea>
 
-      <Navbars />
+      <NavBars />
     </div>
   )
 }
@@ -36,7 +32,7 @@ const ContentArea = ({ children }: PropsWithChildren) => {
     <div
       className={cn(
         "grow overflow-hidden relative", // 为了博主发布的固定位置
-        "p-4 -m-4", // 为了滚动条不遮住内容
+        "py-8 px-4 -m-4", // 为了滚动条不遮住内容
       )}
     >
       <div className={"h-full overflow-y-auto p-4"}>{children}</div>
@@ -50,7 +46,9 @@ const ContentArea = ({ children }: PropsWithChildren) => {
   )
 }
 
-const Navbars = () => {
+const NavBars = () => {
+  useGlobalMessages()
+
   const [selected, setSelected] = useState(0)
 
   return (
