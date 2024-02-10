@@ -70,7 +70,8 @@ export const userRouter = createTRPCRouter({
         // 欢迎语不需要使用socket发，因为用户还没到房间
         await prisma.message.create({
           data: {
-            isAI: true,
+            // 2024-02-10 更新，不要 ai 了
+            isAI: false,
             // 玖姑必存在，在user那步就存在了
             fromUserId: USER_JIUGU_ID,
             toUserId: userId,

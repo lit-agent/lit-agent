@@ -120,7 +120,7 @@ const guidanceItems: IMessageContainer[] = [
     body: {
       type: MessageType.Plain,
       title:
-        "我就是玖姑本姑。因为找我的人太多，我做了个AI助理，帮我处理一些简单问题，比如售后、基本信息。同时我也也会在后台看到你的所有信息，并记录你给我的所有贡献。",
+        "在这里，你可以通过完成姑指定的一些任务来获得火值。火值可以用来兑换姑提供的产品和服务。",
     },
   },
 
@@ -128,19 +128,16 @@ const guidanceItems: IMessageContainer[] = [
     user: admins.jiugu,
     body: {
       type: MessageType.Plain,
-      title:
-        "Hi 我是姑的AI助理。如果我回答不了你的问题，我会收集整理告诉姑。如果你想直接迅速找到姑，可以花一些火值。你可以通过帮姑把内容转评赞、或完成一些指定任务来获得火值。火值也可以用来兑换其他姑提供的产品和服务。",
+      title: "未来，这里还会有很多惊喜，请期待它们一一与你的见面。",
     },
-    isAI: true,
   },
 
   {
     user: admins.jiugu,
     body: {
       type: MessageType.Plain,
-      title: "首先我先帮姑筛选一下真正的姑的friend。请回答以下几个问题：",
+      title: "首先，我需要筛选一下真正的姑的friend。请回答以下几个问题：",
     },
-    isAI: true,
   },
 
   {
@@ -155,7 +152,6 @@ const guidanceItems: IMessageContainer[] = [
         { value: "挑战公众对女性的束缚", checked: true },
       ],
     },
-    isAI: true,
   },
 
   {
@@ -170,7 +166,6 @@ const guidanceItems: IMessageContainer[] = [
         { value: "厌蠢", checked: false },
       ],
     },
-    isAI: true,
   },
   {
     user: admins.jiugu,
@@ -197,6 +192,5 @@ const guidanceItems: IMessageContainer[] = [
         { value: "环游世界", checked: false },
       ],
     },
-    isAI: true,
   },
 ]
