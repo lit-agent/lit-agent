@@ -119,7 +119,7 @@ export default function TaskDetailPage({
             <Separator orientation={"horizontal"} />
 
             <div className={"flex flex-col items-center"}>
-              <div className={"font-semibold"}>任务目的</div>
+              <div className={"font-semibold"}>任务描述</div>
 
               <MyMarkdown>{task?.purpose ?? ""}</MyMarkdown>
 
