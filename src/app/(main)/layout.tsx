@@ -1,6 +1,5 @@
 "use client"
 import { ComponentProps, PropsWithChildren, useState } from "react"
-import { useSession } from "next-auth/react"
 import { cn } from "@/lib/utils"
 import { ActionEntrance } from "@/components/_universal/action-entrance"
 import { useGlobalMessages } from "@/hooks/use-messages"
@@ -12,10 +11,11 @@ import { GrAppleAppStore } from "react-icons/gr"
 import { GoPerson } from "react-icons/go"
 import Link from "next/link"
 import { UserType } from "@prisma/client"
+import { useUser } from "@/hooks/use-user"
 
 export default function MainLayout({ children }: PropsWithChildren) {
   console.log("[MainLayout]")
-  
+
   return (
     <div className={"h-full overflow-hidden flex flex-col"}>
       <ContentArea>{children}</ContentArea>
@@ -26,7 +26,8 @@ export default function MainLayout({ children }: PropsWithChildren) {
 }
 
 const ContentArea = ({ children }: PropsWithChildren) => {
-  const isBlogger = useSession().data?.user.type === UserType.blogger
+  const user = useUser()
+  const isBlogger = user?.type === UserType.blogger
 
   return (
     <div
@@ -38,7 +39,7 @@ const ContentArea = ({ children }: PropsWithChildren) => {
       <div className={"h-full overflow-y-auto p-4"}>{children}</div>
 
       {isBlogger && (
-        <div className={"absolute right-6 bottom-6"}>
+        <div className={"absolute right-8 bottom-8"}>
           <ActionEntrance />
         </div>
       )}

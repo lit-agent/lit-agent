@@ -13,6 +13,18 @@ import { JiuguImage } from "@/lib/assets"
 import { MessageType } from "@/schema/message.base"
 import { admins } from "@/config"
 import { BloggerContainer } from "@/components/user/blogger-container"
+import { BasicMutableUserInfo } from "@/components/user/basic"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { FireValue } from "@/components/_universal/fire-value"
+import { useUser } from "@/hooks/use-user"
 
 export default function ValidationPage() {
   const [validating, setValidating] = useState(false)
@@ -31,8 +43,49 @@ export default function ValidationPage() {
 
   const router = useRouter()
 
+  const [open, setOpen] = useState(false)
+  const { data: users = [] } = api.user.list.useQuery()
+  const user = useUser()
+
   return (
     <div className={"flex h-full flex-col"}>
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              恭喜第
+              <span className={"text-primary mx-1"}>
+                {users.filter((u) => u.validated).length + 1}
+              </span>
+              位粉丝通过测试！
+            </AlertDialogTitle>
+            <AlertDialogDescription
+              className={"flex flex-col items-center gap-1"}
+            >
+              <span>你果然是姑的friend，恭喜你获得火伴身份！</span>
+              <span className={"flex items-center"}>
+                我们将赠送您 <FireValue value={10} />
+                ，可用于兑换玖姑的服务哦！
+              </span>
+              <span>但在进入玖姑的私域之前，请先换下马甲吧！</span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <BasicMutableUserInfo />
+
+          <AlertDialogFooter>
+            <AlertDialogAction
+              disabled={!user?.image || !user?.name}
+              onClick={() => {
+                router.push("/")
+              }}
+            >
+              确定
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <div className={"flex items-center justify-center gap-1 p-2"}>
         <Avatar className={"h-5 w-5"}>
           <AvatarImage src={JiuguImage.src} />
@@ -71,12 +124,7 @@ export default function ValidationPage() {
                 // 在错误的时候重新允许validate，正确的时候会直接飞走
                 setValidating(false)
               } else {
-                toast.success(
-                  "你果然是姑的friend，恭喜你获得火伴身份！",
-                  // todo: 更友好的显示
-                  // "以及我们赠送的10火值，你可以在xxx查看你的火值数额，并在xxx进行兑换。"
-                )
-                void router.push("/")
+                setOpen(true)
               }
             }}
           >
