@@ -5,7 +5,7 @@ import {
 } from "@/lib/trpc/trpc"
 import { z } from "zod"
 
-import { userViewSchema } from "@/schema/user.base"
+import { userListViewSchema } from "@/schema/user.base"
 import { userMainViewSchema } from "@/schema/user"
 import { prisma } from "@/lib/db"
 import { USER_JIUGU_ID } from "@/config"
@@ -14,7 +14,7 @@ import { MessageType } from "@/schema/message.base"
 export const userRouter = createTRPCRouter({
   list: publicProcedure.query(async ({ ctx, input }) => {
     return prisma.user.findMany({
-      ...userViewSchema,
+      ...userListViewSchema,
       orderBy: { totalEarnedFire: "desc" },
     })
   }),
@@ -24,7 +24,7 @@ export const userRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       return prisma.user.findUnique({
         where: input,
-        ...userViewSchema,
+        ...userListViewSchema,
       })
     }),
 
@@ -44,7 +44,7 @@ export const userRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       return prisma.user.findUnique({
         where: input,
-        ...userViewSchema,
+        ...userListViewSchema,
       })
     }),
 

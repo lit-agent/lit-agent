@@ -9,7 +9,7 @@ import { prisma } from "@/lib/db"
 import CredentialsProvider from "next-auth/providers/credentials"
 
 import { SMS_PROVIDER_ID } from "@/lib/sms"
-import { IUserView, userViewSchema } from "@/schema/user.base"
+import { IUserView, userListViewSchema } from "@/schema/user.base"
 
 export type SessionError = "NoPhone" | "NoUserInDB"
 
@@ -141,7 +141,7 @@ export const authOptions: NextAuthOptions = {
             },
           },
           include: {
-            user: userViewSchema,
+            user: userListViewSchema,
           },
         })
         console.log("[sms] account: ", account)

@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { Prisma } from ".prisma/client"
+import { userListViewSchema } from "@/schema/user.base"
 import validator = Prisma.validator
 import ProductDefaultArgs = Prisma.ProductDefaultArgs
 import ProductGetPayload = Prisma.ProductGetPayload
@@ -21,7 +22,7 @@ export type ICreateProduct = z.infer<typeof createProductSchema>
 
 export const productListViewSchema = validator<ProductDefaultArgs>()({
   include: {
-    fromUser: true,
+    fromUser: userListViewSchema,
     bills: {
       select: {
         userId: true,

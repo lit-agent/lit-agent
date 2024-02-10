@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client"
-import { userViewSchema } from "@/schema/user.base"
+import { userListViewSchema } from "@/schema/user.base"
 import UserGetPayload = Prisma.UserGetPayload
 import validator = Prisma.validator
 import UserDefaultArgs = Prisma.UserDefaultArgs
@@ -15,7 +15,7 @@ export const userMainViewSchema = validator<UserDefaultArgs>()({
           include: {
             toUsers: {
               include: {
-                user: userViewSchema,
+                user: userListViewSchema,
               },
             },
             room: {
@@ -30,12 +30,12 @@ export const userMainViewSchema = validator<UserDefaultArgs>()({
     rooms: {
       include: {
         messages: messageViewSchema,
-        users: userViewSchema,
+        users: userListViewSchema,
       },
     },
     toRelations: {
       include: {
-        toUser: userViewSchema,
+        toUser: userListViewSchema,
       },
     },
 

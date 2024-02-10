@@ -16,7 +16,8 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { RedeemType } from "@prisma/client"
 import { calculateProductBuyersCount } from "@/lib/utils"
-import { PRIMARY_COLOR } from "@/config"
+import { PRIMARY_COLOR, TODO } from "@/config"
+import { UserAvatar } from "@/components/user-avatar"
 
 export default function ProductPage({
   params: { id },
@@ -122,17 +123,24 @@ export default function ProductPage({
       </div>
 
       <div
-        className={"shrink-0 flex items-center justify-between px-2 gap-4 p-2"}
+        className={"shrink-0 flex items-center justify-between px-2 gap-6 p-2"}
       >
-        <div>
-          <Avatar className={"w-6 h-6"}>
-            <AvatarImage src={product.fromUser.image ?? undefined} />
-            <AvatarFallback>{product.fromUser.id.slice(0, 2)}</AvatarFallback>
-          </Avatar>
+        <div
+          onClick={() => {
+            toast.info(TODO)
+          }}
+          className={"flex flex-col items-center gap-1 cursor-pointer"}
+        >
+          <UserAvatar user={product.fromUser} size={"sm"} />
           咨询
         </div>
 
-        <div>
+        <div
+          onClick={() => {
+            toast.info(TODO)
+          }}
+          className={"flex flex-col items-center gap-1 cursor-pointer"}
+        >
           <StarIcon className={"w-6 h-6"} />
           收藏
         </div>

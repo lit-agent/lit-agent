@@ -3,7 +3,7 @@ import UserDefaultArgs = Prisma.UserDefaultArgs
 import UserGetPayload = Prisma.UserGetPayload
 import validator = Prisma.validator
 
-export const userViewSchema = validator<UserDefaultArgs>()({
+export const userListViewSchema = validator<UserDefaultArgs>()({
   select: {
     id: true,
     name: true,
@@ -24,4 +24,4 @@ export const userViewSchema = validator<UserDefaultArgs>()({
     },
   },
 })
-export type IUserView = UserGetPayload<typeof userViewSchema>
+export type IUserView = UserGetPayload<typeof userListViewSchema>

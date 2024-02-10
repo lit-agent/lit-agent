@@ -1,4 +1,4 @@
-import { userViewSchema } from "@/schema/user.base"
+import { userListViewSchema } from "@/schema/user.base"
 import { messageViewSchema } from "@/schema/message.base"
 
 import { Prisma } from "@prisma/client"
@@ -9,7 +9,7 @@ import RoomGetPayload = Prisma.RoomGetPayload
 export const roomViewSelector = validator<RoomDefaultArgs>()({
   select: {
     id: true,
-    users: userViewSchema,
+    users: userListViewSchema,
     messages: messageViewSchema,
   },
 })

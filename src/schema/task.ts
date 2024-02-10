@@ -1,5 +1,5 @@
 // 任务
-import { userViewSchema } from "@/schema/user.base"
+import { userListViewSchema } from "@/schema/user.base"
 import { z } from "zod"
 import {
   basicBodySchema,
@@ -31,17 +31,17 @@ export type ICreateTask = z.infer<typeof createTaskSchema>
 
 export const taskViewSchema = validator<TaskDefaultArgs>()({
   include: {
-    fromUser: userViewSchema,
+    fromUser: userListViewSchema,
     room: {
       select: {
         id: true,
         messages: messageViewSchema,
-        users: userViewSchema,
+        users: userListViewSchema,
       },
     },
     toUsers: {
       select: {
-        user: userViewSchema,
+        user: userListViewSchema,
       },
     },
   },

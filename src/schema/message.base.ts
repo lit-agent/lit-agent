@@ -3,7 +3,7 @@ import { Prisma } from ".prisma/client"
 import MessageDefaultArgs = Prisma.MessageDefaultArgs
 import MessageGetPayload = Prisma.MessageGetPayload
 import validator = Prisma.validator
-import { userViewSchema } from "./user.base"
+import { userListViewSchema } from "./user.base"
 
 export enum MessageType {
   Task = "Task",
@@ -53,13 +53,13 @@ export const messageViewSchema = validator<MessageDefaultArgs>()({
   select: {
     isAI: true,
     body: true,
-    fromUser: userViewSchema,
-    toUser: userViewSchema,
+    fromUser: userListViewSchema,
+    toUser: userListViewSchema,
     task: true,
     room: {
       select: {
         id: true,
-        users: userViewSchema,
+        users: userListViewSchema,
       },
     },
   },
