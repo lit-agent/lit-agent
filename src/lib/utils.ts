@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { uniq } from "lodash"
+import { uniq, uniqBy } from "lodash"
 import { IProductListView } from "@/schema/product"
 
 export function cn(...inputs: ClassValue[]) {
@@ -15,8 +15,16 @@ export const maskPhone = (s: string) =>
   s.slice(3, s.length - 2).replace(/./g, "*") +
   s.slice(s.length - 2)
 
-export const calculateProductBuyersCount = (product?: IProductListView) => {
-  return product ? uniq(product.bills.map((bill) => bill.userId)).length : 0
+export const getBuyersOfProduct = (product?: IProductListView) =>
+  product
+    ? uniqBy(
+        product.bills.map((bill) => bill.user),
+        "id",
+      )
+    : []
+
+export const countBuyersOfProduct = (product?: IProductListView) => {
+  return getBuyersOfProduct(product).length
 }
 
 export const PHONE_REGEX = new RegExp(

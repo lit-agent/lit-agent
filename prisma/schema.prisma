@@ -132,7 +132,7 @@ model Message {
   mentionUsers User[] @relation("mention")
 
   // 引用
-  refer    Message?  @relation("refer", fields: [referId], references: [id])
+  refer    Message?  @relation("refer", fields: [referId], references: [id], onDelete: SetNull)
   referId  String?
   referred Message[] @relation("refer")
 
@@ -349,7 +349,7 @@ model UserMessage {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  message   Message @relation(fields: [messageId], references: [id])
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
   messageId String
 
   isSender    Boolean
@@ -365,10 +365,10 @@ model UserProduct {
   createdAt DateTime @updatedAt
   updatedAt DateTime @updatedAt
 
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
   isFavored Boolean @default(false)
@@ -383,10 +383,10 @@ model UserRelation {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  fromUser   User   @relation("from", fields: [fromUserId], references: [id])
+  fromUser   User   @relation("from", fields: [fromUserId], references: [id], onDelete: Cascade)
   fromUserId String
 
-  toUser   User   @relation("to", fields: [toUserId], references: [id])
+  toUser   User   @relation("to", fields: [toUserId], references: [id], onDelete: Cascade)
   toUserId String
 
   // 粉丝

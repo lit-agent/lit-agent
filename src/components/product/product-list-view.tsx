@@ -2,7 +2,7 @@ import { IProductListView } from "@/schema/product"
 import Link from "next/link"
 import Image from "next/image"
 import { FireValue } from "@/components/_universal/fire-value"
-import { calculateProductBuyersCount } from "@/lib/utils"
+import { countBuyersOfProduct } from "@/lib/utils"
 
 export default function ProductListView({
   product,
@@ -33,7 +33,7 @@ export default function ProductListView({
             <FireValue value={product.price} />
 
             <div className={"text-muted-foreground text-xs"}>
-              {calculateProductBuyersCount(product)} 人兑换
+              {countBuyersOfProduct(product)} 人兑换
             </div>
           </div>
         </div>

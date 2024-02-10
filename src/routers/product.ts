@@ -20,9 +20,17 @@ export const productRouter = createTRPCRouter({
   get: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      return prisma.product.findUniqueOrThrow({
+      return prisma.product.findUnique({
         where: { id: input.id },
         ...productListViewSchema,
+      })
+    }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) => {
+      return prisma.product.delete({
+        where: { id: input.id },
       })
     }),
 
