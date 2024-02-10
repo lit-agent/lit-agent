@@ -29,6 +29,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 
 export default function TaskDetailPage({
   params: { id },
@@ -207,65 +208,87 @@ export default function TaskDetailPage({
           ))}
       </div>
 
-      {!hasFinished && (
-        <div className={"flex flex-col w-full shrink-0 space-y-4 pt-4"}>
-          <Button
+      <div className={"flex flex-col w-full shrink-0 space-y-4 pt-4"}>
+        <Button
+          className={"bg-white text-primary hover:bg-white/90"}
+          onClick={async () => {
+            await copyFn(location.href)
+            await toast.success("复制成功！")
+          }}
+        >
+          🔗复制任务链接
+        </Button>
+
+        {!hasFinished ? (
+          <Label
             disabled={toTime <= 0}
-            className={"bg-white text-primary hover:bg-white/90"}
-            onClick={async () => {
-              await copyFn(location.href)
-              await toast.success("复制成功！")
-            }}
+            className={cn(
+              buttonVariants(),
+              "bg-primary text-white cursor-pointer",
+            )}
           >
-            🔗复制任务链接
-          </Button>
+            上传截图，赚🔥火值
+            <input
+              hidden
+              type={"file"}
+              accept={"image/*"}
+              multiple
+              onChange={async (event) => {
+                if (!task) return
+                const files = event.currentTarget.files
 
-          {!hasFinished ? (
-            <Label
-              className={cn(
-                buttonVariants(),
-                "bg-primary text-white cursor-pointer",
-              )}
-            >
-              上传截图，赚🔥火值
-              <input
-                hidden
-                type={"file"}
-                accept={"image/*"}
-                multiple
-                onChange={async (event) => {
-                  if (!task) return
-                  const files = event.currentTarget.files
+                if (!files) return
+                const result = await uploadFilesV2(files)
 
-                  if (!files) return
-                  const result = await uploadFilesV2(files)
+                if (!result.success) return
 
-                  if (!result.success) return
+                submitTask
+                  .mutateAsync({
+                    taskId: task.id,
+                    images: result.data as string[],
+                  })
+                  .catch((e) => {
+                    console.error(e)
+                    toast.error("执行任务失败！")
+                  })
+                  .then((res) => {
+                    setOpen(true)
+                    // toast.success("执行任务成功！")
+                    // 刷新最新的状态，因为后台已经更新了
+                    // invalidate: 1. task.get 2. task.getUserTask
+                    utils.task.invalidate()
+                  })
+              }}
+            />
+          </Label>
+        ) : (
+          // <Button onClick={() => {}}>去限时群聊</Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>去限时群聊</Button>
+            </DialogTrigger>
 
-                  submitTask
-                    .mutateAsync({
-                      taskId: task.id,
-                      images: result.data as string[],
-                    })
-                    .catch((e) => {
-                      console.error(e)
-                      toast.error("执行任务失败！")
-                    })
-                    .then((res) => {
-                      setOpen(true)
-                      // toast.success("执行任务成功！")
-                      // 刷新最新的状态，因为后台已经更新了
-                      // invalidate: 1. task.get 2. task.getUserTask
-                      utils.task.invalidate()
-                    })
-                }}
-              />
-            </Label>
-          ) : (
-            <Button onClick={() => {}}>去限时群聊</Button>
-          )}
-        </div>
-      )}
+            <DialogContent>
+              <div className={"flex flex-col items-center gap-2"}>
+                {!task?.result ? (
+                  "该任务暂无群聊"
+                ) : (
+                  <>
+                    <div>欢迎加入限时群聊</div>
+                    <Image
+                      src={task.result.value}
+                      alt={"group"}
+                      width={240}
+                      height={320}
+                      className={"h-auto"}
+                    />
+                  </>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+      </div>
     </div>
   )
 }

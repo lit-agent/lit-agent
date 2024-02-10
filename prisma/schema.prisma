@@ -229,6 +229,10 @@ model Task {
   sentMessage Message?
 
   room Room?
+
+  // 提交任务后的结果显示
+  /// [TaskResult]
+  result String?
 }
 
 enum TaskStatus {
