@@ -1,1 +1,1 @@
-export type IApi = { success: boolean; data?: any; message?: string }
+export type IApi<T = any> = { success: boolean; data?: T; message?: string }

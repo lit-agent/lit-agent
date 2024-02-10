@@ -257,7 +257,9 @@ model User {
   validated     Boolean?  @default(false) // 是否通过验证
 
   // basic info
-  name   String?
+  name        String?
+  nameUpdated DateTime?
+
   email  String?    @unique
   phone  String?    @unique
   image  String?

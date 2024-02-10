@@ -5,10 +5,10 @@ import {
 } from "@/lib/trpc/trpc"
 import { z } from "zod"
 
-import { userListViewSchema } from "@/schema/user.base"
+import { userListViewSchema, userSafeUpdateSchema } from "@/schema/user.base"
 import { userMainViewSchema } from "@/schema/user"
 import { prisma } from "@/lib/db"
-import { USER_JIUGU_ID } from "@/config"
+import { MSG_RENAME_LIMITATION, USER_JIUGU_ID } from "@/config"
 import { MessageType } from "@/schema/message.base"
 
 export const userRouter = createTRPCRouter({
@@ -92,5 +92,26 @@ export const userRouter = createTRPCRouter({
       }
 
       return validateOk
+    }),
+
+  safeUpdate: protectedProcedure
+    .input(userSafeUpdateSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { id } = ctx.user
+
+      if (input.name) {
+        const user = await prisma.user.findUniqueOrThrow({ where: { id } })
+        if (
+          user.nameUpdated &&
+          +new Date() - +user.nameUpdated < 24 * 60 * 60 * 30
+        )
+          throw new Error(MSG_RENAME_LIMITATION)
+        return await prisma.user.update({
+          where: { id },
+          data: { ...input, nameUpdated: new Date() },
+        })
+      }
+
+      return await prisma.user.update({ where: { id }, data: input })
     }),
 })

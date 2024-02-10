@@ -18,6 +18,7 @@ declare module "next-auth/jwt" {
   /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
   interface JWT extends IUserView {
     name: string | null // JWT 的 name 还支持 undefined，我们要限制一下
+    phone: string | null
   }
 }
 
@@ -29,14 +30,13 @@ declare module "next-auth/jwt" {
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: DefaultSession["user"] & IUserView
+    user: DefaultSession["user"] & { id: string }
     error?: SessionError
   }
 
-  // interface User {
-  //   phone: string | null
-  //   type: UserType
-  // }
+  interface User {
+    phone: string | null
+  }
 }
 
 /**
@@ -81,7 +81,7 @@ export const authOptions: NextAuthOptions = {
       // console.log("[auth.jwt]: ", { token, user, session, account, profile, isNewUser, })
 
       // token 是加解密可信安全的，不用担心被篡改！
-      if (user) token = { ...token, ...user }
+      if (user) token = { ...token, phone: user.phone }
       return token
     },
 
@@ -106,7 +106,7 @@ export const authOptions: NextAuthOptions = {
       else {
         const userInDB = await prisma.user.findUnique({ where: { phone } })
         if (!userInDB) session.error = "NoUserInDB"
-        else session.user = { ...token, ...userInDB }
+        else session.user = { ...token, id: userInDB.id }
       }
       return session
     },

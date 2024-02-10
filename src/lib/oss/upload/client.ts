@@ -1,7 +1,9 @@
 import { toast } from "sonner"
 import { IApi } from "@/schema/api"
 
-export const uploadFilesV2 = async (files: FileList): Promise<IApi> => {
+export const uploadFilesV2 = async (
+  files: FileList,
+): Promise<IApi<string[]>> => {
   // todo: cleaner approach
   const isHttps = location.href.includes("https")
 

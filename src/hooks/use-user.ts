@@ -1,6 +1,9 @@
-import { useSession } from "next-auth/react"
+import { api } from "@/lib/trpc/react"
 
-export const useUser = () => useSession().data?.user
+export const useUser = () => {
+  const { data: user } = api.user.getSelf.useQuery()
+  return user
+}
 
 /**
  * todo: replace useUser
