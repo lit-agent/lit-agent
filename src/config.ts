@@ -57,3 +57,5 @@ export const admins: Record<"jiugu" | "mark" | "shuyu" | "hading", IUserView> =
   }
 export const DEFAULT_USERNAME = "一位不愿透露姓名的神秘用户"
 export const TODO = "研发小哥正在加🍗中……"
+export const TASK_PAGE_TITLE = "姑的广场"
+export const PRODUCT_PAGE_TITLE = "姑的商城"

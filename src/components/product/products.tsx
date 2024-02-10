@@ -1,16 +1,6 @@
 import { api } from "@/lib/trpc/react"
 import { useState } from "react"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
-import { TODO } from "@/config"
+import { PRODUCT_PAGE_TITLE } from "@/config"
 import Link from "next/link"
 import { UniversalTabs } from "@/components/_universal/tabs"
 import ProductListView from "@/components/product/product-list-view"
@@ -32,7 +22,7 @@ export function AllProducts() {
 
   return (
     <UniversalTabs
-      title={"姑的商城"}
+      title={PRODUCT_PAGE_TITLE}
       filters={filters}
       filter={filter}
       setFilter={setFilter}
@@ -79,7 +69,7 @@ export const MyProducts = () => {
             href={"/product"}
             className={"text-primary underline underline-offset-2 mx-1"}
           >
-            姑的商城
+            {PRODUCT_PAGE_TITLE}
           </Link>
           看看吧！
         </div>
