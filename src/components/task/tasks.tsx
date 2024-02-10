@@ -1,6 +1,6 @@
 import { api } from "@/lib/trpc/react"
 import { useState } from "react"
-import TaskItem from "@/components/task/task-item"
+import TaskListView from "@/components/task/task-list-view"
 import Link from "next/link"
 import { UniversalTabs } from "@/components/_universal/tabs"
 
@@ -25,7 +25,7 @@ export function AllTasks() {
       setFilter={setFilter}
     >
       {filteredTasks.map((task, index) => (
-        <TaskItem task={task} key={index} />
+        <TaskListView task={task} key={index} />
       ))}
     </UniversalTabs>
   )
@@ -54,7 +54,7 @@ export const MyTasks = () => {
     >
       {filteredUserTasks.length ? (
         filteredUserTasks.map((userTask, index) => (
-          <TaskItem task={userTask.task} key={index} />
+          <TaskListView task={userTask.task} key={index} />
         ))
       ) : (
         <div>

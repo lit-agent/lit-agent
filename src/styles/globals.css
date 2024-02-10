@@ -89,6 +89,11 @@
         list-style-type: upper-roman;
         list-style-position: inside;
     }
+
+    ul {
+        list-style-type: disc;
+        list-style-position: inside;
+    }
 }
 
 
@@ -125,7 +130,7 @@
 
 .son4 {
     /* 左上角飘带 */
-    background-color: #1890FF;
+    /*background-color: #1890FF;*/
     /* 左上角飘带的背景颜色 */
     overflow: hidden;
     white-space: nowrap;
@@ -141,7 +146,7 @@
 }
 
 .son4 span {
-    border: 1px solid #1890FF;
+    /*border: 1px solid #1890FF;*/
     color: #fff;
     display: block;
     font: bold 100% 'Helvetica Neue', Helvetica, Arial, sans-serif;

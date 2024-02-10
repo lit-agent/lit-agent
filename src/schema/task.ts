@@ -34,14 +34,13 @@ export const taskListViewSchema = validator<TaskDefaultArgs>()({
   include: {
     fromUser: userListViewSchema,
     room: {
-      select: {
-        id: true,
+      include: {
         messages: messageViewSchema,
         users: userListViewSchema,
       },
     },
     toUsers: {
-      select: {
+      include: {
         user: userListViewSchema,
       },
     },

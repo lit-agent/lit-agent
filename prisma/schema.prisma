@@ -232,7 +232,7 @@ model Task {
 
   // 提交任务后的结果显示
   /// [TaskResult]
-  result String?
+  result Json?
 }
 
 enum TaskStatus {

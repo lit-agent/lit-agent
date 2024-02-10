@@ -64,6 +64,7 @@ export const taskRouter = createTRPCRouter({
       let message
       await prisma.$transaction(async (prisma) => {
         const invitation = input.resultOfGroupInvitation
+        delete input.resultOfGroupInvitation
 
         const task = await prisma.task.create({
           data: {
@@ -116,6 +117,7 @@ export const taskRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       return await prisma.userTask.findUnique({
         where: { taskId_userId: { userId: ctx.user.id, taskId: input.taskId } },
+        ...userTaskViewSchema,
       })
     }),
 

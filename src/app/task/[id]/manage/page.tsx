@@ -22,9 +22,9 @@ export default function VerifyTaskPage({
     <div className={"flex flex-col gap-8 p-8"}>
       <Link
         href={`/task/${id}`}
-        className={"inline-flex items-center gap-2 underline"}
+        className={"flex items-center gap-2 underline text-sm"}
       >
-        <ChevronLeftIcon />
+        <ChevronLeftIcon className={"w-4 h-4"} />
         <span> Task @{id}</span>
       </Link>
 
@@ -56,11 +56,16 @@ const UserTaskView = ({ userTask }: { userTask: IUserTaskView }) => {
       }
     >
       {userTask.passed === true && (
-        <div className={"son4"}>
+        <div className={"son4 bg-green-500"}>
           <span>已通过</span>
         </div>
       )}
-      {userTask.passed === false && <div className={"son4"}>未通过</div>}
+
+      {userTask.passed === false && (
+        <div className={"son4 bg-gray-500"}>
+          <span>未通过</span>
+        </div>
+      )}
 
       <UserAvatar user={userTask.user} />
 
@@ -84,15 +89,15 @@ const UserTaskView = ({ userTask }: { userTask: IUserTaskView }) => {
           ))}
         </div>
 
-        {userTask.passed === null && (
-          <div className={"grid grid-cols-2 gap-4"}>
-            <Button onClick={() => verify(true)}>通过</Button>
+        {/*{userTask.passed === null && (*/}
+        <div className={"grid grid-cols-2 gap-4"}>
+          <Button onClick={() => verify(true)}>通过</Button>
 
-            <Button variant={"outline"} onClick={() => verify(false)}>
-              不通过
-            </Button>
-          </div>
-        )}
+          <Button variant={"outline"} onClick={() => verify(false)}>
+            不通过
+          </Button>
+        </div>
+        {/*)}*/}
       </div>
     </div>
   )

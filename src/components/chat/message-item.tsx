@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { IMessageBody } from "@/schema/message"
 
-import RenderTask from "@/components/task/task"
+import RenderTask from "@/components/task/task-message"
 import { IUserView } from "@/schema/user.base"
 import { ChevronRightIcon } from "lucide-react"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
