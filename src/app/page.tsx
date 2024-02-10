@@ -49,6 +49,8 @@ export default function HomePage() {
       (u) => u.id === user?.id,
     ) + 1
   const { data: tasks = [] } = api.task.listTasks.useQuery()
+
+  // todo: 空投池逻辑
   const currentReward = sumBy(
     tasks.filter((t) => +t.createdAt >= +moment().startOf("month").toDate()),
     "value",
@@ -138,7 +140,7 @@ export default function HomePage() {
             </div>
 
             <div className={"flex items-center gap-2"}>
-              <div className={"text-lg font-medium"}>{currentReward}</div>
+              <div className={"text-lg font-medium"}>敬请期待！</div>
               <FireIcon color={PRIMARY_COLOR} className={"w-4 h-4"} />
             </div>
 
