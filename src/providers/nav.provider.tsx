@@ -6,6 +6,8 @@ import { NavTabLink } from "@/components/nav-tab"
 import { UserType } from "@prisma/client"
 import { ActionEntrance } from "@/components/action-entrance"
 import { useSession } from "next-auth/react"
+import { toast } from "sonner"
+import { TODO } from "@/config"
 
 export default function NavProvider({ children }: PropsWithChildren) {
   const isBlogger = useSession().data?.user.type === UserType.blogger
@@ -25,8 +27,12 @@ export default function NavProvider({ children }: PropsWithChildren) {
 
       <div className="w-full shrink-0 grid grid-cols-3 p-2 bg-black gap-2">
         <NavTabLink
-          href={"/chat"}
-          onClick={() => setSelected(1)}
+          href={""}
+          onClick={() => {
+            toast.info(TODO)
+            return
+            setSelected(1)
+          }}
           isSelected={selected === 1}
         >
           <Menu1Icon />
