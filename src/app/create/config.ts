@@ -36,6 +36,12 @@ export const createTaskData: {
     type: "date",
     default: moment().add(1, "days").toDate(),
   },
+  {
+    name: "resultOfGroupInvitation",
+    label: "限时群聊",
+    type: "images",
+    default: [],
+  },
 ]
 
 export const createProductData: {

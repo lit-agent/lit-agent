@@ -220,12 +220,9 @@ export default function TaskDetailPage({
         </Button>
 
         {!hasFinished ? (
-          <Label
+          <Button
             disabled={toTime <= 0}
-            className={cn(
-              buttonVariants(),
-              "bg-primary text-white cursor-pointer",
-            )}
+            className={cn("bg-primary text-white cursor-pointer")}
           >
             上传截图，赚🔥火值
             <input
@@ -260,7 +257,7 @@ export default function TaskDetailPage({
                   })
               }}
             />
-          </Label>
+          </Button>
         ) : (
           // <Button onClick={() => {}}>去限时群聊</Button>
           <Dialog>

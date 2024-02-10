@@ -3,7 +3,6 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@/lib/trpc/trpc"
-import { createRequirementSchema } from "@/schema/requirement"
 import { z } from "zod"
 
 import { MessageType, messageViewSchema } from "@/schema/message.base"
@@ -55,11 +54,21 @@ export const taskRouter = createTRPCRouter({
 
       let message
       await prisma.$transaction(async (prisma) => {
+        const invitation = input.resultOfGroupInvitation
+
         const task = await prisma.task.create({
           data: {
             ...input,
             fromUserId: userId,
             status: "on",
+
+            // 显示群聊
+            result: invitation?.length
+              ? {
+                  type: "GroupInvitation",
+                  value: invitation,
+                }
+              : undefined,
           },
         })
 

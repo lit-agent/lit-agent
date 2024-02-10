@@ -26,6 +26,7 @@ export const createTaskSchema = z.object({
   platform: z.string(),
   target: z.string(),
   purpose: z.string(),
+  resultOfGroupInvitation: z.array(z.string()).optional(),
 })
 export type ICreateTask = z.infer<typeof createTaskSchema>
 

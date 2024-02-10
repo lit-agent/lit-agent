@@ -1,12 +1,12 @@
 import { IMessageBody } from "@/schema/message"
 
 declare global {
-  namespace PrismaJson {
-    type MessageBody = IMessageBody
+  export namespace PrismaJson {
+    export type MessageBody = IMessageBody
 
-    type TaskResult = {
+    export type TaskResult = {
       type: "GroupInvitation"
-      value: string
+      value: string[]
     }
   }
 }
