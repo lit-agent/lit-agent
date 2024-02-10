@@ -117,8 +117,6 @@ export default function HomePage() {
                 世界排名
               </div>
               <AwardFillIcon />
-              <ArrowUpIcon />
-              <div>??</div>
             </div>
 
             <div className={"flex items-center gap-2"}>
