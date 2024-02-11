@@ -98,6 +98,7 @@ const Comp3 = () => {
   }
 
   const [submitting, setSubmitting] = useState(false)
+  const utils = api.useUtils()
 
   async function onSubmit() {
     setSubmitting(true)
@@ -112,8 +113,10 @@ const Comp3 = () => {
     })
     console.log("[Auth] signed res: ", res)
 
-    if (res?.ok) toast.success("登录成功！")
-    else toast.error(res?.error ?? "登录失败", { duration: 3000 })
+    if (res?.ok) {
+      toast.success("登录成功！")
+      utils.user.getSelf.invalidate() // 刷新 user
+    } else toast.error(res?.error ?? "登录失败", { duration: 3000 })
 
     setSubmitting(false)
   }
