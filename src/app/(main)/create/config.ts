@@ -21,14 +21,19 @@ export const createTaskData: {
     type: "string",
     default: "全体姑的Friends",
   },
-  { name: "platform", label: "平台渠道", type: "string", default: "不孤岛" },
+  {
+    name: "platform",
+    label: "平台渠道",
+    type: "string",
+    default: "不孤岛",
+  },
   { name: "detail", label: "详情（富文本）", type: "text", default: "" },
   {
     name: "value",
     label: "价值",
     type: "number",
     default: 10,
-    description: "（单位：火币）",
+    description: "（单位：火值）",
   },
   { name: "startTime", label: "开始时间", type: "date", default: new Date() },
   {
