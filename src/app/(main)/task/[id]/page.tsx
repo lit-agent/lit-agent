@@ -26,7 +26,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { UserAvatar } from "@/components/user/user-avatar"
@@ -42,6 +49,7 @@ import {
   MSG_SUBMIT_VERIFY_SUCCESS,
   MSG_SUBMIT_VERIFYING,
 } from "@/config"
+import { DoorOpenIcon } from "lucide-react"
 
 export default function TaskDetailPage({
   params: { id },
@@ -303,22 +311,6 @@ const BottomActions = ({
 
   return (
     <div className={"flex flex-col w-full shrink-0 space-y-4 pt-4"}>
-      <AlertDialog open={open} onOpenChange={setOpen}>
-        {/*<AlertDialogTrigger>Open</AlertDialogTrigger>*/}
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>任务结果</AlertDialogTitle>
-            <AlertDialogDescription>
-              提交成功，请耐心等待48H内审核通过后火值发放！
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            {/*<AlertDialogCancel>Cancel</AlertDialogCancel>*/}
-            <AlertDialogAction>确认</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
       <Button
         className={"bg-white text-primary hover:bg-white/90"}
         onClick={async () => {
@@ -326,23 +318,32 @@ const BottomActions = ({
           await toast.success("复制成功！")
         }}
       >
-        🔗复制任务链接
+        🔗 复制任务链接
       </Button>
 
       {userTask ? (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button>去限时群聊</Button>
+            <Button className={"gap-1"}>
+              <DoorOpenIcon className={"w-4 h-4"} />
+              去限时群聊
+            </Button>
           </DialogTrigger>
 
           <DialogContent className={"max-h-[80%] overflow-auto"}>
+            <DialogHeader>
+              <DialogTitle>提交成功</DialogTitle>
+              <DialogDescription>
+                欢迎加入限时群聊，并耐心等待48H内审核通过后火值发放！
+              </DialogDescription>
+            </DialogHeader>
+
             <div className={"flex flex-col items-center gap-2"}>
               {!task?.result ? (
                 "该任务暂无群聊"
               ) : (
                 // todo: support more type of result
                 <>
-                  <div>欢迎加入限时群聊</div>
                   {task.result.value.map((item, index) => {
                     return (
                       <Image
