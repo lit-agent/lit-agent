@@ -255,7 +255,7 @@ const guidanceItems: IMessageContainer[] = [
     body: {
       type: MessageType.Plain,
       title:
-        "在这里，你可以通过完成姑指定的一些任务来获得火值。火值可以用来兑换姑提供的产品和服务。",
+        "在这里，你可以通过完成我指定的一些任务来获得火值。火值可以用来兑换我提供的产品和服务。",
     },
   },
 
@@ -271,7 +271,7 @@ const guidanceItems: IMessageContainer[] = [
     user: jiuguAvatar,
     body: {
       type: MessageType.Plain,
-      title: "首先，我需要筛选一下真正的姑的friend。请回答以下几个问题：",
+      title: "首先，我需要筛选一下真正的我的friend。请回答以下几个问题：",
     },
   },
 
