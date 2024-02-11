@@ -1,20 +1,15 @@
 "use client"
 
-import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import {
   IMessageContainer,
   MessageContainer,
 } from "@/components/chat/message-item"
-import { IoMenuOutline } from "react-icons/io5"
-import { Button } from "../../../components/ui/button"
-import { useState } from "react"
+import { Button, buttonVariants } from "../../../components/ui/button"
+import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { api } from "@/lib/trpc/react"
-
-import { JiuguImage } from "@/lib/assets"
 import { MessageType } from "@/schema/message.base"
-import { BloggerContainer } from "@/components/user/blogger-container"
 import { BasicMutableUserInfo } from "@/components/user/basic"
 import {
   AlertDialog,
@@ -29,7 +24,11 @@ import { FireValue } from "@/components/_universal/fire-value"
 import { useUser } from "@/hooks/use-user"
 import { CURSOR_CLASS_NAME, jiuguAvatar } from "@/config"
 import { TypeAnimation } from "react-type-animation"
-import Typewriter from "typewriter-effect"
+import { useElementSize } from "usehooks-ts"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils"
+import { Progress } from "@/components/ui/progress"
 
 export default function ValidationPage() {
   const [answer, setAnswer] = useState<Validation>({
@@ -42,99 +41,122 @@ export default function ValidationPage() {
   const [openRename, setOpenRename] = useState(false)
 
   const [step, setStep] = useState(1)
+  const [showChoices, setShowChoices] = useState(false)
 
-  return (
-    <div className={"flex h-full flex-col"}>
-      <Rename open={openRename} setOpen={setOpenRename} />
+  const refBottom = useRef<HTMLDivElement>(null)
+  const [refWindowInner, { height: heightInner }] = useElementSize()
+  const [refWindowOuter, { height: heightOuter }] = useElementSize()
 
-      <Jiugu />
+  useEffect(() => {
+    refBottom.current?.scrollIntoView()
+  }, [heightInner, heightOuter, step])
 
-      <div className={"flex grow flex-col gap-4 overflow-auto p-4"}>
-        {
-          // sampleChatItems
-          guidanceItems.slice(0, step).map((message, index) => (
-            <TyperMessage
-              message={message}
-              key={index}
-              onFinish={() => {
-                if (message.body.type === MessageType.Plain) {
-                  setStep(step + 1)
-                }
-              }}
-            />
-            // <Message
-            //   {...chatItem}
-            //   key={index}
-            //   onValueChange={(v) => {
-            //     setAnswer({ ...answer, [index]: v })
-            //   }}
-            // />
-          ))
-        }
+  const body = guidanceItems[step - 1]!.body
 
-        <SubmitButton answer={answer} setOpen={setOpenRename} />
-      </div>
+  const isChoosing = body.type === MessageType.TextChoices
+  const [chosen, setChosen] = useState<number[]>([])
 
-      <Blogger />
-    </div>
-  )
-}
+  console.log({ step, answer })
 
-const Jiugu = () => (
-  <div className={"flex items-center justify-center gap-1 p-2"}>
-    <Avatar className={"h-5 w-5"}>
-      <AvatarImage src={JiuguImage.src} />
-    </Avatar>
-
-    <div>玖姑</div>
-  </div>
-)
-
-const Blogger = () => (
-  <div className={"relative px-4 py-1"}>
-    <BloggerContainer
-      className={
-        "absolute bottom-0 right-5 top-0 my-auto h-6 w-6 text-gray-400"
-      }
-    >
-      <IoMenuOutline />
-    </BloggerContainer>
-  </div>
-)
-
-const SubmitButton = ({
-  answer,
-  setOpen,
-}: {
-  answer: Validation
-  setOpen: (v: boolean) => void
-}) => {
   const [validating, setValidating] = useState(false)
 
   const validate = api.user.validate.useMutation()
 
   return (
-    <Button
-      disabled={validating || Object.values(answer).some((v) => !v.length)}
-      onClick={async () => {
-        setValidating(true)
-        const success = await validate.mutateAsync({
-          answer: JSON.stringify(answer),
-        })
+    <div className={"flex h-full flex-col"}>
+      <Rename open={openRename} setOpen={setOpenRename} />
 
-        if (!success) {
-          toast.error("你不算姑的friend哦，想加入再去刷刷姑的视频吧……")
-          // 在错误的时候重新允许validate，正确的时候会直接飞走
-          setValidating(false)
-        } else {
-          setOpen(true)
-        }
-      }}
-    >
-      提交
-    </Button>
+      <Progress value={(step / 8) * 100} className="w-full" />
+
+      <div className={" grow overflow-auto p-4"} ref={refWindowOuter}>
+        <div className={"flex flex-col gap-4"} ref={refWindowInner}>
+          {
+            // sampleChatItems
+            guidanceItems.slice(0, step).map((message, index) => (
+              <TyperMessage
+                message={message}
+                key={index}
+                onFinish={() => {
+                  if (message.body.type === MessageType.Plain) {
+                    setStep(step + 1)
+                  } else {
+                    setShowChoices(true)
+                  }
+                }}
+              />
+            ))
+          }
+        </div>
+
+        <div ref={refBottom} />
+      </div>
+
+      <div className={"flex flex-col gap-4 p-4"}>
+        {showChoices &&
+          body.type === MessageType.TextChoices &&
+          body.choices.map((choice, index) => (
+            <Label
+              className={cn(
+                buttonVariants(),
+                "bg-[#40394A] hover:bg-[#40394A] text-white relative",
+              )}
+              key={index}
+            >
+              <Checkbox
+                className={"absolute left-2 top-0 bottom-0 my-auto"}
+                checked={chosen.includes(index)}
+                onCheckedChange={(checked) => {
+                  if (!body.multiple) setChosen([index])
+                  else {
+                    const newChosen = [...chosen]
+                    if (newChosen.includes(index))
+                      setChosen(newChosen.filter((c) => c !== index))
+                    else setChosen([...newChosen, index].toSorted())
+                  }
+                }}
+              />
+
+              {choice.value}
+            </Label>
+          ))}
+
+        {isChoosing ? (
+          <Button
+            onClick={async () => {
+              const newAnswer = { ...answer, [step - 1]: chosen }
+              setAnswer(newAnswer)
+
+              if (Object.values(newAnswer).some((s) => !s.length)) {
+                setChosen([])
+                setStep(step + 1)
+              } else {
+                setValidating(true)
+                const success = await validate.mutateAsync({
+                  answer: JSON.stringify(newAnswer),
+                })
+
+                if (!success) {
+                  toast.error("你不算姑的friend哦，想加入再去刷刷姑的视频吧……")
+                  // 在错误的时候重新允许validate，正确的时候会直接飞走
+                  setValidating(false)
+                } else {
+                  setOpenRename(true)
+                }
+              }
+            }}
+          >
+            确定
+          </Button>
+        ) : (
+          <Button variant={"secondary"} className={"py-3 animate-pulse"}>
+            <div className={"dot-pulse"} />
+          </Button>
+        )}
+      </div>
+    </div>
   )
 }
+
 const Rename = ({
   open,
   setOpen,
@@ -207,6 +229,7 @@ const TyperMessage = ({
       <TypeAnimation
         cursor={false}
         className={CURSOR_CLASS_NAME}
+        speed={30}
         sequence={[
           (el) => el?.classList.add(CURSOR_CLASS_NAME),
           title,
