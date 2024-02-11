@@ -92,7 +92,7 @@ export const UserSelector = ({ withBack }: { withBack?: boolean }) => {
                             )}
                           />
                           <div>
-                            {targetUser.id}({targetUser.phone})
+                            {targetUser.id}({targetUser.name})
                           </div>
                         </div>
                       </SelectItem>

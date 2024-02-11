@@ -21,7 +21,7 @@ export const userListViewSchema = validator<UserDefaultArgs>()({
     type: true,
     validated: true,
     status: true,
-    phone: true,
+    phone: false, // 不要返回用户手机号，只在userMainViewSchema里返回自己的
     rooms: {
       select: {
         id: true,
