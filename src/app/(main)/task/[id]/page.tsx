@@ -4,7 +4,7 @@ import Image from "next/image"
 import { LitBrandImage } from "@/lib/assets"
 import { RiDoubleQuotesL, RiWechatChannelsLine } from "react-icons/ri"
 import { Separator } from "@/components/ui/separator"
-import { useEffect, useRef, useState } from "react"
+import { ComponentProps, useEffect, useRef, useState } from "react"
 import { FireValue } from "@/components/_universal/fire-value"
 import moment from "@/lib/datetime"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -118,19 +118,7 @@ const MainArea = ({
             <div className={"w-full flex justify-between items-center"}>
               <RiDoubleQuotesL className={"w-10 h-10 text-gray-500"} />
 
-              {userTask?.status === UserTaskStatus.finished && (
-                <>
-                  {userTask?.passed && (
-                    <Badge>{MSG_SUBMIT_VERIFY_SUCCESS}</Badge>
-                  )}
-                  {userTask?.passed === false && (
-                    <Badge>{MSG_SUBMIT_VERIFY_FAILED}</Badge>
-                  )}
-                  {userTask?.passed === null && (
-                    <Badge>{MSG_SUBMIT_VERIFYING}</Badge>
-                  )}
-                </>
-              )}
+              {userTask && <VerifyStatus userTask={userTask} />}
             </div>
             <span>{task?.title}</span>
 
@@ -275,6 +263,25 @@ const MainArea = ({
         ))}
     </div>
   )
+}
+
+const VerifyStatus = ({ userTask }: { userTask: IUserTaskView }) => {
+  if (userTask.status !== UserTaskStatus.finished) return
+
+  const TheBadge = ({ className, ...props }: ComponentProps<typeof Badge>) => {
+    return <Badge className={cn("w-32", className)} {...props} />
+  }
+
+  switch (userTask.passed) {
+    case true:
+      return <TheBadge>{MSG_SUBMIT_VERIFY_SUCCESS}</TheBadge>
+    case false:
+      return <TheBadge>{MSG_SUBMIT_VERIFY_FAILED}</TheBadge>
+    case null:
+      return <TheBadge>{MSG_SUBMIT_VERIFYING}</TheBadge>
+    default:
+      throw new Error("unexpected")
+  }
 }
 
 const BottomActions = ({
