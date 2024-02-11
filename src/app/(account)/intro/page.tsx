@@ -122,6 +122,7 @@ const Comp3 = () => {
   }
 
   const router = useRouter()
+  // 在没有登录的时候，没有 user id，因为 getSelf 受阻；有了后就可以获得正常信息了
   const user = useUser()
   useEffect(() => {
     console.log("[IntroPage] user: ", user)
