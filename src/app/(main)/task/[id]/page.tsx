@@ -37,6 +37,11 @@ import { useRouter } from "next/navigation"
 import UserAvatars from "@/components/user/user-avatars"
 import { Label } from "@/components/ui/label"
 import { useCountdown } from "@/hooks/use-countdown"
+import {
+  MSG_SUBMIT_VERIFY_FAILED,
+  MSG_SUBMIT_VERIFY_SUCCESS,
+  MSG_SUBMIT_VERIFYING,
+} from "@/config"
 
 export default function TaskDetailPage({
   params: { id },
@@ -113,7 +118,19 @@ const MainArea = ({
             <div className={"w-full flex justify-between items-center"}>
               <RiDoubleQuotesL className={"w-10 h-10 text-gray-500"} />
 
-              {userTask?.passed && <Badge>火值已发放！</Badge>}
+              {userTask?.status === UserTaskStatus.finished && (
+                <>
+                  {userTask?.passed && (
+                    <Badge>{MSG_SUBMIT_VERIFY_SUCCESS}</Badge>
+                  )}
+                  {userTask?.passed === false && (
+                    <Badge>{MSG_SUBMIT_VERIFY_FAILED}</Badge>
+                  )}
+                  {userTask?.passed === null && (
+                    <Badge>{MSG_SUBMIT_VERIFYING}</Badge>
+                  )}
+                </>
+              )}
             </div>
             <span>{task?.title}</span>
 
@@ -307,7 +324,7 @@ const BottomActions = ({
         🔗复制任务链接
       </Button>
 
-      {userTask?.passed ? (
+      {hasFinished ? (
         <Dialog>
           <DialogTrigger asChild>
             <Button>去限时群聊</Button>
@@ -340,7 +357,7 @@ const BottomActions = ({
         </Dialog>
       ) : toTime <= 0 ? (
         <Button disabled>不好意思，活动已经结束</Button>
-      ) : !hasFinished ? (
+      ) : (
         <Label
           className={cn(
             buttonVariants(),
@@ -381,12 +398,6 @@ const BottomActions = ({
             }}
           />
         </Label>
-      ) : (
-        <Button disabled>
-          {userTask?.passed === false
-            ? "抱歉，您未通过审核，下次再加油吧！"
-            : "正在审核中，请耐心等待~"}
-        </Button>
       )}
     </div>
   )
