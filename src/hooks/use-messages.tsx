@@ -66,5 +66,8 @@ const useBindChannels = () => {
       channels.forEach((channelId) => pusherClient.unsubscribe(channelId))
       pusherClient.unbind(SocketEventType.Message)
     }
-  }, [user, JSON.stringify(users)])
+  }, [
+    user,
+    // , JSON.stringify(users)
+  ])
 }

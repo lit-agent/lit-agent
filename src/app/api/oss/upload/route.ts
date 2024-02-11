@@ -6,6 +6,14 @@ import { last } from "lodash"
 import { v4 } from "uuid"
 import { oss } from "@/lib/oss/config"
 
+// export const config = {
+//   api: {
+//     bodyParser: {
+//       // sizeLimit: "20mb",
+//     },
+//   },
+// }
+
 export const uploadFileViaArrayBuffer = async (file: File) => {
   const suffix = last(file.name.split(".")) ?? ""
   const id = `${v4()}.${suffix}`
@@ -18,6 +26,11 @@ export const uploadFileViaArrayBuffer = async (file: File) => {
 
   console.log("[OSS] uploaded: ", { id })
   return OSS_DOMAIN + id
+}
+
+export enum OSSMode {
+  clientDirectByServerSignature = "clientDirectByServerSignature",
+  serverBuffer = "serverBuffer",
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse<IApi>> {
