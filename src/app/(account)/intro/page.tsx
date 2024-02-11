@@ -133,12 +133,12 @@ const Comp3 = () => {
   return (
     <div className={"mt-auto flex flex-col items-center pb-8 gap-4"}>
       <div className={"text-muted-foreground text-sm"}>
-        <span className={"text-primary"}>{users.length}</span> 人已加入玖姑私域
+        <span className={"text-primary"}>{users.length}</span> 人已加入姑的社群
       </div>
 
       <Sheet>
         <SheetTrigger asChild>
-          <Button className={"text-white "}>成为姑的Friend</Button>
+          <Button className={"text-white "}>成为姑的friend</Button>
         </SheetTrigger>
 
         <SheetContent side={"bottom"}>
