@@ -17,6 +17,7 @@ export default function VerifyTaskPage({
   const { data: userTasks = [] } = api.task.listUserTasksByTask.useQuery({
     taskId: id,
   })
+  console.log("[VerifyTask]: ", { id, userTasks })
 
   return (
     <div className={"flex flex-col gap-8 p-8"}>
@@ -76,13 +77,13 @@ const UserTaskView = ({ userTask }: { userTask: IUserTaskView }) => {
 
         <div className={"flex overflow-auto gap-2"}>
           {userTask.images.map((image, index) => (
-            <div className={"h-30"} key={index}>
+            <div className={"w-24"} key={index}>
               <AspectRatio ratio={1}>
                 <Image
                   src={image}
                   alt={`user-submitted-${index}`}
                   fill
-                  className={"object-fit"}
+                  className={"object-fit rounded-lg"}
                 />
               </AspectRatio>
             </div>

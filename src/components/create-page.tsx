@@ -14,11 +14,13 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { z } from "zod"
 import { FormFieldControlMap, FormFieldType } from "@/schema/form"
+import { useRouter } from "next/navigation"
 
 export default function CreateFormPage<T = any>({
   data,
   schema,
   route,
+  callbackUrl,
 }: {
   route
   schema
@@ -29,6 +31,7 @@ export default function CreateFormPage<T = any>({
     description?: string
     default?: any
   }[]
+  callbackUrl: string
 }) {
   type Schema = z.infer<typeof schema>
 
@@ -43,6 +46,7 @@ export default function CreateFormPage<T = any>({
   const { errors } = form.formState
 
   const create = route.create.useMutation()
+  const router = useRouter()
 
   function onSubmit(values: Schema) {
     console.log(`create: `, { values })
@@ -51,6 +55,7 @@ export default function CreateFormPage<T = any>({
       .mutateAsync(values)
       .then((res) => {
         toast.success("创建成功！")
+        router.push(callbackUrl)
       })
       .catch((e) => {
         console.error(e)

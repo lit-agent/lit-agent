@@ -114,7 +114,7 @@ const MainCard = () => {
             alt={""}
             fill
             sizes={"100%"}
-            className={"object-fill"}
+            className={"object-cover"}
           />
         </AspectRatio>
       </div>

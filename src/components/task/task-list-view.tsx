@@ -7,7 +7,6 @@ import Link from "next/link"
 import UserAvatars from "@/components/user/user-avatars"
 
 export default function TaskListView({ task }: { task: ITaskView }) {
-  const joinTask = api.task.joinTask.useMutation()
   const { data: userTask } = api.task.getUserTask.useQuery({ taskId: task.id })
 
   return (
@@ -23,12 +22,7 @@ export default function TaskListView({ task }: { task: ITaskView }) {
         </div>
 
         <div className={"flex items-center gap-4"}>
-          <Link
-            href={`/task/${task.id}`}
-            onClick={() => {
-              joinTask.mutate({ taskId: task.id })
-            }}
-          >
+          <Link href={`/task/${task.id}`}>
             <div
               className={
                 "gradient-border px-4 py-1 flex items-center justify-center"

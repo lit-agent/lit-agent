@@ -100,7 +100,7 @@ const MainArea = ({
                 priority
                 fill
                 sizes={"100%"}
-                className={"object-fill rounded-lg"}
+                className={"object-cover rounded-lg"}
               />
             </AspectRatio>
           </div>

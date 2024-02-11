@@ -20,19 +20,21 @@ export default function CreateProductPage() {
         <TabsTrigger value={CreateType.product}>发布产品</TabsTrigger>
       </TabsList>
 
-      <TabsContent value={CreateType.product} className={"mt-0"}>
-        <CreateFormPage
-          route={api.product}
-          data={createProductData}
-          schema={createProductSchema}
-        />
-      </TabsContent>
-
       <TabsContent value={CreateType.task} className={"mt-0"}>
         <CreateFormPage
           route={api.task}
           data={createTaskData}
           schema={createTaskSchema}
+          callbackUrl={"/task"}
+        />
+      </TabsContent>
+
+      <TabsContent value={CreateType.product} className={"mt-0"}>
+        <CreateFormPage
+          route={api.product}
+          data={createProductData}
+          schema={createProductSchema}
+          callbackUrl={"/product"}
         />
       </TabsContent>
     </Tabs>

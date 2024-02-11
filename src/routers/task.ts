@@ -49,6 +49,15 @@ export const taskRouter = createTRPCRouter({
       })
     }),
 
+  getUserTask: protectedProcedure
+    .input(z.object({ taskId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return await prisma.userTask.findUnique({
+        where: { taskId_userId: { userId: ctx.user.id, taskId: input.taskId } },
+        ...userTaskViewSchema,
+      })
+    }),
+
   create: protectedProcedure
     .input(createTaskSchema)
     .mutation(async ({ ctx, input }) => {
@@ -94,14 +103,6 @@ export const taskRouter = createTRPCRouter({
           ...messageViewSchema,
         })
 
-        await prisma.userTask.create({
-          data: {
-            userId,
-            taskId: task.id,
-            status: "goon",
-          },
-        })
-
         void pusherServer.trigger(
           getBroadcastId(userId),
           SocketEventType.Message,
@@ -110,25 +111,6 @@ export const taskRouter = createTRPCRouter({
       })
 
       return message
-    }),
-
-  getUserTask: protectedProcedure
-    .input(z.object({ taskId: z.string() }))
-    .query(async ({ ctx, input }) => {
-      return await prisma.userTask.findUnique({
-        where: { taskId_userId: { userId: ctx.user.id, taskId: input.taskId } },
-        ...userTaskViewSchema,
-      })
-    }),
-
-  joinTask: protectedProcedure
-    .input(z.object({ taskId: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      return await prisma.userTask.upsert({
-        where: { taskId_userId: { userId: ctx.user.id, taskId: input.taskId } },
-        create: { userId: ctx.user.id, taskId: input.taskId, status: "goon" },
-        update: {},
-      })
     }),
 
   submitImages: protectedProcedure
@@ -148,30 +130,15 @@ export const taskRouter = createTRPCRouter({
       })
 
       await prisma.$transaction(async (prisma) => {
-        // 用户完成任务
-        await prisma.userTask.update({
-          where: {
-            taskId_userId: {
-              userId: ctx.user.id,
-              taskId: task.id,
-            },
-          },
+        // 用户执行任务
+        await prisma.userTask.create({
           data: {
-            status: UserTaskStatus.finished,
+            userId: ctx.user.id,
+            taskId: task.id,
             images,
+            status: UserTaskStatus.goon,
           },
         })
-
-        // 2024-02-10：更新火值要由博主端审核
-        // 更新用户的火值
-        // await prisma.user.update({
-        //   where: { id: user.id },
-        //   data: {
-        //     totalEarnedFire: { increment: value },
-        //     currentEarnedFire: { increment: value },
-        //     balance: { increment: value },
-        //   },
-        // })
 
         // 发送消息到博主频道
         await prisma.message.create({
@@ -212,7 +179,7 @@ export const taskRouter = createTRPCRouter({
       await prisma.$transaction(async (prisma) => {
         await prisma.userTask.update({
           where: { taskId_userId: { userId, taskId } },
-          data: { passed },
+          data: { passed, status: UserTaskStatus.finished },
         })
 
         if (passed) {

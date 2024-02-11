@@ -44,7 +44,7 @@ export default function IntroPage() {
         src={CoverTextBigImage}
         alt={"landing cover"}
         fill
-        className={"object-fill"}
+        className={"object-cover"}
         priority
       />
 
