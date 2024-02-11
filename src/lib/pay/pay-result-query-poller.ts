@@ -1,5 +1,6 @@
 import { Terminal } from "./models/terminal";
 import { query } from "./pay";
+import { PayOrderFinalStatus } from "./models/pay-final-order-status";
 /**
  * 收钱吧支付结果轮询poller
  * 跳转支付后需要调用轮询获取支付结果
