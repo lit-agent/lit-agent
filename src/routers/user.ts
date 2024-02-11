@@ -8,10 +8,34 @@ import { z } from "zod"
 import { userListViewSchema, userSafeUpdateSchema } from "@/schema/user.base"
 import { userMainViewSchema } from "@/schema/user"
 import { prisma } from "@/lib/db"
-import { MSG_RENAME_LIMITATION, JIUGU_ID, NEW_USER_REWARD } from "@/config"
+import { JIUGU_ID, MSG_RENAME_LIMITATION, NEW_USER_REWARD } from "@/config"
 import { MessageType } from "@/schema/message.base"
+import { SMS_PROVIDER_ID } from "@/lib/sms"
+import { ValidateUserResult } from "@/schema/auth"
 
 export const userRouter = createTRPCRouter({
+  validateUser: publicProcedure
+    .input(z.object({ phone: z.string(), code: z.string() }))
+    .mutation<ValidateUserResult>(async ({ ctx, input }) => {
+      const { phone, code } = input
+      const accountInDB = await prisma.account.findUnique({
+        where: {
+          provider_providerAccountId: {
+            provider: SMS_PROVIDER_ID,
+            providerAccountId: phone,
+          },
+        },
+        select: {
+          access_token: true,
+          user: { select: { validated: true } },
+        },
+      })
+      if (!accountInDB) return ValidateUserResult.NoAccount
+      if (accountInDB.access_token !== code) return ValidateUserResult.WrongCode
+      if (!accountInDB.user.validated) return ValidateUserResult.NotValidatedYet
+      return ValidateUserResult.Validated
+    }),
+
   list: publicProcedure.query(async ({ ctx, input }) => {
     return prisma.user.findMany({
       ...userListViewSchema,
@@ -48,21 +72,40 @@ export const userRouter = createTRPCRouter({
       })
     }),
 
-  validate: protectedProcedure
+  validateAnswer: publicProcedure
     .input(
       z.object({
+        phone: z.string(),
+        code: z.string(),
         answer: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const userId = ctx.user.id
       const { answer } = input
       const target = '{"4":[0,1,2],"5":[2],"6":[2],"7":[0]}'
       const validateOk = answer === target
 
       if (validateOk) {
-        const user = await prisma.user.findUnique({ where: { id: userId } })
-        if (!user?.validated) {
+        const account = await prisma.account.findUniqueOrThrow({
+          where: {
+            provider_providerAccountId: {
+              provider: SMS_PROVIDER_ID,
+              providerAccountId: input.phone,
+            },
+            access_token: input.code,
+          },
+          select: {
+            user: {
+              select: {
+                id: true,
+                validated: true,
+              },
+            },
+          },
+        })
+        const userId = account.user.id
+
+        if (!account.user?.validated) {
           const user = await prisma.user.update({
             where: { id: userId },
             data: {

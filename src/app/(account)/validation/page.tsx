@@ -7,7 +7,7 @@ import {
 import { Button, buttonVariants } from "../../../components/ui/button"
 import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { api } from "@/lib/trpc/react"
 import { MessageType } from "@/schema/message.base"
 import { BasicMutableUserInfo } from "@/components/user/basic"
@@ -29,8 +29,15 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { Progress } from "@/components/ui/progress"
+import { signIn } from "next-auth/react"
+import { SMS_PROVIDER_ID } from "@/lib/sms"
 
 export default function ValidationPage() {
+  const params = useSearchParams()
+  const phone = params.get("phone")
+  const code = params.get("code")
+  console.log("[ValidationPage]: ", { phone, code })
+
   const [answer, setAnswer] = useState<Validation>({
     4: [],
     5: [],
@@ -60,11 +67,18 @@ export default function ValidationPage() {
 
   const [validating, setValidating] = useState(false)
 
-  const validate = api.user.validate.useMutation()
+  const validateAnswer = api.user.validateAnswer.useMutation()
+
+  if (!phone || !code) return "YOU ARE BANNED FROM ACCESS."
 
   return (
     <div className={"flex h-full flex-col"}>
-      <Rename open={openRename} setOpen={setOpenRename} />
+      <Rename
+        open={openRename}
+        setOpen={setOpenRename}
+        phone={phone}
+        code={code}
+      />
 
       <Progress value={(step / 8) * 100} className="w-full" />
 
@@ -131,7 +145,9 @@ export default function ValidationPage() {
                 setStep(step + 1)
               } else {
                 setValidating(true)
-                const success = await validate.mutateAsync({
+                const success = await validateAnswer.mutateAsync({
+                  phone,
+                  code,
                   answer: JSON.stringify(newAnswer),
                 })
 
@@ -140,6 +156,15 @@ export default function ValidationPage() {
                   // 在错误的时候重新允许validate，正确的时候会直接飞走
                   setValidating(false)
                 } else {
+                  // 直接登录
+                  await signIn(SMS_PROVIDER_ID, {
+                    phone,
+                    code,
+                    redirect: false,
+                    // todo: auth
+                    // callbackUrl: '/', // 感谢: https://github.com/sidebase/nuxt-auth/issues/469#issuecomment-1661909912
+                  })
+
                   setOpenRename(true)
                 }
               }
@@ -160,9 +185,13 @@ export default function ValidationPage() {
 const Rename = ({
   open,
   setOpen,
+  phone,
+  code,
 }: {
   open: boolean
   setOpen: (open: boolean) => void
+  phone: string
+  code: string
 }) => {
   const router = useRouter()
   const { data: users = [] } = api.user.list.useQuery()
@@ -196,7 +225,7 @@ const Rename = ({
         <AlertDialogFooter>
           <AlertDialogAction
             disabled={!user?.image || !user?.name}
-            onClick={() => {
+            onClick={async () => {
               router.push("/")
             }}
           >

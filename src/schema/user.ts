@@ -1,9 +1,9 @@
 import { Prisma } from "@prisma/client"
 import { userListViewSchema } from "@/schema/user.base"
+import { messageViewSchema } from "@/schema/message.base"
 import UserGetPayload = Prisma.UserGetPayload
 import validator = Prisma.validator
 import UserDefaultArgs = Prisma.UserDefaultArgs
-import { messageViewSchema } from "@/schema/message.base"
 
 export const userMainViewSchema = validator<UserDefaultArgs>()({
   include: {

@@ -1,6 +1,6 @@
 "use client"
 
-import { CoverMdImage, CoverTextBigImage } from "@/lib/assets"
+import { CoverTextBigImage } from "@/lib/assets"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
@@ -31,6 +31,9 @@ import { CgSpinner } from "react-icons/cg"
 import { useUser } from "@/hooks/use-user"
 import { useRouter } from "next/navigation"
 import { GiuguProfile } from "@/components/user/jiugu-profile"
+import { UnexpectedError } from "@/config"
+
+import { ValidateUserResult } from "@/schema/auth"
 
 export default function IntroPage() {
   return (
@@ -98,25 +101,44 @@ const Comp3 = () => {
   }
 
   const [submitting, setSubmitting] = useState(false)
-  const utils = api.useUtils()
+  const validateUser = api.user.validateUser.useMutation()
 
   async function onSubmit() {
     setSubmitting(true)
 
     const phone = watch("phone")
     const code = watch("code")
-    const res = await signIn("sms", {
-      phone,
-      code,
-      redirect: false,
-      // callbackUrl: '/', // 感谢: https://github.com/sidebase/nuxt-auth/issues/469#issuecomment-1661909912
-    })
-    console.log("[Auth] signed res: ", res)
+    const validatedResult = await validateUser.mutateAsync({ phone, code })
 
-    if (res?.ok) {
-      toast.success("登录成功！")
-      utils.user.getSelf.invalidate() // 刷新 user
-    } else toast.error(res?.error ?? "登录失败", { duration: 3000 })
+    switch (validatedResult) {
+      case ValidateUserResult.Validated:
+        // 直接登录
+        await signIn("sms", {
+          phone,
+          code,
+          redirect: false,
+          // todo: auth
+          // callbackUrl: '/', // 感谢: https://github.com/sidebase/nuxt-auth/issues/469#issuecomment-1661909912
+        })
+        void router.push("/")
+        break
+
+      case ValidateUserResult.NotValidatedYet:
+        // 到验证页再登录
+        void router.push(`/validation?phone=${phone}&code=${code}`)
+        break
+
+      case ValidateUserResult.WrongCode:
+        toast.error("验证码错误！")
+        break
+
+      case ValidateUserResult.NoAccount:
+        toast.error("手机号未注册！")
+        break
+
+      default:
+        throw new UnexpectedError()
+    }
 
     setSubmitting(false)
   }
