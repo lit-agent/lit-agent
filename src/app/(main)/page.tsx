@@ -106,22 +106,14 @@ const MainCard = () => {
         <Badge className={"shrink-0"}>Hot火伴</Badge>
       </div>
 
-      <div
-        className={
-          "absolute -right-2 sm:right-2 -top-8 sm:-top-12 w-44 sm:w-64"
-        }
-      >
-        <AspectRatio ratio={1}>
-          <Image
-            priority
-            src={LitBrandImage}
-            alt={""}
-            fill
-            sizes={"100%"}
-            className={"object-cover"}
-          />
-        </AspectRatio>
-      </div>
+      <Image
+        priority
+        src={LitBrandImage}
+        alt={""}
+        width={320}
+        height={240}
+        className={"absolute right-2 top-2 w-40 sm:w-64"}
+      />
     </div>
   )
 }
