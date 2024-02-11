@@ -14,8 +14,6 @@ import { UserType } from "@prisma/client"
 import { useUser } from "@/hooks/use-user"
 
 export default function MainLayout({ children }: PropsWithChildren) {
-  console.log("[MainLayout]")
-
   return (
     <div className={"h-full overflow-hidden flex flex-col"}>
       <ContentArea>{children}</ContentArea>
