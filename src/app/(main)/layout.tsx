@@ -53,20 +53,20 @@ const NavBars = () => {
   const [selected, setSelected] = useState(0)
 
   return (
-    <div className="w-full shrink-0 grid grid-cols-4 p-2 bg-black gap-2">
-      <NavTabLink
-        href={""}
-        onClick={() => {
-          toast.info(TODO)
-          return
+    <div className="w-full shrink-0 grid grid-cols-3 p-2 bg-black gap-2">
+      {/*<NavTabLink*/}
+      {/*  href={""}*/}
+      {/*  onClick={() => {*/}
+      {/*    toast.info(TODO)*/}
+      {/*    return*/}
 
-          // todo: chat
-          setSelected(1)
-        }}
-        isSelected={selected === 1}
-      >
-        <IoChatbubbleEllipsesOutline />
-      </NavTabLink>
+      {/*    // todo: chat*/}
+      {/*    setSelected(1)*/}
+      {/*  }}*/}
+      {/*  isSelected={selected === 1}*/}
+      {/*>*/}
+      {/*  <IoChatbubbleEllipsesOutline />*/}
+      {/*</NavTabLink>*/}
 
       <NavTabLink
         href={"/task"}
