@@ -35,11 +35,7 @@ export default function TaskListView({ task }: { task: ITaskView }) {
               }
             >
               <span className={"gradient-text"}>
-                {userTask?.status === "finished"
-                  ? "已完成"
-                  : userTask?.status === "goon"
-                    ? "正在参加"
-                    : "立即参加"}
+                {userTask?.status === "finished" ? "已完成" : "去查看"}
               </span>
             </div>
           </Link>
