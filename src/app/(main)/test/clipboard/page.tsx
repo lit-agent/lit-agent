@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { VerticalContainer } from "@/providers/containers"
 
 export default function Page() {
-  const URL = location.href
+  const URL = typeof window === "undefined" ? "" : location.href
 
   const [isCopied, setCopied] = useClipboard(URL)
 

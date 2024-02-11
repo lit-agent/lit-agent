@@ -3,7 +3,7 @@ import { useState } from "react"
 import TaskListView from "@/components/task/task-list-view"
 import Link from "next/link"
 import { UniversalTabs } from "@/components/_universal/tabs"
-import { TASK_PAGE_TITLE } from "@/config"
+import { JIUGU_TASK_PAGE_TITLE } from "@/config"
 
 export function AllTasks() {
   const filters = ["正在进行", "已过期", "全部"] as const
@@ -20,7 +20,7 @@ export function AllTasks() {
 
   return (
     <UniversalTabs
-      title={TASK_PAGE_TITLE}
+      title={JIUGU_TASK_PAGE_TITLE}
       filters={filters}
       filter={filter}
       setFilter={setFilter}
@@ -64,7 +64,7 @@ export const MyTasks = () => {
             href={"/task"}
             className={"text-primary underline underline-offset-2 mx-1"}
           >
-            {TASK_PAGE_TITLE}
+            {JIUGU_TASK_PAGE_TITLE}
           </Link>
           看看吧！
         </div>

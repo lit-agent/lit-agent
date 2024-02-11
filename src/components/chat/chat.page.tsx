@@ -7,7 +7,7 @@ import { UserType } from "@prisma/client"
 import ChatList from "@/components/chat/chat-list"
 import { getChatId } from "@/lib/socket/helpers"
 import ChatDetailPage from "@/app/(main)/chat/[id]/page"
-import { USER_JIUGU_ID } from "@/config"
+import { JIUGU_ID } from "@/config"
 import { useUser } from "@/hooks/use-user"
 
 export default function ChatListPage() {
@@ -53,5 +53,5 @@ export default function ChatListPage() {
 
   if (user?.type === UserType.blogger) return <ChatList chats={chats} />
 
-  return <ChatDetailPage params={{ id: USER_JIUGU_ID }} />
+  return <ChatDetailPage params={{ id: JIUGU_ID }} />
 }

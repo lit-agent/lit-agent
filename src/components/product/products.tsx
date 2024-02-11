@@ -1,6 +1,6 @@
 import { api } from "@/lib/trpc/react"
 import { useState } from "react"
-import { PRODUCT_PAGE_TITLE } from "@/config"
+import { JIUGU_PRODUCT_PAGE_TITLE } from "@/config"
 import Link from "next/link"
 import { UniversalTabs } from "@/components/_universal/tabs"
 import ProductListView from "@/components/product/product-list-view"
@@ -22,7 +22,7 @@ export function AllProducts() {
 
   return (
     <UniversalTabs
-      title={PRODUCT_PAGE_TITLE}
+      title={JIUGU_PRODUCT_PAGE_TITLE}
       filters={filters}
       filter={filter}
       setFilter={setFilter}
@@ -69,7 +69,7 @@ export const MyProducts = () => {
             href={"/product"}
             className={"text-primary underline underline-offset-2 mx-1"}
           >
-            {PRODUCT_PAGE_TITLE}
+            {JIUGU_PRODUCT_PAGE_TITLE}
           </Link>
           看看吧！
         </div>

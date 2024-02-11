@@ -68,7 +68,7 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   const { session } = ctx
   const user = session?.user
 
-  if (!ctx.session || !user?.phone) {
+  if (!ctx.session || !user?.id) {
     console.error("[trpc.protected]: ", { session })
     throw new TRPCError({ code: "UNAUTHORIZED" })
   }

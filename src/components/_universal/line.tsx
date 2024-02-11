@@ -23,3 +23,4 @@ export const MenuItem = forwardRef<HTMLButtonElement, ButtonProps>(
     </Button>
   ),
 )
+MenuItem.displayName = "MenuItem"

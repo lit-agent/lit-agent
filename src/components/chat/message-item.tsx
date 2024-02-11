@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { IMessageBody } from "@/schema/message"
 
 import RenderTask from "@/components/task/task-message"
-import { IUserView } from "@/schema/user.base"
+import { IUserAvatar, IUserView } from "@/schema/user.base"
 import { ChevronRightIcon } from "lucide-react"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import Image from "next/image"
@@ -23,7 +23,7 @@ import { BloggerContainer } from "@/components/user/blogger-container"
 import { MarkdownContainer } from "@/providers/containers"
 
 export interface IMessageContainer {
-  user: IUserView
+  user: IUserAvatar
   body: IMessageBody
   taskId?: string
   onValueChange?: (v: any) => void
@@ -52,7 +52,7 @@ export const MessageContainer = ({
   children,
   ...props
 }: {
-  user?: IUserView
+  user?: IUserAvatar
   message?: IMessageView
 } & HTMLAttributes<HTMLDivElement>) => {
   return (

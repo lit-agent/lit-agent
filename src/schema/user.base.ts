@@ -3,6 +3,7 @@ import UserDefaultArgs = Prisma.UserDefaultArgs
 import UserGetPayload = Prisma.UserGetPayload
 import validator = Prisma.validator
 import { z } from "zod"
+import { UserType } from "@prisma/client"
 
 export const userSafeUpdateSchema = z.object({
   name: z.string().optional(),
@@ -34,3 +35,9 @@ export const userListViewSchema = validator<UserDefaultArgs>()({
   },
 })
 export type IUserView = UserGetPayload<typeof userListViewSchema>
+export type IUserAvatar = {
+  id: string
+  name: string | null
+  image: string | null
+  type: UserType
+}

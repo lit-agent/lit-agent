@@ -1,14 +1,13 @@
 import { prisma } from "@/lib/db"
-import { admins } from "@/config"
+import { JIUGU_PHONE, JIUGU_ID } from "@/config"
 
 const init = async () => {
-  const phone = admins.jiugu.phone!
+  const phone = JIUGU_PHONE
   const user = await prisma.user.findUnique({ where: { phone } })
   console.log({ phone })
   if (!user) {
-    const { honors, rooms, ...data } = admins.jiugu
-    console.log("[init] creating user: ", data)
-    await prisma.user.create({ data })
+    console.log("[init] creating user: ")
+    await prisma.user.create({ data: { id: JIUGU_ID, phone } })
   } else {
     console.log("skip since user existed")
   }

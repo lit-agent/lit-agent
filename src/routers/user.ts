@@ -8,7 +8,7 @@ import { z } from "zod"
 import { userListViewSchema, userSafeUpdateSchema } from "@/schema/user.base"
 import { userMainViewSchema } from "@/schema/user"
 import { prisma } from "@/lib/db"
-import { MSG_RENAME_LIMITATION, USER_JIUGU_ID } from "@/config"
+import { MSG_RENAME_LIMITATION, JIUGU_ID } from "@/config"
 import { MessageType } from "@/schema/message.base"
 
 export const userRouter = createTRPCRouter({
@@ -29,7 +29,7 @@ export const userRouter = createTRPCRouter({
     }),
 
   getSelf: protectedProcedure.query(async ({ ctx, input }) => {
-    return prisma.user.findUnique({
+    return prisma.user.findUniqueOrThrow({
       where: { id: ctx.user.id },
       ...userMainViewSchema,
     })
@@ -73,7 +73,7 @@ export const userRouter = createTRPCRouter({
             // 2024-02-10 更新，不要 ai 了
             isAI: false,
             // 玖姑必存在，在user那步就存在了
-            fromUserId: USER_JIUGU_ID,
+            fromUserId: JIUGU_ID,
             toUserId: userId,
 
             body: {

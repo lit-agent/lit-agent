@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { RedeemType } from "@prisma/client"
 import { countBuyersOfProduct, getBuyersOfProduct } from "@/lib/utils"
-import { PRIMARY_COLOR, PRODUCT_PAGE_TITLE, TODO } from "@/config"
+import { PRIMARY_COLOR, JIUGU_PRODUCT_PAGE_TITLE, TODO } from "@/config"
 import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io"
 import { PropsWithChildren } from "react"
 import { UserAvatar } from "@/components/user/user-avatar"
@@ -38,7 +38,7 @@ export default function ProductPage({
         <div>商品不存在</div>
 
         <Link href={"/product"}>
-          <Button>返回 {PRODUCT_PAGE_TITLE}</Button>
+          <Button>返回 {JIUGU_PRODUCT_PAGE_TITLE}</Button>
         </Link>
       </div>
     )

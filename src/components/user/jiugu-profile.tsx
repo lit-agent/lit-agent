@@ -1,7 +1,7 @@
 import { HTMLAttributes } from "react"
 import { cn } from "@/lib/utils"
 import { UserAvatar } from "@/components/user/user-avatar"
-import { admins } from "@/config"
+import { jiuguAvatar } from "@/config"
 import { Platforms } from "@/components/_universal/platforms"
 
 export const GiuguProfile = ({
@@ -14,7 +14,7 @@ export const GiuguProfile = ({
       {...props}
     >
       <div className={"relative"}>
-        <UserAvatar user={admins.jiugu} />
+        <UserAvatar user={jiuguAvatar} />
         <div
           className={
             "absolute bottom-[3px] right-[3px] h-3 w-3 rounded-full border border-white bg-green-700"
@@ -22,7 +22,7 @@ export const GiuguProfile = ({
         />
       </div>
 
-      <div className={"text-2xl font-semibold"}>{admins.jiugu.name}</div>
+      <div className={"text-2xl font-semibold"}>{jiuguAvatar.name}</div>
 
       <div>全网粉丝 60w+</div>
 

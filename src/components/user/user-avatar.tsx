@@ -1,4 +1,4 @@
-import { IUserView } from "@/schema/user.base"
+import { IUserAvatar } from "@/schema/user.base"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 
@@ -6,7 +6,7 @@ export const UserAvatar = ({
   user,
   size = "lg",
 }: {
-  user?: IUserView
+  user?: IUserAvatar
   size?: "sm" | "lg"
 }) => (
   <Avatar

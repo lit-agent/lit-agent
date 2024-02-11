@@ -11,7 +11,7 @@ import { api } from "@/lib/trpc/react"
 
 import { JiuguImage } from "@/lib/assets"
 import { MessageType } from "@/schema/message.base"
-import { admins } from "@/config"
+import { jiuguAvatar } from "@/config"
 import { BloggerContainer } from "@/components/user/blogger-container"
 import { BasicMutableUserInfo } from "@/components/user/basic"
 import {
@@ -156,7 +156,7 @@ type Validation = Record<number, number[]>
 
 const guidanceItems: IMessageContainer[] = [
   {
-    user: admins.jiugu,
+    user: jiuguAvatar,
     body: {
       type: MessageType.Plain,
       title: "Hello，我是玖姑。欢迎加入我的朋友圈。",
@@ -164,7 +164,7 @@ const guidanceItems: IMessageContainer[] = [
   },
 
   {
-    user: admins.jiugu,
+    user: jiuguAvatar,
     body: {
       type: MessageType.Plain,
       title:
@@ -173,7 +173,7 @@ const guidanceItems: IMessageContainer[] = [
   },
 
   {
-    user: admins.jiugu,
+    user: jiuguAvatar,
     body: {
       type: MessageType.Plain,
       title: "未来，这里还会有很多惊喜，请期待它们一一与你的见面。",
@@ -181,7 +181,7 @@ const guidanceItems: IMessageContainer[] = [
   },
 
   {
-    user: admins.jiugu,
+    user: jiuguAvatar,
     body: {
       type: MessageType.Plain,
       title: "首先，我需要筛选一下真正的姑的friend。请回答以下几个问题：",
@@ -189,7 +189,7 @@ const guidanceItems: IMessageContainer[] = [
   },
 
   {
-    user: admins.jiugu,
+    user: jiuguAvatar,
     body: {
       type: MessageType.TextChoices,
       title: "玖姑为什么不化妆？（多选）",
@@ -203,7 +203,7 @@ const guidanceItems: IMessageContainer[] = [
   },
 
   {
-    user: admins.jiugu,
+    user: jiuguAvatar,
     body: {
       type: MessageType.TextChoices,
       title: "玖姑的立场是？",
@@ -216,7 +216,7 @@ const guidanceItems: IMessageContainer[] = [
     },
   },
   {
-    user: admins.jiugu,
+    user: jiuguAvatar,
     body: {
       type: MessageType.TextChoices,
       title: "玖姑是否支持彩礼？",
@@ -229,7 +229,7 @@ const guidanceItems: IMessageContainer[] = [
     },
   },
   {
-    user: admins.jiugu,
+    user: jiuguAvatar,
     body: {
       type: MessageType.TextChoices,
       title: "玖姑的目标是什么？",
