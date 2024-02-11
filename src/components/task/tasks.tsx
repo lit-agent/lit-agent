@@ -6,7 +6,7 @@ import { UniversalTabs } from "@/components/_universal/tabs"
 import { JIUGU_TASK_PAGE_TITLE } from "@/config"
 
 export function AllTasks() {
-  const filters = ["正在进行", "已过期", "全部"] as const
+  const filters = ["正在进行", "往期回顾", "全部"] as const
   type Filter = (typeof filters)[number]
   const [filter, setFilter] = useState<Filter>("全部")
 
@@ -15,7 +15,7 @@ export function AllTasks() {
     (task) =>
       filter === "全部" ||
       (filter === "正在进行" && task.status === "on") ||
-      (filter === "已过期" && task.status === "finished"),
+      (filter === "往期回顾" && task.status === "finished"),
   )
 
   return (
