@@ -33,7 +33,9 @@ export function AllTasks() {
 }
 
 export const MyTasks = () => {
-  const filters = ["进行中", "已完成", "已放弃", "全部"] as const
+  const filters = ["审核中", "已完成", "全部"] as const
+  // 2024-02-11：调整了一下
+  // const filters = ["进行中", "已完成", "已放弃", "全部"] as const
   type Filter = (typeof filters)[number]
   const [filter, setFilter] = useState<Filter>("全部")
 
@@ -41,9 +43,8 @@ export const MyTasks = () => {
   const filteredUserTasks = userTasks.filter(
     (userTask) =>
       filter === "全部" ||
-      (filter === "进行中" && userTask.status === "goon") ||
-      (filter === "已完成" && userTask.status === "finished") ||
-      (filter === "已放弃" && userTask.status === "cancelled"),
+      (filter === "审核中" && userTask.status === "goon") ||
+      (filter === "已完成" && userTask.status === "finished"),
   )
 
   return (
