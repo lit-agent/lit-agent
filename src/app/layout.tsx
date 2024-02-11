@@ -7,6 +7,7 @@ import { TRPCReactProvider } from "@/providers/trpc.provider"
 import { Metadata, Viewport } from "next"
 import BgProvider from "@/providers/bg.provider"
 import StableSessionProvider from "@/providers/session.provider"
+import { Suspense } from "react"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -44,13 +45,19 @@ export default async function RootLayout({
 
           <body className={`font-sans ${inter.variable}`}>
             <main className={"relative w-screen"}>
-              <BgProvider>
-                <MyThemeProvider>
-                  {children}
+              <Suspense>
+                <BgProvider>
+                  <MyThemeProvider>
+                    {children}
 
-                  <Toaster richColors position={"top-right"} duration={2000} />
-                </MyThemeProvider>
-              </BgProvider>
+                    <Toaster
+                      richColors
+                      position={"top-right"}
+                      duration={2000}
+                    />
+                  </MyThemeProvider>
+                </BgProvider>
+              </Suspense>
             </main>
           </body>
         </html>

@@ -21,14 +21,13 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import "react-phone-number-input/style.css"
 import { toast } from "sonner"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { api } from "@/lib/trpc/react"
 import { signIn } from "next-auth/react"
 import { cn, PHONE_REGEX } from "@/lib/utils"
 import { SMS_EXPIRE_MINUTES } from "@/lib/sms"
 import { useCountdown } from "@/hooks/use-countdown"
 import { CgSpinner } from "react-icons/cg"
-import { useUser } from "@/hooks/use-user"
 import { useRouter } from "next/navigation"
 import { GiuguProfile } from "@/components/user/jiugu-profile"
 import { UnexpectedError } from "@/config"
@@ -144,13 +143,6 @@ const Comp3 = () => {
   }
 
   const router = useRouter()
-  // 在没有登录的时候，没有 user id，因为 getSelf 受阻；有了后就可以获得正常信息了
-  const user = useUser()
-  useEffect(() => {
-    console.log("[IntroPage] user: ", user)
-    if (!user) return
-    router.push(user.validated ? "/" : "/validation")
-  }, [user])
 
   return (
     <div className={"mt-auto flex flex-col items-center pb-8 gap-4"}>
