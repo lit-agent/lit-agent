@@ -188,7 +188,7 @@ export const MessageBody = ({
                       alt={s}
                       fill
                       sizes={"100%"}
-                      className={"rounded "}
+                      className={"rounded-lg object-cover"}
                     />
                   </AspectRatio>
                 </div>

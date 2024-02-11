@@ -47,7 +47,7 @@ export const ImagesControl = ({ field }) => {
                   alt={`${index}`}
                   fill
                   sizes={"100%"}
-                  className={"rounded"}
+                  className={"rounded object-cover"}
                 />
               </AspectRatio>
             </div>

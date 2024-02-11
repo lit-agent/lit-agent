@@ -77,7 +77,7 @@ export default function TestOssPage() {
       <div className={"mx-auto"}>
         {file && (
           <div className={"relative w-80 h-80"}>
-            <Image src={file} alt={"file"} fill className={"object-contain"} />
+            <Image src={file} alt={"file"} fill className={"object-cover"} />
           </div>
         )}
       </div>

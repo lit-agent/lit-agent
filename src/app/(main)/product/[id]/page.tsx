@@ -2,7 +2,7 @@
 
 import { api } from "@/lib/trpc/react"
 import Image from "next/image"
-import { FireIcon } from "@/lib/assets"
+import { FireIcon, LitBrandImage } from "@/lib/assets"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
@@ -69,9 +69,10 @@ const DetailArea = ({ product }: { product?: IProductListView }) => {
     <div className={"grow overflow-auto flex flex-col gap-2 -mx-4 p-4"}>
       <AspectRatio ratio={3 / 2} className={"w-full"}>
         <Image
-          src={product?.images[0] ?? "/product-1.png"}
+          src={product?.images[0] ?? LitBrandImage}
           alt={"cover"}
           fill
+          className={"object-cover"}
         />
       </AspectRatio>
 

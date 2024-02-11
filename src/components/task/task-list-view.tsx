@@ -55,7 +55,7 @@ const TaskMain = ({ task }: { task: ITaskView }) => {
               src={task.images[0] ?? LitBrandImage}
               alt={""}
               sizes={"100%"}
-              className={"w-full h-full"}
+              className={"w-full h-full object-cover"}
               fill
             />
           </div>
