@@ -7,6 +7,12 @@
 
 ## Tech
 
+### type effect
+
+- 推荐： https://github.com/maxeth/react-type-animation
+  ，参考可以实现停止字符动画： https://react-type-animation.netlify.app/examples#manipulation-via-css-classes
+- https://github.com/tameemsafi/typewriterjs#readme ，npm 在：https://www.npmjs.com/package/react-type-animation
+
 ### oss文件上传问题
 
 - 阿里云OSS文件上传几种方法（主要是前端） - 会飞的一棵树 -

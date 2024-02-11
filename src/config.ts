@@ -18,3 +18,4 @@ export const DEFAULT_USERNAME = "一位不愿透露姓名的神秘用户"
 export const TODO = "研发小哥正在加🍗中……"
 export const MSG_RENAME_LIMITATION = "30天之内只能修改一次！"
 export const NEW_USER_REWARD = 10
+export const CURSOR_CLASS_NAME = "custom-type-animation-cursor"

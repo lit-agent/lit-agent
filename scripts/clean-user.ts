@@ -1,15 +1,19 @@
 import { prisma } from "@/lib/db"
 
-prisma.user
-  .delete({
-    where: {
-      id: "jiugu",
-      // phone: "17777777777",
-    },
-  })
-  .then((res) => {
-    console.log("deleted: ", res)
-  })
-  .catch((err) => {
-    console.log("不存在")
-  })
+const phone = process.argv[2]
+
+if (phone) {
+  prisma.user
+    .delete({
+      where: {
+        // id: "jiugu",
+        phone,
+      },
+    })
+    .then((res) => {
+      console.log("deleted: ", res)
+    })
+    .catch((err) => {
+      console.log("不存在")
+    })
+}
