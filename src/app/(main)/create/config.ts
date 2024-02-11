@@ -19,7 +19,7 @@ export const createTaskData: {
     name: "target",
     label: "目标群体",
     type: "string",
-    default: "全体姑的Friends",
+    default: "全体姑的friend",
   },
   {
     name: "platform",

@@ -266,8 +266,6 @@ const MainArea = ({
 }
 
 const VerifyStatus = ({ userTask }: { userTask: IUserTaskView }) => {
-  if (userTask.status !== UserTaskStatus.finished) return
-
   const TheBadge = ({ className, ...props }: ComponentProps<typeof Badge>) => {
     return <Badge className={cn("w-32", className)} {...props} />
   }
@@ -331,7 +329,7 @@ const BottomActions = ({
         🔗复制任务链接
       </Button>
 
-      {hasFinished ? (
+      {userTask ? (
         <Dialog>
           <DialogTrigger asChild>
             <Button>去限时群聊</Button>
