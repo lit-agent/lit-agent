@@ -1,6 +1,25 @@
-import { Terminal } from "./models/terminal"
-import { query } from "./pay"
-import { PayOrderFinalStatus } from "./models/pay-final-order-status"
+import { queryAction } from "./actions"
+
+import { ITerminal, PayOrderFinalStatus } from "@/lib/pay/schema"
+
+/**
+ * todo: thread for monitoring payment status in both frontend and backend
+ *
+ *   // 调用支付接口
+ *   fetch(payUrl, {
+ *     redirect: "follow",
+ *   })
+ *     .then((data) => {
+ *       const poller = new Poller(terminal, id)
+ *       poller.start()
+ *     })
+ *     .catch((error) => {
+ *       console.error("调用支付接口时发生错误", error)
+ *     })
+ *     .finally(() => {
+ *       console.log("[pay] finished")
+ *     })
+ */
 
 /**
  * 收钱吧支付结果轮询poller
@@ -17,9 +36,9 @@ export class Poller {
   private pollIntervalLate: number
   private earlyPeriod: number
 
-  constructor(terminalSn: string, terminalKey: string, orderCode: string) {
-    this.terminalSn = terminalSn
-    this.terminalKey = terminalKey
+  constructor(role: ITerminal, orderCode: string) {
+    this.terminalSn = role.terminal_sn
+    this.terminalKey = role.terminal_key
     this.orderCode = orderCode
     this.startTime = Date.now()
     this.endTime = this.startTime + 100 * 1000 // 100s
@@ -49,17 +68,16 @@ export class Poller {
 
   private async poll() {
     try {
-      const terminal = new Terminal(this.terminalSn, this.terminalKey)
-      const result = await query(terminal, this.orderCode)
+      const result = await queryAction(this.orderCode)
 
       // 如果订单不是终态且轮训时间没到
       if (
-        !this.isFinalOrderStatus(result?.orderStatus) &&
+        !this.isFinalOrderStatus(result?.data.orderStatus) &&
         this.shouldContinue()
       ) {
         setTimeout(() => this.poll(), this.getPollInterval())
       } else {
-        if (this.isFinalOrderStatus(result?.orderStatus)) {
+        if (this.isFinalOrderStatus(result?.data.orderStatus)) {
           /**
            * 如果是订单是终态，执行落库等业务操作
            */

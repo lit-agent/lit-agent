@@ -1,51 +1,56 @@
 "use client"
 
-import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { VerticalContainer } from "@/components/containers/vertical"
-import { useFormState } from "react-dom"
-import { createInvoiceAction, createPrepayAction } from "@/lib/pay/actions"
 import { useCopyToClipboard } from "@uidotdev/usehooks"
-import { useEffect } from "react"
 import QRCode from "qrcode.react"
+import { useState } from "react"
+import { nanoid } from "nanoid"
+import { PaymentOtherStatus } from "@/lib/pay/schema"
+import { createInvoiceAction, createPrepayAction } from "@/lib/pay/actions"
 
 export default function TestPayPage() {
-  const [invoiceUrl, invoiceAction] = useFormState(createInvoiceAction, null)
-  const [prepayData, prepayAction] = useFormState(createPrepayAction, null)
-  const [copied, copy] = useCopyToClipboard()
-
-  useEffect(() => {
-    if (!invoiceUrl) return
-    copy(invoiceUrl)
-    // window.location.href = `weixin://dl/` + invoiceUrl
-  }, [invoiceUrl])
-
-  useEffect(() => {
-    if (!prepayData) return
-    console.log({ prepayData })
-  }, [prepayData])
+  const [invoiceUrl, copyInvoiceUrl] = useCopyToClipboard()
+  const [invoiceStatus, setInvoiceStatus] = useState<PaymentOtherStatus>(
+    PaymentOtherStatus.DEFAULT,
+  )
 
   return (
     <VerticalContainer>
-      <Label>跳转支付</Label>
-
-      <form action={invoiceAction}>
-        <Button type={"submit"}>点击支付</Button>
-      </form>
+      <Button
+        onClick={async () => {
+          const { url: invoiceUrl, id } = await createInvoiceAction({
+            total_amount: 10,
+          })
+          console.log("-- res: ", invoiceUrl)
+          copyInvoiceUrl(invoiceUrl)
+          // window.location.href = `weixin://dl/` + invoiceUrl
+          location.href = invoiceUrl
+        }}
+      >
+        跳转支付
+      </Button>
 
       {invoiceUrl && (
         <div className={"w-full overflow-hidden p-2"}>
-          <div className={"capitalize"}>generated url:</div>
-
-          <div className={"break-all"}>{invoiceUrl}</div>
-
           <QRCode value={invoiceUrl} />
+
+          <div>Status: {invoiceStatus}</div>
         </div>
       )}
 
-      <form action={prepayAction}>
-        <Button type={"submit"}>预下单支付</Button>
-      </form>
+      <Button
+        onClick={async () => {
+          const prepayData = await createPrepayAction({
+            userId: nanoid(),
+            total_amount: 10,
+            subject: "测试预下单支付",
+          })
+          console.log("-- res: ", prepayData)
+        }}
+      >
+        预下单支付
+      </Button>
     </VerticalContainer>
   )
 }

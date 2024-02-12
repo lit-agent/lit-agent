@@ -1,7 +1,8 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { uniq, uniqBy } from "lodash"
+import { uniqBy } from "lodash"
 import { IProductListView } from "@/schema/product"
+import { createHash } from "crypto"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -30,3 +31,13 @@ export const countBuyersOfProduct = (product?: IProductListView) => {
 export const PHONE_REGEX = new RegExp(
   /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9]){10,}$/,
 )
+
+// md5加密
+export const md5 = (signStr: string): string => {
+  if (!signStr || signStr.trim() === "") {
+    throw new Error("sign can not be null")
+  }
+  const hash = createHash("md5")
+  hash.update(signStr, "utf-8")
+  return hash.digest("hex")
+}
