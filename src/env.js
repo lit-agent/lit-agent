@@ -38,6 +38,13 @@ export const env = createEnv({
 
     OSS_ACCESS_KEY_ID: z.string(),
     OSS_ACCESS_KEY_SECRET: z.string(),
+
+    PAY_APP_ID: z.string(),
+    PAY_ACTIVATION_CODE: z.string(),
+    PAY_VENDOR_SN: z.string(),
+    PAY_VENDOR_KEY: z.string(),
+    PAY_TERMINAL_SN: z.string(),
+    PAY_TERMINAL_KEY: z.string(),
   },
 
   /**
@@ -52,6 +59,9 @@ export const env = createEnv({
 
     NEXT_PUBLIC_PUSHER_APP_KEY: z.string(),
     NEXT_PUBLIC_PUSHER_CLUSTER: z.string(),
+
+    NEXT_PUBLIC_PAY_APP_DOMAIN: z.string(),
+    NEXT_PUBLIC_PAY_QR_DOMAIN: z.string(),
   },
 
   /**
@@ -78,6 +88,15 @@ export const env = createEnv({
 
     OSS_ACCESS_KEY_ID: process.env.OSS_ACCESS_KEY_ID,
     OSS_ACCESS_KEY_SECRET: process.env.OSS_ACCESS_KEY_SECRET,
+
+    PAY_APP_ID: process.env.PAY_APP_ID,
+    PAY_ACTIVATION_CODE: process.env.PAY_ACTIVATION_CODE,
+    PAY_VENDOR_SN: process.env.PAY_VENDOR_SN,
+    PAY_VENDOR_KEY: process.env.PAY_VENDOR_KEY,
+    PAY_TERMINAL_SN: process.env.PAY_TERMINAL_SN,
+    PAY_TERMINAL_KEY: process.env.PAY_TERMINAL_KEY,
+    NEXT_PUBLIC_PAY_APP_DOMAIN: process.env.NEXT_PUBLIC_PAY_APP_DOMAIN,
+    NEXT_PUBLIC_PAY_QR_DOMAIN: process.env.NEXT_PUBLIC_PAY_QR_DOMAIN,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

@@ -6,7 +6,7 @@ import { toast } from "sonner"
 import { UPLOAD_FORM_ID } from "@/lib/oss/const"
 import Image from "next/image"
 
-import { VerticalContainer } from "@/providers/containers"
+import { VerticalContainer } from "@/components/containers/vertical"
 
 export default function TestOssPage() {
   const [file, setFile] = useState<string | null>(

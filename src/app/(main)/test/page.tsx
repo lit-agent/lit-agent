@@ -1,22 +1,20 @@
 "use client"
 
 import { Label } from "@/components/ui/label"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { VerticalContainer } from "@/providers/containers"
+
+import { VerticalContainer } from "@/components/containers/vertical"
+import { ButtonLink } from "@/components/_universal/link"
 
 export default function TestPage() {
   return (
     <VerticalContainer>
       <Label className={"text-2xl"}>Test Page</Label>
 
-      <Link href={"/test/oss"}>
-        <Button>OSS</Button>
-      </Link>
+      <ButtonLink href={"/test/oss"}>OSS</ButtonLink>
 
-      <Link href={"/test/clipboard"}>
-        <Button>Clipboard</Button>
-      </Link>
+      <ButtonLink href={"/test/clipboard"}>Clipboard</ButtonLink>
+
+      <ButtonLink href={"/test/pay"}>Pay</ButtonLink>
     </VerticalContainer>
   )
 }

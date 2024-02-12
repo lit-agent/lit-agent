@@ -7,7 +7,7 @@ import { useCopyToClipboard as useCopyToClipboardUseHooksTS } from "usehooks-ts"
 import { useCopyToClipboard } from "@uidotdev/usehooks"
 import { Button } from "@/components/ui/button"
 
-import { VerticalContainer } from "@/providers/containers"
+import { VerticalContainer } from "@/components/containers/vertical"
 
 export default function Page() {
   const URL = typeof window === "undefined" ? "" : location.href
