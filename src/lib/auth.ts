@@ -80,14 +80,14 @@ export const authOptions: NextAuthOptions = {
       profile,
       isNewUser,
     }) => {
-      console.log("[auth.jwt]: ", {
-        token,
-        user,
-        session,
-        account,
-        profile,
-        isNewUser,
-      })
+      // console.log("[auth.jwt]: ", {
+      //   token,
+      //   user,
+      //   session,
+      //   account,
+      //   profile,
+      //   isNewUser,
+      // })
 
       // token 是加解密可信安全的，不用担心被篡改！
       // init
@@ -118,13 +118,13 @@ export const authOptions: NextAuthOptions = {
      * @param newSession
      */
     session: async ({ session, user, token, trigger, newSession }) => {
-      console.log("[auth.session]: ", {
-        session,
-        user,
-        token,
-        newSession,
-        trigger,
-      })
+      // console.log("[auth.session]: ", {
+      //   session,
+      //   user,
+      //   token,
+      //   newSession,
+      //   trigger,
+      // })
 
       if (token.sub) {
         session.user.id = token.sub

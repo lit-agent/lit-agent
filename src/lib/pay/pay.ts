@@ -7,7 +7,7 @@ import { Terminal } from "./models/terminal"
 import { env } from "@/env"
 
 // md5加密
-const getSign = (signStr: string): string => {
+export const getSign = (signStr: string): string => {
   if (!signStr || signStr.trim() === "") {
     throw new Error("sign can not be null")
   }
@@ -49,7 +49,7 @@ export const generatePayUrl = (
     .digest("hex")
     .toUpperCase()
   const wholeParams = sortedParamStr + "&sign=" + sign
-  const urlWithParams = env.PAY_QR_DOMAIN + "?" + wholeParams
+  const urlWithParams = env.NEXT_PUBLIC_PAY_QR_DOMAIN + "?" + wholeParams
   return urlWithParams
 }
 
@@ -64,7 +64,7 @@ export const activate = async (
   code: string,
 ): Promise<Result<Terminal | null>> => {
   console.log("-- activating: ", { deviceId, code })
-  const url = `${env.PAY_APP_DOMAIN}/terminal/activate`
+  const url = `${env.NEXT_PUBLIC_PAY_APP_DOMAIN}/terminal/activate`
   const params = {
     app_id: env.PAY_APP_ID,
     code: code,
@@ -130,7 +130,7 @@ export const checkin = async (
   terminal: Terminal,
   deviceId: string,
 ): Promise<any> => {
-  const url = `${env.PAY_APP_DOMAIN}/terminal/checkin`
+  const url = `${env.NEXT_PUBLIC_PAY_APP_DOMAIN}/terminal/checkin`
   const params = {
     terminal_sn: terminal.terminalSn,
     device_id: deviceId,
@@ -198,7 +198,7 @@ export const query = async (
   if (orderCode === "") {
     throw new Error(" orderCode should not be null")
   }
-  const url = `${env.PAY_APP_DOMAIN}/upay/v2/query`
+  const url = `${env.NEXT_PUBLIC_PAY_APP_DOMAIN}/upay/v2/query`
   const params = {
     terminal_sn: terminal.terminalSn,
     client_sn: orderCode,
@@ -250,7 +250,7 @@ const cancel = async (terminal: Terminal, orderCode: string): Promise<any> => {
   if (orderCode === "") {
     throw new Error("orderCode can't be null")
   }
-  const url = `${env.PAY_APP_DOMAIN}/upay/v2/cancel`
+  const url = `${env.NEXT_PUBLIC_PAY_APP_DOMAIN}/upay/v2/cancel`
   const params = {
     terminal_sn: terminal.terminalSn,
     client_sn: orderCode,
@@ -300,7 +300,7 @@ export const refund = async (
   refundAmount: string,
   operator: string,
 ): Promise<any> => {
-  const url = `${env.PAY_APP_DOMAIN}/upay/v2/refund`
+  const url = `${env.NEXT_PUBLIC_PAY_APP_DOMAIN}/upay/v2/refund`
   const params = {
     terminal_sn: terminal.terminalSn,
     client_sn: originalOrderCode,
