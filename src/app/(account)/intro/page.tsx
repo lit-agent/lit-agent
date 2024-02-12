@@ -25,7 +25,7 @@ import { useState } from "react"
 import { api } from "@/lib/trpc/react"
 import { signIn } from "next-auth/react"
 import { cn, PHONE_REGEX } from "@/lib/utils"
-import { SMS_EXPIRE_MINUTES } from "@/lib/sms"
+import { SMS_EXPIRE_MINUTES, SMS_PROVIDER_ID } from "@/lib/sms"
 import { useCountdown } from "@/hooks/use-countdown"
 import { CgSpinner } from "react-icons/cg"
 import { useRouter } from "next/navigation"
@@ -100,49 +100,31 @@ const Comp3 = () => {
   }
 
   const [submitting, setSubmitting] = useState(false)
-  const validateUser = api.user.validateUser.useMutation()
+  const router = useRouter()
 
   async function onSubmit() {
     setSubmitting(true)
 
     const phone = watch("phone")
     const code = watch("code")
-    const validatedResult = await validateUser.mutateAsync({ phone, code })
 
-    switch (validatedResult) {
-      case ValidateUserResult.Validated:
-        // 直接登录
-        await signIn("sms", {
-          phone,
-          code,
-          redirect: false,
-          // todo: auth
-          // callbackUrl: '/', // 感谢: https://github.com/sidebase/nuxt-auth/issues/469#issuecomment-1661909912
-        })
-        void router.push("/")
-        break
-
-      case ValidateUserResult.NotValidatedYet:
-        // 到验证页再登录
-        void router.push(`/validation?phone=${phone}&code=${code}`)
-        break
-
-      case ValidateUserResult.WrongCode:
-        toast.error("验证码错误！")
-        break
-
-      case ValidateUserResult.NoAccount:
-        toast.error("手机号未注册！")
-        break
-
-      default:
-        throw new UnexpectedError()
-    }
-
+    const result = await signIn(SMS_PROVIDER_ID, {
+      phone,
+      code,
+      redirect: false,
+      // todo: auth
+      // callbackUrl: "/", // 感谢: https://github.com/sidebase/nuxt-auth/issues/469#issuecomment-1661909912
+    })
     setSubmitting(false)
-  }
+    console.log("[IntroPage] sign in result: ", result)
 
-  const router = useRouter()
+    if (!result?.ok) {
+      toast.error(`登录失败，原因：${result?.error}`)
+    } else {
+      router.push("/")
+      toast.success("登录成功！")
+    }
+  }
 
   return (
     <div className={"mt-auto flex flex-col items-center pb-8 gap-4"}>

@@ -254,7 +254,7 @@ model User {
   sessions      Session[]
   emailVerified DateTime?
   phoneVerified DateTime?
-  validated     Boolean?  @default(false) // 是否通过验证
+  validated     Boolean   @default(false) // 是否通过验证
 
   // basic info
   name        String?

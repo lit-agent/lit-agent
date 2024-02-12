@@ -72,11 +72,9 @@ export const userRouter = createTRPCRouter({
       })
     }),
 
-  validateAnswer: publicProcedure
+  validateAnswer: protectedProcedure
     .input(
       z.object({
-        phone: z.string(),
-        code: z.string(),
         answer: z.string(),
       }),
     )
@@ -86,26 +84,9 @@ export const userRouter = createTRPCRouter({
       const validateOk = answer === target
 
       if (validateOk) {
-        const account = await prisma.account.findUniqueOrThrow({
-          where: {
-            provider_providerAccountId: {
-              provider: SMS_PROVIDER_ID,
-              providerAccountId: input.phone,
-            },
-            access_token: input.code,
-          },
-          select: {
-            user: {
-              select: {
-                id: true,
-                validated: true,
-              },
-            },
-          },
-        })
-        const userId = account.user.id
+        const userId = ctx.user.id
 
-        if (!account.user?.validated) {
+        if (!ctx.user?.validated) {
           const user = await prisma.user.update({
             where: { id: userId },
             data: {

@@ -4,30 +4,26 @@ import { NextResponse } from "next/server"
 
 export default withAuth(
   async function middleware(req) {
+    const redirect = (url: string) =>
+      NextResponse.redirect(new URL(url, req.url))
+
     const token = await getToken({ req })
-    const isAuth = !!token
-    const isAuthPage =
-      req.nextUrl.pathname.startsWith("/login") ||
-      req.nextUrl.pathname.startsWith("/register")
 
-    if (isAuthPage) {
-      if (isAuth) {
-        return NextResponse.redirect(new URL("/dashboard", req.url))
-      }
+    const isLoggingIn = req.nextUrl.pathname.startsWith("/intro")
+    const isValidating = req.nextUrl.pathname.startsWith("/validation")
 
-      return null
-    }
+    // 没有session，始终跳转到登录页
+    if (!token) return isLoggingIn ? null : redirect("/intro")
 
-    if (!isAuth) {
-      let from = req.nextUrl.pathname
-      if (req.nextUrl.search) {
-        from += req.nextUrl.search
-      }
+    // 已登录，但未通过审核，始终重定向到审核页
+    if (token.validated === false)
+      return isValidating ? null : redirect("/validation")
 
-      return NextResponse.redirect(
-        new URL(`/login?from=${encodeURIComponent(from)}`, req.url),
-      )
-    }
+    // 兼容旧版，有token，但没有 validated 信息，由进一步的auth 处理
+    if (!token.validated) return null
+
+    // 已登录，且有 validated信息，无视登录页、审核页
+    return isLoggingIn || isValidating ? redirect("/") : null
   },
   {
     callbacks: {
@@ -46,6 +42,7 @@ export const config = {
     // intro 和 validation 都不要加 auth，因为还没登陆
     // intro 和 validation 都是需要 phone、code 的，所以算是密码登录
 
+    "/((?:intro|validation).*)",
     "/",
     "/((?:bill|chat|create|store|product|settings|task).*)",
     // "/(api|trpc)(.*)"

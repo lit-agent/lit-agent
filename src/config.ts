@@ -22,6 +22,7 @@ export const MSG_SUBMIT_VERIFYING = "正在审核中，请耐心等待~"
 export const MSG_SUBMIT_VERIFY_SUCCESS = "恭喜！火值已发放！请注意查收！"
 export const NEW_USER_REWARD = 10
 export const CURSOR_CLASS_NAME = "custom-type-animation-cursor"
+export const TYPER_SPEED = 30
 
 export class UnexpectedError extends Error {
   constructor() {

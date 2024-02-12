@@ -21,6 +21,7 @@ import { UserType } from "@prisma/client"
 import { UserAvatar } from "@/components/user/user-avatar"
 import { BloggerContainer } from "@/components/user/blogger-container"
 import { MarkdownContainer } from "@/providers/containers"
+import { DEFAULT_USERNAME } from "@/config"
 
 export interface IMessageContainer {
   user: IUserAvatar
@@ -56,7 +57,7 @@ export const MessageContainer = ({
   message?: IMessageView
 } & HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className={cn("relative flex gap-2", className)} {...props}>
+    <div className={cn("relative flex gap-2 p-2", className)} {...props}>
       {user?.type === UserType.blogger ? (
         <BloggerContainer className={"flex items-start"}>
           <UserAvatar user={user} />
@@ -67,7 +68,7 @@ export const MessageContainer = ({
 
       <div className={"grow overflow-hidden flex flex-col gap-2"}>
         <div className={"flex items-center gap-1 text-xs text-gray-400"}>
-          <span>{user?.name ?? "一位神秘的用户"}</span>
+          <span>{user?.name ?? DEFAULT_USERNAME}</span>
 
           {user?.type === "blogger" && (
             <Badge

@@ -20,6 +20,7 @@ declare module "next-auth/jwt" {
   interface JWT extends IUserView {
     name: string | null // JWT 的 name 还支持 undefined，我们要限制一下
     phone: string | null
+    validated: boolean
   }
 }
 
@@ -31,7 +32,7 @@ declare module "next-auth/jwt" {
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: DefaultSession["user"] & { id: string }
+    user: DefaultSession["user"] & { id: string; validated: boolean }
     error?: SessionError
   }
 
@@ -79,10 +80,27 @@ export const authOptions: NextAuthOptions = {
       profile,
       isNewUser,
     }) => {
-      // console.log("[auth.jwt]: ", { token, user, session, account, profile, isNewUser, })
+      console.log("[auth.jwt]: ", {
+        token,
+        user,
+        session,
+        account,
+        profile,
+        isNewUser,
+      })
 
       // token 是加解密可信安全的，不用担心被篡改！
-      if (user) token = { ...token, phone: user.phone }
+      // init
+      if (user) token = { ...token, phone: user.phone, validated: false }
+      // afterwards
+      else if (token.phone && !token.validated) {
+        // 首次更新token
+        const userInDB = await prisma.user.findUniqueOrThrow({
+          where: { phone: token.phone },
+        })
+        if (userInDB.validated) token.validated = true
+      }
+
       return token
     },
 
@@ -100,15 +118,19 @@ export const authOptions: NextAuthOptions = {
      * @param newSession
      */
     session: async ({ session, user, token, trigger, newSession }) => {
-      // console.log("[auth.session]: ", { session, user, token, newSession, trigger, })
+      console.log("[auth.session]: ", {
+        session,
+        user,
+        token,
+        newSession,
+        trigger,
+      })
 
-      const { phone } = token
-      if (!phone) session.error = "NoPhone"
-      else {
-        const userInDB = await prisma.user.findUnique({ where: { phone } })
-        if (!userInDB) session.error = "NoUserInDB"
-        else session.user = { ...token, id: userInDB.id }
+      if (token.sub) {
+        session.user.id = token.sub
+        session.user.validated = token.validated
       }
+
       return session
     },
   },
