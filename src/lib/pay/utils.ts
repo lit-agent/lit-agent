@@ -16,11 +16,14 @@ export const fetchShouqianba = async ({
   const key = isTerminal(role) ? role.terminal_key : role.vendor_key
 
   const url = env.NEXT_PUBLIC_PAY_APP_DOMAIN + path
-  const sign = md5(JSON.stringify(params) + key)
+  // 要转义中文，否则链接无效
+  const body = encodeURI(JSON.stringify(params))
+  const sign = md5(body + key)
+  console.log("-- req: ", { url, params, body, sign })
 
   const response = await fetch(url, {
     method: "POST",
-    body: JSON.stringify(params),
+    body,
     headers: {
       "Content-Type": "application/json",
       Authorization: sn + " " + sign,

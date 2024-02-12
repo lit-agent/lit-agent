@@ -8,6 +8,8 @@ import { useState } from "react"
 import { nanoid } from "nanoid"
 import { PaymentOtherStatus } from "@/lib/pay/schema"
 import { createInvoiceAction, createPrepayAction } from "@/lib/pay/actions"
+import { useRunningEnvironment } from "@/hooks/use-running-environment"
+import { No, Yes } from "@/components/_universal/icons"
 
 export default function TestPayPage() {
   const [invoiceUrl, copyInvoiceUrl] = useCopyToClipboard()
@@ -15,27 +17,35 @@ export default function TestPayPage() {
     PaymentOtherStatus.DEFAULT,
   )
 
+  const { isWechat, isMobile } = useRunningEnvironment()
+  const IsWechat = isWechat ? Yes : No
+  const IsMobile = isMobile ? Yes : No
+
   return (
     <VerticalContainer>
+      <div className={"inline-flex items-center gap-2"}>
+        微信 <IsWechat /> 手机 <IsMobile />
+      </div>
+
       <Button
         onClick={async () => {
           const { url: invoiceUrl, id } = await createInvoiceAction({
             total_amount: 10,
           })
           console.log("-- res: ", invoiceUrl)
-          copyInvoiceUrl(invoiceUrl)
+          await copyInvoiceUrl(invoiceUrl)
           // window.location.href = `weixin://dl/` + invoiceUrl
-          location.href = invoiceUrl
+
+          // 手机微信浏览器直接跳转
+          if (isWechat && isMobile) location.href = invoiceUrl
         }}
       >
         跳转支付
       </Button>
 
       {invoiceUrl && (
-        <div className={"w-full overflow-hidden p-2"}>
-          <QRCode value={invoiceUrl} />
-
-          <div>Status: {invoiceStatus}</div>
+        <div>
+          <ShowInvoice invoice={invoiceUrl} />
         </div>
       )}
 
@@ -53,4 +63,28 @@ export default function TestPayPage() {
       </Button>
     </VerticalContainer>
   )
+}
+
+const ShowInvoice = ({ invoice }: { invoice: string }) => {
+  const { isWechat, isMobile } = useRunningEnvironment()
+  const [invoiceUrl, copyInvoiceUrl] = useCopyToClipboard()
+
+  if (!isMobile) return <QRCode value={invoice} />
+
+  if (!isWechat)
+    return (
+      <div className={"w-full p-4"}>
+        <div>
+          支付链接已复制到剪切板，请到手机微信中粘贴访问（推荐使用微信浏览器访问本网站）
+        </div>
+        <div
+          className={"break-all underline text-xs"}
+          onClick={() => {
+            copyInvoiceUrl(invoice)
+          }}
+        >
+          {invoice}
+        </div>
+      </div>
+    )
 }

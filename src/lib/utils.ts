@@ -41,3 +41,5 @@ export const md5 = (signStr: string): string => {
   hash.update(signStr, "utf-8")
   return hash.digest("hex")
 }
+
+export const isClient = () => typeof window !== "undefined"

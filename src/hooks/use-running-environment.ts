@@ -1,0 +1,30 @@
+import { useEffect, useState } from "react"
+import { isClient } from "@/lib/utils"
+
+/**
+ * ref: https://stackoverflow.com/a/30026162
+ */
+export const checkWechatBrowser = () =>
+  isClient() && /micromessenger/i.test(navigator.userAgent)
+
+/**
+ * ref: https://stackoverflow.com/a/14301832
+ */
+export const checkMobileBrowser = () => /Mobi/i.test(window.navigator.userAgent)
+
+export const useRunningEnvironment = () => {
+  const [isClient, setClient] = useState(false)
+  const [isWechat, setWechat] = useState(false)
+  const [isMobile, setMobile] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== "undefined") setClient(true)
+  }, [])
+
+  useEffect(() => {
+    setWechat(checkWechatBrowser())
+    setMobile(checkMobileBrowser())
+  }, [isClient])
+
+  return { isClient, isWechat, isMobile }
+}

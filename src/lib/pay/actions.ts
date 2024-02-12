@@ -22,7 +22,7 @@ export const genPayUrlAction = (payRequest: JumpPayRequest) => {
   // 排序并拼接字符串
   const sortedParamStr = Object.keys(params)
     .sort((a, b) => a.localeCompare(b))
-    .map((k) => `${k}=${params[k]}`)
+    .map((k) => `${k}=${encodeURIComponent(params[k])}`)
     .join("&")
 
   // 添加key
@@ -33,7 +33,7 @@ export const genPayUrlAction = (payRequest: JumpPayRequest) => {
   const wholeParams = sortedParamStr + "&sign=" + signed
   const url = env.NEXT_PUBLIC_PAY_QR_DOMAIN + "?" + wholeParams
 
-  console.log({ params, toSign, signed, url })
+  console.log("-- req: ", { params, toSign, signed, url })
   return url
 }
 
@@ -151,7 +151,7 @@ export async function createInvoiceAction({
   }
 
   const url = genPayUrlAction(request)
-  console.log("[pay] generated pay url: ", url)
+  console.log("-- res: ", { id, url })
 
   return { id, url }
 }
@@ -182,7 +182,7 @@ export async function createPrepayAction({
     total_amount: total_amount.toString(),
     payway: "3", // 微信
     sub_payway: "6", //网页必填
-    subject,
+    subject: subject,
     operator: "markshawn",
     payer_uid: userId,
     extended: {
