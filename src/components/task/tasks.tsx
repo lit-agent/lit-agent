@@ -9,7 +9,7 @@ import { ITaskView } from "@/schema/task"
 export function AllTasks() {
   const filters = ["正在进行", "往期回顾", "全部"] as const
   type Filter = (typeof filters)[number]
-  const [filter, setFilter] = useState<Filter>("全部")
+  const [filter, setFilter] = useState<Filter>("正在进行")
 
   const { data: tasks = [] } = api.task.listTasks.useQuery()
 
