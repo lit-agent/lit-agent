@@ -13,11 +13,15 @@ import {
 import { FireValue } from "@/components/_universal/fire-value"
 import { Button } from "@/components/ui/button"
 import { BasicMutableUserInfo } from "@/components/user/basic"
+import { toast } from "sonner"
+import { signIn } from "next-auth/react"
+import { SMS_PROVIDER_ID } from "@/lib/sms"
 
 export default function ValidateSuccess() {
   const router = useRouter()
   const { data: users = [] } = api.user.list.useQuery()
   const user = useUser()
+  const getAuthData = api.user.getAuthData.useMutation()
 
   return (
     <Card>
@@ -48,9 +52,21 @@ export default function ValidateSuccess() {
       <CardFooter>
         <Button
           className={"w-full"}
-          disabled={!user?.image || !user?.name}
+          disabled={!user?.image || !user?.name || !user?.id}
           onClick={async (event) => {
-            event.preventDefault() // ref: https://stackoverflow.com/a/72021918
+            const { phone, code } = await getAuthData.mutateAsync()
+            if (!phone || !code) return toast.error("账号异常！")
+
+            // 登录，刷新token
+            const signInResult = await signIn(SMS_PROVIDER_ID, {
+              phone,
+              code,
+              redirect: false,
+              // todo: auth
+              // callbackUrl: "/", // 感谢: https://github.com/sidebase/nuxt-auth/issues/469#issuecomment-1661909912
+            })
+            console.log({ signInResult })
+            toast.success("恭喜加入玖姑的私域！")
             router.push("/")
           }}
         >

@@ -21,6 +21,7 @@ export default function TestPayPage() {
   const IsWechat = isWechat ? Yes : No
   const IsMobile = isMobile ? Yes : No
 
+
   return (
     <VerticalContainer>
       <div className={"inline-flex items-center gap-2"}>

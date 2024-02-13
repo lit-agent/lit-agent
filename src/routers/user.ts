@@ -52,6 +52,24 @@ export const userRouter = createTRPCRouter({
       })
     }),
 
+  getAuthData: protectedProcedure.mutation(async ({ ctx, input }) => {
+    const { phone, accounts } = await prisma.user.findUniqueOrThrow({
+      where: { id: ctx.user.id },
+      select: {
+        phone: true,
+        accounts: { select: { access_token: true, provider: true } },
+      },
+    })
+    const code = accounts.find(
+      (a) => a.provider === SMS_PROVIDER_ID,
+    )?.access_token
+
+    return {
+      phone,
+      code,
+    }
+  }),
+
   getSelf: protectedProcedure.query(async ({ ctx, input }) => {
     return prisma.user.findUniqueOrThrow({
       where: { id: ctx.user.id },
@@ -98,6 +116,7 @@ export const userRouter = createTRPCRouter({
             },
           })
 
+          console.log("[User] updated user: ", user)
           console.log("[User:Validated] 正在发送欢迎语")
           // 欢迎语不需要使用socket发，因为用户还没到房间
           await prisma.message.create({

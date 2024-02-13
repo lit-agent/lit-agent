@@ -80,14 +80,7 @@ export const authOptions: NextAuthOptions = {
       profile,
       isNewUser,
     }) => {
-      // console.log("[auth.jwt]: ", {
-      //   token,
-      //   user,
-      //   session,
-      //   account,
-      //   profile,
-      //   isNewUser,
-      // })
+      console.log("[auth.jwt]: ", { token, user, session, account, profile })
 
       // token 是加解密可信安全的，不用担心被篡改！
       // init
@@ -99,6 +92,7 @@ export const authOptions: NextAuthOptions = {
           where: { phone: token.phone },
         })
         if (userInDB.validated) token.validated = true
+        console.log("[auth.jwt] updated: ", { userInDB, token })
       }
 
       return token

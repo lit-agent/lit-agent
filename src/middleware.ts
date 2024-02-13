@@ -7,30 +7,42 @@ export default withAuth(
     const redirect = (url: string) =>
       NextResponse.redirect(new URL(url, req.url))
 
+    const nextPath = req.nextUrl.pathname
     const token = await getToken({ req })
 
-    const isLoggingIn = req.nextUrl.pathname.startsWith("/intro")
-    const isValidating = req.nextUrl.pathname.startsWith("/validation")
+    const isLoggingIn = nextPath.startsWith("/intro")
+    const isValidating = nextPath.startsWith("/validation")
 
-    // 没有session，始终跳转到登录页
-    if (!token) return isLoggingIn ? null : redirect("/intro")
+    console.log("[Next-Auth Middleware]: ", {
+      url: req.url,
+      referer: req.referrer,
+      nextPath,
+      // req,
+      token,
+      isLoggingIn,
+      isValidating,
+    })
 
-    // 已登录，但未通过审核，始终重定向到审核页
-    if (token.validated === false)
-      return isValidating ? null : redirect("/validation")
+    // 没有 token 且不在登录页，重定向到登录页
+    if (!token && !isLoggingIn) return redirect("/intro")
 
-    // 兼容旧版，有token，但没有 validated 信息，由进一步的auth 处理
-    if (!token.validated) return null
+    // 兼容 token.validated = null | undefined
+    // token 还没置真，且在验证页，重定向到验证页
+    if (token?.validated === false && !isValidating)
+      return redirect("/validation")
 
-    // 已登录，且有 validated信息，无视登录页、审核页
-    return isLoggingIn || isValidating ? redirect("/") : null
+    // 已经有token了，但在登录或者验证页，重定向到首页
+    if (token?.validated && (isLoggingIn || isValidating)) return redirect("/")
+
+    return null
   },
   {
     callbacks: {
-      async authorized() {
+      async authorized({ req, token }) {
         // This is a work-around for handling redirect on auth pages.
         // We return true here so that the middleware function above
         // is always called.
+
         return true
       },
     },
