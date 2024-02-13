@@ -1,17 +1,14 @@
 "use client"
-import { ComponentProps, PropsWithChildren, useState } from "react"
+import { ComponentProps, PropsWithChildren } from "react"
 import { cn } from "@/lib/utils"
 import { ActionEntrance } from "@/components/_universal/action-entrance"
-import { useGlobalMessages } from "@/hooks/use-messages"
-import { toast } from "sonner"
-import { TODO } from "@/config"
-import { IoChatbubbleEllipsesOutline } from "react-icons/io5"
 import { BiGame } from "react-icons/bi"
 import { GrAppleAppStore } from "react-icons/gr"
 import { GoPerson } from "react-icons/go"
 import Link from "next/link"
 import { UserType } from "@prisma/client"
 import { useUser } from "@/hooks/use-user"
+import { usePathname } from "next/navigation"
 
 export default function MainLayout({ children }: PropsWithChildren) {
   return (
@@ -46,47 +43,20 @@ const ContentArea = ({ children }: PropsWithChildren) => {
 }
 
 const NavBars = () => {
-  useGlobalMessages()
-
-  const [selected, setSelected] = useState(0)
+  const pathname = usePathname()
+  // console.log({ pathname })
 
   return (
     <div className="w-full shrink-0 grid grid-cols-3 p-2 bg-black gap-2">
-      {/*<NavTabLink*/}
-      {/*  href={""}*/}
-      {/*  onClick={() => {*/}
-      {/*    toast.info(TODO)*/}
-      {/*    return*/}
-
-      {/*    // todo: chat*/}
-      {/*    setSelected(1)*/}
-      {/*  }}*/}
-      {/*  isSelected={selected === 1}*/}
-      {/*>*/}
-      {/*  <IoChatbubbleEllipsesOutline />*/}
-      {/*</NavTabLink>*/}
-
-      <NavTabLink
-        href={"/task"}
-        onClick={() => setSelected(2)}
-        isSelected={selected === 2}
-      >
+      <NavTabLink href={"/task"} isSelected={pathname === "/task"}>
         <BiGame />
       </NavTabLink>
 
-      <NavTabLink
-        href={"/product"}
-        onClick={() => setSelected(3)}
-        isSelected={selected === 3}
-      >
+      <NavTabLink href={"/product"} isSelected={pathname === "/product"}>
         <GrAppleAppStore />
       </NavTabLink>
 
-      <NavTabLink
-        href={"/"}
-        onClick={() => setSelected(4)}
-        isSelected={selected === 4}
-      >
+      <NavTabLink href={"/"} isSelected={pathname === "/"}>
         <GoPerson />
       </NavTabLink>
     </div>

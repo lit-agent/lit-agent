@@ -12,8 +12,8 @@ export default function SubPage({
 
   return (
     <div className={"h-full overflow-hidden flex flex-col bg-[#2A2335]"}>
-      <div className={"flex items-center w-full py-4"}>
-        <div className={"w-12 flex items-center shrink-0"}>
+      <div className={"flex items-center w-full p-4"}>
+        <div className={"flex items-center shrink-0"}>
           <ChevronLeftIcon
             className={"w-6 h-6 text-muted-foreground"}
             onClick={() => {
@@ -30,7 +30,7 @@ export default function SubPage({
           {title}
         </div>
 
-        <div className={"w-12 flex items-center shrink-0"} />
+        <div className={"flex items-center shrink-0"} />
       </div>
 
       <div className={cn("grow overflow-auto", className)} {...props} />
