@@ -41,23 +41,22 @@ export default function RankingPage() {
             <ChevronRightIcon className={"w-4 h-4 text-muted-foreground"} />
           </Badge>
 
-          <div
-            className={
-              "w-full flex justify-between border-b border-white/10 pb-2 sticky top-0 bg-[#2A2335] z-50"
-            }
-          >
-            <div
-              className={
-                "inline-flex items-center gap-1 text-sm text-secondary-foreground"
-              }
-            >
-              当前排名 <ChevronDownIcon className={"text-gray-500 w-4 h-4"} />
-            </div>
-
-            <div className={"text-muted-foreground text-sm"}>
-              预计 {users.length}人平分
-            </div>
-          </div>
+          {/*<div*/}
+          {/*  className={*/}
+          {/*    "w-full flex justify-between border-b border-white/10 pb-2 sticky top-0 bg-[#2A2335] z-50"*/}
+          {/*  }*/}
+          {/*>*/}
+          {/*  <div*/}
+          {/*    className={*/}
+          {/*      "inline-flex items-center gap-1 text-sm text-secondary-foreground"*/}
+          {/*    }*/}
+          {/*  >*/}
+          {/*    当前排名 <ChevronDownIcon className={"text-gray-500 w-4 h-4"} />*/}
+          {/*  </div>*/}
+          {/*  <div className={"text-muted-foreground text-sm"}>*/}
+          {/*    预计 {users.length}人平分*/}
+          {/*  </div>*/}
+          {/*</div>*/}
 
           {users.map((user, index) => (
             <RankItem
