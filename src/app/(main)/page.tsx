@@ -129,7 +129,10 @@ const WordRandingCard = () => {
     ) + 1
 
   return (
-    <div className={"flex flex-col gap-2 rounded-3xl bg-white p-4 text-black"}>
+    <Link
+      className={"flex flex-col gap-2 rounded-3xl bg-white p-4 text-black"}
+      href={"/ranking"}
+    >
       <div className={"flex items-center gap-2"}>
         <AwardFillIcon />
         <div className={"text-xs font-thin text-gray-950"}>世界排名</div>
@@ -139,7 +142,7 @@ const WordRandingCard = () => {
         <div className={"text-lg font-medium"}>{myRank}</div>
         <div className={"text-gray-500"}>/ {users.length}</div>
       </div>
-    </div>
+    </Link>
   )
 }
 

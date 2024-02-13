@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { IMessageBody } from "@/schema/message"
 
 import RenderTask from "@/components/task/task-message"
-import { IUserAvatar, IUserView } from "@/schema/user.base"
+import { IUserAvatar, IUserListView } from "@/schema/user.base"
 import { ChevronRightIcon } from "lucide-react"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import Image from "next/image"

@@ -1,4 +1,4 @@
-import { IUserView } from "@/schema/user.base"
+import { IUserListView } from "@/schema/user.base"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
@@ -17,7 +17,7 @@ export default function UserAvatars({
   maxN = 6,
   size = "sm",
 }: {
-  users: IUserView[]
+  users: IUserListView[]
   maxN?: number
   size?: "sm" | "lg"
 }) {

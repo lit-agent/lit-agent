@@ -31,6 +31,7 @@ import ShipinhaoBrandImage from "../../public/image/brand/shipinhao.png"
 import KuaishouBrandImage from "../../public/image/brand/kuaishou.png"
 import CoverTextBigImage from "../../public/image/landing/cover-text-big.jpg"
 import LitBrandImage from "../../public/image/brand/lit.png"
+import RankingImage from "../../public/image/illustrator/ranking.png"
 
 import { HonorType } from "@prisma/client"
 
@@ -65,6 +66,7 @@ export {
   XiaohongshuBrandImage,
   CoverTextBigImage,
   LitBrandImage,
+  RankingImage,
 }
 
 export const honorDict: Record<HonorType, string> = {

@@ -9,7 +9,7 @@ import { prisma } from "@/lib/db"
 import CredentialsProvider from "next-auth/providers/credentials"
 
 import { SMS_PROVIDER_ID } from "@/lib/sms"
-import { IUserView } from "@/schema/user.base"
+import { IUserListView } from "@/schema/user.base"
 import { userMainViewSchema } from "@/schema/user"
 
 export type SessionError = "NoPhone" | "NoUserInDB"
@@ -17,7 +17,7 @@ export type SessionError = "NoPhone" | "NoUserInDB"
 // ref: https://next-auth.js.org/getting-started/typescript#submodules
 declare module "next-auth/jwt" {
   /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
-  interface JWT extends IUserView {
+  interface JWT extends IUserListView {
     name: string | null // JWT 的 name 还支持 undefined，我们要限制一下
     phone: string | null
     validated: boolean

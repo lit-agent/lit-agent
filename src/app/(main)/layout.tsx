@@ -31,7 +31,7 @@ const ContentArea = ({ children }: PropsWithChildren) => {
     <div
       className={cn(
         "grow overflow-hidden relative", // 为了博主发布的固定位置
-        "py-8 px-4 -m-4", // 为了滚动条不遮住内容
+        "p-4 -m-4", // 为了滚动条不遮住内容
       )}
     >
       <div className={"h-full overflow-y-auto p-4"}>{children}</div>

@@ -22,6 +22,7 @@ export const userListViewSchema = validator<UserDefaultArgs>()({
     validated: true,
     status: true,
     phone: false, // 不要返回用户手机号，只在userMainViewSchema里返回自己的
+    totalEarnedFire: true,
     rooms: {
       select: {
         id: true,
@@ -34,7 +35,7 @@ export const userListViewSchema = validator<UserDefaultArgs>()({
     },
   },
 })
-export type IUserView = UserGetPayload<typeof userListViewSchema>
+export type IUserListView = UserGetPayload<typeof userListViewSchema>
 export type IUserAvatar = {
   id: string
   name: string | null

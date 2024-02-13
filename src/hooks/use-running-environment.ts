@@ -8,6 +8,7 @@ export const checkWechatBrowser = () =>
   isClient() && /micromessenger/i.test(navigator.userAgent)
 
 /**
+ * todo: https://nextjs.org/docs/app/api-reference/functions/userAgent
  * ref: https://stackoverflow.com/a/14301832
  */
 export const checkMobileBrowser = () => /Mobi/i.test(window.navigator.userAgent)
