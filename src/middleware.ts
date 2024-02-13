@@ -13,7 +13,7 @@ export default withAuth(
     const isLoggingIn = nextPath.startsWith("/intro")
     const isValidating = nextPath.startsWith("/validation")
 
-    console.log("[Next-Auth Middleware]: ", {
+    console.debug("[Next-Auth Middleware]: ", {
       url: req.url,
       referer: req.referrer,
       nextPath,

@@ -16,7 +16,7 @@ export const UserAvatar = ({
       size === "sm" && "w-6 h-6",
     )}
   >
-    <AvatarImage src={user?.image ?? undefined} />
+    <AvatarImage src={user?.image ?? undefined} className={"object-cover"} />
     <AvatarFallback className={"bg-gray-500"}>
       {(user?.name ?? "U")[0]}
     </AvatarFallback>
