@@ -4,12 +4,15 @@ import { Button } from "@/components/ui/button"
 import { VerticalContainer } from "@/components/containers/vertical"
 import { useCopyToClipboard } from "@uidotdev/usehooks"
 import QRCode from "qrcode.react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { nanoid } from "nanoid"
 import { PaymentOtherStatus } from "@/lib/pay/schema"
 import { createInvoiceAction, createPrepayAction } from "@/lib/pay/actions"
 import { useRunningEnvironment } from "@/hooks/use-running-environment"
 import { No, Yes } from "@/components/_universal/icons"
+import { Label } from "@/components/ui/label"
+import { toast } from "sonner"
+import { LoaderIcon } from "lucide-react"
 
 export default function TestPayPage() {
   const [invoiceUrl, copyInvoiceUrl] = useCopyToClipboard()
@@ -20,7 +23,6 @@ export default function TestPayPage() {
   const { isWechat, isMobile } = useRunningEnvironment()
   const IsWechat = isWechat ? Yes : No
   const IsMobile = isMobile ? Yes : No
-
 
   return (
     <VerticalContainer>
@@ -44,11 +46,7 @@ export default function TestPayPage() {
         跳转支付
       </Button>
 
-      {invoiceUrl && (
-        <div>
-          <ShowInvoice invoice={invoiceUrl} />
-        </div>
-      )}
+      {invoiceUrl && <ShowInvoice invoice={invoiceUrl} />}
 
       <Button
         onClick={async () => {
@@ -70,22 +68,34 @@ const ShowInvoice = ({ invoice }: { invoice: string }) => {
   const { isWechat, isMobile } = useRunningEnvironment()
   const [invoiceUrl, copyInvoiceUrl] = useCopyToClipboard()
 
-  if (!isMobile) return <QRCode value={invoice} />
+  if (isMobile && isWechat) return
 
-  if (!isWechat)
-    return (
-      <div className={"w-full p-4"}>
-        <div>
-          支付链接已复制到剪切板，请到手机微信中粘贴访问（推荐使用微信浏览器访问本网站）
-        </div>
-        <div
-          className={"break-all underline text-xs"}
-          onClick={() => {
-            copyInvoiceUrl(invoice)
-          }}
-        >
-          {invoice}
-        </div>
-      </div>
-    )
+  return (
+    <div className={"p-4 flex flex-col items-start gap-4"}>
+      <Label>状态：</Label>
+
+      <ul className="steps steps-vertical w-full">
+        <li className="step step-primary" data-content={"✓"}>
+          创建订单
+        </li>
+        <li className="step step-primary" data-content={"●"}>
+          支付
+        </li>
+        <li className="step">支付成功</li>
+      </ul>
+
+      <Label>方法一：扫码支付</Label>
+      <QRCode value={invoice} />
+
+      <div>方法二：复制链接到手机微信中打开</div>
+      <Button
+        onClick={() => {
+          copyInvoiceUrl(invoice)
+          toast.success(`复制链接成功：${invoice}`)
+        }}
+      >
+        复制
+      </Button>
+    </div>
+  )
 }

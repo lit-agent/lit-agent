@@ -78,8 +78,21 @@ const config = {
 
   // daisyUI config (optional - here are the default values)
   daisyui: {
-    themes: false, // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
-    darkTheme: "dark", // name of one of the included themes for dark mode
+    themes: [
+      "halloween",
+      "coffee",
+      {
+        hading: {
+          primary: "hsl(17 100% 64%)",
+          secondary: "hsl(265 14% 25%)",
+          accent: "hsl(217.2 32.6% 17.5%)",
+          muted: "hsl(224 21% 20%)",
+        },
+      },
+      "dark",
+    ], // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
+    // darkTheme: "coffee", // name of one of the included themes for dark mode
+    darkTheme: "hading", // name of one of the included themes for dark mode
     base: true, // applies background color and foreground color for root element by default
     styled: true, // include daisyUI colors and design decisions for all components
     utils: true, // adds responsive and modifier utility classes
