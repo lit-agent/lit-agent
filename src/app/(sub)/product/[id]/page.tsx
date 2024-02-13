@@ -22,6 +22,7 @@ import UserAvatars from "@/components/user/user-avatars"
 import { useAuthedUser } from "@/hooks/use-user"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import SubPage from "@/components/sub-page"
 
 export default function ProductPage({
   params: { id },
@@ -32,23 +33,27 @@ export default function ProductPage({
 }) {
   const { data: product } = api.product.get.useQuery({ id })
 
-  if (product === null)
-    return (
-      <div className={"flex flex-col items-center gap-4 p-4"}>
-        <div>商品不存在</div>
-
-        <Link href={"/product"}>
-          <Button>返回 {JIUGU_PRODUCT_PAGE_TITLE}</Button>
-        </Link>
-      </div>
-    )
-
   return (
-    <div className={"flex flex-col h-full"}>
-      <DetailArea product={product} />
+    <SubPage
+      title={"产品详情"}
+      className={"p-4 h-full overflow-hidden flex flex-col"}
+    >
+      {!product ? (
+        <>
+          <div>商品不存在</div>
 
-      <BottomActions id={id} product={product} />
-    </div>
+          <Link href={"/product"}>
+            <Button>返回 {JIUGU_PRODUCT_PAGE_TITLE}</Button>
+          </Link>
+        </>
+      ) : (
+        <>
+          <DetailArea product={product} />
+
+          <BottomActions id={id} product={product} />
+        </>
+      )}
+    </SubPage>
   )
 }
 

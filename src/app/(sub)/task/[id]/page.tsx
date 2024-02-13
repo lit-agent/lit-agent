@@ -50,6 +50,7 @@ import {
   MSG_SUBMIT_VERIFYING,
 } from "@/config"
 import { DoorOpenIcon } from "lucide-react"
+import SubPage from "@/components/sub-page"
 
 export default function TaskDetailPage({
   params: { id },
@@ -72,11 +73,11 @@ export default function TaskDetailPage({
   }, [toTimeInit])
 
   return (
-    <div className={" h-full flex flex-col overflow-hidden"}>
+    <SubPage title={"任务详情"} className={"p-4"}>
       <MainArea toTime={toTime} task={task} userTask={userTask} />
 
       <BottomActions toTime={toTime} task={task} userTask={userTask} />
-    </div>
+    </SubPage>
   )
 }
 
