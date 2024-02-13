@@ -28,8 +28,6 @@ export const BasicMutableUserInfo = () => {
   const refName = useRef<HTMLInputElement>(null)
   const user = useUser()
 
-  if (!user) return
-
   return (
     <GrayCard>
       <MenuItem name={"头像"}>
@@ -65,7 +63,7 @@ export const BasicMutableUserInfo = () => {
 
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <MenuItem name={"昵称"}>{user.name ?? DEFAULT_USERNAME}</MenuItem>
+          <MenuItem name={"昵称"}>{user?.name ?? DEFAULT_USERNAME}</MenuItem>
         </AlertDialogTrigger>
 
         <AlertDialogContent>
