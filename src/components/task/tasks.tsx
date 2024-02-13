@@ -4,6 +4,7 @@ import TaskListView from "@/components/task/task-list-view"
 import Link from "next/link"
 import { UniversalTabs } from "@/components/_universal/tabs"
 import { JIUGU_TASK_PAGE_TITLE } from "@/config"
+import { ITaskView } from "@/schema/task"
 
 export function AllTasks() {
   const filters = ["正在进行", "往期回顾", "全部"] as const
@@ -11,11 +12,12 @@ export function AllTasks() {
   const [filter, setFilter] = useState<Filter>("全部")
 
   const { data: tasks = [] } = api.task.listTasks.useQuery()
+
   const filteredTasks = tasks.filter(
     (task) =>
       filter === "全部" ||
-      (filter === "正在进行" && task.status === "on") ||
-      (filter === "往期回顾" && task.status === "finished"),
+      (filter === "正在进行" && !isExpired(task)) ||
+      (filter === "往期回顾" && isExpired(task)),
   )
 
   return (
@@ -73,3 +75,9 @@ export const MyTasks = () => {
     </UniversalTabs>
   )
 }
+
+/**
+ * todo: based on task status
+ * @param task
+ */
+const isExpired = (task: ITaskView) => +task.endTime < Date.now()
