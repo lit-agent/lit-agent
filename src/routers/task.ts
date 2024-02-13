@@ -16,11 +16,13 @@ import { getBroadcastId } from "@/lib/socket/helpers"
 import { SocketEventType } from "@/lib/socket/events"
 import { prisma } from "@/lib/db"
 import { UserTaskStatus } from "@prisma/client"
+import { descOrder } from "@/routers/_utils"
 
 export const taskRouter = createTRPCRouter({
   listTasks: protectedProcedure.query(async ({ ctx, input }) => {
     return prisma.task.findMany({
       ...taskListViewSchema,
+      ...descOrder,
     })
   }),
 
@@ -28,6 +30,7 @@ export const taskRouter = createTRPCRouter({
     return prisma.userTask.findMany({
       where: { userId: ctx.user.id },
       ...userTaskViewSchema,
+      ...descOrder,
     })
   }),
 
@@ -37,6 +40,7 @@ export const taskRouter = createTRPCRouter({
       return prisma.userTask.findMany({
         where: { taskId: input.taskId },
         ...userTaskViewSchema,
+        ...descOrder,
       })
     }),
 
