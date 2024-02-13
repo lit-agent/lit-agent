@@ -2,28 +2,32 @@
 import { nanoid } from "nanoid"
 import { operator, RETURN_URL, terminal } from "@/lib/pay/config"
 import { fetchShouqianba } from "@/lib/pay/utils"
-import { JumpPayRequest } from "@/lib/pay/schema"
+import {
+  JumpPayRequest,
+  PaymentOtherStatus,
+  PayOrderFinalStatus,
+} from "@/lib/pay/schema"
 import { genPayUrlAction, queryAction } from "@/lib/pay/business"
-import { prisma } from "@/lib/db"
-import { ThreadStatus } from "@prisma/client"
+import { UnexpectedError } from "@/config"
 
-const intervals: Record<string, ReturnType<typeof setInterval>> = {}
-
-export async function cancelJob(JobId: string) {
-  const id = `invoice-${JobId}`
-  let thread = await prisma.thread.findUnique({
-    where: { id },
-  })
-  if (thread && thread.status === ThreadStatus.running) {
-    thread = await prisma.thread.update({
-      where: { id },
-      data: { status: ThreadStatus.cancelled },
-    })
-    const data = thread.data as { intervalId: string }
-    clearInterval(data.intervalId)
+// server-side HMR, ref: https://chat.openai.com/c/8491eba2-9f95-4926-9b20-f6ffaa9e6915
+if (!global.data) {
+  global.data = {
+    intervals: {},
   }
-  console.log("[sqb] cancel job: ", thread)
-  return thread
+}
+const persistedData = global.data
+
+export async function cancelJob(id: string) {
+  console.log(
+    `cancelled job(id=${id}), current intervals: `,
+    Object.keys(persistedData.intervals),
+  )
+  if (id in persistedData.intervals) {
+    clearInterval(persistedData.intervals[id])
+    delete persistedData.intervals[id]
+  }
+  return
 }
 
 /**
@@ -55,27 +59,44 @@ export async function createInvoiceAction({
   const interval = setInterval(async () => {
     try {
       ++i
-      console.log("-- interval: ", {
-        id,
-        i,
-        intervalsCount: Object.keys(intervals).length,
-      })
-      // const res = await queryAction(id)
+      const data = await queryAction(id)
+      console.log("[sqn] queried: ", data)
+
+      // 订单号不存在（还没开始创建）
+      if (!data.data) return
+
+      switch (data.data.order_status) {
+        // 订单已创建，但还在等待
+        case PaymentOtherStatus.CREATED:
+          // todo: send message
+          return
+
+        // 其他状态，基本都是终态
+        case PayOrderFinalStatus.CANCELED:
+        case PayOrderFinalStatus.REFUNDED:
+        case PayOrderFinalStatus.PAY_CANCELED:
+        case PayOrderFinalStatus.PARTIAL_REFUNDED:
+          clearInterval(interval)
+          return
+
+        case PayOrderFinalStatus.PAID:
+          clearInterval(interval)
+          // todo: 更新表
+          return
+
+        default:
+          throw new UnexpectedError()
+      }
+      // switch (data.data.orderStatus) {
+      //   case
+      // }
     } catch (e) {
       console.log("[sqb] query error: ", e)
-      clearInterval(interval)
+      cancelJob(id)
     }
   }, 3000)
 
-  intervals[id] = interval
-
-  const data = {
-    id: `invoice-${id}`,
-    type: "invoice",
-    request: { id, params, url },
-  }
-  console.log("-- data: ", data)
-  // await prisma.thread.create({ data: { data } })
+  persistedData.intervals[id] = interval
 
   return { id, url }
 }

@@ -26,26 +26,26 @@ export interface PayQueryResponse {
    * 结果码表示接口调用的业务逻辑是否成功
    * 示例: "SUCCESS"
    */
-  resultCode: string
+  result_code: string
 
   data: {
     /**
      * 参考附录：业务执行错误码列表
      * 示例: "TRADE_TIMEOUT"
      */
-    errorCode?: string
+    error_code?: string
 
     /**
      * 参考附录：业务执行错误码列表
      * 示例: "交易超时自动撤单"
      */
-    errorMessage?: string
+    error_message?: string
 
     /**
      * 收钱吧终端ID
      * 示例: "01012010201201029"
      */
-    terminalSn: string
+    terminal_sn: string
 
     /**
      * 收钱吧系统内部唯一订单号
@@ -57,7 +57,7 @@ export interface PayQueryResponse {
      * 商户系统订单号
      * 示例: "22345677767776"
      */
-    orderCode: string
+    order_code: string
 
     /**
      * 本次操作对应的流水的状态
@@ -69,7 +69,7 @@ export interface PayQueryResponse {
      * 当前订单状态
      * 示例: "REFUNDED"
      */
-    orderStatus: string
+    order_status: PaymentStatus
 
     /**
      * 订单支付方式
@@ -81,13 +81,13 @@ export interface PayQueryResponse {
      * 支付方式名称
      * 示例: "微信"
      */
-    paywayName: string
+    payway_name: string
 
     /**
      * 订单付款人的id
      * 示例: 如微信"oGFfksxxsiXIWSPsNy4Mu-YhBB-I"
      */
-    payerUid: string
+    payer_uid: string
 
     /**
      * 支付宝或微信的订单号
@@ -99,25 +99,25 @@ export interface PayQueryResponse {
      * 原始交易实收金额
      * 示例: "100"
      */
-    totalAmount: string
+    total_amount: string
 
     /**
      * 订单支付时等于本次支付金额，订单退款时等于本次操作退款金额
      * 示例: "100"
      */
-    settlementAmount?: string
+    settlement_amount?: string
 
     /**
      * 时间戳，本次动作在收钱吧的完成时间，只有支付成功、退款成功、撤单成功才有值返回
      * 示例: "1449646835244"
      */
-    finishTime?: string
+    finish_time?: string
 
     /**
      * 时间戳，本次动作在微信或支付宝的完成时间，只有支付成功、退款成功、撤单成功才有值返回
      * 示例: "1449646835221"
      */
-    channelFinishTime?: string
+    channel_finish_time?: string
 
     /**
      * 交易时候的商品概述
@@ -157,7 +157,6 @@ export enum PayOrderFinalStatus {
  * 收钱吧支付其他状态
  */
 export enum PaymentOtherStatus {
-  DEFAULT = "DEFAULT",
   CREATED = "CREATED",
 }
 

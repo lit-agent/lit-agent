@@ -6,12 +6,11 @@ import { useCopyToClipboard } from "@uidotdev/usehooks"
 import QRCode from "qrcode.react"
 import { useEffect, useState } from "react"
 import { nanoid } from "nanoid"
-import { PaymentOtherStatus } from "@/lib/pay/schema"
+import { PaymentOtherStatus, PaymentStatus } from "@/lib/pay/schema"
 import { useRunningEnvironment } from "@/hooks/use-running-environment"
 import { No, Yes } from "@/components/_universal/icons"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
-import { LoaderIcon } from "lucide-react"
 import {
   cancelJob,
   createInvoiceAction,
@@ -20,20 +19,25 @@ import {
 
 export default function TestPayPage() {
   const [invoiceUrl, copyInvoiceUrl] = useCopyToClipboard()
-  const [invoiceStatus, setInvoiceStatus] = useState<PaymentOtherStatus>(
-    PaymentOtherStatus.DEFAULT,
-  )
+  const [invoiceStatus, setInvoiceStatus] = useState<PaymentStatus | null>(null)
   const [invoiceId, setInvoiceId] = useState("")
 
   const { isWechat, isMobile } = useRunningEnvironment()
   const IsWechat = isWechat ? Yes : No
   const IsMobile = isMobile ? Yes : No
 
+  const clean = () => {
+    cancelJob(invoiceId)
+  }
+
   useEffect(() => {
+    window.addEventListener("beforeunload", clean)
+
     return () => {
-      if (invoiceId) cancelJob(invoiceId)
+      clean()
+      window.removeEventListener("beforeunload", clean)
     }
-  }, [])
+  }, [invoiceId])
 
   return (
     <VerticalContainer>

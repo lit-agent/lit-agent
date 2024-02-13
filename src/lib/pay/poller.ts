@@ -72,12 +72,12 @@ export class Poller {
 
       // 如果订单不是终态且轮训时间没到
       if (
-        !this.isFinalOrderStatus(result?.data.orderStatus) &&
+        !this.isFinalOrderStatus(result?.data.order_status) &&
         this.shouldContinue()
       ) {
         setTimeout(() => this.poll(), this.getPollInterval())
       } else {
-        if (this.isFinalOrderStatus(result?.data.orderStatus)) {
+        if (this.isFinalOrderStatus(result?.data.order_status)) {
           /**
            * 如果是订单是终态，执行落库等业务操作
            */

@@ -2,6 +2,8 @@ import { env } from "@/env"
 import { md5 } from "@/lib/utils"
 import fetch from "node-fetch"
 import { IRole, isTerminal } from "@/lib/pay/schema"
+import { v4 } from "uuid"
+import { nanoid } from "nanoid"
 
 export const fetchShouqianba = async ({
   path,
@@ -19,7 +21,8 @@ export const fetchShouqianba = async ({
   // 要转义中文，否则链接无效
   const body = JSON.stringify(params)
   const sign = md5(body + key)
-  console.log("-- req: ", { url, params, body, sign })
+  const requestId = v4()
+  console.debug("[sqb] req: ", { requestId, url, params })
 
   const response = await fetch(url, {
     method: "POST",
@@ -33,10 +36,7 @@ export const fetchShouqianba = async ({
     throw new Error(`HTTP error: ${response.status} ${response.statusText}`)
   }
   const data = await response.json()
-  console.log(
-    "[shouqianba] fetched: ",
-    JSON.stringify({ url, params, data }, null, 2),
-  )
+  console.debug("[sqb] res: ", { requestId, data })
 
   if (data.result_code !== "200") {
     throw new Error(`[shouqianba] fetch failed`)

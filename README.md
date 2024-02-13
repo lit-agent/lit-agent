@@ -7,6 +7,20 @@
 
 ## Tech
 
+### server side HMR persist
+
+use `global`, like this:
+
+```ts
+// server-side HMR, ref: https://chat.openai.com/c/8491eba2-9f95-4926-9b20-f6ffaa9e6915
+if (!global.data) {
+  global.data = {
+    intervals: {},
+  }
+}
+const persistedData = global.data
+```
+
 ### type effect
 
 - 推荐： https://github.com/maxeth/react-type-animation
