@@ -302,9 +302,8 @@ const BottomActions = ({
 }) => {
   const utils = api.useUtils()
 
-  const hasFinished = userTask?.status === UserTaskStatus.finished
-
   const submitTask = api.task.submitImages.useMutation()
+  // const submitTask = api.task.submitImages.useMutation()
 
   const [copied, copyFn] = useCopyToClipboard()
 

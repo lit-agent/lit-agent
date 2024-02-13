@@ -4,7 +4,7 @@ import { env } from "@/env"
 import { md5 } from "@/lib/utils"
 import { fetchShouqianba } from "@/lib/pay/utils"
 import { terminal, vendor } from "@/lib/pay/config"
-import { ITerminal, JumpPayRequest, PayQueryResponse } from "@/lib/pay/schema"
+import { ITerminal, JumpPayRequest, PayQueryRes } from "@/lib/pay/schema"
 
 /**
  * 跳转支付url生成
@@ -90,7 +90,7 @@ export const queryAction = async (orderCode: string) => {
     client_sn: orderCode,
   }
   const data = await fetchShouqianba({ role: terminal, path, params })
-  return data.biz_response as PayQueryResponse
+  return data.biz_response as PayQueryRes
 }
 
 /**

@@ -12,6 +12,7 @@ import { JIUGU_ID, MSG_RENAME_LIMITATION, NEW_USER_REWARD } from "@/config"
 import { MessageType } from "@/schema/message.base"
 import { SMS_PROVIDER_ID } from "@/lib/sms"
 import { ValidateUserResult } from "@/schema/auth"
+import { findWechatAccount } from "@/lib/wechat/auth"
 
 export const userRouter = createTRPCRouter({
   validateUser: publicProcedure

@@ -22,4 +22,6 @@ export const billRouter = createTRPCRouter({
 
       return createInvoiceAction({ userId, total_amount: value })
     }),
+
+  // myFunc: protectedProcedure.
 })

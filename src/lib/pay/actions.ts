@@ -1,6 +1,6 @@
 "use server"
 import { nanoid } from "nanoid"
-import { operator, RETURN_URL, terminal } from "@/lib/pay/config"
+import { RETURN_URL, terminal } from "@/lib/pay/config"
 import { fetchShouqianba } from "@/lib/pay/utils"
 import {
   JumpPayRequest,
@@ -10,6 +10,7 @@ import {
 import { genPayUrlAction, queryAction } from "@/lib/pay/business"
 import { UnexpectedError } from "@/config"
 import { pusherServer } from "@/lib/socket/config"
+import { SocketEventType } from "@/lib/socket/events"
 
 // server-side HMR, ref: https://chat.openai.com/c/8491eba2-9f95-4926-9b20-f6ffaa9e6915
 if (!global.data) {
@@ -36,7 +37,7 @@ export async function cancelJob(id: string) {
  * 需要生成一个二维码，然后手机微信扫码支付
  */
 export async function createInvoiceAction({
-  subject = "兑换火值",
+  subject = "Redeem",
   total_amount,
   userId,
 }: {
@@ -56,38 +57,45 @@ export async function createInvoiceAction({
   }
 
   const url = genPayUrlAction(params)
-  console.log("-- res: ", { id, url })
+  const startTime = Date.now()
+  console.log("-- res: ", { id, url, startTime })
 
-  let i = 0
-  const interval = setInterval(async () => {
+  const f = async () => {
+    const t = (Date.now() - startTime) / 1e3
+    // 6分钟后关闭轮询
+    if (t > 360)
+      return pusherServer.trigger(id, SocketEventType.Payment, {
+        order_status: PaymentOtherStatus.TIMEOUT,
+      })
+
+    const t2 = Math.log(t + 1)
+    const delay = t2 * 1e3
+
     try {
-      ++i
       const { data } = await queryAction(id)
-      console.log("[sqn] queried: ", data)
+      console.log(`[sqb] (${t.toFixed(2)}:${t2.toFixed(2)}s) queried: `, data)
 
       // 订单号不存在（还没开始创建）
-      if (!data) return
+      if (!data) return setTimeout(f, delay)
 
       const status = data.order_status
 
       // 推给前端
-      await pusherServer.sendToUser(userId, status, data)
+      await pusherServer.trigger(id, SocketEventType.Payment, data)
 
       switch (status) {
         // 订单已创建，但还在等待
         case PaymentOtherStatus.CREATED:
-          return
+          return setTimeout(f, delay)
 
         // 其他状态，基本都是终态
         case PayOrderFinalStatus.CANCELED:
         case PayOrderFinalStatus.REFUNDED:
         case PayOrderFinalStatus.PAY_CANCELED:
         case PayOrderFinalStatus.PARTIAL_REFUNDED:
-          clearInterval(interval)
           return
 
         case PayOrderFinalStatus.PAID:
-          clearInterval(interval)
           return
 
         default:
@@ -95,11 +103,9 @@ export async function createInvoiceAction({
       }
     } catch (e) {
       console.log("[sqb] query error: ", e)
-      cancelJob(id)
     }
-  }, 3000)
-
-  persistedData.intervals[id] = interval
+  }
+  setTimeout(f, 0)
 
   return { id, url }
 }
@@ -115,7 +121,7 @@ export async function createInvoiceAction({
 export async function createPrepayAction({
   total_amount,
   userId,
-  subject = "兑换火值",
+  subject = "Redeem",
 }: {
   total_amount: number
   subject?: string
@@ -131,7 +137,7 @@ export async function createPrepayAction({
     payway: "3", // 微信
     sub_payway: "6", //网页必填
     subject: subject,
-    operator: "markshawn",
+    operator: userId,
     payer_uid: userId,
     extended: {
       return_url: RETURN_URL,
