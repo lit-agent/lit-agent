@@ -6,16 +6,13 @@ import { useCopyToClipboard } from "@uidotdev/usehooks"
 import QRCode from "qrcode.react"
 import { useEffect, useState } from "react"
 import { nanoid } from "nanoid"
-import { PaymentOtherStatus, PaymentStatus } from "@/lib/pay/schema"
+import { PaymentStatus } from "@/lib/pay/schema"
 import { useRunningEnvironment } from "@/hooks/use-running-environment"
 import { No, Yes } from "@/components/_universal/icons"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
-import {
-  cancelJob,
-  createInvoiceAction,
-  createPrepayAction,
-} from "@/lib/pay/actions"
+import { cancelJob, createPrepayAction } from "@/lib/pay/actions"
+import { api } from "@/lib/trpc/react"
 
 export default function TestPayPage() {
   const [invoiceUrl, copyInvoiceUrl] = useCopyToClipboard()
@@ -39,6 +36,12 @@ export default function TestPayPage() {
     }
   }, [invoiceId])
 
+  const charge = api.bill.charge.useMutation()
+
+  useEffect(() => {
+    // pusherClient.
+  }, [])
+
   return (
     <VerticalContainer>
       <div className={"inline-flex items-center gap-2"}>
@@ -52,8 +55,8 @@ export default function TestPayPage() {
           if (invoiceId) await cancelJob(invoiceId)
 
           console.log("-- creating")
-          const { url: invoiceUrl, id } = await createInvoiceAction({
-            total_amount: 1,
+          const { url: invoiceUrl, id } = await charge.mutateAsync({
+            value: 1,
           })
           setInvoiceId(id)
           console.log("-- res: ", invoiceUrl)

@@ -9,6 +9,7 @@ import {
 } from "@/lib/pay/schema"
 import { genPayUrlAction, queryAction } from "@/lib/pay/business"
 import { UnexpectedError } from "@/config"
+import { pusherServer } from "@/lib/socket/config"
 
 // server-side HMR, ref: https://chat.openai.com/c/8491eba2-9f95-4926-9b20-f6ffaa9e6915
 if (!global.data) {
@@ -37,9 +38,11 @@ export async function cancelJob(id: string) {
 export async function createInvoiceAction({
   subject = "兑换火值",
   total_amount,
+  userId,
 }: {
   total_amount: number
   subject?: string
+  userId: string
 }) {
   const id = nanoid()
 
@@ -48,7 +51,7 @@ export async function createInvoiceAction({
     total_amount: total_amount.toString(),
     // payway: "3"
     subject,
-    operator,
+    operator: userId,
     return_url: RETURN_URL,
   }
 
@@ -59,16 +62,20 @@ export async function createInvoiceAction({
   const interval = setInterval(async () => {
     try {
       ++i
-      const data = await queryAction(id)
+      const { data } = await queryAction(id)
       console.log("[sqn] queried: ", data)
 
       // 订单号不存在（还没开始创建）
-      if (!data.data) return
+      if (!data) return
 
-      switch (data.data.order_status) {
+      const status = data.order_status
+
+      // 推给前端
+      await pusherServer.sendToUser(userId, status, data)
+
+      switch (status) {
         // 订单已创建，但还在等待
         case PaymentOtherStatus.CREATED:
-          // todo: send message
           return
 
         // 其他状态，基本都是终态
@@ -81,15 +88,11 @@ export async function createInvoiceAction({
 
         case PayOrderFinalStatus.PAID:
           clearInterval(interval)
-          // todo: 更新表
           return
 
         default:
           throw new UnexpectedError()
       }
-      // switch (data.data.orderStatus) {
-      //   case
-      // }
     } catch (e) {
       console.log("[sqb] query error: ", e)
       cancelJob(id)

@@ -10,6 +10,11 @@ export const pusherServer = new PusherServer({
   useTLS: true,
 })
 
-export const pusherClient = new PusherClient(env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
-  cluster: env.NEXT_PUBLIC_PUSHER_CLUSTER,
-})
+/**
+ * 每次创建都会消耗一个 connection 名额，所以用函数式启动应该会好一点
+ * ref: https://docs.bird.com/pusher/channels/channels/limits/how-are-concurrent-connections-counted
+ */
+export const initPusherClient = () =>
+  new PusherClient(env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
+    cluster: env.NEXT_PUBLIC_PUSHER_CLUSTER,
+  })

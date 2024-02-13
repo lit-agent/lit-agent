@@ -2,13 +2,13 @@
 
 import { useEffect } from "react"
 import { useAppData } from "@/lib/store/use-app-data"
-import { pusherClient } from "@/lib/socket/config"
 import { getBroadcastId } from "@/lib/socket/helpers"
 import { SocketEventType } from "@/lib/socket/events"
 import { IMessageView } from "@/schema/message.base"
 import { useAuthedUser } from "@/hooks/use-user"
 import { api } from "@/lib/trpc/react"
 import { UserType } from "@prisma/client"
+import { initPusherClient } from "@/lib/socket/config"
 
 export const useGlobalMessages = () => {
   useInitMessages()
@@ -53,6 +53,8 @@ const useBindChannels = () => {
     )
 
     console.log("[Socket] bound channels: ", channels)
+
+    const pusherClient = initPusherClient()
 
     channels.forEach((channelId) => pusherClient.subscribe(channelId))
 
