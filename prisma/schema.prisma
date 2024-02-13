@@ -243,6 +243,22 @@ enum TaskStatus {
   finished
 }
 
+/// 一些线程追踪，用于持久化，比如订单
+model Thread {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  status ThreadStatus @default(running)
+  data   Json
+}
+
+enum ThreadStatus {
+  running
+  finished
+  cancelled
+}
+
 /// most important
 model User {
   id        String   @id @default(cuid())

@@ -17,7 +17,7 @@ export const fetchShouqianba = async ({
 
   const url = env.NEXT_PUBLIC_PAY_APP_DOMAIN + path
   // 要转义中文，否则链接无效
-  const body = encodeURI(JSON.stringify(params))
+  const body = JSON.stringify(params)
   const sign = md5(body + key)
   console.log("-- req: ", { url, params, body, sign })
 
@@ -33,7 +33,10 @@ export const fetchShouqianba = async ({
     throw new Error(`HTTP error: ${response.status} ${response.statusText}`)
   }
   const data = await response.json()
-  console.log("[shouqianba] fetched: ", { url, params, data })
+  console.log(
+    "[shouqianba] fetched: ",
+    JSON.stringify({ url, params, data }, null, 2),
+  )
 
   if (data.result_code !== "200") {
     throw new Error(`[shouqianba] fetch failed`)

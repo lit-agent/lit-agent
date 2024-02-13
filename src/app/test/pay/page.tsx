@@ -7,22 +7,33 @@ import QRCode from "qrcode.react"
 import { useEffect, useState } from "react"
 import { nanoid } from "nanoid"
 import { PaymentOtherStatus } from "@/lib/pay/schema"
-import { createInvoiceAction, createPrepayAction } from "@/lib/pay/actions"
 import { useRunningEnvironment } from "@/hooks/use-running-environment"
 import { No, Yes } from "@/components/_universal/icons"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import { LoaderIcon } from "lucide-react"
+import {
+  cancelJob,
+  createInvoiceAction,
+  createPrepayAction,
+} from "@/lib/pay/actions"
 
 export default function TestPayPage() {
   const [invoiceUrl, copyInvoiceUrl] = useCopyToClipboard()
   const [invoiceStatus, setInvoiceStatus] = useState<PaymentOtherStatus>(
     PaymentOtherStatus.DEFAULT,
   )
+  const [invoiceId, setInvoiceId] = useState("")
 
   const { isWechat, isMobile } = useRunningEnvironment()
   const IsWechat = isWechat ? Yes : No
   const IsMobile = isMobile ? Yes : No
+
+  useEffect(() => {
+    return () => {
+      if (invoiceId) cancelJob(invoiceId)
+    }
+  }, [])
 
   return (
     <VerticalContainer>
@@ -32,9 +43,15 @@ export default function TestPayPage() {
 
       <Button
         onClick={async () => {
+          // clean before
+          console.log("-- clicked")
+          if (invoiceId) await cancelJob(invoiceId)
+
+          console.log("-- creating")
           const { url: invoiceUrl, id } = await createInvoiceAction({
-            total_amount: 10,
+            total_amount: 1,
           })
+          setInvoiceId(id)
           console.log("-- res: ", invoiceUrl)
           await copyInvoiceUrl(invoiceUrl)
           // window.location.href = `weixin://dl/` + invoiceUrl
@@ -46,7 +63,7 @@ export default function TestPayPage() {
         跳转支付
       </Button>
 
-      {invoiceUrl && <ShowInvoice invoice={invoiceUrl} />}
+      {invoiceUrl && <ShowInvoice id={invoiceId} invoice={invoiceUrl} />}
 
       <Button
         onClick={async () => {
@@ -64,7 +81,7 @@ export default function TestPayPage() {
   )
 }
 
-const ShowInvoice = ({ invoice }: { invoice: string }) => {
+const ShowInvoice = ({ invoice, id }: { invoice: string; id: string }) => {
   const { isWechat, isMobile } = useRunningEnvironment()
   const [invoiceUrl, copyInvoiceUrl] = useCopyToClipboard()
 
@@ -83,6 +100,14 @@ const ShowInvoice = ({ invoice }: { invoice: string }) => {
         </li>
         <li className="step">支付成功</li>
       </ul>
+
+      <Button
+        onClick={() => {
+          cancelJob(id)
+        }}
+      >
+        取消
+      </Button>
 
       <Label>方法一：扫码支付</Label>
       <QRCode value={invoice} />

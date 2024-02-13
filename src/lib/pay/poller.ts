@@ -1,4 +1,4 @@
-import { queryAction } from "./actions"
+import { queryAction } from "./business"
 
 import { ITerminal, PayOrderFinalStatus } from "@/lib/pay/schema"
 

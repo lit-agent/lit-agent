@@ -80,7 +80,10 @@ export const authOptions: NextAuthOptions = {
       profile,
       isNewUser,
     }) => {
-      console.log("[auth.jwt]: ", { token, user, session, account, profile })
+      console.log(
+        `[auth.jwt] user(id=${token.sub}, phone=${token.phone}, name=${token.name}, validated=${token.validated})`,
+      )
+      // console.log("[auth.jwt]: ", { token, user, session, account, profile })
 
       // token 是加解密可信安全的，不用担心被篡改！
       // init
