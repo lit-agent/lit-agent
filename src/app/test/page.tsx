@@ -15,6 +15,8 @@ export default function TestPage() {
       <ButtonLink href={"/test/clipboard"}>Clipboard</ButtonLink>
 
       <ButtonLink href={"/test/pay"}>Pay</ButtonLink>
+
+      <ButtonLink href={"/test/wechat"}>wechat</ButtonLink>
     </VerticalContainer>
   )
 }
