@@ -6,7 +6,7 @@ import { nanoid } from "nanoid"
 import { useRunningEnvironment } from "@/hooks/use-running-environment"
 import { No, Yes } from "@/components/_universal/icons"
 import { createPrepayAction } from "@/lib/pay/actions"
-import { JumpPay } from "@/components/pay"
+import { JumpPayPage } from "@/components/pay"
 
 export default function TestPayPage() {
   const { isWechat, isMobile } = useRunningEnvironment()
@@ -19,7 +19,7 @@ export default function TestPayPage() {
         微信 <IsWechat /> 手机 <IsMobile />
       </div>
 
-      <JumpPay />
+      <JumpPayPage />
 
       <Button
         onClick={async () => {

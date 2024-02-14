@@ -37,15 +37,17 @@ export async function cancelJob(id: string) {
  * 需要生成一个二维码，然后手机微信扫码支付
  */
 export async function createInvoiceAction({
+  billId,
   subject = "Redeem",
   total_amount,
   userId,
 }: {
+  billId?: string
   total_amount: number
   subject?: string
   userId: string
 }) {
-  const id = nanoid()
+  const id = billId ?? nanoid()
 
   const params: JumpPayRequest = {
     client_sn: id,
@@ -58,7 +60,7 @@ export async function createInvoiceAction({
 
   const url = genPayUrlAction(params)
   const startTime = Date.now()
-  console.log("-- res: ", { id, url, startTime })
+  console.log("-- res: ", { id: id, url, startTime })
 
   const f = async () => {
     const t = (Date.now() - startTime) / 1e3

@@ -72,15 +72,26 @@ model Bill {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String
+  // 用户的 bill 也可以是直接充钱的结果，此时就没有对应的product
+  // todo: SKU 以及 现金的 entity 划分
+  product      Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId    String?
+  productCount Int?
 
-  productCount Int
-  // todo: 实际价格，或者未来支持多种模式
-  price        Float
-  redeemType   RedeemType
+  // 以分为单位，单位产品的价格
+  price Int
 
+  redeemType RedeemType
+
+  paymentStatus PaymentStatus @default(PAID)
   // userActions UserAction[]
+}
+
+enum BillStatus {
+  NotCreated
+  Created
+  Paid
+  Pay
 }
 
 // 用户徽章，每个徽章可以有自己的一些信息，通过 id 与程序的UI对接
@@ -143,6 +154,33 @@ model Message {
   taskId String? @unique
 
   isAI Boolean @default(false)
+}
+
+enum PaymentStatus {
+  // --- non-final
+
+  CREATING
+  CREATED
+
+  // --- final
+
+  // suceess
+  PAID
+
+  // 支付失败并且已经成功冲正
+  PAY_CANCELED
+
+  // 已成功全额退款
+  REFUNDED
+
+  // 已成功部分退款
+  PARTIAL_REFUNDED
+
+  // 客户端发起撤单成功
+  CANCELED
+
+  // 南川@2024-02-14
+  PAY_ERROR
 }
 
 // 博主发布的产品

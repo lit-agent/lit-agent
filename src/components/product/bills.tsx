@@ -23,6 +23,33 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { TODO } from "@/config"
 import { UniversalTabs } from "@/components/_universal/tabs"
+import { IBillListView } from "@/schema/bill"
+
+export const BillItem = ({ bill }: { bill: IBillListView }) => (
+  <Card key={bill.id}>
+    <CardHeader>
+      <Link href={`/product/${bill.product.id}`}>
+        <CardTitle>{bill.product.title}</CardTitle>
+      </Link>
+      <CardDescription>{bill.product.description}</CardDescription>
+    </CardHeader>
+
+    <CardContent>
+      <div>price: {bill.price}</div>
+      <div>count: {bill.productCount}</div>
+    </CardContent>
+
+    <CardFooter>
+      <Button
+        onClick={() => {
+          toast.info(TODO)
+        }}
+      >
+        退货
+      </Button>
+    </CardFooter>
+  </Card>
+)
 
 export const MyBills = () => {
   const { data: bills = [] } = api.bill.listMyBills.useQuery()
@@ -30,29 +57,7 @@ export const MyBills = () => {
   return (
     <UniversalTabs title={"我的账单"}>
       {bills.map((bill) => (
-        <Card key={bill.id}>
-          <CardHeader>
-            <Link href={`/product/${bill.product.id}`}>
-              <CardTitle>{bill.product.title}</CardTitle>
-            </Link>
-            <CardDescription>{bill.product.description}</CardDescription>
-          </CardHeader>
-
-          <CardContent>
-            <div>price: {bill.price}</div>
-            <div>count: {bill.productCount}</div>
-          </CardContent>
-
-          <CardFooter>
-            <Button
-              onClick={() => {
-                toast.info(TODO)
-              }}
-            >
-              退货
-            </Button>
-          </CardFooter>
-        </Card>
+        <BillItem bill={bill} key={bill.id} />
       ))}
     </UniversalTabs>
   )

@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { RedeemType } from "@prisma/client"
 import { countBuyersOfProduct, getBuyersOfProduct } from "@/lib/utils"
-import { PRIMARY_COLOR, JIUGU_PRODUCT_PAGE_TITLE, TODO } from "@/config"
+import { JIUGU_PRODUCT_PAGE_TITLE, PRIMARY_COLOR, TODO } from "@/config"
 import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io"
 import { PropsWithChildren } from "react"
 import { UserAvatar } from "@/components/user/user-avatar"
@@ -23,6 +23,8 @@ import { useAuthedUser } from "@/hooks/use-user"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import SubPage from "@/components/sub-page"
+import { nanoid } from "nanoid"
+import { useRunningEnvironment } from "@/hooks/use-running-environment"
 
 export default function ProductPage({
   params: { id },
@@ -195,6 +197,27 @@ const BottomActions = ({
   const favor = api.product.favor.useMutation()
   const Favor = userProduct?.isFavored ? IoIosHeart : IoIosHeartEmpty
 
+  const router = useRouter()
+  const { isWechat, isMobile } = useRunningEnvironment()
+
+  const charge = api.bill.charge.useMutation()
+  const billId = nanoid()
+
+  const onChargeProduct = async () => {
+    if (!product) return
+    // 一火值等于10分
+    const value = product.price * 10
+    const { url } = await charge.mutateAsync({
+      value,
+      billId,
+    })
+    router.push(
+      isMobile && isWechat
+        ? url
+        : `/pay?id=${billId}&url=${encodeURIComponent(url)}`,
+    )
+  }
+
   return (
     <div className={"shrink-0 flex items-center justify-between gap-6 p-2"}>
       <div
@@ -226,9 +249,7 @@ const BottomActions = ({
           className={
             "flex items-center bg-[#4D3130] text-[#FF854F] rounded-r-none rounded-l-3xl"
           }
-          onClick={() => {
-            toast.error("暂不支持现金购买，敬请稍候！")
-          }}
+          onClick={onChargeProduct}
         >
           <div>¥{product ? product.price / 10 : 0}</div>
           <div>现金购买</div>

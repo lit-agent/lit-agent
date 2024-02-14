@@ -153,12 +153,17 @@ export enum PayOrderFinalStatus {
 
   // 客户端发起撤单成功
   CANCELED = "CANCELED",
+
+  // 南川@2024-02-14
+  PAY_ERROR = "PAY_ERROR",
 }
 
 /**
  * 收钱吧支付其他状态
  */
 export enum PaymentOtherStatus {
+  NOT_CREATED_YET = "NOT_CREATED_YET",
+  CREATING = "CREATING",
   CREATED = "CREATED",
   TIMEOUT = "TIMEOUT",
 }

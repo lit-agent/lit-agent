@@ -1,103 +1,118 @@
-import { PaymentStatus, PayQueryResData } from "@/lib/pay/schema"
+"use client"
+
+import {
+  PaymentOtherStatus,
+  PaymentStatus,
+  PayOrderFinalStatus,
+} from "@/lib/pay/schema"
 import { cn } from "@/lib/utils"
-import { useRunningEnvironment } from "@/hooks/use-running-environment"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { useCopyToClipboard } from "@uidotdev/usehooks"
-import { useEffect, useState } from "react"
-import { initPusherClient } from "@/lib/socket/config"
-import { SocketEventType } from "@/lib/socket/events"
-import { api } from "@/lib/trpc/react"
-import { cancelJob } from "@/lib/pay/actions"
 import { Label } from "@/components/ui/label"
-import { ThumbsUpIcon } from "lucide-react"
+import { LoaderIcon, ThumbsUpIcon } from "lucide-react"
 import QRCode from "qrcode.react"
 import { toast } from "sonner"
+import { UnexpectedError } from "@/config"
+import { usePayMessage } from "@/hooks/use-pay-message"
+import { useRouter } from "next/navigation"
 
-export const JumpPay = () => {
-  const [payUrl, copyInvoiceUrl] = useCopyToClipboard()
-  const [payStatus, setPayStatus] = useState<PaymentStatus | null>(null)
-  const [payId, setPayId] = useState("")
-
-  const { isWechat, isMobile } = useRunningEnvironment()
-
-  useEffect(() => {
-    if (!payId) return
-
-    const pusher = initPusherClient()
-    const channel = pusher.subscribe(payId)
-    channel.bind(SocketEventType.Payment, (data: PayQueryResData) => {
-      console.log("-- received data: ", data)
-      setPayStatus(data.order_status)
-    })
-
-    return () => {
-      channel.unbind(SocketEventType.Payment)
-      pusher.unsubscribe(payId)
-    }
-  }, [payId])
-
-  const charge = api.bill.charge.useMutation()
-
-  const retry = async () => {
-    setPayStatus(null)
-
-    // clean before
-    console.log("-- clicked")
-    if (payId) await cancelJob(payId)
-
-    console.log("-- creating")
-    const { url: invoiceUrl, id } = await charge.mutateAsync({
-      value: 1,
-    })
-    setPayId(id)
-    console.log("-- res: ", invoiceUrl)
-    await copyInvoiceUrl(invoiceUrl)
-    // window.location.href = `weixin://dl/` + invoiceUrl
-
-    // 手机微信浏览器直接跳转
-    if (isWechat && isMobile) location.href = invoiceUrl
-  }
-
+export const JumpPayPage = () => {
   return (
-    <div className={"flex flex-col items-center"}>
-      <Button onClick={retry}>跳转支付</Button>
-
-      {payUrl && (
-        <ShowPayComp retry={retry} url={payUrl} payStatus={payStatus} />
-      )}
+    <div className={"w-full flex flex-col items-center"}>
+      <Button>跳转支付</Button>
     </div>
   )
 }
 
-export const ShowPayComp = ({
-  url,
-  payStatus,
-  retry,
+export const JumpPayComp = ({
+  payUrl,
+  payId,
+  onThanks,
 }: {
-  url: string
-  payStatus: null | PaymentStatus
-  retry: () => void
+  payId: string
+  payUrl: string
+  onThanks?: () => void
 }) => {
-  const { isWechat, isMobile } = useRunningEnvironment()
-
-  if (isMobile && isWechat) return
+  const payStatus = usePayMessage(payId, PaymentOtherStatus.CREATING)
 
   return (
-    <div className={"p-4 flex flex-col items-center gap-6"}>
+    <div className={"p-4 w-full flex flex-col items-center gap-6"}>
       <PayStep status={payStatus} />
 
       <Separator orientation={"horizontal"} />
 
-      {payStatus !== "TIMEOUT" ? (
-        <ShowPaying url={url} />
-      ) : (
-        <Button className={"w-full"} onClick={retry}>
-          重试
-        </Button>
-      )}
+      <PayContentGoing url={payUrl} status={payStatus} onThanks={onThanks} />
     </div>
   )
+}
+
+export const PayContentGoing = ({
+  url,
+  status,
+  onThanks,
+  onRetry,
+}: {
+  url: string
+  status: PaymentStatus
+  onThanks?: () => void
+  onRetry?: () => void
+}) => {
+  const router = useRouter()
+
+  switch (status) {
+    case PaymentOtherStatus.CREATING:
+      return <ShowPaying url={url} />
+
+    case PaymentOtherStatus.CREATED:
+      return (
+        <div className={"w-full flex flex-col items-center gap-4"}>
+          <div className={"inline-flex items-center gap-2"}>
+            请在手机上确认
+            <LoaderIcon className={"animate-spin"} />
+          </div>
+          <Button onClick={onRetry} className={"w-full"} variant={"secondary"}>
+            重试
+          </Button>
+        </div>
+      )
+
+    case PayOrderFinalStatus.PAID:
+      return (
+        <div className={"w-full flex flex-col items-center gap-4"}>
+          <Label>感谢你的支持！</Label>
+
+          <Button
+            className={"w-full"}
+            onClick={() => {
+              router.push(`/me/bills`)
+            }}
+          >
+            返回兑换列表
+          </Button>
+        </div>
+      )
+
+    case PayOrderFinalStatus.CANCELED:
+    case PayOrderFinalStatus.PARTIAL_REFUNDED:
+    case PayOrderFinalStatus.PAY_CANCELED:
+    case PayOrderFinalStatus.REFUNDED:
+    case PayOrderFinalStatus.PAY_ERROR:
+    case PaymentOtherStatus.TIMEOUT:
+      return (
+        <Button className={"w-full"} onClick={onRetry}>
+          重试
+        </Button>
+      )
+    case PaymentOtherStatus.NOT_CREATED_YET:
+      return (
+        <Button className={"w-full"} onClick={onRetry}>
+          开始
+        </Button>
+      )
+    default:
+      throw new UnexpectedError()
+  }
 }
 
 export const ShowPaying = ({ url }: { url: string }) => {
@@ -127,7 +142,7 @@ export const ShowPaying = ({ url }: { url: string }) => {
   )
 }
 
-export const PayStep = ({ status }: { status: PaymentStatus | null }) => {
+export const PayStep = ({ status }: { status: PaymentStatus }) => {
   return (
     <ul className="steps w-full ">
       {/*<Label className={"text-green-500"}>*/}
@@ -138,28 +153,34 @@ export const PayStep = ({ status }: { status: PaymentStatus | null }) => {
       <li
         className={cn(
           "step step-primary",
-          !status ? "text-primary" : "text-muted-foreground",
+          status === "CREATING"
+            ? "text-primary underline underline-offset-4"
+            : "text-muted-foreground",
         )}
         data-content={"1"}
       >
-        生成订单
+        发起订单
       </li>
 
       <li
         className={cn(
           "step step-primary",
-          status === "CREATED" ? "text-primary" : "text-muted-foreground",
+          status === "CREATED"
+            ? "text-primary underline underline-offset-4"
+            : "text-muted-foreground",
         )}
         data-content={"2"}
       >
-        创建订单
+        等待支付
       </li>
 
       {status !== "PAY_CANCELED" && status !== "TIMEOUT" && (
         <li
           className={cn(
             "step step-primary",
-            status === "PAID" ? "text-primary" : "text-muted-foreground",
+            status === "PAID"
+              ? "text-primary underline underline-offset-4"
+              : "text-muted-foreground",
           )}
           data-content={"3"}
         >
@@ -172,7 +193,7 @@ export const PayStep = ({ status }: { status: PaymentStatus | null }) => {
           className={cn(
             "step step-primary",
             status === "PAY_CANCELED"
-              ? "text-primary"
+              ? "text-primary underline underline-offset-4"
               : "text-muted-foreground",
           )}
           data-content={"3"}
@@ -184,7 +205,7 @@ export const PayStep = ({ status }: { status: PaymentStatus | null }) => {
       {status === "TIMEOUT" && (
         <li
           className={cn(
-            "step step-primary",
+            "step step-primary underline underline-offset-4",
             status === "TIMEOUT" ? "text-primary" : "text-muted-foreground",
           )}
           data-content={"3"}

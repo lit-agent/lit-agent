@@ -13,14 +13,19 @@ export const billRouter = createTRPCRouter({
   }),
 
   charge: protectedProcedure
-    .input(z.object({ value: z.number().int() }))
+    .input(
+      z.object({
+        billId: z.string().optional(),
+        value: z.number().int(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const {
         user: { id: userId },
       } = ctx
-      const { value } = input
+      const { value, billId } = input
 
-      return createInvoiceAction({ userId, total_amount: value })
+      return createInvoiceAction({ billId, userId, total_amount: value })
     }),
 
   // myFunc: protectedProcedure.
