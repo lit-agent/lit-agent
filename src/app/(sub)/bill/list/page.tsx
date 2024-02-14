@@ -14,7 +14,7 @@ import { sum } from "lodash"
 
 export default async function ListBillsPage() {
   const bills = await prisma.bill.findMany({ ...billListViewSchema })
-  const totalRevenue = sum(bills.map((bill) => bill.price * bill.productCount))
+  // const totalRevenue = sum(bills.map((bill) => bill.price * bill.productCount))
 
   return (
     <Table>
@@ -41,33 +41,39 @@ export default async function ListBillsPage() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {bills.map((bill) => (
-          <TableRow key={bill.id}>
-            <TableCell className="font-medium">{bill.user.id}</TableCell>
-            <TableCell>{bill.user.name}</TableCell>
-            <TableCell>{bill.product.id}</TableCell>
-            <TableCell className="text-right">{bill.product.title}</TableCell>
-            <TableCell className="text-right">{bill.product.price}</TableCell>
-            <TableCell className="text-right">{bill.productCount}</TableCell>
-            <TableCell className="text-right">
-              {bill.createdAt.toLocaleString()}
-            </TableCell>
-            <TableCell className="text-right">{bill.redeemType}</TableCell>
-            <TableCell className="text-right">{"-"}</TableCell>
-            <TableCell className="text-right">{"-"}</TableCell>
-            <TableCell className="text-right">{"-"}</TableCell>
-            <TableCell className="text-right">{"-"}</TableCell>
-            <TableCell className="text-right">{"-"}</TableCell>
-          </TableRow>
-        ))}
+        {bills
+          .filter((bill) => !!bill.product)
+          .map((bill) => (
+            <TableRow key={bill.id}>
+              <TableCell className="font-medium">{bill.user.id}</TableCell>
+              <TableCell>{bill.user.name}</TableCell>
+              <TableCell>{bill.product!.id}</TableCell>
+              <TableCell className="text-right">
+                {bill.product!.title}
+              </TableCell>
+              <TableCell className="text-right">
+                {bill.product!.price}
+              </TableCell>
+              <TableCell className="text-right">{bill.productCount}</TableCell>
+              <TableCell className="text-right">
+                {bill.createdAt.toLocaleString()}
+              </TableCell>
+              <TableCell className="text-right">{bill.redeemType}</TableCell>
+              <TableCell className="text-right">{"-"}</TableCell>
+              <TableCell className="text-right">{"-"}</TableCell>
+              <TableCell className="text-right">{"-"}</TableCell>
+              <TableCell className="text-right">{"-"}</TableCell>
+              <TableCell className="text-right">{"-"}</TableCell>
+            </TableRow>
+          ))}
       </TableBody>
 
-      <TableFooter>
-        <TableRow>
-          <TableCell colSpan={3}>Total Revenue</TableCell>
-          <TableCell className="text-right">${totalRevenue}</TableCell>
-        </TableRow>
-      </TableFooter>
+      {/*<TableFooter>*/}
+      {/*  <TableRow>*/}
+      {/*    <TableCell colSpan={3}>Total Revenue</TableCell>*/}
+      {/*    <TableCell className="text-right">${totalRevenue}</TableCell>*/}
+      {/*  </TableRow>*/}
+      {/*</TableFooter>*/}
     </Table>
   )
 }

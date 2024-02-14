@@ -28,7 +28,7 @@ import { useRunningEnvironment } from "@/hooks/use-running-environment"
 
 export default function ProductPage({
   params: { id },
-}: {
+}: {hh
   params: {
     id: string
   }
