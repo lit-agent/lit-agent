@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { api } from "@/lib/trpc/react"
 import Head from 'next/head'
 import { useEffect, useState } from "react"
-declare var wx: any;
+// declare var wx: any;
 
 export default function Page() {
   const [showSubscribe, setShowSubscribe] = useState(false);
@@ -14,32 +14,32 @@ export default function Page() {
   const {data: wxconfig} = api.wechat.getWxJsApiToken.useQuery({url:"https://lit.cs-magic.cn/test/wechat"});
   const sendSubscribeNotify = api.wechat.sendSubscribeNotify.useMutation();
   const openId1 = "okV6w6TM289_2QtKYOExU6MI01hA";
-  useEffect(()=>{
-    if (wxconfig) {
-      wx.config({
-        debug: true, // 开启调试模式
-        appId: "wx0fca1662e5518990", // 必填，公众号的唯一标识
-        timestamp: wxconfig.timestamp, // 必填，生成签名的时间戳
-        nonceStr: wxconfig.nonceStr, // 必填，生成签名的随机串
-        signature: wxconfig.signature, // 必填，签名
-        jsApiList: ['checkJsApi'], // 必填，需要使用的JS接口列表
-        openTagList:['<wx-open-subscribe>']
-      });
+  // useEffect(()=>{
+  //   if (wxconfig) {
+  //     wx.config({
+  //       debug: true, // 开启调试模式
+  //       appId: "wx0fca1662e5518990", // 必填，公众号的唯一标识
+  //       timestamp: wxconfig.timestamp, // 必填，生成签名的时间戳
+  //       nonceStr: wxconfig.nonceStr, // 必填，生成签名的随机串
+  //       signature: wxconfig.signature, // 必填，签名
+  //       jsApiList: ['checkJsApi'], // 必填，需要使用的JS接口列表
+  //       openTagList:['<wx-open-subscribe>']
+  //     });
   
-      wx.ready(function () {
-        console.log("grant success")
-        // 配置成功后的逻辑
-      });
+  //     wx.ready(function () {
+  //       console.log("grant success")
+  //       // 配置成功后的逻辑
+  //     });
   
-      wx.error(function (error) {
-        // 配置失败后的逻辑
-        console.error('wx.config error:', error);
-      });
-    }
-  }, []);
+  //     wx.error(function (error) {
+  //       // 配置失败后的逻辑
+  //       console.error('wx.config error:', error);
+  //     });
+  //   }
+  // }, []);
     return (
     <div>
-      <Head>
+      {/* <Head>
         <script src="http://res2.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
       </Head>
       {      showSubscribe &&
@@ -58,7 +58,7 @@ export default function Page() {
         一次性模版消息订阅              
       </button>
     </script>
-  </wx-open-subscribe>` }} />}
+  </wx-open-subscribe>` }} />} */}
 
     <VerticalContainer>
       <a href={url} target="_blank" rel="noopener noreferrer">
