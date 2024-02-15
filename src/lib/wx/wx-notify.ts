@@ -29,7 +29,7 @@ export const sendSubscribeNotify = async (openId: string, accessToken: string, n
         throw new Error(`HTTP error: ${response.status} ${response.statusText}`)
     }
     const data = await response.json();
-    console.log(`send subscribe notify result:openId:${openId}, notify template_id:${notifyData.template_id},
+    console.log(`send subscribe notify result:${JSON.stringify(data)} openId:${openId}, notify template_id:${notifyData.template_id},
     result:${data}`);
 
     return data;

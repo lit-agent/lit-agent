@@ -1,8 +1,10 @@
 import { prisma } from "../db";
 import fetch from 'node-fetch';
 import { getServerAuthSession } from "../auth";
+import crypto from 'crypto';
 import { WX_PROVIDER, WX_REDIRECT_URL, WX_AUTH_URL, WX_ACCESS_URL, WX_REGULAR_ACCESS_TOKEN_URL, wxApp } from "@/lib/wx/config"
 import { GetAccessTokenResponse } from "./schema";
+import singletonTokenInstance from "./singleton-token";
 
 
 // 获取微信获取用户信息授权url
@@ -18,17 +20,6 @@ export const getWxAuthUrl = async () => {
 
 }
 
-// 获取微信access token, 用于发送订阅消息
-export const getWxAccessToken = async () => {
-    const url = `${WX_REGULAR_ACCESS_TOKEN_URL}?grant_type=client_credential&appid=${wxApp.appId}&secret=${wxApp.appSecret}`;
-    const response = await fetch(url);
-    if (!response.ok) {
-        throw new Error(`HTTP error: ${response.status} ${response.statusText}`)
-    }
-    const data = await response.json();
-    console.log(`getWxAccessToken url:${url} data:${JSON.stringify(data)}`);
-    return data as GetAccessTokenResponse;
-}
 
 /**
  * 将微信openid关联至已存在的用户账号
@@ -103,3 +94,47 @@ export const getOpenId = async (code: string) => {
     }
 }
         
+
+const createNonceStr = () => {
+    return Math.random().toString(36).substr(2, 15);
+  };
+  
+const createTimestamp = () => {
+    return Math.floor(Date.now() / 1000) + '';
+  };
+  
+const raw = (args) => {
+    var keys = Object.keys(args);
+    keys = keys.sort()
+    var newArgs = {};
+    keys.forEach(function (key) {
+      newArgs[key.toLowerCase()] = args[key];
+    });
+  
+    var string = '';
+    for (var k in newArgs) {
+      string += '&' + k + '=' + newArgs[k];
+    }
+    string = string.substr(1);
+    return string;
+  };
+  
+  /**
+  * @synopsis 签名算法 
+  *
+  * @param url 用于签名的 url ，注意必须动态获取，不能 hardcode
+  *
+  * @returns
+  */
+export const sign = (url: string) => {
+    var ret = {
+      jsapi_ticket: singletonTokenInstance.getJsapiTicket,
+      nonceStr: createNonceStr(),
+      timestamp: createTimestamp(),
+      url: url,
+    } as any;
+    var string = raw(ret);
+    const hash = crypto.createHash('sha1');
+    ret.signature = hash.update(string).digest('hex');
+    return ret;
+  };
