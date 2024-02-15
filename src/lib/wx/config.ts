@@ -1,7 +1,7 @@
 import { env } from "@/env"
 import { ISubscribeNotifyTemplate, IWxApp } from "./schema";
 
-export const WX_REDIRECT_URL = "https://lit.cs-magic.cn/api/wxauth/processCode";
+export const WX_REDIRECT_URL = "https://lit.cs-magic.cn/test/wechat-callback";
 export const WX_AUTH_URL = "https://open.weixin.qq.com/connect/oauth2/authorize";
 // 获取用户基本数据接口
 export const WX_ACCESS_URL = "https://api.weixin.qq.com/sns/oauth2/access_token";

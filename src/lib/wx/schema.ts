@@ -1,3 +1,4 @@
+import { z } from "zod"; 
 export type IWxApp = {
     appId: string
     appSecret: string
@@ -8,8 +9,8 @@ export interface GetAccessTokenResponse {
     access_token: string;
     // 凭证有效时间，单位：秒
     expires_in: Number;
-    errcode: Number;
-    errmsg:string;
+    errcode?: Number;
+    errmsg?:string;
 }
 
 export interface ISubscribeNotifyTemplate {
@@ -20,3 +21,15 @@ export interface ISubscribeNotifyTemplate {
     // 卡片数据
     data: Map<string, string>;
 }
+
+export const SubscribeNotifyTemplateSchema = z.object({
+    template_id: z.string(),  
+    page: z.string(),  
+    data: z.instanceof(Map<string, string>)  
+  });
+
+export const SubscribeNotifySchema = z.object({
+    openId: z.string(),  
+    accessToken: z.string(),  
+    notifyData: SubscribeNotifyTemplateSchema
+  });

@@ -7,6 +7,7 @@ import { GetAccessTokenResponse } from "./schema";
 
 // 获取微信获取用户信息授权url
 export const getWxAuthUrl = async () => {
+    console.log("-- enter into getWxAuthUrl");
     const session = await getServerAuthSession();
     if (!session?.user?.id) {
         throw new Error("Fail to get userId");
@@ -25,7 +26,7 @@ export const getWxAccessToken = async () => {
         throw new Error(`HTTP error: ${response.status} ${response.statusText}`)
     }
     const data = await response.json();
-    console.log(`getWxAccessToken data:${data}`);
+    console.log(`getWxAccessToken url:${url} data:${JSON.stringify(data)}`);
     return data as GetAccessTokenResponse;
 }
 
@@ -35,8 +36,12 @@ export const getWxAccessToken = async () => {
  * @param openId 用户微信openid
  * @returns 
  */
-export const bindWxOpenIdToUser = async (userId: string, openId: string) => {
-
+export const bindWxOpenIdToUser = async (openId: string) => {
+    const session = await getServerAuthSession();
+    if (!session?.user?.id) {
+        throw new Error("Fail to get userId");
+    }
+    const userId = session?.user?.id;
     const existingAccount = await prisma.account.findUnique({
         where: {
             provider_providerAccountId: {
@@ -82,12 +87,13 @@ export const bindWxOpenIdToUser = async (userId: string, openId: string) => {
  */
 export const getOpenId = async (code: string) => {
     const requestUrl = `${WX_ACCESS_URL}?appid=${wxApp.appId}&secret=${wxApp.appSecret}&code=${code}&grant_type=authorization_code`;
+    
     const response = await fetch(requestUrl);
     if (!response.ok) {
         throw new Error(`HTTP error: ${response.status} ${response.statusText}`)
     }
     const data = await response.json();
-    console.log(`getOpenId data:${data}`);
+    console.log(`getOpenId data:${JSON.stringify(data)}`);
     // 检查响应中是否有openid
     if (data.openid) {
         return data.openid;
