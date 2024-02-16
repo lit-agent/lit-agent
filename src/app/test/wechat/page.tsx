@@ -30,7 +30,7 @@ export default function Page() {
   const userId = user?.id
 
   const getUrl = (scope: string) =>
-    `${WX_AUTH_URL}?$appid=${wxApp.appId}&redirect_uri=${WX_REDIRECT_URL}&response_type=code&scope=${scope}&state=${userId}#wechat_redirect`
+    `${WX_AUTH_URL}?appid=${wxApp.appId}&redirect_uri=${WX_REDIRECT_URL}&response_type=code&scope=${scope}&state=${userId}#wechat_redirect`
 
   useWxInit()
 
