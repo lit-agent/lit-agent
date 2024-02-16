@@ -5,6 +5,8 @@ import Link from "next/link"
 import { ButtonLink } from "@/components/_universal/link"
 import { useUser } from "@/hooks/use-user"
 import { Label } from "@/components/ui/label"
+import SubPage from "@/components/sub-page"
+import { BrowserEnvironmentComp } from "@/components/_universal/browser"
 
 export default function Page() {
   const user = useUser()
@@ -14,9 +16,9 @@ export default function Page() {
     `${WX_AUTH_URL}?appid=${wxApp.appId}&redirect_uri=${WX_REDIRECT_URL}&response_type=code&scope=${scope}&state=${userId}#wechat_redirect`
 
   return (
-    <div>
+    <SubPage title={"微信登录授权测试"}>
       <VerticalContainer>
-        <Label className={"text-primary text-lg"}>登录授权</Label>
+        <BrowserEnvironmentComp />
 
         <Label className={"text-xs"}>
           不弹出授权页面，直接跳转，只能获取用户openid
@@ -45,6 +47,6 @@ export default function Page() {
           </Link>
         </div>
       </VerticalContainer>
-    </div>
+    </SubPage>
   )
 }
