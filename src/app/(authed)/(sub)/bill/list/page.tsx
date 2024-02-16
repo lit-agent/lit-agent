@@ -28,7 +28,7 @@ const BillItem = ({ bill }: { bill: IBillListView }) => {
   const product = bill.products[0]!
   const value = product.count * product.price
   const utils = api.useUtils()
-  const deleteBill = api.bill.delete.useMutation({
+  const { mutate, isLoading } = api.bill.delete.useMutation({
     onSuccess: () => {
       utils.bill.listMyBills.invalidate()
       toast.success("删除成功")
@@ -57,7 +57,7 @@ const BillItem = ({ bill }: { bill: IBillListView }) => {
             共{product.count}件 合计 <FireValue value={value} />
           </div>
           <div className={"truncate"}>
-            兑换时间：{moment(bill.updatedAt).format("YYYY/MM/DD")}
+            兑换时间：{moment(bill.updatedAt).format("YYYY/MM/DD HH:mm:ss")}
           </div>
         </div>
       </div>
@@ -66,8 +66,9 @@ const BillItem = ({ bill }: { bill: IBillListView }) => {
         <Button
           variant={"ghost"}
           size={"sm"}
+          disabled={isLoading}
           onClick={() => {
-            deleteBill.mutateAsync({ billId: bill.id })
+            mutate({ billId: bill.id })
           }}
         >
           删除订单

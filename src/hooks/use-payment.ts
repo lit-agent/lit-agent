@@ -1,11 +1,40 @@
+import { api } from "@/lib/trpc/react"
+import { nanoid } from "nanoid"
+import { useRouter } from "next/navigation"
+import { useRunningEnvironment } from "@/hooks/use-running-environment"
 import {
   PaymentOtherStatus,
   PaymentStatus,
   PayQueryResData,
 } from "@/lib/pay/schema"
+import { useEffect, useState } from "react"
 import { initPusherClient } from "@/lib/socket/config"
 import { SocketEventType } from "@/lib/socket/events"
-import { useEffect, useState } from "react"
+
+export const useCreatePayment = () => {
+  const charge = api.bill.charge.useMutation()
+  const paymentId = nanoid()
+  const router = useRouter()
+  const { isWechat, isMobile } = useRunningEnvironment()
+
+  return async ({
+    value,
+    callbackUrl,
+  }: {
+    value: number
+    callbackUrl: string
+  }) => {
+    const { url } = await charge.mutateAsync({
+      value,
+      paymentId,
+    })
+    router.push(
+      isMobile && isWechat
+        ? url
+        : `/pay?id=${paymentId}&url=${encodeURIComponent(url)}&callbackUrl=${encodeURIComponent(callbackUrl)}`,
+    )
+  }
+}
 
 /**
  * 只能用 socket 等技术从后端更新前端的状态，trpc 本身是做不到的
@@ -20,6 +49,7 @@ export const usePaymentStatus = (
 ) => {
   const [paymentStatus, setPaymentStatus] =
     useState<PaymentStatus>(defaultPayStatus)
+  
   useEffect(() => {
     if (!paymentId) return
 

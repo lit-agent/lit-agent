@@ -23,6 +23,8 @@ import { MyProducts } from "@/components/product/products"
 import { UserTaskStatus } from "@prisma/client"
 import moment from "moment"
 import { UserAvatar } from "@/components/user/user-avatar"
+import { Button, buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 export default function HomePage() {
   return (
@@ -32,6 +34,16 @@ export default function HomePage() {
       <MainCard />
 
       <SecondaryCards />
+
+      <Link
+        className={cn(
+          buttonVariants({ variant: "secondary" }),
+          "rounded-2xl p-2",
+        )}
+        href={"/bill/list"}
+      >
+        兑换记录
+      </Link>
 
       <MyTasks />
 

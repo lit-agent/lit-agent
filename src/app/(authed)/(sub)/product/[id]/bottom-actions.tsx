@@ -3,7 +3,6 @@ import { api } from "@/lib/trpc/react"
 import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io"
 import { useRunningEnvironment } from "@/hooks/use-running-environment"
 import { useRouter } from "next/navigation"
-import { BillStatus } from ".prisma/client"
 import { toast } from "sonner"
 import { TODO } from "@/config"
 import { UserAvatar } from "@/components/user/user-avatar"
@@ -18,13 +17,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { FireValue } from "@/components/_universal/fire-value"
+import { useUser } from "@/hooks/use-user"
+import { useCreatePayment } from "@/hooks/use-payment"
 
 export const BottomActions = ({
   id,
   product,
 }: {
   id: string
-  product?: IProductListView
+  product: IProductListView
 }) => {
   const { data: userProduct } = api.product.getMyUserProduct.useQuery({
     productId: id,
@@ -40,7 +41,9 @@ export const BottomActions = ({
   const redeemBill = api.bill.redeem.useMutation()
   const router = useRouter()
   const [shouldCharge, setShouldCharge] = useState(false)
-  const [diff, setDiff] = useState(0)
+  const user = useUser()
+  const diff = product.price - (user?.balance ?? 0)
+  const createPayment = useCreatePayment()
 
   const onRedeemProduct = async () => {
     if (!product) return
@@ -51,6 +54,8 @@ export const BottomActions = ({
     })
 
     const res = await redeemBill.mutateAsync({ billId: bill.id })
+    console.log("[redeem] result: ", res)
+
     if (res.success) {
       toast.success("购买成功！")
       utils.product.invalidate()
@@ -58,11 +63,11 @@ export const BottomActions = ({
       router.push(`/bill/list`)
     } else {
       setShouldCharge(true)
-      setDiff(res.data!.diff)
       // toast.error(`购买失败，原因：${res.message}`)
     }
   }
-  const charges = [1, 10, 100]
+  const paymentValues = [1, 10, 100]
+  const soldOut = product.sold >= product.total
 
   return (
     <div className={"shrink-0 flex items-center justify-between gap-6 p-2"}>
@@ -73,7 +78,7 @@ export const BottomActions = ({
             <DialogDescription
               className={"break-all items-center flex flex-col py-2"}
             >
-              <span className={"inline-block items-center gap-1"}>
+              <span className={"inline-flex items-center gap-1"}>
                 您还需 <FireValue value={diff} /> 方可以兑换玖姑的：
               </span>
               <span className={"text-primary text-lg"}>{product!.title}</span>
@@ -81,8 +86,20 @@ export const BottomActions = ({
           </DialogHeader>
 
           <div className={"grid grid-cols-3 gap-4"}>
-            {charges.map((charge) => {
-              return <Button key={charge}>{charge}</Button>
+            {paymentValues.map((value) => {
+              return (
+                <Button
+                  key={value}
+                  onClick={() => {
+                    createPayment({
+                      value: value * 10,
+                      callbackUrl: location.href,
+                    })
+                  }}
+                >
+                  {value}
+                </Button>
+              )
             })}
           </div>
         </DialogContent>
@@ -117,12 +134,19 @@ export const BottomActions = ({
           "flex items-center bg-[#FF854F] text-white rounded-3xl gap-2 ml-auto"
         }
         onClick={onRedeemProduct}
+        disabled={soldOut}
       >
-        <span className={"inline-flex items-center"}>
-          <FireIcon className={"w-4 h-4"} />
-          {product?.price}
-        </span>
-        立即兑换
+        {soldOut ? (
+          "暂无库存"
+        ) : (
+          <>
+            <span className={"inline-flex items-center"}>
+              <FireIcon className={"w-4 h-4"} />
+              {product?.price}
+            </span>
+            立即兑换
+          </>
+        )}
       </Button>
     </div>
   )

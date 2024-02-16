@@ -12,7 +12,8 @@ export const billRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(z.object({ billId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      await prisma.bill.delete({ where: { id: input.billId } })
+      // safe to delete
+      await prisma.bill.deleteMany({ where: { id: input.billId } })
     }),
 
   create: protectedProcedure
@@ -128,7 +129,6 @@ export const billRouter = createTRPCRouter({
   charge: protectedProcedure
     .input(
       z.object({
-        billId: z.string().optional(),
         paymentId: z.string().optional(),
         value: z.number().int(),
       }),
@@ -137,12 +137,11 @@ export const billRouter = createTRPCRouter({
       const {
         user: { id: userId },
       } = ctx
-      const { value, paymentId, billId } = input
+      const { value, paymentId } = input
 
       await prisma.payment.create({
         data: {
           id: paymentId,
-          billId,
           value,
           userId,
           status: PaymentStatus.CREATING,

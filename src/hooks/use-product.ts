@@ -1,8 +1,5 @@
 import { api } from "@/lib/trpc/react"
-import { nanoid } from "nanoid"
 import { useRouter } from "next/navigation"
-import { useRunningEnvironment } from "@/hooks/use-running-environment"
-import { IProductListView } from "@/schema/product"
 import { toast } from "sonner"
 
 export const useRedeemProduct = () => {
@@ -26,27 +23,5 @@ export const useRedeemProduct = () => {
       utils.product.invalidate()
       router.push(`/bill/list`)
     }
-  }
-}
-
-export const useChargeProduct = () => {
-  const charge = api.bill.charge.useMutation()
-  const paymentId = nanoid()
-  const router = useRouter()
-  const { isWechat, isMobile } = useRunningEnvironment()
-
-  return async (product?: { price: number }) => {
-    if (!product) return
-    // 一火值等于10分
-    const value = product.price * 10
-    const { url } = await charge.mutateAsync({
-      value,
-      paymentId,
-    })
-    router.push(
-      isMobile && isWechat
-        ? url
-        : `/pay?id=${paymentId}&url=${encodeURIComponent(url)}`,
-    )
   }
 }

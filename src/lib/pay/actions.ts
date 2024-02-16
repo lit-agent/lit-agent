@@ -43,6 +43,8 @@ export async function createPaymentAction({
 }) {
   const id = paymentId ?? nanoid()
 
+  if (total_amount % 10 !== 0) throw new Error("必须是10的倍数（1毛钱起充）")
+
   const params: JumpPayRequest = {
     client_sn: id,
     total_amount: total_amount.toString(),
@@ -90,7 +92,7 @@ export async function createPaymentAction({
       // 推给前端
       await pusherServer.trigger(id, SocketEventType.Payment, data)
       await prisma.payment.update({
-        where: { id: paymentId },
+        where: { id },
         data: { status },
       })
 
@@ -107,6 +109,15 @@ export async function createPaymentAction({
           return
 
         case PaymentStatus.PAID:
+          // 更新账户的金额
+          await prisma.user.update({
+            where: { id: userId },
+            data: {
+              balance: { increment: total_amount / 10 },
+              totalEarnedFire: { increment: total_amount / 10 },
+              currentEarnedFire: { increment: total_amount / 10 },
+            },
+          })
           return
 
         default:
