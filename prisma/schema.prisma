@@ -63,7 +63,7 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-// user 购买 product，会形成 bill
+// 一个 bill 可能包含多个 products
 model Bill {
   id        String   @id @default(cuid())
   createdAt DateTime @updatedAt
@@ -73,25 +73,27 @@ model Bill {
   userId String
 
   // 用户的 bill 也可以是直接充钱的结果，此时就没有对应的product
-  // todo: SKU 以及 现金的 entity 划分
-  product      Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId    String?
-  productCount Int?
+  products ProductInBill[]
 
-  // 以分为单位，单位产品的价格
-  price Int
+  // 总价值
+  value Int
 
-  redeemType RedeemType
+  type BillType
 
-  paymentStatus PaymentStatus @default(PAID)
+  status BillStatus @default(PAID)
   // userActions UserAction[]
 }
 
 enum BillStatus {
-  NotCreated
-  Created
-  Paid
-  Pay
+  NOT_PAID
+  PAID
+  REFUNDING
+  REFUNDED
+}
+
+enum BillType {
+  currency
+  fire
 }
 
 // 用户徽章，每个徽章可以有自己的一些信息，通过 id 与程序的UI对接
@@ -156,6 +158,21 @@ model Message {
   isAI Boolean @default(false)
 }
 
+model Payment {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  value  Int
+  status PaymentStatus @default(PAID)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  // 如果一个支付是跳转支付，则会产生一个url
+  url String?
+}
+
 enum PaymentStatus {
   // --- non-final
 
@@ -209,13 +226,22 @@ model Product {
   isSelfOperating       Boolean? // 是否自营
   isReturnable          Boolean? // 是否可退换
   isReservationRequired Boolean? // 是否需要预约
-
-  bills Bill[]
+  ProductInBill         ProductInBill[]
 }
 
-enum RedeemType {
-  currency
-  fire
+model ProductInBill {
+  id String @id @default(cuid())
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  count Int @default(1)
+  // 用户实际购买本产品的价格
+  prict Int
+
+  // 不可以脱离 bill 存在
+  Bill   Bill   @relation(fields: [billId], references: [id], onDelete: Cascade)
+  billId String
 }
 
 model Room {
@@ -346,9 +372,10 @@ model User {
   rooms Room[]
 
   // balance
-  totalEarnedFire   Int @default(0)
-  currentEarnedFire Int @default(0)
-  balance           Int @default(0)
+  totalEarnedFire   Int       @default(0)
+  currentEarnedFire Int       @default(0)
+  balance           Int       @default(0)
+  payments          Payment[]
 }
 
 // model UserAction {

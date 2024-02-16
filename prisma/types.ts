@@ -8,5 +8,11 @@ declare global {
       type: "GroupInvitation"
       value: string[]
     }
+
+    export type SkuItem = {
+      id: string
+      count: number
+      price: number
+    }
   }
 }
