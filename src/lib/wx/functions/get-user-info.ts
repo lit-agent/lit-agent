@@ -1,4 +1,4 @@
-import { WX_USER_INFO_URL } from "@/lib/wx/config"
+import { WX_GET_USER_INFO_URL } from "@/lib/wx/config"
 
 import { WxRes } from "@/lib/wx/functions/_general"
 
@@ -23,7 +23,7 @@ export const getWxUserInfo = async (
   openid: string,
 ): Promise<WxRes<IGetWxUserInfoRes>> => {
   const res = await fetch(
-    WX_USER_INFO_URL +
+    WX_GET_USER_INFO_URL +
       `?access_token=${access_token}&openid=${openid}&lang=zh_CN`,
   )
   const data = await res.json()

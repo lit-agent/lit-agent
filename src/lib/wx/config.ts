@@ -17,21 +17,19 @@ export const WX_REDIRECT_URL = env.NEXT_PUBLIC_APP_URL + "/wx-auth"
 console.log("[wx]: ", { WX_REDIRECT_URL })
 
 export const WX_API_URL = "https://api.weixin.qq.com"
-export const WX_BIN_URL = WX_API_URL + "/cgi-bin"
-export const WX_SNS_URL = WX_API_URL + "/sns"
-export const WX_USER_INFO_URL = WX_SNS_URL + "/userinfo"
-export const WX_OAUTH_URL =
+export const WX_GET_CODE_URL =
   "https://open.weixin.qq.com/connect/oauth2/authorize"
 
-// access token 用于 auth 的各个环节
-export const WX_ACCESS_TOKEN_URL = WX_OAUTH_URL + "/access_token"
-// refresh token 用于 刷新 access token
-export const WX_REFRESH_ACCESS_TOKEN_URL = WX_OAUTH_URL + "/refresh_token"
+export const WX_GET_ACCESS_TOKEN_URL = WX_API_URL + "/sns/oauth2/access_token"
+export const WX_REFRESH_ACCESS_TOKEN_URL =
+  WX_API_URL + "/sns/oauth2/refresh_token"
+export const WX_GET_USER_INFO_URL = WX_API_URL + "/sns/userinfo"
+export const WX_VALIDATE_ACCESS_TOKEN_URL = WX_API_URL + "/sns/auth"
 
-export const WX_AUTH_URL = WX_OAUTH_URL + "/authorize"
 // 基本鉴权，获取推送订阅消息的access token的接口
-export const WX_REGULAR_ACCESS_TOKEN_URL = WX_BIN_URL + "/token"
-export const WX_NOTIFY_API_URL = WX_BIN_URL + "/message/subscribe/bizsend"
+export const WX_REGULAR_ACCESS_TOKEN_URL = WX_API_URL + "/cgi-bin/token"
+export const WX_NOTIFY_API_URL =
+  WX_API_URL + "/cgi-bin/message/subscribe/bizsend"
 
 // note: app_id 是要暴露给前端的，但是secret不行，所以这里要分别导出
 export const wxApp: IWxApp = {
