@@ -13,7 +13,7 @@ export default function SafeSessionProvider({ children }: PropsWithChildren) {
 
 function StableSessionProviderInner({ children }: PropsWithChildren) {
   const session = useSession()
-  const error = session.data?.error
+  const error = session.data?.user.error
 
   useEffect(() => {
     if (error) {

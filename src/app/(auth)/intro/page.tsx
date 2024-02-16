@@ -30,9 +30,6 @@ import { useCountdown } from "@/hooks/use-countdown"
 import { CgSpinner } from "react-icons/cg"
 import { useRouter } from "next/navigation"
 import { GiuguProfile } from "@/components/user/jiugu-profile"
-import { UnexpectedError } from "@/config"
-
-import { ValidateUserResult } from "@/schema/auth"
 
 export default function IntroPage() {
   return (

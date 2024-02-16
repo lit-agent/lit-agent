@@ -13,6 +13,8 @@ import { MessageType } from "@/schema/message.base"
 import { SMS_PROVIDER_ID } from "@/lib/sms"
 import { ValidateUserResult } from "@/schema/auth"
 import { findWechatAccount } from "@/lib/wechat/auth"
+import { Validation } from "@/app/(auth)/validation/config"
+import { isEqual } from "lodash"
 
 export const userRouter = createTRPCRouter({
   validateUser: publicProcedure
@@ -98,13 +100,30 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const userId = ctx.user.id
       const { answer } = input
-      const target = '{"4":[0,1,2],"5":[2],"6":[2],"7":[0]}'
-      const validateOk = answer === target
 
-      if (validateOk) {
-        const userId = ctx.user.id
+      const target = { 4: [0, 1, 2], 5: [2], 6: [2], 7: [0] }
+      const parsed = JSON.parse(answer) as Validation
+      const passed = Object.keys(parsed).every((k) =>
+        isEqual(parsed[k].value, target[k]),
+      )
 
+      await prisma.validation.create({
+        data: {
+          userId,
+          passed,
+          items: {
+            create: Object.keys(parsed).map((k) => ({
+              index: Number(k),
+              createdAt: parsed[k].date,
+              answer: parsed[k].value,
+            })),
+          },
+        },
+      })
+
+      if (passed) {
         if (!ctx.user?.validated) {
           const user = await prisma.user.update({
             where: { id: userId },
@@ -144,7 +163,7 @@ export const userRouter = createTRPCRouter({
         }
       }
 
-      return validateOk
+      return passed
     }),
 
   safeUpdate: protectedProcedure

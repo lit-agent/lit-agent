@@ -27,7 +27,11 @@ export const productListViewSchema = validator<ProductDefaultArgs>()({
     fromUser: userListViewSchema,
     bills: {
       include: {
-        user: userListViewSchema,
+        bill: {
+          include: {
+            user: userListViewSchema,
+          },
+        },
       },
     },
   },

@@ -5,7 +5,7 @@ import { useAppData } from "@/lib/store/use-app-data"
 import { getBroadcastId } from "@/lib/socket/helpers"
 import { SocketEventType } from "@/lib/socket/events"
 import { IMessageView } from "@/schema/message.base"
-import { useAuthedUser } from "@/hooks/use-user"
+import { useUser } from "@/hooks/use-user"
 import { api } from "@/lib/trpc/react"
 import { UserType } from "@prisma/client"
 import { initPusherClient } from "@/lib/socket/config"
@@ -17,7 +17,7 @@ export const useGlobalMessages = () => {
 
 const useInitMessages = () => {
   const { setMessages } = useAppData()
-  const user = useAuthedUser()
+  const user = useUser()
 
   const { data: serverMessages = [] } = api.message.list.useQuery(
     {},
@@ -31,7 +31,7 @@ const useInitMessages = () => {
 
 const useBindChannels = () => {
   const { setMessages } = useAppData()
-  const user = useAuthedUser()
+  const user = useUser()
   const { data: users = [] } = api.user.list.useQuery()
 
   useEffect(() => {

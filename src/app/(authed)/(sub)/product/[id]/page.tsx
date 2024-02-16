@@ -19,7 +19,7 @@ import { UserAvatar } from "@/components/user/user-avatar"
 import { MarkdownContainer } from "@/providers/containers"
 import { IProductListView } from "@/schema/product"
 import UserAvatars from "@/components/user/user-avatars"
-import { useAuthedUser } from "@/hooks/use-user"
+import { useUser } from "@/hooks/use-user"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import SubPage from "@/components/sub-page"
@@ -28,7 +28,8 @@ import { useRunningEnvironment } from "@/hooks/use-running-environment"
 
 export default function ProductPage({
   params: { id },
-}: {hh
+}: {
+  hh
   params: {
     id: string
   }
@@ -67,7 +68,7 @@ const Card2 = ({ children }: PropsWithChildren) => (
 
 const DetailArea = ({ product }: { product?: IProductListView }) => {
   const surplus = product ? product.total - product.sold : 0
-  const user = useAuthedUser()
+  const user = useUser()
   const deleteProduct = api.product.delete.useMutation()
   const utils = api.useUtils()
   const router = useRouter()

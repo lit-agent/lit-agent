@@ -63,7 +63,7 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-// 一个 bill 可能包含多个 products
+// user 购买 product，会形成 bill
 model Bill {
   id        String   @id @default(cuid())
   createdAt DateTime @updatedAt
@@ -72,28 +72,29 @@ model Bill {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  // 用户的 bill 也可以是直接充钱的结果，此时就没有对应的product
-  products ProductInBill[]
-
-  // 总价值
-  value Int
-
-  type BillType
-
   status BillStatus @default(PAID)
+
+  type BillType @default(FIRE)
+
+  // SKU
+  products ProductInBill[]
+  // 总消费
+  value    Int
+
   // userActions UserAction[]
 }
 
+// 不要轻易改动enum的值，会导致表爆炸💥
 enum BillStatus {
-  NOT_PAID
+  PAYING
   PAID
-  REFUNDING
   REFUNDED
+  REFUNDING
 }
 
 enum BillType {
-  currency
-  fire
+  CASH
+  FIRE
 }
 
 // 用户徽章，每个徽章可以有自己的一些信息，通过 id 与程序的UI对接
@@ -158,21 +159,6 @@ model Message {
   isAI Boolean @default(false)
 }
 
-model Payment {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  value  Int
-  status PaymentStatus @default(PAID)
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
-
-  // 如果一个支付是跳转支付，则会产生一个url
-  url String?
-}
-
 enum PaymentStatus {
   // --- non-final
 
@@ -226,7 +212,8 @@ model Product {
   isSelfOperating       Boolean? // 是否自营
   isReturnable          Boolean? // 是否可退换
   isReservationRequired Boolean? // 是否需要预约
-  ProductInBill         ProductInBill[]
+
+  bills ProductInBill[]
 }
 
 model ProductInBill {
@@ -235,12 +222,11 @@ model ProductInBill {
   product   Product @relation(fields: [productId], references: [id])
   productId String
 
-  count Int @default(1)
-  // 用户实际购买本产品的价格
-  prict Int
+  count Int
+  // 实际付费（非product的标费）
+  price Int
 
-  // 不可以脱离 bill 存在
-  Bill   Bill   @relation(fields: [billId], references: [id], onDelete: Cascade)
+  bill   Bill   @relation(fields: [billId], references: [id], onDelete: Cascade)
   billId String
 }
 
@@ -372,10 +358,11 @@ model User {
   rooms Room[]
 
   // balance
-  totalEarnedFire   Int       @default(0)
-  currentEarnedFire Int       @default(0)
-  balance           Int       @default(0)
-  payments          Payment[]
+  totalEarnedFire   Int @default(0)
+  currentEarnedFire Int @default(0)
+  balance           Int @default(0)
+
+  validations Validation[]
 }
 
 // model UserAction {
@@ -521,6 +508,33 @@ enum UserType {
   user
   assistant
   blogger
+}
+
+model Validation {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  items  ValidationItem[]
+
+  // 是否通过
+  passed Boolean
+}
+
+model ValidationItem {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 题号
+  index        Int
+  // 答案
+  /// [ValidationItemAnswer]
+  answer       Json
+  validation   Validation @relation(fields: [validationId], references: [id], onDelete: Cascade)
+  validationId String
 }
 
 model VerificationToken {

@@ -8,7 +8,6 @@ import { Metadata, Viewport } from "next"
 import BgProvider from "@/providers/bg.provider"
 import StableSessionProvider from "@/providers/session.provider"
 import { Suspense } from "react"
-import MessagesProvider from "@/providers/messages.provider"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -38,32 +37,30 @@ export default async function RootLayout({
   return (
     <StableSessionProvider>
       <TRPCReactProvider>
-        <MessagesProvider>
-          <html lang="zh" suppressHydrationWarning>
-            <head>
-              {/* todo: 这个不能开，开了之后本地的服务资源就都挂了 */}
-              {/*<meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" />*/}
-            </head>
+        <html lang="zh" suppressHydrationWarning>
+          <head>
+            {/* todo: 这个不能开，开了之后本地的服务资源就都挂了 */}
+            {/*<meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" />*/}
+          </head>
 
-            <body className={`font-sans ${inter.variable}`}>
-              <main className={"relative w-screen"}>
-                <Suspense>
-                  <BgProvider>
-                    <MyThemeProvider>
-                      {children}
+          <body className={`font-sans ${inter.variable}`}>
+            <main className={"relative w-screen"}>
+              <Suspense>
+                <BgProvider>
+                  <MyThemeProvider>
+                    {children}
 
-                      <Toaster
-                        richColors
-                        position={"top-right"}
-                        duration={2000}
-                      />
-                    </MyThemeProvider>
-                  </BgProvider>
-                </Suspense>
-              </main>
-            </body>
-          </html>
-        </MessagesProvider>
+                    <Toaster
+                      richColors
+                      position={"top-right"}
+                      duration={2000}
+                    />
+                  </MyThemeProvider>
+                </BgProvider>
+              </Suspense>
+            </main>
+          </body>
+        </html>
       </TRPCReactProvider>
     </StableSessionProvider>
   )

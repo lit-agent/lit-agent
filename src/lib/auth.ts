@@ -11,17 +11,22 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import { SMS_PROVIDER_ID } from "@/lib/sms"
 import { IUserListView } from "@/schema/user.base"
 import { userMainViewSchema } from "@/schema/user"
+import { DefaultJWT } from "next-auth/jwt"
 
 export type SessionError = "NoPhone" | "NoUserInDB"
+
+interface Payload {
+  id: string
+  validated: boolean
+  name: string | null // JWT 的 name 还支持 undefined，我们要限制一下
+  phone: string | null
+  error?: SessionError
+}
 
 // ref: https://next-auth.js.org/getting-started/typescript#submodules
 declare module "next-auth/jwt" {
   /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
-  interface JWT extends IUserListView {
-    name: string | null // JWT 的 name 还支持 undefined，我们要限制一下
-    phone: string | null
-    validated: boolean
-  }
+  interface JWT extends DefaultJWT, IUserListView, Payload {}
 }
 
 /**
@@ -32,13 +37,10 @@ declare module "next-auth/jwt" {
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: DefaultSession["user"] & { id: string; validated: boolean }
-    error?: SessionError
+    user: DefaultSession["user"] & Payload
   }
 
-  interface User {
-    phone: string | null
-  }
+  interface User extends Payload {}
 }
 
 /**
@@ -86,16 +88,27 @@ export const authOptions: NextAuthOptions = {
       // console.log("[auth.jwt]: ", { token, user, session, account, profile })
 
       // token 是加解密可信安全的，不用担心被篡改！
-      // init
+
+      if (token.sub) token.id = token.sub
+
       if (user) token = { ...token, phone: user.phone, validated: false }
       // afterwards
-      else if (token.phone && !token.validated) {
+      else if (token.phone) {
         // 首次更新token
-        const userInDB = await prisma.user.findUniqueOrThrow({
+        const userInDB = await prisma.user.findUnique({
           where: { phone: token.phone },
         })
-        if (userInDB.validated) token.validated = true
-        console.log("[auth.jwt] updated: ", { userInDB, token })
+        if (!userInDB) {
+          token.expiresIn = Date.now() / 1e3
+          token.error = "NoUserInDB"
+          console.debug("[auth.jwt] updated(invalidating): ", {
+            userInDB,
+            token,
+          })
+        } else if (userInDB.validated) {
+          token.validated = true
+          console.debug("[auth.jwt] updated(validated): ", { userInDB, token })
+        }
       }
 
       return token
@@ -115,17 +128,16 @@ export const authOptions: NextAuthOptions = {
      * @param newSession
      */
     session: async ({ session, user, token, trigger, newSession }) => {
-      // console.log("[auth.session]: ", {
-      //   session,
-      //   user,
-      //   token,
-      //   newSession,
-      //   trigger,
-      // })
+      console.debug("[auth.session]: ", {
+        session,
+        user,
+        token,
+        newSession,
+        trigger,
+      })
 
       if (token.sub) {
-        session.user.id = token.sub
-        session.user.validated = token.validated
+        session.user = { ...session.user, ...token }
       }
 
       return session

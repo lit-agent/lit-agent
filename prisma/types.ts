@@ -14,5 +14,7 @@ declare global {
       count: number
       price: number
     }
+
+    export type ValidationItemAnswer = number[]
   }
 }
