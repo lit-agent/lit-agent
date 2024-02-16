@@ -139,16 +139,22 @@ export const billRouter = createTRPCRouter({
       } = ctx
       const { value, paymentId } = input
 
+      const { id, url } = await createPaymentAction({
+        paymentId,
+        userId,
+        total_amount: value,
+      })
+
       await prisma.payment.create({
         data: {
-          id: paymentId,
+          id,
           value,
           userId,
           status: PaymentStatus.CREATING,
+          url,
         },
       })
-
-      return createPaymentAction({ paymentId, userId, total_amount: value })
+      return { id, url }
     }),
 
   // myFunc: protectedProcedure.

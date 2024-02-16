@@ -50,15 +50,17 @@ export const genPayUrlAction = (payRequest: JumpPayRequest) => {
  * @returns
  */
 export const activateAction = async (deviceId: string, code: string) => {
-  console.log("-- activating: ", { deviceId, code })
   const path = `/terminal/activate`
   const params = {
     app_id: env.PAY_APP_ID,
     code: code,
     device_id: deviceId,
   }
-  const data = await fetchShouqianba({ params, role: vendor, path })
-  return data.biz_response as ITerminal
+  console.log("-- activating: ", { deviceId, code, params, vendor })
+  const res = await fetchShouqianba({ params, role: vendor, path })
+  const data = res.biz_response as ITerminal
+  console.log("[sqb] activated: ", data)
+  return data
 }
 
 /**

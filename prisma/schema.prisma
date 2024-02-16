@@ -180,7 +180,7 @@ model Payment {
   billId String? @unique
 
   // 跳转支付
-  url String
+  url String?
 }
 
 enum PaymentStatus {

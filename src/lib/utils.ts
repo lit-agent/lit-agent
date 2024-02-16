@@ -1,8 +1,8 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { uniqBy } from "lodash"
 import { IProductListView } from "@/schema/product"
 import { createHash } from "crypto"
+import uniqBy from "lodash/uniqBy"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -19,7 +19,7 @@ export const maskPhone = (s: string) =>
 export const getBuyersOfProduct = (product?: IProductListView) =>
   product
     ? uniqBy(
-        product.bills.map((bill) => bill.user),
+        product.bills.map((bill) => bill.bill.user),
         "id",
       )
     : []
