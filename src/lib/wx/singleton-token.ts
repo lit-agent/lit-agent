@@ -1,5 +1,5 @@
 import { GetAccessTokenResponse } from "./schema"
-import { WX_REGULAR_ACCESS_TOKEN_URL, wxApp } from "@/lib/wechat/config"
+import { WX_REGULAR_ACCESS_TOKEN_URL, wxApp } from "@/lib/wx/config"
 
 // 获取微信token单例类
 class SingletonToken {

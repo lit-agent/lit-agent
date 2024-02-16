@@ -1,6 +1,7 @@
 import { WX_ACCESS_TOKEN_URL, WX_APP_ID } from "@/lib/wx/config"
 import { env } from "@/env"
-import { WxRes } from "@/lib/wx/server"
+
+import { WxRes } from "@/lib/wx/functions/_general"
 
 export type IGetWxAccessTokenRes = {
   access_token: string
@@ -11,6 +12,7 @@ export type IGetWxAccessTokenRes = {
   is_snapshotuser: number
   unionid: string
 }
+
 export const getWxAccessToken = async (
   code: string,
 ): Promise<WxRes<IGetWxAccessTokenRes>> => {

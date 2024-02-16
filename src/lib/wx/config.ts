@@ -1,11 +1,19 @@
+/**
+ * @see: https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html
+ */
+
+export const WECHAT_AUTHORIZATION_DOC_URL =
+  "https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html"
+
 import { env } from "@/env"
 import { ISubscribeNotifyTemplate, IWxApp } from "./schema"
 
 export const WX_APP_ID = env.NEXT_PUBLIC_WX_APP_ID
 export const WX_PROVIDER_ID = "wechat"
 
-// 只需要相对地址即可
-export const WX_REDIRECT_URL = "/wechat-auth"
+// 微信强制绝对地址
+export const WX_REDIRECT_URL = env.NEXT_PUBLIC_APP_URL + "/wx-auth"
+console.log({ WX_REDIRECT_URL })
 
 export const WX_API_URL = "https://api.weixin.qq.com"
 export const WX_BIN_URL = WX_API_URL + "/cgi-bin"

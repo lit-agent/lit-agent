@@ -1,12 +1,12 @@
-import { IUserAvatar } from "@/schema/user.base"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
+import { IUserAvatarBase } from "@/schema/user.base"
 
 export const UserAvatar = ({
   user,
   size = "lg",
 }: {
-  user?: IUserAvatar
+  user?: IUserAvatarBase
   size?: "sm" | "lg"
 }) => (
   <Avatar

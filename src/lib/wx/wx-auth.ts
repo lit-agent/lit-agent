@@ -9,7 +9,7 @@ import {
   WX_ACCESS_TOKEN_URL,
   WX_REGULAR_ACCESS_TOKEN_URL,
   wxApp,
-} from "@/lib/wechat/config"
+} from "@/lib/wx/config"
 import { GetAccessTokenResponse } from "./schema"
 import singletonTokenInstance from "./singleton-token"
 
@@ -41,8 +41,7 @@ export const bindWxOpenIdToUser = async (openId: string) => {
     },
   })
   console.log(`existing user: `, existingAccount)
-  if (!existingUser)
-    throw new Error("User not found, cannot create wechat account")
+  if (!existingUser) throw new Error("User not found, cannot create wx account")
 
   const createdAccount = await prisma.account.create({
     data: {

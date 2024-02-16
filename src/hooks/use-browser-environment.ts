@@ -13,7 +13,7 @@ export const checkWechatBrowser = () =>
  */
 export const checkMobileBrowser = () => /Mobi/i.test(window.navigator.userAgent)
 
-export const useRunningEnvironment = () => {
+export const useBrowserEnvironment = () => {
   const [isClient, setClient] = useState(false)
   const [isWechat, setWechat] = useState(false)
   const [isMobile, setMobile] = useState(false)

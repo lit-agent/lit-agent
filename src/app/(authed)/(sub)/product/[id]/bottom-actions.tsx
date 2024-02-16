@@ -1,7 +1,7 @@
 import { IProductListView } from "@/schema/product"
 import { api } from "@/lib/trpc/react"
 import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io"
-import { useRunningEnvironment } from "@/hooks/use-running-environment"
+import { useBrowserEnvironment } from "@/hooks/use-browser-environment"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { TODO } from "@/config"
@@ -35,7 +35,7 @@ export const BottomActions = ({
   const favor = api.product.favor.useMutation()
   const Favor = userProduct?.isFavored ? IoIosHeart : IoIosHeartEmpty
 
-  const { isWechat, isMobile } = useRunningEnvironment()
+  const { isWechat, isMobile } = useBrowserEnvironment()
 
   const createBill = api.bill.create.useMutation()
   const redeemBill = api.bill.redeem.useMutation()

@@ -1,5 +1,6 @@
 import { WX_USER_INFO_URL } from "@/lib/wx/config"
-import { WxRes } from "@/lib/wx/server"
+
+import { WxRes } from "@/lib/wx/functions/_general"
 
 export interface IGetWxUserInfoRes {
   // 用户的唯一标识

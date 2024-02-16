@@ -27,4 +27,4 @@ export const CURSOR_CLASS_NAME = "custom-type-animation-cursor"
 
 export const TYPER_SPEED = env.NODE_ENV === "production" ? 30 : 90
 
-export const LOG_AUTH_ENABLED = true
+export const LOG_AUTH_ENABLED = false

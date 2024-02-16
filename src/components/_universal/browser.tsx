@@ -1,8 +1,8 @@
-import { useRunningEnvironment } from "@/hooks/use-running-environment"
+import { useBrowserEnvironment } from "@/hooks/use-browser-environment"
 import { No, Yes } from "@/components/_universal/icons"
 
 export const BrowserEnvironmentComp = () => {
-  const { isWechat, isMobile } = useRunningEnvironment()
+  const { isWechat, isMobile } = useBrowserEnvironment()
   const IsWechat = isWechat ? Yes : No
   const IsMobile = isMobile ? Yes : No
 

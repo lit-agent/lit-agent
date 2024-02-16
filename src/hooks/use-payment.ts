@@ -1,7 +1,7 @@
 import { api } from "@/lib/trpc/react"
 import { nanoid } from "nanoid"
 import { useRouter } from "next/navigation"
-import { useRunningEnvironment } from "@/hooks/use-running-environment"
+import { useBrowserEnvironment } from "@/hooks/use-browser-environment"
 import {
   PaymentOtherStatus,
   PaymentStatus,
@@ -15,7 +15,7 @@ export const useCreatePayment = () => {
   const charge = api.bill.charge.useMutation()
   const paymentId = nanoid()
   const router = useRouter()
-  const { isWechat, isMobile } = useRunningEnvironment()
+  const { isWechat, isMobile } = useBrowserEnvironment()
 
   return async ({
     value,
@@ -49,7 +49,7 @@ export const usePaymentStatus = (
 ) => {
   const [paymentStatus, setPaymentStatus] =
     useState<PaymentStatus>(defaultPayStatus)
-  
+
   useEffect(() => {
     if (!paymentId) return
 

@@ -1,80 +1,61 @@
 "use server"
 
-import { env } from "@/env"
+import { getWxAccessToken } from "@/lib/wx/functions/get-access-token"
+import { refreshWxAccessToken } from "@/lib/wx/functions/refresh-access-token"
 import {
-  WX_ACCESS_TOKEN_URL,
-  WX_APP_ID,
-  WX_REFRESH_ACCESS_TOKEN_URL,
-  WX_USER_INFO_URL,
-} from "@/lib/wechat/config"
+  getWxUserInfo,
+  IGetWxUserInfoRes,
+} from "@/lib/wx/functions/get-user-info"
 
-export type IGetWechatAccessTokenRes = {
-  access_token: string
-  expires_in: number // 7200s
-  refresh_token: string
-  openid: string
-  scope: string
-  is_snapshotuser: number
-  unionid: string
-}
+import { isWxError } from "@/lib/wx/functions/_general"
 
-export const getWechatAccessToken = async (
-  code: string,
-): Promise<IGetWechatAccessTokenRes> => {
-  const res = await fetch(
-    WX_ACCESS_TOKEN_URL +
-      `?appid=${WX_APP_ID}&secret=${env.WX_APP_SECRET}&code=${code}&grant_type=authorization_code`,
-  )
-  const data = await res.json()
-  console.log("[wechat] getWechatAccessToken: ", data)
-  return data
-}
+export class WxServerAuth {
+  private code: string
+  private access_token?: string
+  private refresh_token?: string
+  private openid?: string
+  private expires_in?: number // we can ignore it for ease
 
-export interface IRefreshWechatAccessTokenRes {
-  access_token: string
-  expires_in: number //7200s
-  refresh_token: string
-  openid: string
-  scope: string
-}
+  constructor(code: string) {
+    this.code = code
+  }
 
-export const refreshWechatAccessToken = async (
-  refresh_token: string,
-): Promise<IRefreshWechatAccessTokenRes> => {
-  const res = await fetch(
-    WX_REFRESH_ACCESS_TOKEN_URL +
-      `?appid=${WX_APP_ID}&grant_type=refresh_token&refresh_token=${refresh_token}`,
-  )
-  const data = await res.json()
-  console.log("[wechat] refreshWechatAccessToken: ", data)
-  return data
-}
+  private async getUserSecrets() {
+    const data = await getWxAccessToken(this.code)
+    if (isWxError(data)) throw new Error(data.errmsg)
 
-export interface IGetWechatUserInfoRes {
-  // 用户的唯一标识
-  openid: string
-  // 只有在用户将公众号绑定到微信开放平台账号后，才会出现该字段。
-  unionid: string
-  nickname: string
-  // 用户头像，最后一个数值代表正方形头像大小（有0、46、64、96、132数值可选，0代表640*640正方形头像），用户没有头像时该项为空。若用户更换头像，原有头像URL将失效。
-  headimgurl: string
+    this.access_token = data.access_token
+    this.refresh_token = data.refresh_token
+    this.openid = data.openid
+    this.expires_in = data.expires_in
+    return data
+  }
 
-  sex: number
-  province: string
-  city: string
-  country: string
-  privilege: string[]
-}
+  public async getUserInfo(): Promise<IGetWxUserInfoRes> {
+    if (!this.access_token || !this.openid || !this.refresh_token) {
+      await this.getUserSecrets()
+      return this.getUserInfo() // again since the token not initialized
+    }
 
-export const getWechatUserInfo = async (
-  access_token: string,
-  openid: string,
-): Promise<IGetWechatUserInfoRes> => {
-  const res = await fetch(
-    WX_USER_INFO_URL +
-      `?access_token=${access_token}&openid=${openid}&lang=zh_CN`,
-  )
-  const data = await res.json()
-  console.log("[wechat] getWechatUserInfo: ", data)
-  return data
+    const userInfo = await getWxUserInfo(this.access_token, this.openid)
+    if (!isWxError(userInfo)) return userInfo
+
+    // 可能是 access_token 过期了
+    const refreshedWxAccessToken = await refreshWxAccessToken(
+      this.refresh_token,
+    )
+
+    // 需要重新登陆了，30天
+    if (isWxError(refreshedWxAccessToken))
+      throw new Error(refreshedWxAccessToken.errmsg)
+
+    const { access_token, refresh_token, expires_in, openid } =
+      refreshedWxAccessToken
+    this.access_token = access_token
+    this.refresh_token = refresh_token
+    this.expires_in = expires_in
+    this.openid = openid
+
+    return this.getUserInfo() // again since the token refreshed
+  }
 }

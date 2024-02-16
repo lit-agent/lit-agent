@@ -3,7 +3,7 @@
 import { CoverTextBigImage } from "@/lib/assets"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { Input } from "@/components/ui/input"
 
 import { z } from "zod"
@@ -30,6 +30,9 @@ import { useCountdown } from "@/hooks/use-countdown"
 import { CgSpinner } from "react-icons/cg"
 import { useRouter } from "next/navigation"
 import { GiuguProfile } from "@/components/user/jiugu-profile"
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { useBrowserEnvironment } from "@/hooks/use-browser-environment"
+import { getWechatLoginUrl, WxAuthScope } from "@/lib/wx/utils"
 
 export default function IntroPage() {
   return (
@@ -50,13 +53,13 @@ export default function IntroPage() {
       <div className={"z-50 bg-black/75 w-full"}>
         <GiuguProfile className={"-mt-6 mb-6"} />
 
-        <Comp3 />
+        <LoginViaPhone />
       </div>
     </div>
   )
 }
 
-const Comp3 = () => {
+const LoginViaPhone = () => {
   const { data: users = [] } = api.user.list.useQuery()
 
   const formSchema = z.object({
@@ -97,7 +100,6 @@ const Comp3 = () => {
   }
 
   const [submitting, setSubmitting] = useState(false)
-  const router = useRouter()
 
   async function onSubmit() {
     setSubmitting(true)
@@ -123,17 +125,31 @@ const Comp3 = () => {
     }
   }
 
+  const [phoneSheetOpen, setPhoneSheetOpen] = useState(false)
+  const { isWechat } = useBrowserEnvironment()
+  const router = useRouter()
+
   return (
     <div className={"mt-auto flex flex-col items-center pb-8 gap-4"}>
       <div className={"text-muted-foreground text-sm"}>
         <span className={"text-primary"}>{users.length}</span> 人已加入姑的社群
       </div>
 
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button className={"text-white "}>成为姑的friend</Button>
-        </SheetTrigger>
+      <Button
+        className={"text-white "}
+        onClick={() => {
+          // 不是微信环境，使用手机登录
+          if (!isWechat) setPhoneSheetOpen(true)
+          // 是微信环境，调用微信登录
+          else {
+            router.push(getWechatLoginUrl(WxAuthScope.info))
+          }
+        }}
+      >
+        成为姑的friend
+      </Button>
 
+      <Sheet open={phoneSheetOpen} onOpenChange={setPhoneSheetOpen}>
         <SheetContent side={"bottom"}>
           <Form {...form}>
             <div className="space-y-8">

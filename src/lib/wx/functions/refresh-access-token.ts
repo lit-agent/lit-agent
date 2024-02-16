@@ -1,5 +1,6 @@
 import { WX_APP_ID, WX_REFRESH_ACCESS_TOKEN_URL } from "@/lib/wx/config"
-import { WxRes } from "@/lib/wx/server"
+
+import { WxRes } from "@/lib/wx/functions/_general"
 
 export interface IRefreshWxAccessTokenRes {
   access_token: string
