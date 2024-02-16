@@ -14,7 +14,7 @@ ALTER TABLE "Bill" DROP CONSTRAINT "Bill_productId_fkey";
 ALTER TABLE "Bill" DROP COLUMN "price",
 DROP COLUMN "productCount",
 DROP COLUMN "productId",
-ADD COLUMN     "value" INTEGER NOT NULL;
+ADD COLUMN     "value" INTEGER;
 
 -- CreateTable
 CREATE TABLE "ProductInBill" (
