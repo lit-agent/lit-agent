@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils"
+import { PaymentStatus } from "@prisma/client"
 
 export const PayStep = ({ status }: { status: PaymentStatus }) => {
   return (

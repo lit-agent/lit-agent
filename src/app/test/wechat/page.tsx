@@ -1,19 +1,24 @@
 "use client"
 import { VerticalContainer } from "@/components/containers/vertical"
 import { commentNotify } from "@/lib/wx/config"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { api } from "@/lib/trpc/react"
-import Head from 'next/head'
+import Head from "next/head"
 import { useEffect, useState } from "react"
+import Link from "next/link"
+import { cn } from "@/lib/utils"
+import { ButtonLink } from "@/components/_universal/link"
 // declare var wx: any;
 
 export default function Page() {
-  const [showSubscribe, setShowSubscribe] = useState(false);
-  const {data: url} = api.wechat.getWxAuthUrl.useQuery();
-  const {data: accessToken} = api.wechat.getWxGeneralAccessToken.useQuery();
-  const {data: wxconfig} = api.wechat.getWxJsApiToken.useQuery({url:"https://lit.cs-magic.cn/test/wechat"});
-  const sendSubscribeNotify = api.wechat.sendSubscribeNotify.useMutation();
-  const openId1 = "okV6w6TM289_2QtKYOExU6MI01hA";
+  const [showSubscribe, setShowSubscribe] = useState(false)
+  const { data: url } = api.wechat.getWxAuthUrl.useQuery()
+  const { data: accessToken } = api.wechat.getWxGeneralAccessToken.useQuery()
+  const { data: wxconfig } = api.wechat.getWxJsApiToken.useQuery({
+    url: "https://lit.cs-magic.cn/test/wechat",
+  })
+  const sendSubscribeNotify = api.wechat.sendSubscribeNotify.useMutation()
+  const openId1 = "okV6w6TM289_2QtKYOExU6MI01hA"
   // useEffect(()=>{
   //   if (wxconfig) {
   //     wx.config({
@@ -25,19 +30,19 @@ export default function Page() {
   //       jsApiList: ['checkJsApi'], // 必填，需要使用的JS接口列表
   //       openTagList:['<wx-open-subscribe>']
   //     });
-  
+
   //     wx.ready(function () {
   //       console.log("grant success")
   //       // 配置成功后的逻辑
   //     });
-  
+
   //     wx.error(function (error) {
   //       // 配置失败后的逻辑
   //       console.error('wx.config error:', error);
   //     });
   //   }
   // }, []);
-    return (
+  return (
     <div>
       {/* <Head>
         <script src="http://res2.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
@@ -60,49 +65,51 @@ export default function Page() {
     </script>
   </wx-open-subscribe>` }} />} */}
 
-    <VerticalContainer>
-      <a href={url} target="_blank" rel="noopener noreferrer">
+      <VerticalContainer>
+        {/*<a href={url} target="_blank" rel="noopener noreferrer">*/}
+        {/*  <Button*/}
+        {/*      onClick={async () =>{*/}
+        {/*        console.log("-- get wechat grant url")*/}
+        {/*        console.log(url)*/}
+        {/*      }*/}
+        {/*      }*/}
+        {/*    >*/}
+        {/*    微信授权*/}
+        {/*  </Button>*/}
+        {/*</a>*/}
+        <ButtonLink href={url ?? ""}>
+          {url ? "微信授权" : "waiting...."}
+        </ButtonLink>
+
         <Button
-            onClick={async () =>{
-              console.log("-- get wechat grant url")
-              console.log(url)
-            }
-            }
-          >
-          微信授权
+          onClick={async () => {
+            setShowSubscribe(true)
+          }}
+        >
+          接受订阅消息授权
         </Button>
-      </a>
 
-      <Button
-      
-        onClick={async () =>{
-        setShowSubscribe(true);
-      }
-        }
-      >
-        接受订阅消息授权
-      </Button>
-
-      <Button
-      
-      onClick={async () =>{
-      if (accessToken) {
-        const copyOfCommentNotify = {
-          ...commentNotify,
-          data: new Map(commentNotify.data)
-      };
-      copyOfCommentNotify.data.set("thing2", "cyx");
-      copyOfCommentNotify.data.set("thing3", "测试一下");
-      copyOfCommentNotify.data.set("date4", "2024-01-01 12:00:00");
-      sendSubscribeNotify.mutate({openId:openId1 , accessToken:accessToken, notifyData:copyOfCommentNotify});
-      }
-    }
-      }
-    >
-      发送订阅消息
-    </Button>
-
-    </VerticalContainer>
+        <Button
+          onClick={async () => {
+            if (accessToken) {
+              const copyOfCommentNotify = {
+                ...commentNotify,
+                data: new Map(commentNotify.data),
+              }
+              copyOfCommentNotify.data.set("thing2", "cyx")
+              copyOfCommentNotify.data.set("thing3", "测试一下")
+              copyOfCommentNotify.data.set("date4", "2024-01-01 12:00:00")
+              sendSubscribeNotify.mutate({
+                openId: openId1,
+                accessToken: accessToken,
+                notifyData: copyOfCommentNotify,
+              })
+            }
+          }}
+        >
+          发送订阅消息
+        </Button>
+      </VerticalContainer>
     </div>
   )
 }

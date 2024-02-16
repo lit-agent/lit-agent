@@ -13,9 +13,11 @@ export default function PayPage({}) {
   console.log({ id, url, callbackUrl })
   const router = useRouter()
 
-  if (!id || !url || !callbackUrl) return "invalid id/url"
+  const clean = () => {
+    if (!id) return
 
-  const clean = () => cancelJob(id)
+    cancelJob(id)
+  }
 
   useEffect(() => {
     window.addEventListener("beforeunload", clean)
@@ -25,6 +27,8 @@ export default function PayPage({}) {
       window.removeEventListener("beforeunload", clean)
     }
   }, [id])
+
+  if (!id || !url || !callbackUrl) return "invalid id/url"
 
   return (
     <SubPage title={"支付系统"} className={"p-4 flex flex-col gap-6"}>

@@ -3,6 +3,8 @@ import { twMerge } from "tailwind-merge"
 import { IProductListView } from "@/schema/product"
 import { createHash } from "crypto"
 import uniqBy from "lodash/uniqBy"
+import { IBillListView } from "@/schema/bill"
+import { sum } from "lodash"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -43,3 +45,6 @@ export const md5 = (signStr: string): string => {
 }
 
 export const isClient = () => typeof window !== "undefined"
+
+export const getBillValue = (bill: IBillListView) =>
+  sum(bill.products.map((p) => p.count * p.price))

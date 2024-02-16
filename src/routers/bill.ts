@@ -4,8 +4,8 @@ import { billListViewSchema } from "@/schema/bill"
 import { z } from "zod"
 import { createPaymentAction } from "@/lib/pay/actions"
 import { $Enums, BillStatus } from ".prisma/client"
-import { sum } from "lodash"
 import { MessageType } from "@/schema/message.base"
+import { getBillValue } from "@/lib/utils"
 import PaymentStatus = $Enums.PaymentStatus
 
 export const billRouter = createTRPCRouter({
@@ -57,7 +57,7 @@ export const billRouter = createTRPCRouter({
 
         await prisma.$transaction(async (prisma) => {
           // 更新用户的钱
-          const cost = sum(bill.products.map((p) => p.price * p.count))
+          const cost = getBillValue(bill)
           data.diff = cost - user.balance
           if (data.diff > 0) throw new Error("火值不足！")
           await prisma.user.update({

@@ -13,22 +13,24 @@ import { toast } from "sonner"
 import { TODO } from "@/config"
 import { UniversalTabs } from "@/components/_universal/tabs"
 import { IBillListView } from "@/schema/bill"
+import { getBillValue } from "@/lib/utils"
 
 export const BillItem = ({ bill }: { bill: IBillListView }) => {
-  if (!bill.product) return "no product in bill"
+  const product = bill.products[0]!.product
+  const value = getBillValue(bill)
+  if (!product) return "no product in bill"
 
   return (
     <Card key={bill.id}>
       <CardHeader>
-        <Link href={`/product/${bill.product.id}`}>
-          <CardTitle>{bill.product.title}</CardTitle>
+        <Link href={`/product/${product.id}`}>
+          <CardTitle>{product.title}</CardTitle>
         </Link>
-        <CardDescription>{bill.product.description}</CardDescription>
+        <CardDescription>{product.description}</CardDescription>
       </CardHeader>
 
       <CardContent>
-        <div>price: {bill.price}</div>
-        <div>count: {bill.productCount}</div>
+        <div>value: {value}</div>
       </CardContent>
 
       <CardFooter>
