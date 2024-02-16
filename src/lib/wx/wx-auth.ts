@@ -3,13 +3,13 @@ import fetch from "node-fetch"
 import { getServerAuthSession } from "../auth"
 import crypto from "crypto"
 import {
-  WX_PROVIDER,
+  WX_PROVIDER_ID,
   WX_REDIRECT_URL,
   WX_AUTH_URL,
-  WX_ACCESS_URL,
+  WX_ACCESS_TOKEN_URL,
   WX_REGULAR_ACCESS_TOKEN_URL,
   wxApp,
-} from "@/lib/wx/config"
+} from "@/lib/wechat/config"
 import { GetAccessTokenResponse } from "./schema"
 import singletonTokenInstance from "./singleton-token"
 
@@ -27,7 +27,7 @@ export const bindWxOpenIdToUser = async (openId: string) => {
   const existingAccount = await prisma.account.findUnique({
     where: {
       provider_providerAccountId: {
-        provider: WX_PROVIDER,
+        provider: WX_PROVIDER_ID,
         providerAccountId: openId,
       },
     },
@@ -46,7 +46,7 @@ export const bindWxOpenIdToUser = async (openId: string) => {
 
   const createdAccount = await prisma.account.create({
     data: {
-      provider: WX_PROVIDER,
+      provider: WX_PROVIDER_ID,
       providerAccountId: openId,
       type: "oauth",
       user: {
@@ -65,7 +65,7 @@ export const bindWxOpenIdToUser = async (openId: string) => {
  * @returns 用户微信openid
  */
 export const getOpenId = async (code: string) => {
-  const requestUrl = `${WX_ACCESS_URL}?appid=${wxApp.appId}&secret=${wxApp.appSecret}&code=${code}&grant_type=authorization_code`
+  const requestUrl = `${WX_ACCESS_TOKEN_URL}?appid=${wxApp.appId}&secret=${wxApp.appSecret}&code=${code}&grant_type=authorization_code`
 
   const response = await fetch(requestUrl)
   if (!response.ok) {
