@@ -2,9 +2,6 @@
  * @see: https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html
  */
 
-export const WECHAT_AUTHORIZATION_DOC_URL =
-  "https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html"
-
 import { env } from "@/env"
 import { ISubscribeNotifyTemplate, IWxApp } from "./schema"
 
@@ -17,13 +14,16 @@ export const WX_REDIRECT_URL = env.NEXT_PUBLIC_APP_URL + "/wx-auth"
 console.log("[wx]: ", { WX_REDIRECT_URL })
 
 export const WX_API_URL = "https://api.weixin.qq.com"
+export const WX_AUTH_DOC_URL =
+  "https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html"
+
 export const WX_GET_CODE_URL =
   "https://open.weixin.qq.com/connect/oauth2/authorize"
-
 export const WX_GET_ACCESS_TOKEN_URL = WX_API_URL + "/sns/oauth2/access_token"
+export const WX_GET_USER_INFO_URL = WX_API_URL + "/sns/userinfo"
+
 export const WX_REFRESH_ACCESS_TOKEN_URL =
   WX_API_URL + "/sns/oauth2/refresh_token"
-export const WX_GET_USER_INFO_URL = WX_API_URL + "/sns/userinfo"
 export const WX_VALIDATE_ACCESS_TOKEN_URL = WX_API_URL + "/sns/auth"
 
 // 基本鉴权，获取推送订阅消息的access token的接口

@@ -13,6 +13,14 @@ import { IUserListView } from "@/schema/user.base"
 import { userMainViewSchema } from "@/schema/user"
 import { DefaultJWT } from "next-auth/jwt"
 import { LOG_AUTH_ENABLED } from "@/config"
+import {
+  WX_GET_ACCESS_TOKEN_URL,
+  WX_GET_CODE_URL,
+  WX_GET_USER_INFO_URL,
+  WX_REDIRECT_URL,
+} from "@/lib/wx/config"
+import { env } from "@/env"
+import { WxAuthScope } from "@/lib/wx/utils"
 
 export type SessionError = "NoPhone" | "NoUserInDB"
 
@@ -51,7 +59,7 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   pages: {
-    signIn: "/intro",
+    // signIn: "/intro",
   },
 
   session: {
@@ -213,6 +221,76 @@ export const authOptions: NextAuthOptions = {
      */
   ],
 }
+
+/**
+ * ref: https://github.com/nextauthjs/next-auth/issues/5937
+ */
+authOptions.providers.push({
+  id: "wechat-web",
+  name: "Wechat Web",
+  type: "oauth",
+  clientId: env.NEXT_PUBLIC_WX_APP_ID,
+  clientSecret: env.WX_APP_SECRET,
+  userinfo: {
+    url: "https://api.weixin.qq.com/sns/userinfo",
+    async request({ client, provider, tokens }) {
+      const url = new URL((provider.userinfo as any).url)
+      url.search = new URLSearchParams({
+        ...(provider.userinfo as any).params,
+        access_token: tokens.access_token,
+        openid: tokens.openid,
+      } as Record<string, string>).toString()
+
+      const r = await fetch(url).then((v) => v.json())
+      // as SnsUserInfoResponse;
+      return {
+        sub: r.openid,
+        name: r.nickname,
+        image: r.headimgurl,
+        ...r,
+      }
+    },
+  },
+  authorization: {
+    // `https://open.weixin.qq.com/connect/qrconnect?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect`
+    url: `https://open.weixin.qq.com/connect/oauth2/authorize#wechat_redirect`,
+    params: {
+      appid: env.NEXT_PUBLIC_WX_APP_ID,
+      response_type: "code",
+      scope: WxAuthScope.info,
+      redirect_url: encodeURIComponent(WX_REDIRECT_URL),
+      state: "",
+      forcePopup: true,
+    },
+  },
+  token: {
+    // https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code
+    url: "https://api.weixin.qq.com/sns/oauth2/access_token",
+    params: {
+      appid: env.NEXT_PUBLIC_WX_APP_ID,
+      secret: env.WX_APP_SECRET,
+      grant_type: "authorization_code",
+    },
+    async request({ provider, client, params, checks }) {
+      const url = new URL((provider.token as any).url)
+      url.search = new URLSearchParams(
+        params as Record<string, string>,
+      ).toString()
+      const r = await fetch(url).then((v) => v.json())
+      // as SnsOAuth2AccessTokenResponse;
+      return { tokens: { ...r } }
+    },
+  },
+  profile(profile, tokens) {
+    console.log("[wx-auth]: ", { profile, tokens })
+    return {
+      ...profile,
+      id: profile.openid,
+    }
+  },
+  // not checked yet, i don't know how
+  checks: ["state"],
+})
 
 /**
  * Wrapper for `getServerSession` so that you don't need to import the `authOptions` in every file.

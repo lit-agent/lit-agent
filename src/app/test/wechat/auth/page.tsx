@@ -8,7 +8,7 @@ import SubPage from "@/components/sub-page"
 import { BrowserEnvironmentComp } from "@/components/_universal/browser"
 
 import { getWechatLoginUrl, WxAuthScope } from "@/lib/wx/utils"
-import { WECHAT_AUTHORIZATION_DOC_URL } from "@/lib/wx/config"
+import { WX_AUTH_DOC_URL } from "@/lib/wx/config"
 
 export default function TestWechatAuthPage() {
   const user = useUser()
@@ -42,11 +42,8 @@ export default function TestWechatAuthPage() {
 
         <div className={"text-xs inline-flex"}>
           ref:
-          <Link
-            href={WECHAT_AUTHORIZATION_DOC_URL}
-            className={"truncate italic"}
-          >
-            {WECHAT_AUTHORIZATION_DOC_URL}
+          <Link href={WX_AUTH_DOC_URL} className={"truncate italic"}>
+            {WX_AUTH_DOC_URL}
           </Link>
         </div>
       </VerticalContainer>
