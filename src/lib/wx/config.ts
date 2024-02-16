@@ -9,6 +9,7 @@ import { env } from "@/env"
 import { ISubscribeNotifyTemplate, IWxApp } from "./schema"
 
 export const WX_APP_ID = env.NEXT_PUBLIC_WX_APP_ID
+export const WX_APP_SECRET = env.WX_APP_SECRET
 export const WX_PROVIDER_ID = "wechat"
 
 // 微信强制绝对地址

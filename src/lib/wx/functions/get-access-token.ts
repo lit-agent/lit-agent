@@ -1,5 +1,4 @@
-import { WX_ACCESS_TOKEN_URL, WX_APP_ID } from "@/lib/wx/config"
-import { env } from "@/env"
+import { WX_ACCESS_TOKEN_URL, WX_APP_ID, WX_APP_SECRET } from "@/lib/wx/config"
 
 import { WxRes } from "@/lib/wx/functions/_general"
 
@@ -18,8 +17,10 @@ export const getWxAccessToken = async (
 ): Promise<WxRes<IGetWxAccessTokenRes>> => {
   const res = await fetch(
     WX_ACCESS_TOKEN_URL +
-      `?appid=${WX_APP_ID}&secret=${env.WX_APP_SECRET}&code=${code}&grant_type=authorization_code`,
+      `?appid=${WX_APP_ID}&secret=${WX_APP_SECRET}&code=${code}&grant_type=authorization_code`,
   )
+  console.log("[wx] getWechatAccessToken res: ", res)
+
   const data = await res.json()
   console.log("[wx] getWechatAccessToken: ", data)
 
