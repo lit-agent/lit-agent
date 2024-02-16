@@ -12,10 +12,8 @@ export const WX_APP_ID = env.NEXT_PUBLIC_WX_APP_ID
 export const WX_PROVIDER_ID = "wechat"
 
 // 微信强制绝对地址
-export const WX_REDIRECT_URL =
-  // env.NEXT_PUBLIC_APP_URL +
-  "/wx-auth"
-// console.log({ WX_REDIRECT_URL })
+export const WX_REDIRECT_URL = env.NEXT_PUBLIC_APP_URL + "/wx-auth"
+console.log("[wx]: ", { WX_REDIRECT_URL })
 
 export const WX_API_URL = "https://api.weixin.qq.com"
 export const WX_BIN_URL = WX_API_URL + "/cgi-bin"
