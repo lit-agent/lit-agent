@@ -1,3 +1,5 @@
+.env.production
+
 # 用户上传的文件，不要加入git
 public/uploaded
 
