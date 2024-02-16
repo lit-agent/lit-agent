@@ -60,7 +60,9 @@ export const ActionEntrance = () => {
             setOpen(false)
           }}
         >
-          <Button className={"w-full"}>管理订单</Button>
+          <Button className={"w-full"} disabled>
+            管理订单
+          </Button>
         </Link>
       </DialogContent>
     </Dialog>

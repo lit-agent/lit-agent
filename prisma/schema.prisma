@@ -63,7 +63,7 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-// user 购买 product，会形成 bill
+// 兑换的服务
 model Bill {
   id        String   @id @default(cuid())
   createdAt DateTime @updatedAt
@@ -72,16 +72,20 @@ model Bill {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  status BillStatus @default(PAID)
-
-  type BillType @default(FIRE)
+  // 最终都是兑换成火币购买
+  // type BillType @default(FIRE)
 
   // SKU
   products ProductInBill[]
-  // 总消费
-  value    Int
+  // 总消费（由products算出来）
+  // value    Int
 
   // userActions UserAction[]
+  payment Payment?
+
+  status BillStatus
+
+  consumed DateTime?
 }
 
 // 不要轻易改动enum的值，会导致表爆炸💥
@@ -159,9 +163,29 @@ model Message {
   isAI Boolean @default(false)
 }
 
+model Payment {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  // 按人民币分算
+  value  Int
+  status PaymentStatus
+
+  // 可能是和一个bill有关
+  bill   Bill?   @relation(fields: [billId], references: [id], onDelete: Cascade)
+  billId String? @unique
+
+  // 跳转支付
+  url String
+}
+
 enum PaymentStatus {
   // --- non-final
-
+  NOT_CREATED_YET
   CREATING
   CREATED
 
@@ -184,6 +208,7 @@ enum PaymentStatus {
 
   // 南川@2024-02-14
   PAY_ERROR
+  TIMEOUT
 }
 
 // 博主发布的产品
@@ -217,8 +242,6 @@ model Product {
 }
 
 model ProductInBill {
-  id String @id @default(cuid())
-
   product   Product @relation(fields: [productId], references: [id])
   productId String
 
@@ -228,6 +251,8 @@ model ProductInBill {
 
   bill   Bill   @relation(fields: [billId], references: [id], onDelete: Cascade)
   billId String
+
+  @@id([billId, productId])
 }
 
 model Room {
@@ -363,6 +388,7 @@ model User {
   balance           Int @default(0)
 
   validations Validation[]
+  Payment     Payment[]
 }
 
 // model UserAction {

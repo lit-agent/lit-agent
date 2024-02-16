@@ -1,6 +1,7 @@
 import { getToken } from "next-auth/jwt"
 import { withAuth } from "next-auth/middleware"
 import { NextResponse } from "next/server"
+import { LOG_AUTH_ENABLED } from "@/config"
 
 export default withAuth(
   async function middleware(req) {
@@ -13,15 +14,16 @@ export default withAuth(
     const isLoggingIn = nextPath.startsWith("/intro")
     const isValidating = nextPath.startsWith("/validation")
 
-    // console.debug("[Next-Auth Middleware]: ", {
-    //   url: req.url,
-    //   referer: req.referrer,
-    //   nextPath,
-    //   // req,
-    //   token,
-    //   isLoggingIn,
-    //   isValidating,
-    // })
+    if (LOG_AUTH_ENABLED)
+      console.debug("[Next-Auth Middleware]: ", {
+        url: req.url,
+        referer: req.referrer,
+        nextPath,
+        // req,
+        token,
+        isLoggingIn,
+        isValidating,
+      })
 
     // 没有 token 且不在登录页，重定向到登录页
     if (!token && !isLoggingIn) return redirect("/intro")

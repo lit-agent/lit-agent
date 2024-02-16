@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db"
 import { JIUGU_PHONE, JIUGU_ID, JIUGU_CODE } from "@/config"
 import { SMS_PROVIDER_ID } from "@/lib/sms"
+import { UserType } from "@prisma/client"
 
 const init = async () => {
   const phone = JIUGU_PHONE
@@ -12,6 +13,8 @@ const init = async () => {
       data: {
         id: JIUGU_ID,
         phone,
+        validated: true,
+        type: UserType.blogger,
         accounts: {
           create: [
             {

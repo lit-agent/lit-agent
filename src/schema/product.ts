@@ -6,6 +6,7 @@ import ProductDefaultArgs = Prisma.ProductDefaultArgs
 import ProductGetPayload = Prisma.ProductGetPayload
 import UserProductDefaultArgs = Prisma.UserProductDefaultArgs
 import UserProductGetPayload = Prisma.UserProductGetPayload
+import { billListViewSchema } from "@/schema/bill"
 
 export const createProductSchema = z.object({
   title: z.string(),
@@ -27,11 +28,7 @@ export const productListViewSchema = validator<ProductDefaultArgs>()({
     fromUser: userListViewSchema,
     bills: {
       include: {
-        bill: {
-          include: {
-            user: userListViewSchema,
-          },
-        },
+        bill: billListViewSchema,
       },
     },
   },

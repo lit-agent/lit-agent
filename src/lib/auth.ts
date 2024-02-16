@@ -12,6 +12,7 @@ import { SMS_PROVIDER_ID } from "@/lib/sms"
 import { IUserListView } from "@/schema/user.base"
 import { userMainViewSchema } from "@/schema/user"
 import { DefaultJWT } from "next-auth/jwt"
+import { LOG_AUTH_ENABLED } from "@/config"
 
 export type SessionError = "NoPhone" | "NoUserInDB"
 
@@ -82,34 +83,34 @@ export const authOptions: NextAuthOptions = {
       profile,
       isNewUser,
     }) => {
-      console.log(
-        `[auth.jwt] user(id=${token.sub}, phone=${token.phone}, name=${token.name}, validated=${token.validated})`,
-      )
-      // console.log("[auth.jwt]: ", { token, user, session, account, profile })
-
       // token 是加解密可信安全的，不用担心被篡改！
 
       if (token.sub) token.id = token.sub
 
+      let userInDB
+      let status = ""
       if (user) token = { ...token, phone: user.phone, validated: false }
       // afterwards
       else if (token.phone) {
         // 首次更新token
-        const userInDB = await prisma.user.findUnique({
+        userInDB = await prisma.user.findUnique({
           where: { phone: token.phone },
         })
         if (!userInDB) {
           token.expiresIn = Date.now() / 1e3
           token.error = "NoUserInDB"
-          console.debug("[auth.jwt] updated(invalidating): ", {
-            userInDB,
-            token,
-          })
+          status = "invalidated"
+          // console.debug("[auth.jwt] updated(invalidating): ", { userInDB, token, })
         } else if (userInDB.validated) {
           token.validated = true
-          console.debug("[auth.jwt] updated(validated): ", { userInDB, token })
+          status = "validated"
+        } else {
+          status = "ok"
         }
       }
+
+      if (LOG_AUTH_ENABLED)
+        console.debug(`[auth.jwt]: `, { status, user, userInDB, token })
 
       return token
     },
@@ -128,13 +129,14 @@ export const authOptions: NextAuthOptions = {
      * @param newSession
      */
     session: async ({ session, user, token, trigger, newSession }) => {
-      console.debug("[auth.session]: ", {
-        session,
-        user,
-        token,
-        newSession,
-        trigger,
-      })
+      if (LOG_AUTH_ENABLED)
+        console.debug("[auth.session]: ", {
+          session,
+          user,
+          token,
+          newSession,
+          trigger,
+        })
 
       if (token.sub) {
         session.user = { ...session.user, ...token }
@@ -158,7 +160,8 @@ export const authOptions: NextAuthOptions = {
        * 登录的时候会调用这个函数，返回的结果会存入 jwt 回调的 user 内
        */
       authorize: async (credentials) => {
-        console.log("[Auth] authorizing: ", credentials)
+        if (LOG_AUTH_ENABLED) console.log("[Auth] authorizing: ", credentials)
+
         if (!credentials) throw new Error("验证信息不能为空（1）！")
 
         const { phone, code } = credentials
@@ -176,7 +179,8 @@ export const authOptions: NextAuthOptions = {
             user: userMainViewSchema,
           },
         })
-        console.log("[sms] account: ", account)
+
+        if (LOG_AUTH_ENABLED) console.log("[sms] account: ", account)
 
         if (
           // 不存在

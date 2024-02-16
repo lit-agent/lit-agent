@@ -33,3 +33,5 @@ export class UnexpectedError extends Error {
     super("UnexpectedError")
   }
 }
+
+export const LOG_AUTH_ENABLED = false

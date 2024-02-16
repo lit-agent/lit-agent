@@ -7,6 +7,15 @@
 
 ## Tech
 
+### 支付逻辑
+
+1. 用户点击 product 的购买，生成一个 bill，拿着bill的id，生成 payment 页
+	1. 支付成功后标记bill成功，重定向到兑换页
+	2. 支付失败后点击重试按钮，或者刷新页面，将重新基于bill生成新的 payment 页
+2. 用户点击 火值 购买，生成一个 bill，拿着bill的id，生成 payment 页
+	1. 用户火值足够，购买后标记bill成功，重定向到兑换页
+	2. 用户火值不够，xxx
+
 ### server side HMR persist
 
 use `global`, like this:

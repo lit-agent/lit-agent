@@ -9,8 +9,7 @@ import {
   userProductListViewSchema,
 } from "@/schema/product"
 import { z } from "zod"
-import { $Enums } from ".prisma/client"
-import RedeemType = $Enums.RedeemType
+import { $Enums, BillStatus } from ".prisma/client"
 import { MessageType } from "@/schema/message.base"
 import { pusherServer } from "@/lib/socket/config"
 import { SocketEventType } from "@/lib/socket/events"
@@ -95,12 +94,12 @@ export const productRouter = createTRPCRouter({
       z.object({
         productId: z.string(),
         productCount: z.number(),
-        redeemType: z.nativeEnum(RedeemType),
+        // type: z.nativeEnum(BillType),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.user.id
-      const { productId, productCount, redeemType } = input
+      const { productId, productCount } = input
 
       const user = await prisma.user.findUnique({ where: { id: ctx.user.id } })
       if (!user) return { success: false, message: "用户不存在！" }
@@ -110,12 +109,12 @@ export const productRouter = createTRPCRouter({
       })
       if (!product) return { success: false, message: "商品不存在！" }
 
+      if (product.total < productCount)
+        return { success: false, message: "商品库存不足！" }
+
       const cost = productCount * product.price
 
       if (user.balance < cost) return { success: false, message: "余额不足！" }
-
-      if (product.total < productCount)
-        return { success: false, message: "商品库存不足！" }
 
       let bill
       await prisma.$transaction(async (prisma) => {
@@ -135,10 +134,17 @@ export const productRouter = createTRPCRouter({
         bill = await prisma.bill.create({
           data: {
             userId,
-            productId,
-            productCount,
-            price: product.price,
-            redeemType,
+            // type,
+            status: BillStatus.PAID,
+            products: {
+              create: [
+                {
+                  productId,
+                  count: 1,
+                  price: product.price,
+                },
+              ],
+            },
           },
         })
 

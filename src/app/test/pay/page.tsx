@@ -6,7 +6,8 @@ import { nanoid } from "nanoid"
 import { useRunningEnvironment } from "@/hooks/use-running-environment"
 import { No, Yes } from "@/components/_universal/icons"
 import { createPrepayAction } from "@/lib/pay/actions"
-import { JumpPayPage } from "@/components/pay"
+
+import { JumpPayPage } from "@/components/pay/pay-page"
 
 export default function TestPayPage() {
   const { isWechat, isMobile } = useRunningEnvironment()

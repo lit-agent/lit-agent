@@ -2,52 +2,46 @@
 import { nanoid } from "nanoid"
 import { RETURN_URL, terminal } from "@/lib/pay/config"
 import { fetchShouqianba } from "@/lib/pay/utils"
-import {
-  JumpPayRequest,
-  PaymentOtherStatus,
-  PayOrderFinalStatus,
-} from "@/lib/pay/schema"
+import { JumpPayRequest, PaymentOtherStatus } from "@/lib/pay/schema"
 import { genPayUrlAction, queryAction } from "@/lib/pay/business"
 import { UnexpectedError } from "@/config"
 import { pusherServer } from "@/lib/socket/config"
 import { SocketEventType } from "@/lib/socket/events"
+import { prisma } from "@/lib/db"
+import { PaymentStatus } from "@prisma/client"
+import { api } from "@/lib/trpc/server"
 
 // server-side HMR, ref: https://chat.openai.com/c/8491eba2-9f95-4926-9b20-f6ffaa9e6915
 if (!global.data) {
   global.data = {
-    intervals: {},
+    cancelled: new Set<string>(),
   }
 }
-const persistedData = global.data
+const persistedData: { cancelled: Set<string> } = global.data
 
 export async function cancelJob(id: string) {
   console.log(
-    `cancelled job(id=${id}), current intervals: `,
-    Object.keys(persistedData.intervals),
+    `cancelling job(id=${id}), current: ${persistedData.cancelled.size}`,
   )
-  if (id in persistedData.intervals) {
-    clearInterval(persistedData.intervals[id])
-    delete persistedData.intervals[id]
-  }
-  return
+  persistedData.cancelled.add(id)
 }
 
 /**
  * C扫B场景 ✅
  * 需要生成一个二维码，然后手机微信扫码支付
  */
-export async function createInvoiceAction({
-  billId,
+export async function createPaymentAction({
+  paymentId,
   subject = "Redeem",
   total_amount,
   userId,
 }: {
-  billId?: string
+  paymentId?: string
   total_amount: number
   subject?: string
   userId: string
 }) {
-  const id = billId ?? nanoid()
+  const id = paymentId ?? nanoid()
 
   const params: JumpPayRequest = {
     client_sn: id,
@@ -60,9 +54,17 @@ export async function createInvoiceAction({
 
   const url = genPayUrlAction(params)
   const startTime = Date.now()
-  console.log("-- res: ", { id: id, url, startTime })
+  console.debug("[sqb] created payment: ", { id, url, startTime })
 
   const f = async () => {
+    // 收到客户端的取消命令
+    if (persistedData.cancelled.has(id)) {
+      persistedData.cancelled.delete(id)
+      return pusherServer.trigger(id, SocketEventType.Payment, {
+        order_status: PaymentStatus.CANCELED,
+      })
+    }
+
     const t = (Date.now() - startTime) / 1e3
     // 6分钟后关闭轮询
     if (t > 360)
@@ -75,7 +77,10 @@ export async function createInvoiceAction({
 
     try {
       const { data } = await queryAction(id)
-      console.log(`[sqb] (${t.toFixed(2)}:${t2.toFixed(2)}s) queried: `, data)
+      console.log(`[sqb] (${t.toFixed(2)}:${t2.toFixed(2)}s) queried: `, {
+        id,
+        data,
+      })
 
       // 订单号不存在（还没开始创建）
       if (!data) return setTimeout(f, delay)
@@ -84,20 +89,24 @@ export async function createInvoiceAction({
 
       // 推给前端
       await pusherServer.trigger(id, SocketEventType.Payment, data)
+      await prisma.payment.update({
+        where: { id: paymentId },
+        data: { status },
+      })
 
       switch (status) {
         // 订单已创建，但还在等待
-        case PaymentOtherStatus.CREATED:
+        case PaymentStatus.CREATED:
           return setTimeout(f, delay)
 
         // 其他状态，基本都是终态
-        case PayOrderFinalStatus.CANCELED:
-        case PayOrderFinalStatus.REFUNDED:
-        case PayOrderFinalStatus.PAY_CANCELED:
-        case PayOrderFinalStatus.PARTIAL_REFUNDED:
+        case PaymentStatus.CANCELED:
+        case PaymentStatus.REFUNDED:
+        case PaymentStatus.PAY_CANCELED:
+        case PaymentStatus.PARTIAL_REFUNDED:
           return
 
-        case PayOrderFinalStatus.PAID:
+        case PaymentStatus.PAID:
           return
 
         default:

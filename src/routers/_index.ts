@@ -6,6 +6,7 @@ import { taskRouter } from "@/routers/task"
 import { productRouter } from "./product"
 import { billRouter } from "@/routers/bill"
 import { wechatRouter } from "@/routers/wechat"
+import { payRouter } from "@/routers/pay"
 
 /**
  * This is the primary router for your server.
@@ -20,6 +21,7 @@ export const appRouter = createTRPCRouter({
   task: taskRouter,
   product: productRouter,
   bill: billRouter,
+  pay: payRouter,
   wechat: wechatRouter,
 })
 
