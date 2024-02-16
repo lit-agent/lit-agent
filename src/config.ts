@@ -6,6 +6,7 @@ import { env } from "./env"
 export const JIUGU_ID = "jiugu"
 export const JIUGU_AI_NAME = "玖姑的AI助手"
 export const JIUGU_PHONE = "13121363847"
+export const JIUGU_CODE = "000000"
 export const jiuguAvatar: IUserAvatar = {
   id: JIUGU_ID,
   image: "/image/user/jiugu-avatar.png",
