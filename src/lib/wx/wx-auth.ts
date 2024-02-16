@@ -21,8 +21,7 @@ export const getWxAuthUrl = async () => {
     throw new Error("Fail to get userId")
   }
   const userId = session?.user?.id
-  const requestParam = `appid=${wxApp.appId}&redirect_uri=${WX_REDIRECT_URL}&response_type=code&scope=snsapi_base&state=${userId}#wechat_redirect`
-  const wxAuthUrl = `${WX_AUTH_URL}?${requestParam}`
+  const wxAuthUrl = `${WX_AUTH_URL}?$appid=${wxApp.appId}&redirect_uri=${WX_REDIRECT_URL}&response_type=code&scope=snsapi_base&state=${userId}#wechat_redirect`
   console.log("[wx]: ", { wxAuthUrl })
   return wxAuthUrl
 }

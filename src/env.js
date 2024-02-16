@@ -45,7 +45,6 @@ export const env = createEnv({
     PAY_VENDOR_KEY: z.string(),
     PAY_TERMINAL_SN: z.string(),
     PAY_TERMINAL_KEY: z.string(),
-    WX_APP_ID: z.string(),
     WX_APP_SECRET: z.string(),
   },
 
@@ -64,6 +63,8 @@ export const env = createEnv({
 
     NEXT_PUBLIC_PAY_APP_DOMAIN: z.string(),
     NEXT_PUBLIC_PAY_QR_DOMAIN: z.string(),
+
+    NEXT_PUBLIC_WX_APP_ID: z.string(),
   },
 
   /**
@@ -100,7 +101,7 @@ export const env = createEnv({
     NEXT_PUBLIC_PAY_APP_DOMAIN: process.env.NEXT_PUBLIC_PAY_APP_DOMAIN,
     NEXT_PUBLIC_PAY_QR_DOMAIN: process.env.NEXT_PUBLIC_PAY_QR_DOMAIN,
 
-    WX_APP_ID: process.env.WX_APP_ID,
+    NEXT_PUBLIC_WX_APP_ID: process.env.NEXT_PUBLIC_WX_APP_ID,
     WX_APP_SECRET: process.env.WX_APP_SECRET,
   },
   /**
