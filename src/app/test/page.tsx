@@ -16,7 +16,9 @@ export default function TestPage() {
 
       <ButtonLink href={"/test/pay"}>Pay</ButtonLink>
 
-      <ButtonLink href={"/test/wechat"}>wechat</ButtonLink>
+      <ButtonLink href={"/test/wechat/auth"}>Wechat Auth</ButtonLink>
+
+      <ButtonLink href={"/test/wechat/pusher"}>Wechat Pusher</ButtonLink>
     </VerticalContainer>
   )
 }

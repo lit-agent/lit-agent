@@ -13,19 +13,6 @@ import {
 import { GetAccessTokenResponse } from "./schema"
 import singletonTokenInstance from "./singleton-token"
 
-// 获取微信获取用户信息授权url
-export const getWxAuthUrl = async () => {
-  console.log("-- enter into getWxAuthUrl")
-  const session = await getServerAuthSession()
-  if (!session?.user?.id) {
-    throw new Error("Fail to get userId")
-  }
-  const userId = session?.user?.id
-  const wxAuthUrl = `${WX_AUTH_URL}?$appid=${wxApp.appId}&redirect_uri=${WX_REDIRECT_URL}&response_type=code&scope=snsapi_base&state=${userId}#wechat_redirect`
-  console.log("[wx]: ", { wxAuthUrl })
-  return wxAuthUrl
-}
-
 /**
  * 将微信openid关联至已存在的用户账号
  * @param userId 用户id
