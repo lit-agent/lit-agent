@@ -1,5 +1,3 @@
-"use server"
-
 import { getWxAccessToken } from "@/lib/wx/functions/get-access-token"
 import { refreshWxAccessToken } from "@/lib/wx/functions/refresh-access-token"
 import {

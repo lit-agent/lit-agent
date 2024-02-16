@@ -12,14 +12,17 @@ export const WX_APP_ID = env.NEXT_PUBLIC_WX_APP_ID
 export const WX_PROVIDER_ID = "wechat"
 
 // 微信强制绝对地址
-export const WX_REDIRECT_URL = env.NEXT_PUBLIC_APP_URL + "/wx-auth"
-console.log({ WX_REDIRECT_URL })
+export const WX_REDIRECT_URL =
+  // env.NEXT_PUBLIC_APP_URL +
+  "/wx-auth"
+// console.log({ WX_REDIRECT_URL })
 
 export const WX_API_URL = "https://api.weixin.qq.com"
 export const WX_BIN_URL = WX_API_URL + "/cgi-bin"
 export const WX_SNS_URL = WX_API_URL + "/sns"
 export const WX_USER_INFO_URL = WX_SNS_URL + "/userinfo"
-export const WX_OAUTH_URL = WX_SNS_URL + "/oauth2"
+export const WX_OAUTH_URL =
+  "https://open.weixin.qq.com/connect/oauth2/authorize"
 
 // access token 用于 auth 的各个环节
 export const WX_ACCESS_TOKEN_URL = WX_OAUTH_URL + "/access_token"
