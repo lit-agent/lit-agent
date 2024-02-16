@@ -2,10 +2,11 @@ import {
     createTRPCRouter,
     protectedProcedure,
   } from "@/lib/trpc/trpc"
-import { bindWxOpenIdToUser, getOpenId, getWxAuthUrl, getWxAccessToken } from "@/lib/wx/wx-auth"
+import { bindWxOpenIdToUser, getOpenId, getWxAuthUrl, sign } from "@/lib/wx/wx-auth"
 import { sendSubscribeNotify } from "@/lib/wx/wx-notify"
 import { SubscribeNotifySchema, ISubscribeNotifyTemplate } from "@/lib/wx/schema"
 import { z } from "zod"
+import singletonTokenInstance from "@/lib/wx/singleton-token"
 
 export const wechatRouter = createTRPCRouter({
 
@@ -30,9 +31,15 @@ export const wechatRouter = createTRPCRouter({
         return await sendSubscribeNotify(input.openId, input.accessToken, input.notifyData);
     }),
 
-    getWxAccessToken: protectedProcedure
+    getWxGeneralAccessToken: protectedProcedure
     .query(async ({ ctx, input}) => {
-        return await getWxAccessToken();
+        return singletonTokenInstance.getGeneralAccessToken();
+    }),
+
+    getWxJsApiToken: protectedProcedure
+    .input(z.object({  url: z.string() }))
+    .query(async ({ ctx, input}) => {
+        return sign(input.url);
     }),
 
 })
