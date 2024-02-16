@@ -9,6 +9,15 @@ import { TODO } from "@/config"
 import { UserAvatar } from "@/components/user/user-avatar"
 import { Button } from "@/components/ui/button"
 import { FireIcon } from "@/lib/assets"
+import { useState } from "react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { FireValue } from "@/components/_universal/fire-value"
 
 export const BottomActions = ({
   id,
@@ -30,6 +39,8 @@ export const BottomActions = ({
   const createBill = api.bill.create.useMutation()
   const redeemBill = api.bill.redeem.useMutation()
   const router = useRouter()
+  const [shouldCharge, setShouldCharge] = useState(false)
+  const [diff, setDiff] = useState(0)
 
   const onRedeemProduct = async () => {
     if (!product) return
@@ -38,6 +49,7 @@ export const BottomActions = ({
       productId: product.id,
       productPrice: product.price,
     })
+
     const res = await redeemBill.mutateAsync({ billId: bill.id })
     if (res.success) {
       toast.success("购买成功！")
@@ -45,12 +57,37 @@ export const BottomActions = ({
       utils.bill.invalidate()
       router.push(`/bill/list`)
     } else {
-      toast.error(`购买失败，原因：${res.message}`)
+      setShouldCharge(true)
+      setDiff(res.data!.diff)
+      // toast.error(`购买失败，原因：${res.message}`)
     }
   }
+  const charges = [1, 10, 100]
 
   return (
     <div className={"shrink-0 flex items-center justify-between gap-6 p-2"}>
+      <Dialog open={shouldCharge} onOpenChange={setShouldCharge}>
+        <DialogContent className={"max-w-[80%]"}>
+          <DialogHeader>
+            <DialogTitle>充值提醒</DialogTitle>
+            <DialogDescription
+              className={"break-all items-center flex flex-col py-2"}
+            >
+              <span className={"inline-block items-center gap-1"}>
+                您还需 <FireValue value={diff} /> 方可以兑换玖姑的：
+              </span>
+              <span className={"text-primary text-lg"}>{product!.title}</span>
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className={"grid grid-cols-3 gap-4"}>
+            {charges.map((charge) => {
+              return <Button key={charge}>{charge}</Button>
+            })}
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <div
         onClick={() => {
           toast.info(TODO)

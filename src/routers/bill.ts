@@ -43,6 +43,7 @@ export const billRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.user.id
       const { billId } = input
+      let data = { diff: 0 }
 
       try {
         const user = await prisma.user.findUniqueOrThrow({
@@ -56,7 +57,8 @@ export const billRouter = createTRPCRouter({
         await prisma.$transaction(async (prisma) => {
           // 更新用户的钱
           const cost = sum(bill.products.map((p) => p.price * p.count))
-          if (cost > user.balance) throw new Error("火值不足！")
+          data.diff = cost - user.balance
+          if (data.diff > 0) throw new Error("火值不足！")
           await prisma.user.update({
             where: { id: userId },
             data: { balance: { decrement: cost } },
@@ -108,7 +110,11 @@ export const billRouter = createTRPCRouter({
         })
         return { success: true }
       } catch (e) {
-        return { success: false, message: (e as { message: string }).message }
+        return {
+          success: false,
+          message: (e as { message: string }).message,
+          data,
+        }
       }
     }),
 
