@@ -4,12 +4,12 @@ import { RETURN_URL, terminal } from "@/lib/pay/config"
 import { fetchShouqianba } from "@/lib/pay/utils"
 import { JumpPayRequest, PaymentOtherStatus } from "@/lib/pay/schema"
 import { genPayUrlAction, queryAction } from "@/lib/pay/business"
-import { UnexpectedError } from "@/config"
 import { pusherServer } from "@/lib/socket/config"
 import { SocketEventType } from "@/lib/socket/events"
 import { prisma } from "@/lib/db"
 import { PaymentStatus } from "@prisma/client"
 import { api } from "@/lib/trpc/server"
+import { UnexpectedError } from "@/schema/errors"
 
 // server-side HMR, ref: https://chat.openai.com/c/8491eba2-9f95-4926-9b20-f6ffaa9e6915
 if (!global.data) {

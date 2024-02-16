@@ -4,12 +4,12 @@ import { PayDetail } from "@/components/pay/pay-detail"
 import { PayStep } from "@/components/pay/pay-step"
 import { useEffect } from "react"
 import { api } from "@/lib/trpc/react"
-import { UnexpectedError } from "@/config"
 import { useRedeemProduct } from "@/hooks/use-product"
 import { useCreatePayment, usePaymentStatus } from "@/hooks/use-payment"
 import { PaymentStatus } from "@prisma/client"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import { UnexpectedError } from "@/schema/errors"
 
 export const JumpPayComp = ({
   paymentUrl,

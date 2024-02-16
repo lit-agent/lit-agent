@@ -8,7 +8,9 @@ import { Label } from "@/components/ui/label"
 import SubPage from "@/components/sub-page"
 import { BrowserEnvironmentComp } from "@/components/_universal/browser"
 
-export default function Page() {
+import { WECHAT_AUTHORIZATION_DOC_URL } from "@/lib/wechat/const"
+
+export default function TestWechatAuthPage() {
   const user = useUser()
   const userId = user?.id
 
@@ -38,12 +40,10 @@ export default function Page() {
         <div className={"text-xs inline-flex"}>
           ref:
           <Link
-            href={
-              "https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html"
-            }
+            href={WECHAT_AUTHORIZATION_DOC_URL}
             className={"truncate italic"}
           >
-            https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html
+            {WECHAT_AUTHORIZATION_DOC_URL}
           </Link>
         </div>
       </VerticalContainer>

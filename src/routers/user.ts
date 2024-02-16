@@ -74,8 +74,10 @@ export const userRouter = createTRPCRouter({
   }),
 
   getSelf: protectedProcedure.query(async ({ ctx, input }) => {
+    const userId = ctx.user.id
+    console.log("[getSelf]: ", { userId })
     return prisma.user.findUniqueOrThrow({
-      where: { id: ctx.user.id },
+      where: { id: userId },
       ...userMainViewSchema,
     })
   }),

@@ -7,9 +7,9 @@ import {
 import { LoaderIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { UnexpectedError } from "@/config"
 
 import { PayScan } from "@/components/pay/pay-scan"
+import { UnexpectedError } from "@/schema/errors"
 
 export const PayDetail = ({
   url,

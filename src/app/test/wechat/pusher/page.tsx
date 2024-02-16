@@ -8,7 +8,7 @@ import { api } from "@/lib/trpc/react"
 import SubPage from "@/components/sub-page"
 import { BrowserEnvironmentComp } from "@/components/_universal/browser"
 
-export default function WxPusherPage() {
+export default function TestWechatPusherPage() {
   const [showSubscribe, setShowSubscribe] = useState(false)
   const { data: accessToken } = api.wechat.getWxGeneralAccessToken.useQuery()
   const { data: wxconfig } = api.wechat.getWxJsApiToken.useQuery({

@@ -1,6 +1,5 @@
 import { UserType } from "@prisma/client"
 import { IUserAvatar } from "@/schema/user.base"
-import * as process from "process"
 import { env } from "./env"
 
 export const JIUGU_ID = "jiugu"
@@ -28,10 +27,4 @@ export const CURSOR_CLASS_NAME = "custom-type-animation-cursor"
 
 export const TYPER_SPEED = env.NODE_ENV === "production" ? 30 : 90
 
-export class UnexpectedError extends Error {
-  constructor() {
-    super("UnexpectedError")
-  }
-}
-
-export const LOG_AUTH_ENABLED = false
+export const LOG_AUTH_ENABLED = true

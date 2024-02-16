@@ -1,10 +1,7 @@
 import { createTRPCRouter, protectedProcedure } from "@/lib/trpc/trpc"
 import { bindWxOpenIdToUser, getOpenId, sign } from "@/lib/wx/wx-auth"
 import { sendSubscribeNotify } from "@/lib/wx/wx-notify"
-import {
-  SubscribeNotifySchema,
-  ISubscribeNotifyTemplate,
-} from "@/lib/wx/schema"
+import { SubscribeNotifySchema } from "@/lib/wx/schema"
 import { z } from "zod"
 import singletonTokenInstance from "@/lib/wx/singleton-token"
 

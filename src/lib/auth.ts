@@ -104,6 +104,7 @@ export const authOptions: NextAuthOptions = {
         } else if (userInDB.validated) {
           token.validated = true
           status = "validated"
+          token = { ...token, ...userInDB }
         } else {
           status = "ok"
         }
@@ -129,6 +130,10 @@ export const authOptions: NextAuthOptions = {
      * @param newSession
      */
     session: async ({ session, user, token, trigger, newSession }) => {
+      if (token.sub) {
+        session.user = { ...session.user, ...token }
+      }
+
       if (LOG_AUTH_ENABLED)
         console.debug("[auth.session]: ", {
           session,
@@ -137,10 +142,6 @@ export const authOptions: NextAuthOptions = {
           newSession,
           trigger,
         })
-
-      if (token.sub) {
-        session.user = { ...session.user, ...token }
-      }
 
       return session
     },
