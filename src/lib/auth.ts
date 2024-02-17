@@ -242,26 +242,20 @@ authOptions.providers.push({
 
   /**
    * Step 1. 基于前端拿到 code
-   * eg. https://open.weixin.qq.com/connect/oauth2/authorize
-   * ?appid=wx807d86fb6b3d4fd2
-   * &redirect_uri=http%3A%2F%2Fdevelopers.weixin.qq.com
-   * &response_type=code
-   * &scope=snsapi_userinfo
-   * &state=STATE
-   * #wechat_redirect
+   * eg. https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx807d86fb6b3d4fd2&redirect_uri=http%3A%2F%2Fdevelopers.weixin.qq.com&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect
    */
   authorization: {
     // why the following would cause scope === "openid"?
-    // url: getWxAuthorizationUrl(WxAuthScopeType.info),
-    url: WX_GET_CODE_URL + "#wechat_redirect",
-    params: {
-      appid: WX_APP_ID,
-      redirect_uri: encodeURI(WX_REDIRECT_URL),
-      response_type: "code",
-      scope: WxAuthScopeType.info,
-      state: "",
-      forcePopup: true,
-    },
+    url: getWxAuthorizationUrl(WxAuthScopeType.info),
+    // url: WX_GET_CODE_URL + "#wechat_redirect",
+    // params: {
+    //   appid: WX_APP_ID,
+    //   redirect_uri: encodeURI(WX_REDIRECT_URL),
+    //   response_type: "code",
+    //   scope: WxAuthScopeType.info,
+    //   state: "",
+    //   forcePopup: true,
+    // },
   },
 
   /**
