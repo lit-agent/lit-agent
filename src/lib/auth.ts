@@ -18,6 +18,7 @@ import {
   WX_APP_ID,
   WX_APP_SECRET,
   WX_GET_ACCESS_TOKEN_URL,
+  WX_GET_CODE_URL,
   WX_GET_USER_INFO_URL,
   WX_PROVIDER_ID,
   WX_PROVIDER_TYPE,
@@ -249,7 +250,17 @@ authOptions.providers.push({
    * #wechat_redirect
    */
   authorization: {
-    url: getWxAuthorizationUrl(WxAuthScopeType.info),
+    // why the following would cause scope === "openid"?
+    // url: getWxAuthorizationUrl(WxAuthScopeType.info),
+    url: WX_GET_CODE_URL + "#wechat_redirect",
+    params: {
+      appid: WX_APP_ID,
+      redirect_uri: encodeURIComponent(WX_REDIRECT_URL),
+      response_type: "code",
+      scope: WxAuthScopeType.info,
+      state: "",
+      forcePopup: true,
+    },
   },
 
   /**
