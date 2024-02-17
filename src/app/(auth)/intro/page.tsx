@@ -57,7 +57,7 @@ const Bottom = () => {
         isWechat && (
           <Button
             onClick={() => {
-              signIn(WX_PROVIDER_ID, { redirect: true })
+              signIn(WX_PROVIDER_ID, { redirect: false })
                 .then((res) => {
                   toast.success("login success")
                 })
