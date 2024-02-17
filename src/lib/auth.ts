@@ -255,7 +255,7 @@ authOptions.providers.push({
     url: WX_GET_CODE_URL + "#wechat_redirect",
     params: {
       appid: WX_APP_ID,
-      redirect_uri: encodeURIComponent(WX_REDIRECT_URL),
+      redirect_uri: encodeURI(WX_REDIRECT_URL),
       response_type: "code",
       scope: WxAuthScopeType.info,
       state: "",
