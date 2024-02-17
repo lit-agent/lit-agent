@@ -14,6 +14,7 @@ import { useBrowserEnvironment } from "@/hooks/use-browser-environment"
 import { WX_PROVIDER_ID } from "@/lib/wx/config"
 import { LoginFormViaSMS } from "@/components/login-via-sms"
 import { toast } from "sonner"
+import { useCsrfToken } from "@/hooks/use-auth"
 
 export default function IntroPage() {
   return (
@@ -46,25 +47,32 @@ const Bottom = () => {
   const { isWechat } = useBrowserEnvironment()
   const [smsOpen, setSmsOpen] = useState(false)
 
+  const csrfToken = useCsrfToken()
+
   return (
     <div className={"mt-auto flex flex-col items-center pb-8 gap-4"}>
       <div className={"text-muted-foreground text-sm"}>
         <span className={"text-primary"}>{users.length}</span> 人已加入姑的社群
       </div>
 
-      {
-        // 是微信环境，额外允许调用微信登录
-        isWechat && (
-          <Button
-            onClick={async () => {
-              const signInResult = await signIn(WX_PROVIDER_ID)
-              console.log({ signInResult })
-            }}
-          >
-            一键微信登录
-          </Button>
-        )
-      }
+      {/* 抓包UI的结果 */}
+      <form action={"/api/auth/signin/wx-oauth"} method={"POST"}>
+        <input hidden name={"csrfToken"} value={csrfToken} />
+        {
+          // 是微信环境，额外允许调用微信登录
+          isWechat && (
+            <Button
+              type={"submit"}
+              onClick={async () => {
+                const signInResult = await signIn(WX_PROVIDER_ID)
+                console.log({ signInResult })
+              }}
+            >
+              一键微信登录
+            </Button>
+          )
+        }
+      </form>
 
       <Button
         className={"text-white "}
