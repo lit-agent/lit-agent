@@ -6,8 +6,8 @@ import {
   getWxAccessToken,
   IWxAccessTokenPayload,
 } from "@/lib/wx/functions/get-access-token"
-import { prisma } from "@/lib/db"
-import { userMainViewSchema } from "@/schema/user"
+
+const authorizationUrl = getWxAuthorizationUrl()
 
 /**
  * ref:
@@ -22,7 +22,7 @@ export default function WechatProvider<P extends IWxProfile>(
     name: "wx-auth",
     type: WX_PROVIDER_TYPE,
 
-    authorization: getWxAuthorizationUrl(),
+    authorization: authorizationUrl,
 
     token: {
       request: async ({ params: { code } }) => {
