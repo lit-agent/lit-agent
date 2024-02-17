@@ -45,6 +45,7 @@ export const env = createEnv({
     PAY_VENDOR_KEY: z.string(),
     PAY_TERMINAL_SN: z.string(),
     PAY_TERMINAL_KEY: z.string(),
+
     WX_APP_SECRET: z.string(),
   },
 
