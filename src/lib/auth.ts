@@ -87,7 +87,7 @@ export const authOptions: NextAuthOptions = {
 
       let userInDB
       let status = ""
-      if (user.phone) token = { ...token, phone: user.phone, validated: false }
+      if (user?.phone) token = { ...token, phone: user.phone, validated: false }
       // afterwards
       else if (token.phone) {
         // 首次更新token
