@@ -62,7 +62,7 @@ const Bottom = () => {
         method={"POST"}
       >
         {/* 没有 csrfToken 会直接跳转到 signIn 页 */}
-        <input hidden name={"csrfToken"} defaultValue={csrfToken} />
+        {/*<input hidden name={"csrfToken"} defaultValue={csrfToken} />*/}
         {
           // 是微信环境，额外允许调用微信登录
           isWechat && <Button type={"submit"}>一键微信登录</Button>

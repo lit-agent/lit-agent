@@ -234,9 +234,11 @@ authOptions.providers.push({
   id: WX_PROVIDER_ID,
   name: "Wechat Web",
   type: "oauth",
-  // 这个理论上需要手动写入各个验证函数才可以
-  // clientId: WX_APP_ID,
-  // clientSecret: WX_APP_SECRET,
+
+  // 这两个必须要有，会在oauth的框架逻辑里被检查
+  clientId: WX_APP_ID,
+  clientSecret: WX_APP_SECRET,
+
   // todo: investigate
   checks: ["state"],
 
