@@ -13,6 +13,7 @@ import { GiuguProfile } from "@/components/user/jiugu-profile"
 import { useBrowserEnvironment } from "@/hooks/use-browser-environment"
 import { WX_PROVIDER_ID } from "@/lib/wx/config"
 import { LoginFormViaSMS } from "@/components/login-via-sms"
+import { toast } from "sonner"
 
 export default function IntroPage() {
   return (
@@ -57,6 +58,13 @@ const Bottom = () => {
           <Button
             onClick={() => {
               signIn(WX_PROVIDER_ID, { redirect: false })
+                .then((res) => {
+                  toast.success("login success")
+                })
+                .catch((err) => {
+                  console.error(err)
+                  toast.error("login failed")
+                })
             }}
           >
             一键微信登录
