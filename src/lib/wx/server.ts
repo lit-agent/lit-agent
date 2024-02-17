@@ -1,9 +1,6 @@
 import { getWxAccessToken } from "@/lib/wx/functions/get-access-token"
 import { refreshWxAccessToken } from "@/lib/wx/functions/refresh-access-token"
-import {
-  getWxUserInfo,
-  IGetWxUserInfoRes,
-} from "@/lib/wx/functions/get-user-info"
+import { getWxProfile, IWxProfile } from "@/lib/wx/functions/get-user-info"
 
 import { isWxError } from "@/lib/wx/functions/_general"
 
@@ -29,13 +26,13 @@ export class WxServerAuth {
     return data
   }
 
-  public async getUserInfo(): Promise<IGetWxUserInfoRes> {
+  public async getUserInfo(): Promise<IWxProfile> {
     if (!this.access_token || !this.openid || !this.refresh_token) {
       await this.getUserSecrets()
       return this.getUserInfo() // again since the token not initialized
     }
 
-    const userInfo = await getWxUserInfo(this.access_token, this.openid)
+    const userInfo = await getWxProfile(this.access_token, this.openid)
     if (!isWxError(userInfo)) return userInfo
 
     // 可能是 access_token 过期了

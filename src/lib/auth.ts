@@ -26,6 +26,8 @@ import {
 } from "@/lib/wx/config"
 import { WxAuthScopeType } from "@/lib/wx/schema"
 import { getWxAuthorizationUrl } from "@/lib/wx/utils"
+import { IWxProfile } from "@/lib/wx/functions/get-user-info"
+import { getWxAccessToken } from "@/lib/wx/functions/get-access-token"
 
 export type SessionError = "NoPhone" | "NoUserInDB"
 
@@ -271,15 +273,11 @@ authOptions.providers.push({
       secret: WX_APP_SECRET,
       grant_type: "authorization_code",
     },
-    // async request({ provider, client, params, checks }) {
-    //   console.log("[wx-auth] token: ", { provider, params })
-    //   const url = new URL((provider.token as any).url)
-    //   url.search = new URLSearchParams(
-    //     params as Record<string, string>,
-    //   ).toString()
-    //   const r = await fetch(url).then((v) => v.json()) //as SnsOAuth2AccessTokenResponse;
-    //   return { tokens: { ...r } }
-    // },
+    async request({ provider, client, params, checks }) {
+      // return {tokens: await getWxAccessToken()}
+      console.log("[wx-auth] token: ", { provider, params, client, checks })
+      return { tokens: {} }
+    },
   },
 
   /**
@@ -288,12 +286,17 @@ authOptions.providers.push({
    */
   userinfo: {
     url: WX_GET_USER_INFO_URL,
+    async request({ provider, tokens, client }) {
+      // return {tokens: await getWxAccessToken()}
+      console.log("[wx-auth] userinfo: ", { provider, client, tokens })
+      return {}
+    },
   },
 
   /**
    * 4. 基于 返回的 用户信息，生成与 next-auth 框架一致的 user 数据结构
    */
-  async profile(profile, tokens) {
+  async profile(profile: IWxProfile, tokens) {
     console.log("[wx-auth] profile: ", { profile, tokens })
     let account = await prisma.account.upsert({
       where: {

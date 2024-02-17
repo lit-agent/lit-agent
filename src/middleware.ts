@@ -14,16 +14,16 @@ export default withAuth(
     const isLoggingIn = nextPath.startsWith("/intro")
     const isValidating = nextPath.startsWith("/validation")
 
-    if (LOG_AUTH_ENABLED)
-      console.debug("[Next-Auth Middleware]: ", {
-        url: req.url,
-        referer: req.referrer,
-        nextPath,
-        // req,
-        token,
-        isLoggingIn,
-        isValidating,
-      })
+    // if (LOG_AUTH_ENABLED)
+    //   console.debug("[Next-Auth Middleware]: ", {
+    //     url: req.url,
+    //     referer: req.referrer,
+    //     nextPath,
+    //     // req,
+    //     token,
+    //     isLoggingIn,
+    //     isValidating,
+    //   })
 
     // 没有 token 且不在登录页，重定向到登录页
     if (!token && !isLoggingIn) return redirect("/intro")

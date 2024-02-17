@@ -2,7 +2,7 @@ import { WX_GET_USER_INFO_URL } from "@/lib/wx/config"
 
 import { WxRes } from "@/lib/wx/functions/_general"
 
-export interface IGetWxUserInfoRes {
+export interface IWxProfile {
   // 用户的唯一标识
   openid: string
   // 只有在用户将公众号绑定到微信开放平台账号后，才会出现该字段。
@@ -18,10 +18,10 @@ export interface IGetWxUserInfoRes {
   privilege: string[]
 }
 
-export const getWxUserInfo = async (
+export const getWxProfile = async (
   access_token: string,
   openid: string,
-): Promise<WxRes<IGetWxUserInfoRes>> => {
+): Promise<WxRes<IWxProfile>> => {
   const res = await fetch(
     WX_GET_USER_INFO_URL +
       `?access_token=${access_token}&openid=${openid}&lang=zh_CN`,
