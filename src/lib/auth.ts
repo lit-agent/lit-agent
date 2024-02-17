@@ -273,11 +273,11 @@ authOptions.providers.push({
       secret: WX_APP_SECRET,
       grant_type: "authorization_code",
     },
-    async request({ provider, client, params, checks }) {
-      // return {tokens: await getWxAccessToken()}
-      console.log("[wx-auth] token: ", { provider, params, client, checks })
-      return { tokens: {} }
-    },
+    // async request({ provider, client, params, checks }) {
+    //   // return {tokens: await getWxAccessToken()}
+    //   console.log("[wx-auth] token: ", { provider, params, client, checks })
+    //   return { tokens: {} }
+    // },
   },
 
   /**
@@ -286,9 +286,17 @@ authOptions.providers.push({
    */
   userinfo: {
     url: WX_GET_USER_INFO_URL,
+    params: {
+      lang: "zh_CN",
+    },
     async request({ provider, tokens, client }) {
       // return {tokens: await getWxAccessToken()}
       console.log("[wx-auth] userinfo: ", { provider, client, tokens })
+      // return client.userinfo(tokens.access_token, {
+      //   params: {
+      //     openid:
+      //   }
+      // })
       return {}
     },
   },
