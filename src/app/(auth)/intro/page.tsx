@@ -57,9 +57,7 @@ const Bottom = () => {
         isWechat && (
           <Button
             onClick={async () => {
-              const signInResult = await signIn(WX_PROVIDER_ID, {
-                redirect: true,
-              })
+              const signInResult = await signIn(WX_PROVIDER_ID)
               console.log({ signInResult })
             }}
           >
