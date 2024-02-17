@@ -32,33 +32,18 @@ export default function WechatProvider<P extends IWxProfile>(
     },
 
     userinfo: {
+      // @ts-ignore
       request: async ({ tokens, client }) => {
         const { openid, access_token } = tokens as IWxAccessTokenPayload
-        const wxProfile = (await getWxProfile(
-          access_token,
-          openid,
-        )) as IWxProfile
-        return {
-          ...wxProfile,
-          sub: wxProfile.openid,
-          name: wxProfile.nickname,
-          image: wxProfile.headimgurl,
-        }
+        return (await getWxProfile(access_token, openid)) as IWxProfile
       },
     },
 
-    profile: async (profile) => {
-      const account = await prisma.account.findUniqueOrThrow({
-        where: {
-          provider_providerAccountId: {
-            provider: WX_PROVIDER_ID,
-            providerAccountId: profile.openid,
-          },
-        },
-        include: { user: userMainViewSchema },
-      })
-      return account.user
-    },
+    profile: async (profile: IWxProfile) => ({
+      id: profile.openid,
+      name: profile.nickname,
+      image: profile.headimgurl,
+    }),
 
     // style: { logo: "/facebook.svg", bg: "#006aff", text: "#fff" },
     options,

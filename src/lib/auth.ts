@@ -3,6 +3,7 @@ import {
   type DefaultSession,
   getServerSession,
   type NextAuthOptions,
+  DefaultUser,
 } from "next-auth"
 import { prisma } from "@/lib/db"
 
@@ -12,6 +13,7 @@ import { LOG_AUTH_ENABLED } from "@/config"
 import { WX_APP_ID, WX_APP_SECRET } from "@/lib/wx/config"
 import { SmsProvider } from "@/lib/sms/provider"
 import WechatProvider from "@/lib/wx/provider"
+import { boolean } from "zod/lib/types"
 
 export type SessionError = "NoPhone" | "NoUserInDB"
 
@@ -40,7 +42,9 @@ declare module "next-auth" {
     user: DefaultSession["user"] & Payload
   }
 
-  interface User extends Payload {}
+  interface User extends DefaultUser {
+    phone?: string
+  }
 }
 
 /**
@@ -83,7 +87,7 @@ export const authOptions: NextAuthOptions = {
 
       let userInDB
       let status = ""
-      if (user) token = { ...token, phone: user.phone, validated: false }
+      if (user.phone) token = { ...token, phone: user.phone, validated: false }
       // afterwards
       else if (token.phone) {
         // 首次更新token
