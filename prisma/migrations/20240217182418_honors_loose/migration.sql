@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Honor" ALTER COLUMN "userId" DROP NOT NULL;
