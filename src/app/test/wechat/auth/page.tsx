@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import SubPage from "@/components/sub-page"
 import { BrowserEnvironmentComp } from "@/components/_universal/browser"
 
-import { getWechatLoginUrl } from "@/lib/wx/utils"
+import { getWxAuthorizationUrl } from "@/lib/wx/utils"
 import { WX_AUTH_DOC_URL } from "@/lib/wx/config"
 import { WxAuthScopeType } from "@/lib/wx/schema"
 
@@ -24,7 +24,7 @@ export default function TestWechatAuthPage() {
           不弹出授权页面，直接跳转，只能获取用户openid
         </Label>
         <ButtonLink
-          href={getWechatLoginUrl(WxAuthScopeType.base, userId)}
+          href={getWxAuthorizationUrl(WxAuthScopeType.base, userId)}
           disabled={!userId}
         >
           {WxAuthScopeType.base} 授权
@@ -35,7 +35,7 @@ export default function TestWechatAuthPage() {
           即使在未关注的情况下，只要用户授权，也能获取其信息
         </Label>
         <ButtonLink
-          href={getWechatLoginUrl(WxAuthScopeType.info, userId)}
+          href={getWxAuthorizationUrl(WxAuthScopeType.info, userId)}
           disabled={!userId}
         >
           {WxAuthScopeType.info} 授权

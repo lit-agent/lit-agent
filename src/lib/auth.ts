@@ -4,7 +4,6 @@ import {
   getServerSession,
   type NextAuthOptions,
   Profile,
-  User,
 } from "next-auth"
 import { prisma } from "@/lib/db"
 
@@ -19,15 +18,13 @@ import {
   WX_APP_ID,
   WX_APP_SECRET,
   WX_GET_ACCESS_TOKEN_URL,
-  WX_GET_CODE_URL,
   WX_GET_USER_INFO_URL,
   WX_PROVIDER_ID,
   WX_PROVIDER_TYPE,
   WX_REDIRECT_URL,
 } from "@/lib/wx/config"
-import { env } from "@/env"
-import { IGetWxUserInfoRes } from "@/lib/wx/functions/get-user-info"
 import { WxAuthScopeType } from "@/lib/wx/schema"
+import { getWxAuthorizationUrl } from "@/lib/wx/utils"
 
 export type SessionError = "NoPhone" | "NoUserInDB"
 
@@ -252,15 +249,7 @@ authOptions.providers.push({
    * #wechat_redirect
    */
   authorization: {
-    url: WX_GET_CODE_URL + `#wechat_redirect`,
-    params: {
-      appid: WX_APP_ID,
-      response_type: "code",
-      scope: WxAuthScopeType.info,
-      redirect_uri: encodeURIComponent(WX_REDIRECT_URL),
-      state: "",
-      forcePopup: true,
-    },
+    url: getWxAuthorizationUrl(WxAuthScopeType.info),
   },
 
   /**
