@@ -12,7 +12,10 @@ export const WX_PROVIDER_ID = "wx-oauth"
 export const WX_PROVIDER_TYPE = "oauth"
 
 // 微信的回调地址，必须是绝对地址，因为是从微信服务器回调回来
-export const WX_REDIRECT_URL = env.NEXT_PUBLIC_APP_URL + "/wx-auth"
+// export const WX_REDIRECT_URL = env.NEXT_PUBLIC_APP_URL + "/wx-auth"
+// 根据 oauth 逻辑图，这里我们对接 oauth 的官方回调路由
+export const WX_REDIRECT_URL =
+  env.NEXT_PUBLIC_APP_URL + `/api/auth/callback/${WX_PROVIDER_ID}`
 
 export const WX_API_URL = "https://api.weixin.qq.com"
 export const WX_AUTH_DOC_URL =
