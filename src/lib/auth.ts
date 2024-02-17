@@ -264,6 +264,8 @@ authOptions.providers.push({
       grant_type: "authorization_code",
     },
     async request({ provider, client, params, checks }) {
+      console.log("[wx-auth] token: ", { provider, params })
+
       const url = new URL((provider.token as any).url)
       url.search = new URLSearchParams(
         params as Record<string, string>,
@@ -282,6 +284,8 @@ authOptions.providers.push({
   userinfo: {
     url: WX_GET_USER_INFO_URL,
     async request({ client, provider, tokens }): Promise<Profile> {
+      console.log("[wx-auth] userinfo: ", { provider, tokens })
+
       const url = new URL((provider.userinfo as any).url)
       url.search = new URLSearchParams({
         ...(provider.userinfo as any).params,

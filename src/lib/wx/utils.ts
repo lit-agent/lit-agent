@@ -5,5 +5,15 @@ export const getWxAuthorizationUrl = (
   scope: WxAuthScopeType,
   userId?: string,
   forcePopup: boolean = true,
-) =>
-  `${WX_GET_CODE_URL}?appid=${WX_APP_ID}&redirect_uri=${encodeURIComponent(WX_REDIRECT_URL)}&response_type=code&scope=${scope}&state=${userId}&forcePopup=${forcePopup}#wechat_redirect`
+) => {
+  const url = `${WX_GET_CODE_URL}?appid=${WX_APP_ID}&redirect_uri=${encodeURIComponent(WX_REDIRECT_URL)}&response_type=code&scope=${scope}&state=${userId}&forcePopup=${forcePopup}#wechat_redirect`
+
+  console.log("[wx-auth] getWxAuthorizationUrl: ", {
+    scope,
+    userId,
+    forcePopup,
+    url,
+  })
+  
+  return url
+}
