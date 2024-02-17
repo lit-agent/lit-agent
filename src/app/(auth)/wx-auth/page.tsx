@@ -1,5 +1,8 @@
 "use client"
-import { useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
+import { VerticalContainer } from "@/components/containers/vertical"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
 
 export default async function WxAuthPage({
   searchParams: { code },
@@ -13,5 +16,13 @@ export default async function WxAuthPage({
 
   const session = useSession()
 
-  return <div>{JSON.stringify(session, null, 2)}</div>
+  return (
+    <VerticalContainer>
+      <Button onClick={() => signOut()}>Sign Out</Button>
+
+      <Label> Session</Label>
+
+      <div>{JSON.stringify(session, null, 2)}</div>
+    </VerticalContainer>
+  )
 }
