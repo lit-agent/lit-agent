@@ -243,14 +243,15 @@ authOptions.providers.push({
 
   /**
    * Step 1. 基于前端拿到 code
+   * eg. https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx807d86fb6b3d4fd2&redirect_uri=http%3A%2F%2Fdevelopers.weixin.qq.com&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect
    */
   authorization: {
-    url: `https://open.weixin.qq.com/connect/oauth2/authorize#wechat_redirect`,
+    url: WX_GET_CODE_URL + `#wechat_redirect`,
     params: {
       appid: WX_APP_ID,
       response_type: "code",
       scope: WxAuthScope.info,
-      redirect_url: encodeURIComponent(WX_REDIRECT_URL),
+      redirect_uri: encodeURIComponent(WX_REDIRECT_URL),
       state: "",
       forcePopup: true,
     },
@@ -261,7 +262,7 @@ authOptions.providers.push({
    */
   token: {
     // https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code
-    url: "https://api.weixin.qq.com/sns/oauth2/access_token",
+    url: WX_GET_ACCESS_TOKEN_URL,
     params: {
       appid: WX_APP_ID,
       secret: WX_APP_SECRET,
@@ -284,7 +285,7 @@ authOptions.providers.push({
    * Step 3. 基于 access_token 拿到 用户信息
    */
   userinfo: {
-    url: "https://api.weixin.qq.com/sns/userinfo",
+    url: WX_GET_USER_INFO_URL,
     async request({ client, provider, tokens }): Promise<Profile> {
       const url = new URL((provider.userinfo as any).url)
       url.search = new URLSearchParams({
