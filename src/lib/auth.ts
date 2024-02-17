@@ -319,7 +319,7 @@ authOptions.providers.push({
    */
   async profile(profile: Profile, tokens) {
     console.log("[wx-auth] profile: ", { profile, tokens })
-    return { id: "", validated: false, phone: "" } //updateWxProfile(profile)
+    return { id: profile.sub!, validated: false, phone: "" } //updateWxProfile(profile)
   },
 })
 
