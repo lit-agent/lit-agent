@@ -67,7 +67,7 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
-  debug: true,
+  debug: false,
 
   logger: {
     error(code, metadata) {
@@ -319,7 +319,7 @@ authOptions.providers.push({
    */
   async profile(profile: Profile, tokens) {
     console.log("[wx-auth] profile: ", { profile, tokens })
-    return { id: profile.sub!, validated: false, phone: "" } //updateWxProfile(profile)
+    return updateWxProfile(profile)
   },
 })
 
@@ -338,21 +338,22 @@ export const ensureServerUser = async () => {
   return user
 }
 
-const updateWxProfile = async (profile: IWxProfile) => {
+const updateWxProfile = async (profile: Profile) => {
+  const openId = profile.sub!
   const account = await prisma.account.upsert({
     where: {
       provider_providerAccountId: {
         provider: WX_PROVIDER_ID,
-        providerAccountId: profile.openid,
+        providerAccountId: openId,
       },
     },
     create: {
       provider: WX_PROVIDER_ID,
-      providerAccountId: profile.openid,
+      providerAccountId: openId,
       user: {
         create: {
-          name: profile.nickname,
-          image: profile.headimgurl,
+          name: profile.name,
+          image: profile.image,
         },
       },
       type: WX_PROVIDER_TYPE,
@@ -360,8 +361,8 @@ const updateWxProfile = async (profile: IWxProfile) => {
     update: {
       user: {
         update: {
-          name: profile.nickname,
-          image: profile.headimgurl,
+          name: profile.name,
+          image: profile.image,
         },
       },
     },
