@@ -56,7 +56,7 @@ const Bottom = () => {
         <span className={"text-primary"}>{users.length}</span> 人已加入姑的社群
       </div>
 
-      {/* 抓包UI的结果 */}
+      {/* 抓包UI的结果, or see: https://github.com/ndom91/next-auth-example-sign-in-page/blob/main/src/pages/auth/signin.js */}
       <form
         action={env.NEXT_PUBLIC_APP_URL + "/api/auth/signin/wx-oauth"}
         method={"POST"}

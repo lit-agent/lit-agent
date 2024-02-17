@@ -262,7 +262,7 @@ authOptions.providers.push({
 
   /**
    * Step 2. 基于 code 拿到 access_token
-   * e.g. https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code
+   * e.g. appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code
    */
   token: {
     url: WX_GET_ACCESS_TOKEN_URL,
@@ -271,19 +271,20 @@ authOptions.providers.push({
       secret: WX_APP_SECRET,
       grant_type: "authorization_code",
     },
-    async request({ provider, client, params, checks }) {
-      console.log("[wx-auth] token: ", { provider, params })
-      const url = new URL((provider.token as any).url)
-      url.search = new URLSearchParams(
-        params as Record<string, string>,
-      ).toString()
-      const r = await fetch(url).then((v) => v.json()) //as SnsOAuth2AccessTokenResponse;
-      return { tokens: { ...r } }
-    },
+    // async request({ provider, client, params, checks }) {
+    //   console.log("[wx-auth] token: ", { provider, params })
+    //   const url = new URL((provider.token as any).url)
+    //   url.search = new URLSearchParams(
+    //     params as Record<string, string>,
+    //   ).toString()
+    //   const r = await fetch(url).then((v) => v.json()) //as SnsOAuth2AccessTokenResponse;
+    //   return { tokens: { ...r } }
+    // },
   },
 
   /**
    * Step 3. 基于 access_token 拿到 用户信息
+   * e.g. `?access_token=${access_token}&openid=${openid}&lang=zh_CN`,
    */
   userinfo: {
     url: WX_GET_USER_INFO_URL,
