@@ -57,7 +57,7 @@ const Bottom = () => {
 
       {/* 抓包UI的结果 */}
       <form action={"/api/auth/signin/wx-oauth"} method={"POST"}>
-        <input hidden name={"csrfToken"} value={csrfToken} />
+        <input hidden name={"csrfToken"} defaultValue={csrfToken} />
         {
           // 是微信环境，额外允许调用微信登录
           isWechat && (
