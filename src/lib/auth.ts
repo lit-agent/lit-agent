@@ -234,6 +234,7 @@ authOptions.providers.push({
   id: WX_PROVIDER_ID,
   name: "Wechat Web",
   type: "oauth",
+  // 这个理论上需要手动写入各个验证函数才可以
   clientId: WX_APP_ID,
   clientSecret: WX_APP_SECRET,
   // todo: investigate
@@ -265,27 +266,14 @@ authOptions.providers.push({
 
   /**
    * Step 2. 基于 code 拿到 access_token
+   * e.g. https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code
    */
   token: {
-    // https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code
     url: WX_GET_ACCESS_TOKEN_URL,
     params: {
       appid: WX_APP_ID,
       secret: WX_APP_SECRET,
       grant_type: "authorization_code",
-    },
-    async request({ provider, client, params, checks }) {
-      console.log("[wx-auth] token: ", { provider, params })
-
-      const url = new URL((provider.token as any).url)
-      url.search = new URLSearchParams(
-        params as Record<string, string>,
-      ).toString()
-      const r = await fetch(url).then((v) => v.json())
-      // as SnsOAuth2AccessTokenResponse;
-
-      console.log("[wx-auth] token: ", r)
-      return { tokens: { ...r } }
     },
   },
 
@@ -294,19 +282,6 @@ authOptions.providers.push({
    */
   userinfo: {
     url: WX_GET_USER_INFO_URL,
-    async request({ client, provider, tokens }): Promise<Profile> {
-      console.log("[wx-auth] userinfo: ", { provider, tokens })
-
-      const url = new URL((provider.userinfo as any).url)
-      url.search = new URLSearchParams({
-        ...(provider.userinfo as any).params,
-        access_token: tokens.access_token,
-        openid: tokens.openid,
-      } as Record<string, string>).toString()
-
-      const res = await fetch(url)
-      return res.json()
-    },
   },
 
   /**
