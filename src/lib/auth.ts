@@ -264,11 +264,13 @@ authOptions.providers.push({
       ).toString()
       const r = await fetch(url).then((v) => v.json())
       // as SnsOAuth2AccessTokenResponse;
+
+      console.log("[wx-auth] token: ", r)
       return { tokens: { ...r } }
     },
   },
   profile(profile, tokens) {
-    console.log("[wx-auth]: ", { profile, tokens })
+    console.log("[wx-auth] profile: ", { profile, tokens })
     return {
       ...profile,
       id: profile.openid,
@@ -316,6 +318,8 @@ authOptions.providers.push({
         },
       })
       // as SnsUserInfoResponse;
+      console.log("[wx-auth] userinfo: ", { account })
+
       const user = account.user
       return {
         sub: user.id,
