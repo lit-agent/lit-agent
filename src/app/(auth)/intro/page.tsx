@@ -15,6 +15,7 @@ import { WX_PROVIDER_ID } from "@/lib/wx/config"
 import { LoginFormViaSMS } from "@/components/login-via-sms"
 import { toast } from "sonner"
 import { useCsrfToken } from "@/hooks/use-auth"
+import { env } from "@/env"
 
 export default function IntroPage() {
   return (
@@ -56,8 +57,16 @@ const Bottom = () => {
       </div>
 
       {/* 抓包UI的结果 */}
-      <form action={"/api/auth/signin/wx-oauth"} method={"POST"}>
-        <input hidden name={"csrfToken"} defaultValue={csrfToken} />
+      <form
+        action={env.NEXT_PUBLIC_APP_URL + "/api/auth/signin/wx-oauth"}
+        method={"POST"}
+      >
+        <input
+          hidden
+          name={"csrfToken"}
+          value={csrfToken}
+          onChange={() => {}}
+        />
         {
           // 是微信环境，额外允许调用微信登录
           isWechat && (
