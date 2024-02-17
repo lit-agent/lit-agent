@@ -264,7 +264,7 @@ authOptions.providers.push({
 
   /**
    * Step 2. 基于 code 拿到 access_token
-   * e.g. appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code
+   * e.g. ?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code
    */
   token: {
     url: WX_GET_ACCESS_TOKEN_URL,
@@ -291,6 +291,7 @@ authOptions.providers.push({
     },
     async request({ provider, tokens, client }) {
       // return {tokens: await getWxAccessToken()}
+      console.log("[wx-auth] token params: ", provider.token!.params)
       console.log("[wx-auth] userinfo: ", { provider, client, tokens })
       // return client.userinfo(tokens.access_token, {
       //   params: {
@@ -306,37 +307,7 @@ authOptions.providers.push({
    */
   async profile(profile: IWxProfile, tokens) {
     console.log("[wx-auth] profile: ", { profile, tokens })
-    let account = await prisma.account.upsert({
-      where: {
-        provider_providerAccountId: {
-          provider: WX_PROVIDER_ID,
-          providerAccountId: profile.openid,
-        },
-      },
-      create: {
-        provider: WX_PROVIDER_ID,
-        providerAccountId: profile.openid,
-        user: {
-          create: {
-            name: profile.nickname,
-            image: profile.headimgurl,
-          },
-        },
-        type: WX_PROVIDER_TYPE,
-      },
-      update: {
-        user: {
-          update: {
-            name: profile.nickname,
-            image: profile.headimgurl,
-          },
-        },
-      },
-      include: {
-        user: true,
-      },
-    })
-    return account.user
+    return { id: "", validated: false, phone: "" } //updateWxProfile(profile)
   },
 })
 
@@ -353,4 +324,38 @@ export const ensureServerUser = async () => {
   const user = await getServerUser()
   if (!user) throw new Error("no user found")
   return user
+}
+
+const updateWxProfile = async (profile: IWxProfile) => {
+  const account = await prisma.account.upsert({
+    where: {
+      provider_providerAccountId: {
+        provider: WX_PROVIDER_ID,
+        providerAccountId: profile.openid,
+      },
+    },
+    create: {
+      provider: WX_PROVIDER_ID,
+      providerAccountId: profile.openid,
+      user: {
+        create: {
+          name: profile.nickname,
+          image: profile.headimgurl,
+        },
+      },
+      type: WX_PROVIDER_TYPE,
+    },
+    update: {
+      user: {
+        update: {
+          name: profile.nickname,
+          image: profile.headimgurl,
+        },
+      },
+    },
+    include: {
+      user: true,
+    },
+  })
+  return account.user
 }
