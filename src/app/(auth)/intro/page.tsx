@@ -69,17 +69,7 @@ const Bottom = () => {
         />
         {
           // 是微信环境，额外允许调用微信登录
-          isWechat && (
-            <Button
-              type={"submit"}
-              onClick={async () => {
-                const signInResult = await signIn(WX_PROVIDER_ID)
-                console.log({ signInResult })
-              }}
-            >
-              一键微信登录
-            </Button>
-          )
+          isWechat && <Button type={"submit"}>一键微信登录</Button>
         }
       </form>
 
