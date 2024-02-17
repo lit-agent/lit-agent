@@ -11,9 +11,8 @@ export const WX_APP_SECRET = env.WX_APP_SECRET
 export const WX_PROVIDER_ID = "wx-oauth"
 export const WX_PROVIDER_TYPE = "oauth"
 
-// 微信强制绝对地址
+// 微信的回调地址，必须是绝对地址，因为是从微信服务器回调回来
 export const WX_REDIRECT_URL = env.NEXT_PUBLIC_APP_URL + "/wx-auth"
-console.log("[wx]: ", { WX_REDIRECT_URL })
 
 export const WX_API_URL = "https://api.weixin.qq.com"
 export const WX_AUTH_DOC_URL =

@@ -235,8 +235,8 @@ authOptions.providers.push({
   name: "Wechat Web",
   type: "oauth",
   // 这个理论上需要手动写入各个验证函数才可以
-  clientId: WX_APP_ID,
-  clientSecret: WX_APP_SECRET,
+  // clientId: WX_APP_ID,
+  // clientSecret: WX_APP_SECRET,
   // todo: investigate
   checks: ["state"],
 
@@ -245,17 +245,17 @@ authOptions.providers.push({
    * eg. https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx807d86fb6b3d4fd2&redirect_uri=http%3A%2F%2Fdevelopers.weixin.qq.com&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect
    */
   authorization: {
-    // why the following would cause scope === "openid"?
-    url: getWxAuthorizationUrl(WxAuthScopeType.info),
-    // url: WX_GET_CODE_URL + "#wechat_redirect",
-    // params: {
-    //   appid: WX_APP_ID,
-    //   redirect_uri: encodeURI(WX_REDIRECT_URL),
-    //   response_type: "code",
-    //   scope: WxAuthScopeType.info,
-    //   state: "",
-    //   forcePopup: true,
-    // },
+    // todo: 为什么拼接 url 会导致 scope === "openid"?
+    // url: getWxAuthorizationUrl(WxAuthScopeType.info),
+    url: WX_GET_CODE_URL + "#wechat_redirect",
+    params: {
+      appid: WX_APP_ID,
+      redirect_uri: encodeURI(WX_REDIRECT_URL),
+      response_type: "code",
+      scope: WxAuthScopeType.info,
+      state: "",
+      forcePopup: true,
+    },
   },
 
   /**
@@ -279,7 +279,7 @@ authOptions.providers.push({
   },
 
   /**
-   * 基于 返回的 用户信息，生成与 next-auth 框架一致的 user 数据结构
+   * 4. 基于 返回的 用户信息，生成与 next-auth 框架一致的 user 数据结构
    */
   async profile(profile, tokens) {
     console.log("[wx-auth] profile: ", { profile, tokens })

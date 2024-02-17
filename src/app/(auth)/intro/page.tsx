@@ -61,12 +61,8 @@ const Bottom = () => {
         action={env.NEXT_PUBLIC_APP_URL + "/api/auth/signin/wx-oauth"}
         method={"POST"}
       >
-        <input
-          hidden
-          name={"csrfToken"}
-          value={csrfToken}
-          onChange={() => {}}
-        />
+        {/* 没有 csrfToken 也是可以的 应该 */}
+        {/*<input hidden name={"csrfToken"} defaultValue={csrfToken} />*/}
         {
           // 是微信环境，额外允许调用微信登录
           isWechat && <Button type={"submit"}>一键微信登录</Button>
