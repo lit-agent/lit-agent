@@ -28,6 +28,7 @@ import { WxAuthScopeType } from "@/lib/wx/schema"
 import { getWxAuthorizationUrl } from "@/lib/wx/utils"
 import { IWxProfile } from "@/lib/wx/functions/get-user-info"
 import { getWxAccessToken } from "@/lib/wx/functions/get-access-token"
+import log from "logging-service"
 
 export type SessionError = "NoPhone" | "NoUserInDB"
 
@@ -65,6 +66,20 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+  debug: true,
+
+  logger: {
+    error(code, metadata) {
+      log.error(code, metadata)
+    },
+    warn(code) {
+      log.warn(code)
+    },
+    debug(code, metadata) {
+      log.debug(code, metadata)
+    },
+  },
+
   pages: {
     // signIn: "/intro",
   },
