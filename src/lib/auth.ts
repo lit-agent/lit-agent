@@ -3,6 +3,7 @@ import {
   type DefaultSession,
   getServerSession,
   type NextAuthOptions,
+  Profile,
 } from "next-auth"
 import { prisma } from "@/lib/db"
 
@@ -24,7 +25,11 @@ import {
   WX_REDIRECT_URL,
 } from "@/lib/wx/config"
 import { WxAuthScopeType } from "@/lib/wx/schema"
-import { IWxProfile } from "@/lib/wx/functions/get-user-info"
+import { getWxProfile, IWxProfile } from "@/lib/wx/functions/get-user-info"
+import {
+  getWxAccessToken,
+  IWxAccessTokenPayload,
+} from "@/lib/wx/functions/get-access-token"
 
 export type SessionError = "NoPhone" | "NoUserInDB"
 
@@ -253,7 +258,7 @@ authOptions.providers.push({
   clientSecret: WX_APP_SECRET,
 
   // todo: investigate
-  checks: ["state"],
+  // checks: ["state"],
 
   /**
    * Step 1. 基于前端拿到 code
@@ -278,17 +283,18 @@ authOptions.providers.push({
    * e.g. ?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code
    */
   token: {
-    url: WX_GET_ACCESS_TOKEN_URL,
-    params: {
-      appid: WX_APP_ID,
-      secret: WX_APP_SECRET,
-      grant_type: "authorization_code",
-    },
-    // async request({ provider, client, params, checks }) {
-    //   // return {tokens: await getWxAccessToken()}
-    //   console.log("[wx-auth] token: ", { provider, params, client, checks })
-    //   return { tokens: {} }
+    // url: WX_GET_ACCESS_TOKEN_URL,
+    // params: {
+    //   appid: WX_APP_ID,
+    //   secret: WX_APP_SECRET,
+    //   grant_type: "authorization_code",
     // },
+    async request({ provider, client, params, checks }) {
+      const tokens = await getWxAccessToken(params.code!)
+      // return {tokens: await getWxAccessToken()}
+      console.log("[wx-auth] token: ", { params, checks, tokens })
+      return { tokens }
+    },
   },
 
   /**
@@ -296,27 +302,22 @@ authOptions.providers.push({
    * e.g. `?access_token=${access_token}&openid=${openid}&lang=zh_CN`,
    */
   userinfo: {
-    url: WX_GET_USER_INFO_URL,
-    params: {
-      lang: "zh_CN",
-    },
     async request({ provider, tokens, client }) {
-      // return {tokens: await getWxAccessToken()}
-      console.log("[wx-auth] token params: ", provider.token!.params)
-      console.log("[wx-auth] userinfo: ", { provider, client, tokens })
-      // return client.userinfo(tokens.access_token, {
-      //   params: {
-      //     openid:
-      //   }
-      // })
-      return {}
+      const { openid, access_token } = tokens as IWxAccessTokenPayload
+      const profile = (await getWxProfile(access_token, openid)) as IWxProfile
+      console.log("[wx-auth] userinfo: ", { tokens, profile })
+      return {
+        sub: profile.openid,
+        name: profile.nickname,
+        image: profile.headimgurl,
+      }
     },
   },
 
   /**
    * 4. 基于 返回的 用户信息，生成与 next-auth 框架一致的 user 数据结构
    */
-  async profile(profile: IWxProfile, tokens) {
+  async profile(profile: Profile, tokens) {
     console.log("[wx-auth] profile: ", { profile, tokens })
     return { id: "", validated: false, phone: "" } //updateWxProfile(profile)
   },

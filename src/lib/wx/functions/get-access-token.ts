@@ -6,7 +6,7 @@ import {
 
 import { WxRes } from "@/lib/wx/functions/_general"
 
-export type IGetWxAccessTokenRes = {
+export type IWxAccessTokenPayload = {
   access_token: string
   expires_in: number // 7200s
   refresh_token: string
@@ -18,7 +18,7 @@ export type IGetWxAccessTokenRes = {
 
 export const getWxAccessToken = async (
   code: string,
-): Promise<WxRes<IGetWxAccessTokenRes>> => {
+): Promise<WxRes<IWxAccessTokenPayload>> => {
   const res = await fetch(
     WX_GET_ACCESS_TOKEN_URL +
       `?appid=${WX_APP_ID}&secret=${WX_APP_SECRET}&code=${code}&grant_type=authorization_code`,
