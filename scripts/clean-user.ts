@@ -2,7 +2,16 @@ import { prisma } from "@/lib/db"
 
 const phone = process.argv[2]
 
-if (phone) {
+if (phone?.toLowerCase() === "all") {
+  prisma.user
+    .deleteMany({})
+    .then((res) => {
+      console.log("deleted: ", res)
+    })
+    .catch((err) => {
+      console.log("不存在")
+    })
+} else if (phone) {
   prisma.user
     .delete({
       where: {
