@@ -3,7 +3,6 @@ import {
   type DefaultSession,
   getServerSession,
   type NextAuthOptions,
-  Profile,
 } from "next-auth"
 import { prisma } from "@/lib/db"
 
@@ -25,10 +24,7 @@ import {
   WX_REDIRECT_URL,
 } from "@/lib/wx/config"
 import { WxAuthScopeType } from "@/lib/wx/schema"
-import { getWxAuthorizationUrl } from "@/lib/wx/utils"
 import { IWxProfile } from "@/lib/wx/functions/get-user-info"
-import { getWxAccessToken } from "@/lib/wx/functions/get-access-token"
-import log from "logging-service"
 
 export type SessionError = "NoPhone" | "NoUserInDB"
 
@@ -70,13 +66,13 @@ export const authOptions: NextAuthOptions = {
 
   logger: {
     error(code, metadata) {
-      log.error(code, metadata)
+      console.error(code, metadata)
     },
     warn(code) {
-      log.warn(code)
+      console.warn(code)
     },
     debug(code, metadata) {
-      log.debug(code, metadata)
+      console.debug(code, metadata)
     },
   },
 
