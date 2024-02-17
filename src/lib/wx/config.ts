@@ -7,7 +7,8 @@ import { ISubscribeNotifyTemplate, IWxApp } from "./schema"
 
 export const WX_APP_ID = env.NEXT_PUBLIC_WX_APP_ID
 export const WX_APP_SECRET = env.WX_APP_SECRET
-export const WX_PROVIDER_ID = "wechat"
+export const WX_PROVIDER_ID = "wx-oauth"
+export const WX_PROVIDER_TYPE = "oauth"
 
 // 微信强制绝对地址
 export const WX_REDIRECT_URL = env.NEXT_PUBLIC_APP_URL + "/wx-auth"

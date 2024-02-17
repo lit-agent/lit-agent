@@ -33,6 +33,7 @@ import { GiuguProfile } from "@/components/user/jiugu-profile"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { useBrowserEnvironment } from "@/hooks/use-browser-environment"
 import { getWechatLoginUrl, WxAuthScope } from "@/lib/wx/utils"
+import { WX_PROVIDER_ID } from "@/lib/wx/config"
 
 export default function IntroPage() {
   return (
@@ -134,6 +135,14 @@ const LoginViaPhone = () => {
       <div className={"text-muted-foreground text-sm"}>
         <span className={"text-primary"}>{users.length}</span> 人已加入姑的社群
       </div>
+
+      <Button
+        onClick={async () => {
+          await signIn(WX_PROVIDER_ID)
+        }}
+      >
+        一键微信登录
+      </Button>
 
       <Button
         className={"text-white "}

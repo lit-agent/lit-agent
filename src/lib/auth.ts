@@ -3,6 +3,8 @@ import {
   type DefaultSession,
   getServerSession,
   type NextAuthOptions,
+  Profile,
+  User,
 } from "next-auth"
 import { prisma } from "@/lib/db"
 
@@ -17,10 +19,13 @@ import {
   WX_GET_ACCESS_TOKEN_URL,
   WX_GET_CODE_URL,
   WX_GET_USER_INFO_URL,
+  WX_PROVIDER_ID,
+  WX_PROVIDER_TYPE,
   WX_REDIRECT_URL,
 } from "@/lib/wx/config"
 import { env } from "@/env"
 import { WxAuthScope } from "@/lib/wx/utils"
+import { IGetWxUserInfoRes } from "@/lib/wx/functions/get-user-info"
 
 export type SessionError = "NoPhone" | "NoUserInDB"
 
@@ -226,31 +231,12 @@ export const authOptions: NextAuthOptions = {
  * ref: https://github.com/nextauthjs/next-auth/issues/5937
  */
 authOptions.providers.push({
-  id: "wechat-web",
+  id: WX_PROVIDER_ID,
   name: "Wechat Web",
   type: "oauth",
   clientId: env.NEXT_PUBLIC_WX_APP_ID,
   clientSecret: env.WX_APP_SECRET,
-  userinfo: {
-    url: "https://api.weixin.qq.com/sns/userinfo",
-    async request({ client, provider, tokens }) {
-      const url = new URL((provider.userinfo as any).url)
-      url.search = new URLSearchParams({
-        ...(provider.userinfo as any).params,
-        access_token: tokens.access_token,
-        openid: tokens.openid,
-      } as Record<string, string>).toString()
 
-      const r = await fetch(url).then((v) => v.json())
-      // as SnsUserInfoResponse;
-      return {
-        sub: r.openid,
-        name: r.nickname,
-        image: r.headimgurl,
-        ...r,
-      }
-    },
-  },
   authorization: {
     // `https://open.weixin.qq.com/connect/qrconnect?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect`
     url: `https://open.weixin.qq.com/connect/oauth2/authorize#wechat_redirect`,
@@ -287,6 +273,57 @@ authOptions.providers.push({
       ...profile,
       id: profile.openid,
     }
+  },
+  userinfo: {
+    url: "https://api.weixin.qq.com/sns/userinfo",
+    async request({ client, provider, tokens }): Promise<Profile> {
+      const url = new URL((provider.userinfo as any).url)
+      url.search = new URLSearchParams({
+        ...(provider.userinfo as any).params,
+        access_token: tokens.access_token,
+        openid: tokens.openid,
+      } as Record<string, string>).toString()
+
+      const r = (await fetch(url).then((v) => v.json())) as IGetWxUserInfoRes
+      let account = await prisma.account.upsert({
+        where: {
+          provider_providerAccountId: {
+            provider: WX_PROVIDER_ID,
+            providerAccountId: r.openid,
+          },
+        },
+        create: {
+          provider: WX_PROVIDER_ID,
+          providerAccountId: r.openid,
+          user: {
+            create: {
+              name: r.nickname,
+              image: r.headimgurl,
+            },
+          },
+          type: WX_PROVIDER_TYPE,
+        },
+        update: {
+          user: {
+            update: {
+              name: r.nickname,
+              image: r.headimgurl,
+            },
+          },
+        },
+        include: {
+          user: true,
+        },
+      })
+      // as SnsUserInfoResponse;
+      const user = account.user
+      return {
+        sub: user.id,
+        name: user.name ?? undefined,
+        image: user.image ?? undefined,
+        email: user.email ?? undefined,
+      }
+    },
   },
   // not checked yet, i don't know how
   checks: ["state"],
