@@ -139,12 +139,11 @@ const LoginViaPhone = () => {
         className={"text-white "}
         onClick={() => {
           // 不是微信环境，使用手机登录
-          // if (!isWechat)
-          setPhoneSheetOpen(true)
+          if (!isWechat) setPhoneSheetOpen(true)
           // 是微信环境，调用微信登录
-          // else {
-          //   router.push(getWechatLoginUrl(WxAuthScope.info))
-          // }
+          else {
+            router.push(getWechatLoginUrl(WxAuthScope.info))
+          }
         }}
       >
         成为姑的friend
