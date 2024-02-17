@@ -26,8 +26,8 @@ import {
   WX_REDIRECT_URL,
 } from "@/lib/wx/config"
 import { env } from "@/env"
-import { WxAuthScope } from "@/lib/wx/utils"
 import { IGetWxUserInfoRes } from "@/lib/wx/functions/get-user-info"
+import { WxAuthScopeType } from "@/lib/wx/schema"
 
 export type SessionError = "NoPhone" | "NoUserInDB"
 
@@ -250,7 +250,7 @@ authOptions.providers.push({
     params: {
       appid: WX_APP_ID,
       response_type: "code",
-      scope: WxAuthScope.info,
+      scope: WxAuthScopeType.info,
       redirect_uri: encodeURIComponent(WX_REDIRECT_URL),
       state: "",
       forcePopup: true,

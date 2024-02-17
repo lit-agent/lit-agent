@@ -1,8 +1,8 @@
 import { z } from "zod"
 
-export type IWxApp = {
-  appId: string
-  appSecret: string
+export enum WxAuthScopeType {
+  base = "snsapi_base",
+  info = "snsapi_userinfo",
 }
 
 export interface GetAccessTokenResponse {

@@ -25,6 +25,7 @@ export const MSG_SUBMIT_VERIFY_SUCCESS = "恭喜！火值已发放！请注意�
 export const NEW_USER_REWARD = 10
 export const CURSOR_CLASS_NAME = "custom-type-animation-cursor"
 
+// 正式模式下回答问题的打字速度较慢，开发模式下可以调快点
 export const TYPER_SPEED = env.NODE_ENV === "production" ? 30 : 90
 
-export const LOG_AUTH_ENABLED = false
+export const LOG_AUTH_ENABLED = true

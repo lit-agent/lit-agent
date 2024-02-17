@@ -1,5 +1,9 @@
 import { GetAccessTokenResponse } from "./schema"
-import { WX_REGULAR_ACCESS_TOKEN_URL, wxApp } from "@/lib/wx/config"
+import {
+  WX_APP_ID,
+  WX_APP_SECRET,
+  WX_REGULAR_ACCESS_TOKEN_URL,
+} from "@/lib/wx/config"
 
 // 获取微信token单例类
 class SingletonToken {
@@ -82,7 +86,7 @@ class SingletonToken {
 
   // 获取微信access token
   async getWxAccessToken() {
-    const url = `${WX_REGULAR_ACCESS_TOKEN_URL}?grant_type=client_credential&appid=${wxApp.appId}&secret=${wxApp.appSecret}`
+    const url = `${WX_REGULAR_ACCESS_TOKEN_URL}?grant_type=client_credential&appid=${WX_APP_ID}&secret=${WX_APP_SECRET}`
     const response = await fetch(url)
     if (!response.ok) {
       throw new Error(`HTTP error: ${response.status} ${response.statusText}`)

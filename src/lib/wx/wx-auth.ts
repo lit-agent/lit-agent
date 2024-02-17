@@ -2,7 +2,12 @@ import { prisma } from "../db"
 import fetch from "node-fetch"
 import { getServerAuthSession } from "../auth"
 import crypto from "crypto"
-import { WX_GET_ACCESS_TOKEN_URL, WX_PROVIDER_ID, wxApp } from "@/lib/wx/config"
+import {
+  WX_APP_ID,
+  WX_APP_SECRET,
+  WX_GET_ACCESS_TOKEN_URL,
+  WX_PROVIDER_ID,
+} from "@/lib/wx/config"
 import singletonTokenInstance from "./singleton-token"
 
 /**
@@ -56,7 +61,7 @@ export const bindWxOpenIdToUser = async (openId: string) => {
  * @returns 用户微信openid
  */
 export const getOpenId = async (code: string) => {
-  const requestUrl = `${WX_GET_ACCESS_TOKEN_URL}?appid=${wxApp.appId}&secret=${wxApp.appSecret}&code=${code}&grant_type=authorization_code`
+  const requestUrl = `${WX_GET_ACCESS_TOKEN_URL}?appid=${WX_APP_ID}&secret=${WX_APP_SECRET}&code=${code}&grant_type=authorization_code`
 
   const response = await fetch(requestUrl)
   if (!response.ok) {

@@ -3,8 +3,9 @@
  */
 
 import { env } from "@/env"
-import { ISubscribeNotifyTemplate, IWxApp } from "./schema"
+import { ISubscribeNotifyTemplate } from "./schema"
 
+// note: app_id 是要暴露给前端的，但是secret不行，所以这里要分别导出
 export const WX_APP_ID = env.NEXT_PUBLIC_WX_APP_ID
 export const WX_APP_SECRET = env.WX_APP_SECRET
 export const WX_PROVIDER_ID = "wx-oauth"
@@ -25,18 +26,13 @@ export const WX_GET_USER_INFO_URL = WX_API_URL + "/sns/userinfo"
 
 export const WX_REFRESH_ACCESS_TOKEN_URL =
   WX_API_URL + "/sns/oauth2/refresh_token"
+// todo: validation in order to avoid re-pull access_token
 export const WX_VALIDATE_ACCESS_TOKEN_URL = WX_API_URL + "/sns/auth"
 
 // 基本鉴权，获取推送订阅消息的access token的接口
 export const WX_REGULAR_ACCESS_TOKEN_URL = WX_API_URL + "/cgi-bin/token"
 export const WX_NOTIFY_API_URL =
   WX_API_URL + "/cgi-bin/message/subscribe/bizsend"
-
-// note: app_id 是要暴露给前端的，但是secret不行，所以这里要分别导出
-export const wxApp: IWxApp = {
-  appId: env.NEXT_PUBLIC_WX_APP_ID,
-  appSecret: env.WX_APP_SECRET,
-}
 
 export const commentNotify: ISubscribeNotifyTemplate = {
   // 订阅通知模版ID
