@@ -56,15 +56,11 @@ const Bottom = () => {
         // 是微信环境，额外允许调用微信登录
         isWechat && (
           <Button
-            onClick={() => {
-              signIn(WX_PROVIDER_ID, { redirect: false })
-                .then((res) => {
-                  toast.success("login success")
-                })
-                .catch((err) => {
-                  console.error(err)
-                  toast.error("login failed")
-                })
+            onClick={async () => {
+              const signInResult = await signIn(WX_PROVIDER_ID, {
+                redirect: true,
+              })
+              console.log({ signInResult })
             }}
           >
             一键微信登录
