@@ -23,7 +23,6 @@ export const getWxAccessToken = async (
     WX_GET_ACCESS_TOKEN_URL +
       `?appid=${WX_APP_ID}&secret=${WX_APP_SECRET}&code=${code}&grant_type=authorization_code`,
   )
-  console.log("[wx] getWechatAccessToken res: ", res)
 
   const data = await res.json()
   console.log("[wx] getWechatAccessToken: ", data)
