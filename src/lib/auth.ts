@@ -16,6 +16,8 @@ import { userMainViewSchema } from "@/schema/user"
 import { DefaultJWT } from "next-auth/jwt"
 import { LOG_AUTH_ENABLED } from "@/config"
 import {
+  WX_APP_ID,
+  WX_APP_SECRET,
   WX_GET_ACCESS_TOKEN_URL,
   WX_GET_CODE_URL,
   WX_GET_USER_INFO_URL,
@@ -234,14 +236,18 @@ authOptions.providers.push({
   id: WX_PROVIDER_ID,
   name: "Wechat Web",
   type: "oauth",
-  clientId: env.NEXT_PUBLIC_WX_APP_ID,
-  clientSecret: env.WX_APP_SECRET,
+  clientId: WX_APP_ID,
+  clientSecret: WX_APP_SECRET,
+  // todo: investigate
+  checks: ["state"],
 
+  /**
+   * Step 1. 基于前端拿到 code
+   */
   authorization: {
-    // `https://open.weixin.qq.com/connect/qrconnect?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect`
     url: `https://open.weixin.qq.com/connect/oauth2/authorize#wechat_redirect`,
     params: {
-      appid: env.NEXT_PUBLIC_WX_APP_ID,
+      appid: WX_APP_ID,
       response_type: "code",
       scope: WxAuthScope.info,
       redirect_url: encodeURIComponent(WX_REDIRECT_URL),
@@ -249,12 +255,16 @@ authOptions.providers.push({
       forcePopup: true,
     },
   },
+
+  /**
+   * Step 2. 基于 code 拿到 access_token
+   */
   token: {
     // https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code
     url: "https://api.weixin.qq.com/sns/oauth2/access_token",
     params: {
-      appid: env.NEXT_PUBLIC_WX_APP_ID,
-      secret: env.WX_APP_SECRET,
+      appid: WX_APP_ID,
+      secret: WX_APP_SECRET,
       grant_type: "authorization_code",
     },
     async request({ provider, client, params, checks }) {
@@ -269,13 +279,10 @@ authOptions.providers.push({
       return { tokens: { ...r } }
     },
   },
-  profile(profile, tokens) {
-    console.log("[wx-auth] profile: ", { profile, tokens })
-    return {
-      ...profile,
-      id: profile.openid,
-    }
-  },
+
+  /**
+   * Step 3. 基于 access_token 拿到 用户信息
+   */
   userinfo: {
     url: "https://api.weixin.qq.com/sns/userinfo",
     async request({ client, provider, tokens }): Promise<Profile> {
@@ -286,51 +293,48 @@ authOptions.providers.push({
         openid: tokens.openid,
       } as Record<string, string>).toString()
 
-      const r = (await fetch(url).then((v) => v.json())) as IGetWxUserInfoRes
-      let account = await prisma.account.upsert({
-        where: {
-          provider_providerAccountId: {
-            provider: WX_PROVIDER_ID,
-            providerAccountId: r.openid,
-          },
-        },
-        create: {
-          provider: WX_PROVIDER_ID,
-          providerAccountId: r.openid,
-          user: {
-            create: {
-              name: r.nickname,
-              image: r.headimgurl,
-            },
-          },
-          type: WX_PROVIDER_TYPE,
-        },
-        update: {
-          user: {
-            update: {
-              name: r.nickname,
-              image: r.headimgurl,
-            },
-          },
-        },
-        include: {
-          user: true,
-        },
-      })
-      // as SnsUserInfoResponse;
-      console.log("[wx-auth] userinfo: ", { account })
-
-      const user = account.user
-      return {
-        sub: user.id,
-        name: user.name ?? undefined,
-        image: user.image ?? undefined,
-        email: user.email ?? undefined,
-      }
+      const res = await fetch(url)
+      return res.json()
     },
   },
-  // not checked yet, i don't know how
-  checks: ["state"],
+
+  /**
+   * 基于 返回的 用户信息，生成与 next-auth 框架一致的 user 数据结构
+   */
+  async profile(profile, tokens) {
+    console.log("[wx-auth] profile: ", { profile, tokens })
+    let account = await prisma.account.upsert({
+      where: {
+        provider_providerAccountId: {
+          provider: WX_PROVIDER_ID,
+          providerAccountId: profile.openid,
+        },
+      },
+      create: {
+        provider: WX_PROVIDER_ID,
+        providerAccountId: profile.openid,
+        user: {
+          create: {
+            name: profile.nickname,
+            image: profile.headimgurl,
+          },
+        },
+        type: WX_PROVIDER_TYPE,
+      },
+      update: {
+        user: {
+          update: {
+            name: profile.nickname,
+            image: profile.headimgurl,
+          },
+        },
+      },
+      include: {
+        user: true,
+      },
+    })
+    return account.user
+  },
 })
 
 /**
