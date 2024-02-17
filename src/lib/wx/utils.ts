@@ -2,7 +2,7 @@ import { WX_APP_ID, WX_GET_CODE_URL, WX_REDIRECT_URL } from "@/lib/wx/config"
 import { WxAuthScopeType } from "@/lib/wx/schema"
 
 export const getWxAuthorizationUrl = (
-  scope: WxAuthScopeType,
+  scope: WxAuthScopeType = WxAuthScopeType.info,
   userId?: string,
   forcePopup: boolean = true,
 ) => {
@@ -14,6 +14,6 @@ export const getWxAuthorizationUrl = (
     forcePopup,
     url,
   })
-  
+
   return url
 }

@@ -8,7 +8,6 @@ import { toast } from "sonner"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { signIn } from "next-auth/react"
-import { SMS_EXPIRE_MINUTES, SMS_PROVIDER_ID } from "@/lib/sms"
 import { Sheet, SheetContent } from "@/components/ui/sheet"
 import {
   Form,
@@ -22,6 +21,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { CgSpinner } from "react-icons/cg"
+import { SMS_EXPIRE_MINUTES, SMS_PROVIDER_ID } from "@/lib/sms/config"
 
 export const LoginFormViaSMS = ({ open, setOpen }) => {
   const formSchema = z.object({

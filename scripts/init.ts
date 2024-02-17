@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db"
 import { JIUGU_PHONE, JIUGU_ID, JIUGU_CODE } from "@/config"
-import { SMS_PROVIDER_ID } from "@/lib/sms"
 import { UserType } from "@prisma/client"
+import { SMS_PROVIDER_ID } from "@/lib/sms/config"
 
 const init = async () => {
   const phone = JIUGU_PHONE

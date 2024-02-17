@@ -1,14 +1,14 @@
 import { createTRPCRouter, publicProcedure } from "@/lib/trpc/trpc"
 import { z } from "zod"
+import { prisma } from "@/lib/db"
+import { smsClient } from "@/lib/sms/client"
 import {
   SMS_APP_ID,
   SMS_EXPIRE_MINUTES,
   SMS_PROVIDER_ID,
   SMS_SIGN_NAME,
   SMS_TEMPLATE_ID,
-  smsClient,
-} from "@/lib/sms"
-import { prisma } from "@/lib/db"
+} from "@/lib/sms/config"
 
 export const smsRouter = createTRPCRouter({
   send: publicProcedure

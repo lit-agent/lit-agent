@@ -15,7 +15,8 @@ import { Button } from "@/components/ui/button"
 import { BasicMutableUserInfo } from "@/components/user/basic"
 import { toast } from "sonner"
 import { signIn } from "next-auth/react"
-import { SMS_PROVIDER_ID } from "@/lib/sms"
+
+import { SMS_PROVIDER_ID } from "@/lib/sms/config"
 
 export default function ValidateSuccess() {
   const router = useRouter()
