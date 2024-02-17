@@ -271,6 +271,15 @@ authOptions.providers.push({
       secret: WX_APP_SECRET,
       grant_type: "authorization_code",
     },
+    async request({ provider, client, params, checks }) {
+      console.log("[wx-auth] token: ", { provider, params })
+      const url = new URL((provider.token as any).url)
+      url.search = new URLSearchParams(
+        params as Record<string, string>,
+      ).toString()
+      const r = await fetch(url).then((v) => v.json()) //as SnsOAuth2AccessTokenResponse;
+      return { tokens: { ...r } }
+    },
   },
 
   /**
