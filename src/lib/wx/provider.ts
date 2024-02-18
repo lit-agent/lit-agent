@@ -7,7 +7,10 @@ import {
   IWxAccessTokenPayload,
 } from "@/lib/wx/functions/get-access-token"
 
-const authorizationUrl = getWxAuthorizationUrl()
+if (!global.authorizationUrl) {
+  global.authorizationUrl = getWxAuthorizationUrl()
+}
+const authorizationUrl = global.authorizationUrl
 
 /**
  * ref:
