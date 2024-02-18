@@ -1,5 +1,5 @@
 import { isWechatError } from "@/lib/wechat/schema"
-import { WX_API_URL, WX_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
+import { WECHAT_API_URL, WX_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
 import {
   IWechatAdaptedProfile,
   IWechatAdaptedToken,
@@ -34,7 +34,9 @@ const fetchWechatAuth = async <T>(
   path: string,
   params: Record<string, string>,
 ) => {
-  const res = await fetch(WX_API_URL + path + "?" + new URLSearchParams(params))
+  const res = await fetch(
+    WECHAT_API_URL + path + "?" + new URLSearchParams(params),
+  )
   const data = await res.json()
   console.log(`[wechat-auth] fetched ${name}: `, data)
   if (isWechatError(data)) throw data.errmsg
@@ -65,6 +67,18 @@ export const adaptWechatToken = (
   return { id: openid, ...other }
 }
 
+export const refreshWechatToken = async (refresh_token: string) => {
+  return fetchWechatAuth<IWechatRefreshedToken>(
+    "refresh-token",
+    `/sns/oauth2/refresh_token`,
+    {
+      appid: WX_APP_ID,
+      grant_type: "refresh_token",
+      refresh_token,
+    },
+  )
+}
+
 export const getWechatProfile = async (
   access_token: string,
   openid: string,
@@ -84,18 +98,6 @@ export const adaptWechatProfile = (
   name: profile.nickname,
   image: profile.headimgurl,
 })
-
-export const refreshWechatToken = async (refresh_token: string) => {
-  return fetchWechatAuth<IWechatRefreshedToken>(
-    "refresh-token",
-    `/sns/oauth2/refresh_token`,
-    {
-      appid: WX_APP_ID,
-      grant_type: "refresh_token",
-      refresh_token,
-    },
-  )
-}
 
 /**
  * 用于稳定地获取用户信息

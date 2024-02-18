@@ -2,7 +2,7 @@ import { prisma } from "../../db"
 import fetch from "node-fetch"
 import { getServerAuthSession } from "../../auth"
 import crypto from "crypto"
-import { WX_API_URL, WX_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
+import { WECHAT_API_URL, WX_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
 
 import singletonTokenInstance from "@/lib/wechat/auth-cyx/token"
 import { WECHAT_AUTH_PROVIDER_ID } from "@/lib/wechat/auth/config"
@@ -59,7 +59,7 @@ export const bindWxOpenIdToUser = async (openId: string) => {
  * @returns 用户微信openid
  */
 export const getOpenId = async (code: string) => {
-  const requestUrl = `${WX_API_URL}/sns/oauth2/access_token?appid=${WX_APP_ID}&secret=${WX_APP_SECRET}&code=${code}&grant_type=authorization_code`
+  const requestUrl = `${WECHAT_API_URL}/sns/oauth2/access_token?appid=${WX_APP_ID}&secret=${WX_APP_SECRET}&code=${code}&grant_type=authorization_code`
 
   const response = await fetch(requestUrl)
   if (!response.ok) {

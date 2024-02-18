@@ -11,6 +11,7 @@ import {
   IWechatAdaptedToken,
 } from "@/lib/wechat/auth/schema"
 import { WECHAT_AUTH_PROVIDER_ID } from "@/lib/wechat/auth/config"
+import { WECHAT_API_URL } from "@/lib/wechat/config"
 
 if (!global.authorizationUrl) {
   global.authorizationUrl = getWechatAuthorizationUrl()
@@ -40,11 +41,15 @@ export default function WechatProvider<P extends IWechatAdaptedProfile>(
     },
 
     userinfo: {
-      request: async ({ tokens, client }) => {
-        const { id, access_token } = tokens as IWechatAdaptedToken
-        const wechatProfile = await getWechatProfile(access_token, id)
-        return adaptWechatProfile(wechatProfile)
+      url: WECHAT_API_URL + "/sns/userinfo",
+      params: {
+        lang: "zh_CN",
       },
+      // request: async ({ tokens, client }) => {
+      //   const { id, access_token } = tokens as IWechatAdaptedToken
+      //   const wechatProfile = await getWechatProfile(access_token, id)
+      //   return adaptWechatProfile(wechatProfile)
+      // },
     },
 
     profile: async (profile: IWechatAdaptedProfile) => {

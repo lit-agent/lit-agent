@@ -8,4 +8,4 @@ import { env } from "@/env"
 export const WX_APP_ID = env.NEXT_PUBLIC_WX_APP_ID
 export const WX_APP_SECRET = env.WX_APP_SECRET
 
-export const WX_API_URL = "https://api.weixin.qq.com"
+export const WECHAT_API_URL = "https://api.weixin.qq.com"
