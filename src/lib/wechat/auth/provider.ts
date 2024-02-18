@@ -10,7 +10,7 @@ import {
   IWechatAdaptedProfile,
   IWechatAdaptedToken,
 } from "@/lib/wechat/auth/schema"
-import { WX_PROVIDER_ID } from "@/lib/wechat/auth/config"
+import { WECHAT_AUTH_PROVIDER_ID } from "@/lib/wechat/auth/config"
 
 if (!global.authorizationUrl) {
   global.authorizationUrl = getWechatAuthorizationUrl()
@@ -26,7 +26,7 @@ export default function WechatProvider<P extends IWechatAdaptedProfile>(
   options: OAuthUserConfig<P>,
 ): OAuthConfig<P> {
   return {
-    id: WX_PROVIDER_ID,
+    id: WECHAT_AUTH_PROVIDER_ID,
     name: "wx-auth",
     type: "oauth", // fixed
 

@@ -2,6 +2,8 @@ import { UserType } from "@prisma/client"
 import { IUserAvatar } from "@/schema/user.base"
 import { env } from "./env"
 
+export const APP_URL = env.NEXT_PUBLIC_APP_URL
+
 export const JIUGU_ID = "jiugu"
 export const JIUGU_AI_NAME = "玖姑的AI助手"
 export const JIUGU_PHONE = "13121363847"

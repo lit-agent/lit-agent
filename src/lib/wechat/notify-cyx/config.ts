@@ -1,5 +1,5 @@
 import { WX_API_URL } from "@/lib/wechat/config"
-import { WX_REDIRECT_URL } from "@/lib/wechat/auth/config"
+import { WECHAT_AUTH_CALLBACK_URL } from "@/lib/wechat/auth/config"
 import { ISubscribeNotifyTemplate } from "@/lib/wechat/notify-cyx/schema"
 
 export const WX_NOTIFY_API_URL =
@@ -8,7 +8,7 @@ export const commentNotify: ISubscribeNotifyTemplate = {
   // 订阅通知模版ID
   template_id: "3xqA08YN4RJPF2Rrivw7NEtR9YwoW83u-20u9EiDMZ0",
   // 点击卡片后跳转的页面
-  page: WX_REDIRECT_URL,
+  page: WECHAT_AUTH_CALLBACK_URL,
   // 卡片数据
   data: new Map([
     // 留言用户

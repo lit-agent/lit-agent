@@ -9,7 +9,7 @@ import { BrowserEnvironmentComp } from "@/components/_universal/browser"
 
 import { getWechatAuthorizationUrl } from "@/lib/wechat/auth/functions"
 import { WechatScopeType } from "@/lib/wechat/auth/schema"
-import { WX_AUTH_DOC_URL } from "@/lib/wechat/auth/config"
+import { WECHAT_AUTH_DOC_URL } from "@/lib/wechat/auth/config"
 
 export default function TestWechatAuthPage() {
   const user = useUser()
@@ -43,8 +43,8 @@ export default function TestWechatAuthPage() {
 
         <div className={"text-xs inline-flex"}>
           ref:
-          <Link href={WX_AUTH_DOC_URL} className={"truncate italic"}>
-            {WX_AUTH_DOC_URL}
+          <Link href={WECHAT_AUTH_DOC_URL} className={"truncate italic"}>
+            {WECHAT_AUTH_DOC_URL}
           </Link>
         </div>
       </VerticalContainer>

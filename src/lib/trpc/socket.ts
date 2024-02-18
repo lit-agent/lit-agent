@@ -10,13 +10,14 @@ import {
 import superjson from "superjson"
 import { NextPageContext } from "next"
 import { env } from "@/env"
+import { APP_URL } from "@/config"
 
 export function getEndingLink(
   ctx: NextPageContext | undefined,
 ): TRPCLink<AppRouter> {
   if (typeof window === "undefined") {
     return httpBatchLink({
-      url: `${env.NEXT_PUBLIC_APP_URL}/api/trpc`,
+      url: `${APP_URL}/api/trpc`,
       headers() {
         if (!ctx?.req?.headers) {
           return {}
