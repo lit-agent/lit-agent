@@ -13,8 +13,8 @@ import { MessageType } from "@/schema/message.base"
 import { ValidateUserResult } from "@/schema/auth"
 import { Validation } from "@/app/(auth)/validation/config"
 import { isEqual } from "lodash"
-import { findWechatAccount } from "@/lib/wx/actions"
 import { SMS_PROVIDER_ID } from "@/lib/sms/config"
+import { findWechatAccount } from "@/lib/wechat/auth-cyx/functions"
 
 export const userRouter = createTRPCRouter({
   validateUser: publicProcedure

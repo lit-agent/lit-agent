@@ -1,19 +1,5 @@
 import { z } from "zod"
 
-export enum WxAuthScopeType {
-  base = "snsapi_base",
-  info = "snsapi_userinfo",
-}
-
-export interface GetAccessTokenResponse {
-  // 获取到的凭证
-  access_token: string
-  // 凭证有效时间，单位：秒
-  expires_in: Number
-  errcode?: Number
-  errmsg?: string
-}
-
 export interface ISubscribeNotifyTemplate {
   // 订阅通知模版ID
   template_id: string
@@ -28,7 +14,6 @@ export const SubscribeNotifyTemplateSchema = z.object({
   page: z.string(),
   data: z.instanceof(Map<string, string>),
 })
-
 export const SubscribeNotifySchema = z.object({
   openId: z.string(),
   accessToken: z.string(),

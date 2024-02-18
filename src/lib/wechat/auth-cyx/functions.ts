@@ -1,14 +1,11 @@
-import { prisma } from "../db"
+import { prisma } from "../../db"
 import fetch from "node-fetch"
-import { getServerAuthSession } from "../auth"
+import { getServerAuthSession } from "../../auth"
 import crypto from "crypto"
-import {
-  WX_APP_ID,
-  WX_APP_SECRET,
-  WX_GET_ACCESS_TOKEN_URL,
-  WX_PROVIDER_ID,
-} from "@/lib/wx/config"
-import singletonTokenInstance from "./singleton-token"
+import { WX_API_URL, WX_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
+
+import singletonTokenInstance from "@/lib/wechat/auth-cyx/token"
+import { WX_PROVIDER_ID } from "@/lib/wechat/auth/config"
 
 /**
  * 将微信openid关联至已存在的用户账号
@@ -38,7 +35,8 @@ export const bindWxOpenIdToUser = async (openId: string) => {
     },
   })
   console.log(`existing user: `, existingAccount)
-  if (!existingUser) throw new Error("User not found, cannot create wx account")
+  if (!existingUser)
+    throw new Error("User not found, cannot create wechat account")
 
   const createdAccount = await prisma.account.create({
     data: {
@@ -61,13 +59,13 @@ export const bindWxOpenIdToUser = async (openId: string) => {
  * @returns 用户微信openid
  */
 export const getOpenId = async (code: string) => {
-  const requestUrl = `${WX_GET_ACCESS_TOKEN_URL}?appid=${WX_APP_ID}&secret=${WX_APP_SECRET}&code=${code}&grant_type=authorization_code`
+  const requestUrl = `${WX_API_URL}/sns/oauth2/access_token?appid=${WX_APP_ID}&secret=${WX_APP_SECRET}&code=${code}&grant_type=authorization_code`
 
   const response = await fetch(requestUrl)
   if (!response.ok) {
     throw new Error(`HTTP error: ${response.status} ${response.statusText}`)
   }
-  const data = await response.json()
+  const data = (await response.json()) as { openid: string }
   console.log(`getOpenId data:${JSON.stringify(data)}`)
   // 检查响应中是否有openid
   if (data.openid) {
@@ -120,4 +118,23 @@ export const sign = (url: string) => {
   const hash = crypto.createHash("sha1")
   ret.signature = hash.update(string).digest("hex")
   return ret
+}
+
+export const findWechatAccount = async (wxid: string, userId: string) => {
+  console.log("-- finding: ", userId)
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: { accounts: true },
+  })
+  if (!user) throw new Error("用户ID不存在")
+
+  const account = user.accounts.find(
+    (account) =>
+      account.provider === "wechat" && account.providerAccountId === wxid,
+  )
+  if (!account) throw new Error("用户的微信ID不存在")
+
+  // const account = user.accounts[0]!
+  const providerId = account.providerAccountId // openid
 }

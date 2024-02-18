@@ -11,11 +11,11 @@ import { signIn } from "next-auth/react"
 import { cn } from "@/lib/utils"
 import { GiuguProfile } from "@/components/user/jiugu-profile"
 import { useBrowserEnvironment } from "@/hooks/use-browser-environment"
-import { WX_PROVIDER_ID } from "@/lib/wx/config"
 import { LoginFormViaSMS } from "@/components/login-via-sms"
 import { toast } from "sonner"
 import { useCsrfToken } from "@/hooks/use-auth"
 import { env } from "@/env"
+import { WX_PROVIDER_ID } from "@/lib/wechat/auth/config"
 
 export default function IntroPage() {
   return (
@@ -58,7 +58,7 @@ const Bottom = () => {
 
       {/* 抓包UI的结果, or see: https://github.com/ndom91/next-auth-example-sign-in-page/blob/main/src/pages/auth/signin.js */}
       <form
-        action={env.NEXT_PUBLIC_APP_URL + "/api/auth/signin/wx-oauth"}
+        action={env.NEXT_PUBLIC_APP_URL + "/api/auth/signin/wechat-oauth"}
         method={"POST"}
       >
         {/*没有 csrfToken 会直接跳转到 signIn 页 */}

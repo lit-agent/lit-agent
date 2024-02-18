@@ -1,5 +1,5 @@
-import { WX_NOTIFY_API_URL } from "./config"
-import { ISubscribeNotifyTemplate } from "./schema"
+import { WX_NOTIFY_API_URL } from "@/lib/wechat/notify-cyx/config"
+import { ISubscribeNotifyTemplate } from "@/lib/wechat/notify-cyx/schema"
 // 向一个用户发送订阅通知
 export const sendSubscribeNotify = async (
   openId: string,

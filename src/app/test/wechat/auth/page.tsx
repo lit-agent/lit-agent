@@ -7,9 +7,9 @@ import { Label } from "@/components/ui/label"
 import SubPage from "@/components/sub-page"
 import { BrowserEnvironmentComp } from "@/components/_universal/browser"
 
-import { getWxAuthorizationUrl } from "@/lib/wx/utils"
-import { WX_AUTH_DOC_URL } from "@/lib/wx/config"
-import { WxAuthScopeType } from "@/lib/wx/schema"
+import { getWechatAuthorizationUrl } from "@/lib/wechat/auth/functions"
+import { WechatScopeType } from "@/lib/wechat/auth/schema"
+import { WX_AUTH_DOC_URL } from "@/lib/wechat/auth/config"
 
 export default function TestWechatAuthPage() {
   const user = useUser()
@@ -24,10 +24,10 @@ export default function TestWechatAuthPage() {
           不弹出授权页面，直接跳转，只能获取用户openid
         </Label>
         <ButtonLink
-          href={getWxAuthorizationUrl(WxAuthScopeType.base, userId)}
+          href={getWechatAuthorizationUrl(WechatScopeType.base, userId)}
           disabled={!userId}
         >
-          {WxAuthScopeType.base} 授权
+          {WechatScopeType.base} 授权
         </ButtonLink>
 
         <Label className={"text-xs"}>
@@ -35,10 +35,10 @@ export default function TestWechatAuthPage() {
           即使在未关注的情况下，只要用户授权，也能获取其信息
         </Label>
         <ButtonLink
-          href={getWxAuthorizationUrl(WxAuthScopeType.info, userId)}
+          href={getWechatAuthorizationUrl(WechatScopeType.info, userId)}
           disabled={!userId}
         >
-          {WxAuthScopeType.info} 授权
+          {WechatScopeType.info} 授权
         </ButtonLink>
 
         <div className={"text-xs inline-flex"}>

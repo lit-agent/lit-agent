@@ -111,7 +111,7 @@ export interface PayQueryResData {
 
   /**
    * 交易时候的商品概述
-   * 示例: "wx"
+   * 示例: "wechat"
    */
   subject: string
 

@@ -2,11 +2,11 @@
 
 import { VerticalContainer } from "@/components/containers/vertical"
 import { Button } from "@/components/ui/button"
-import { commentNotify } from "@/lib/wx/config"
 import { useState } from "react"
 import { api } from "@/lib/trpc/react"
 import SubPage from "@/components/sub-page"
 import { BrowserEnvironmentComp } from "@/components/_universal/browser"
+import { commentNotify } from "@/lib/wechat/notify-cyx/config"
 
 export default function TestWechatPusherPage() {
   const [showSubscribe, setShowSubscribe] = useState(false)

@@ -1,12 +1,9 @@
-import { GetAccessTokenResponse } from "./schema"
-import {
-  WX_APP_ID,
-  WX_APP_SECRET,
-  WX_REGULAR_ACCESS_TOKEN_URL,
-} from "@/lib/wx/config"
-
 // 获取微信token单例类
-class SingletonToken {
+import { WX_API_URL, WX_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
+
+import { GetAccessTokenResponse } from "@/lib/wechat/auth-cyx/schema"
+
+export class SingletonToken {
   static instance
 
   static accessToken: string
@@ -86,7 +83,7 @@ class SingletonToken {
 
   // 获取微信access token
   async getWxAccessToken() {
-    const url = `${WX_REGULAR_ACCESS_TOKEN_URL}?grant_type=client_credential&appid=${WX_APP_ID}&secret=${WX_APP_SECRET}`
+    const url = `${WX_API_URL}/cgi-bin/token?grant_type=client_credential&appid=${WX_APP_ID}&secret=${WX_APP_SECRET}`
     const response = await fetch(url)
     if (!response.ok) {
       throw new Error(`HTTP error: ${response.status} ${response.statusText}`)
@@ -97,6 +94,5 @@ class SingletonToken {
   }
 }
 
-const singletonTokenInstance = new SingletonToken()
-
+export const singletonTokenInstance = new SingletonToken()
 export default singletonTokenInstance

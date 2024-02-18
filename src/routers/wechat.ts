@@ -1,9 +1,14 @@
 import { createTRPCRouter, protectedProcedure } from "@/lib/trpc/trpc"
-import { bindWxOpenIdToUser, getOpenId, sign } from "@/lib/wx/wx-auth"
-import { sendSubscribeNotify } from "@/lib/wx/wx-notify"
-import { SubscribeNotifySchema } from "@/lib/wx/schema"
+import {
+  bindWxOpenIdToUser,
+  getOpenId,
+  sign,
+} from "@/lib/wechat/auth-cyx/functions"
+import { sendSubscribeNotify } from "@/lib/wechat/notify-cyx/functions"
 import { z } from "zod"
-import singletonTokenInstance from "@/lib/wx/singleton-token"
+
+import singletonTokenInstance from "@/lib/wechat/auth-cyx/token"
+import { SubscribeNotifySchema } from "@/lib/wechat/notify-cyx/schema"
 
 export const wechatRouter = createTRPCRouter({
   bindWxOpenIdToUser: protectedProcedure

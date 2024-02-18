@@ -10,9 +10,9 @@ import { prisma } from "@/lib/db"
 import { IUserListView } from "@/schema/user.base"
 import { DefaultJWT } from "next-auth/jwt"
 import { LOG_AUTH_ENABLED } from "@/config"
-import { WX_APP_ID, WX_APP_SECRET } from "@/lib/wx/config"
+import { WX_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
 import { SmsProvider } from "@/lib/sms/provider"
-import WechatProvider from "@/lib/wx/provider"
+import WechatProvider from "@/lib/wechat/auth/provider"
 
 export type SessionError = "NoPhone" | "NoUserInDB"
 
