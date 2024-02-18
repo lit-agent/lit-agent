@@ -83,29 +83,27 @@ export const authOptions: NextAuthOptions = {
     }) => {
       // token 是加解密可信安全的，不用担心被篡改！
 
+      // todo: avoid re-mapping
       if (token.sub) token.id = token.sub
 
-      let userInDB
       let status = ""
-      if (user?.phone) token = { ...token, phone: user.phone, validated: false }
-      // afterwards
-      else if (token.phone) {
-        // 首次更新token
-        userInDB = await prisma.user.findUnique({
-          where: { phone: token.phone },
-        })
-        if (!userInDB) {
-          token.expiresIn = Date.now() / 1e3
-          token.error = "NoUserInDB"
-          status = "invalidated"
-          // console.debug("[auth.jwt] updated(invalidating): ", { userInDB, token, })
-        } else if (userInDB.validated) {
-          token.validated = true
-          status = "validated"
-          token = { ...token, ...userInDB }
-        } else {
-          status = "ok"
-        }
+      if (user) token = { ...token, ...user, validated: false }
+
+      const userInDB = await prisma.user.findUnique({
+        where: { id: token.id },
+      })
+
+      if (!userInDB) {
+        token.expiresIn = Date.now() / 1e3
+        token.error = "NoUserInDB"
+        status = "invalidated"
+        // console.debug("[auth.jwt] updated(invalidating): ", { userInDB, token, })
+      } else if (userInDB.validated) {
+        token.validated = true
+        status = "validated"
+        token = { ...token, ...userInDB }
+      } else {
+        status = "ok"
       }
 
       if (LOG_AUTH_ENABLED)
