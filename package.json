@@ -13,7 +13,7 @@
     "_dev:wss": "cross-env PORT=3001 tsx watch src/lib/wssDevServer.ts --tsconfig tsconfig.server.json ",
     "dev:next": "next dev",
     "dev": "yarn db:migrate-dev && run-p dev:*",
-    "postinstall": "prisma generate",
+    "postinstall": "prisma generate && patch-package",
     "lint": "next lint",
     "start": "next start",
     "update": "DIST=.next-tmp && git stash && git pull -f && yarn && DIST=$DIST yarn build && rm -rf .next && mv $DIST .next"
@@ -60,6 +60,8 @@
     "next-auth": "^4.24.6",
     "next-themes": "^0.2.1",
     "node-fetch": "^3.3.2",
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0",
     "pusher": "^5.2.0",
     "pusher-js": "^8.4.0-rc2",
     "qrcode.react": "^3.1.0",

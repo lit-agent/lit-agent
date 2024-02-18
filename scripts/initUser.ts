@@ -3,7 +3,7 @@ import { JIUGU_PHONE, JIUGU_ID, JIUGU_CODE } from "@/config"
 import { UserType } from "@prisma/client"
 import { SMS_PROVIDER_ID } from "@/lib/sms/config"
 
-const init = async () => {
+export const initUser = async () => {
   const phone = JIUGU_PHONE
   const user = await prisma.user.findUnique({ where: { phone } })
   console.log({ phone })
@@ -32,4 +32,4 @@ const init = async () => {
   }
 }
 
-init()
+initUser()

@@ -1,0 +1,13 @@
+diff --git a/node_modules/next-auth/src/core/lib/oauth/callback.ts b/node_modules/next-auth/src/core/lib/oauth/callback.ts
+index 3038150..5427b65 100644
+--- a/node_modules/next-auth/src/core/lib/oauth/callback.ts
++++ b/node_modules/next-auth/src/core/lib/oauth/callback.ts
+@@ -121,6 +121,8 @@ export default async function oAuthCallback(params: {
+       })
+     }
+ 
++    console.log('>>> [next-auth] callback: ', {profile})
++
+     const profileResult = await getProfile({
+       profile,
+       provider,
