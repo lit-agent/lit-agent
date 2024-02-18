@@ -5,7 +5,7 @@ import crypto from "crypto"
 import { WECHAT_API_URL, WX_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
 
 import singletonTokenInstance from "@/lib/wechat/auth-cyx/token"
-import { WECHAT_AUTH_PROVIDER_ID } from "@/lib/wechat/auth/config"
+import { WECHAT_PROVIDER_ID } from "@/lib/wechat/auth/config"
 
 /**
  * 将微信openid关联至已存在的用户账号
@@ -21,7 +21,7 @@ export const bindWxOpenIdToUser = async (openId: string) => {
   const existingAccount = await prisma.account.findUnique({
     where: {
       provider_providerAccountId: {
-        provider: WECHAT_AUTH_PROVIDER_ID,
+        provider: WECHAT_PROVIDER_ID,
         providerAccountId: openId,
       },
     },
@@ -40,7 +40,7 @@ export const bindWxOpenIdToUser = async (openId: string) => {
 
   const createdAccount = await prisma.account.create({
     data: {
-      provider: WECHAT_AUTH_PROVIDER_ID,
+      provider: WECHAT_PROVIDER_ID,
       providerAccountId: openId,
       type: "oauth",
       user: {

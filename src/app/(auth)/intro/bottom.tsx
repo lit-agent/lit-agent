@@ -6,7 +6,7 @@ import { env } from "@/env"
 import { Button } from "@/components/ui/button"
 import { LoginFormViaSMS } from "@/components/login-via-sms"
 import { useState } from "react"
-import { WECHAT_AUTH_PROVIDER_ID } from "@/lib/wechat/auth/config"
+import { WECHAT_PROVIDER_ID } from "@/lib/wechat/auth/config"
 import { APP_URL } from "@/config"
 
 export const Bottom = () => {
@@ -25,7 +25,7 @@ export const Bottom = () => {
 
       {/* 抓包UI的结果, or see: https://github.com/ndom91/next-auth-example-sign-in-page/blob/main/src/pages/auth/signin.js */}
       <form
-        action={`${APP_URL}/api/auth/signin/${WECHAT_AUTH_PROVIDER_ID}`}
+        action={`${APP_URL}/api/auth/signin/${WECHAT_PROVIDER_ID}`}
         method={"POST"}
       >
         {/*没有 csrfToken 会直接跳转到 signIn 页 */}

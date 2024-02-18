@@ -17,6 +17,7 @@ import { toast } from "sonner"
 import { signIn } from "next-auth/react"
 
 import { SMS_PROVIDER_ID } from "@/lib/sms/config"
+import { WECHAT_PROVIDER_ID } from "@/lib/wechat/auth/config"
 
 export default function ValidateSuccess() {
   const router = useRouter()
@@ -55,18 +56,23 @@ export default function ValidateSuccess() {
           className={"w-full"}
           disabled={!user?.image || !user?.name || !user?.id}
           onClick={async (event) => {
+            // 手机登录，需要再次 signin 以刷新
             const { phone, code } = await getAuthData.mutateAsync()
-            if (!phone || !code) return toast.error("账号异常！")
-
-            // 登录，刷新token
-            const signInResult = await signIn(SMS_PROVIDER_ID, {
-              phone,
-              code,
-              redirect: false,
-              // todo: auth
-              // callbackUrl: "/", // 感谢: https://github.com/sidebase/nuxt-auth/issues/469#issuecomment-1661909912
-            })
+            let signInResult
+            if (phone && code) {
+              // 登录，刷新token
+              signInResult = await signIn(SMS_PROVIDER_ID, {
+                phone,
+                code,
+                redirect: false,
+                // todo: auth
+                // callbackUrl: "/", // 感谢: https://github.com/sidebase/nuxt-auth/issues/469#issuecomment-1661909912
+              })
+            } else {
+              signInResult = await signIn(WECHAT_PROVIDER_ID)
+            }
             console.log({ signInResult })
+
             toast.success("恭喜加入玖姑的私域！")
             router.push("/")
           }}
