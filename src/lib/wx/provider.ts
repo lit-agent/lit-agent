@@ -4,7 +4,8 @@ import { WX_PROVIDER_ID, WX_PROVIDER_TYPE } from "@/lib/wx/config"
 import { getWxAuthorizationUrl } from "@/lib/wx/utils"
 import {
   getWxAccessToken,
-  IWxAccessTokenPayload,
+  IWechatTokenPayload,
+  IWechatTokenPayloadAdaptor,
 } from "@/lib/wx/functions/get-access-token"
 
 if (!global.authorizationUrl) {
@@ -29,8 +30,12 @@ export default function WechatProvider<P extends IWxProfile>(
 
     token: {
       request: async ({ params: { code } }) => {
-        const tokens = (await getWxAccessToken(code!)) as IWxAccessTokenPayload
-        console.log("[wx-auth] token: ", { code, tokens })
+        const wechatToken = (await getWxAccessToken(
+          code!,
+        )) as IWechatTokenPayload
+        const { openid: id, ...other } = wechatToken
+        const tokens = { id, ...other } as IWechatTokenPayloadAdaptor
+        console.log("[wx-auth] token: ", { code, wechatToken, tokens })
         return { tokens }
       },
     },
@@ -38,11 +43,8 @@ export default function WechatProvider<P extends IWxProfile>(
     userinfo: {
       // @ts-ignore
       request: async ({ tokens, client }) => {
-        const { openid, access_token } = tokens as IWxAccessTokenPayload
-        const userinfo = (await getWxProfile(
-          access_token,
-          openid,
-        )) as IWxProfile
+        const { id, access_token } = tokens as IWechatTokenPayloadAdaptor
+        const userinfo = (await getWxProfile(access_token, id)) as IWxProfile
         console.log("[wx-auth] userinfo: ", { tokens, userinfo })
         return userinfo
       },
