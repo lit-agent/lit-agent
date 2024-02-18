@@ -35,7 +35,10 @@ export const fetchShouqianba = async ({
   if (!response.ok) {
     throw new Error(`HTTP error: ${response.status} ${response.statusText}`)
   }
-  const data = await response.json()
+  const data = (await response.json()) as {
+    biz_response: any
+    result_code: string
+  }
   console.debug("[sqb] res: ", { requestId, data })
 
   if (data.result_code !== "200") {
