@@ -1,9 +1,9 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import {
   type DefaultSession,
+  DefaultUser,
   getServerSession,
   type NextAuthOptions,
-  DefaultUser,
 } from "next-auth"
 import { prisma } from "@/lib/db"
 
@@ -13,7 +13,6 @@ import { LOG_AUTH_ENABLED } from "@/config"
 import { WX_APP_ID, WX_APP_SECRET } from "@/lib/wx/config"
 import { SmsProvider } from "@/lib/sms/provider"
 import WechatProvider from "@/lib/wx/provider"
-import { boolean } from "zod/lib/types"
 
 export type SessionError = "NoPhone" | "NoUserInDB"
 

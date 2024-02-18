@@ -30,6 +30,7 @@ export default function WechatProvider<P extends IWxProfile>(
     token: {
       request: async ({ params: { code } }) => {
         const tokens = (await getWxAccessToken(code!)) as IWxAccessTokenPayload
+        console.log("[wx-auth] token: ", { code, tokens })
         return { tokens }
       },
     },
@@ -38,7 +39,12 @@ export default function WechatProvider<P extends IWxProfile>(
       // @ts-ignore
       request: async ({ tokens, client }) => {
         const { openid, access_token } = tokens as IWxAccessTokenPayload
-        return (await getWxProfile(access_token, openid)) as IWxProfile
+        const userinfo = (await getWxProfile(
+          access_token,
+          openid,
+        )) as IWxProfile
+        console.log("[wx-auth] userinfo: ", { tokens, userinfo })
+        return userinfo
       },
     },
 
