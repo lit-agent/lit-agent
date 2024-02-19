@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { maskPhone } from "@/lib/utils"
 import { useUser } from "@/hooks/use-user"
 import { TODO } from "@/config"
-import { signOut } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 import { Label } from "@/components/ui/label"
 import { BasicMutableUserInfo } from "@/components/user/basic"
 import { GrayCard } from "@/components/_universal/cards"
@@ -13,7 +13,7 @@ import SubPage from "@/components/sub-page"
 import { toast } from "sonner"
 
 export default function SettingsPage() {
-  const user = useUser()
+  const user = useSession().data?.user
 
   const phone = user?.phone
   const wxid = user?.wxid

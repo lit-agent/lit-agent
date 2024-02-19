@@ -21,6 +21,7 @@ interface Payload {
   validated: boolean
   name: string | null // JWT 的 name 还支持 undefined，我们要限制一下
   phone: string | null
+  wxid: string | null
   error?: SessionError
 }
 
@@ -43,6 +44,7 @@ declare module "next-auth" {
 
   interface User extends DefaultUser {
     phone?: string
+    wxid?: string
   }
 }
 
