@@ -13,22 +13,14 @@ import { LOG_AUTH_ENABLED } from "@/config"
 import { WX_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
 import { SmsProvider } from "@/lib/sms/provider"
 import WechatProvider from "@/lib/wechat/auth/provider"
+import { IUserMainView, userMainViewSchema } from "@/schema/user"
 
 export type SessionError = "NoPhone" | "NoUserInDB"
-
-interface Payload {
-  id: string
-  validated: boolean
-  name: string | null // JWT 的 name 还支持 undefined，我们要限制一下
-  phone: string | null
-  wxid: string | null
-  error?: SessionError
-}
 
 // ref: https://next-auth.js.org/getting-started/typescript#submodules
 declare module "next-auth/jwt" {
   /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
-  interface JWT extends DefaultJWT, IUserListView, Payload {}
+  interface JWT extends DefaultJWT, IUserMainView {}
 }
 
 /**
@@ -39,13 +31,10 @@ declare module "next-auth/jwt" {
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: DefaultSession["user"] & Payload
+    user: DefaultSession["user"] & IUserMainView
   }
 
-  interface User extends DefaultUser {
-    phone?: string
-    wxid?: string
-  }
+  // interface User extends DefaultUser, IUserMainView {}
 }
 
 /**
@@ -92,6 +81,7 @@ export const authOptions: NextAuthOptions = {
 
       const userInDB = await prisma.user.findUnique({
         where: { id: token.id },
+        ...userMainViewSchema,
       })
 
       if (!userInDB) {

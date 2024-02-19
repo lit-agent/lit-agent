@@ -3,18 +3,16 @@
 import { Button } from "@/components/ui/button"
 import { maskPhone } from "@/lib/utils"
 import { TODO } from "@/config"
-import { signOut, useSession } from "next-auth/react"
+import { signOut } from "next-auth/react"
 import { BasicMutableUserInfo } from "@/components/user/basic"
 import { GrayCard } from "@/components/_universal/cards"
 import { MenuButton } from "@/components/_universal/line"
 import SubPage from "@/components/sub-page"
 import { toast } from "sonner"
+import { useMe } from "@/hooks/use-user"
 
 export default function SettingsPage() {
-  const user = useSession().data?.user
-
-  const phone = user?.phone
-  const wxid = user?.wxid
+  const { wxid, phone } = useMe()
 
   return (
     <SubPage title={"用户中心"} className={"flex flex-col gap-4"}>

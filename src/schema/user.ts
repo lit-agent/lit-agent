@@ -9,6 +9,12 @@ export const userMainViewSchema = validator<UserDefaultArgs>()({
   include: {
     honors: true,
     fromTasks: true,
+    accounts: {
+      select: {
+        provider: true,
+        providerAccountId: true,
+      },
+    },
     toTasks: {
       include: {
         task: {
