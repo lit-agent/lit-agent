@@ -11,13 +11,8 @@ export const LoginViaWechat = () => {
     <Button
       className={"w-full"}
       disabled={continueWithPhone}
-      onClick={async (event) => {
-        event.preventDefault()
-        event.stopPropagation()
-        await signIn(
-          WECHAT_PROVIDER_ID,
-          // { redirect: false }
-        )
+      onClick={(event) => {
+        signIn(WECHAT_PROVIDER_ID, { redirect: false })
       }}
     >
       {continueWithPhone ? "请先绑定手机号" : "直接微信登录"}

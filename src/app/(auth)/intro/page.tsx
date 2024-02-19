@@ -4,7 +4,7 @@ import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { GiuguProfile } from "@/components/user/jiugu-profile"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { ShowUsers } from "@/components/show-users"
 import LoginComp from "@/components/login"
 
@@ -31,7 +31,9 @@ export default function IntroPage() {
           <ShowUsers />
 
           <Sheet>
-            <SheetTrigger>成为姑的friend</SheetTrigger>
+            <SheetTrigger className={cn(buttonVariants(), "text-white")}>
+              成为姑的friend
+            </SheetTrigger>
 
             <SheetContent side={"bottom"} className={"flex flex-col gap-4"}>
               <LoginComp />
