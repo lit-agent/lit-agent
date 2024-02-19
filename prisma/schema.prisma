@@ -342,13 +342,17 @@ model User {
 
   // auth
   email         String?   @unique // email auth
-  phone         String?   @unique // sms auth
-  wxid          String?   @unique // wechat auth
-  accounts      Account[]
-  sessions      Session[]
   emailVerified DateTime?
+
+  phone         String?   @unique // sms auth
   phoneVerified DateTime?
-  validated     Boolean   @default(false) // 是否通过验证
+
+  wechat         String?   @unique // wechat auth
+  wechatVerified DateTime?
+
+  accounts  Account[]
+  sessions  Session[]
+  validated Boolean   @default(false) // 是否通过验证
 
   // basic info
   name        String?

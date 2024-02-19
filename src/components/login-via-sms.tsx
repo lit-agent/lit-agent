@@ -5,7 +5,6 @@ import { PHONE_REGEX } from "@/lib/utils"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useCountdown } from "@/hooks/use-countdown"
-import { api } from "@/lib/trpc/react"
 import { toast } from "sonner"
 import { useState } from "react"
 import { signIn } from "next-auth/react"
@@ -21,6 +20,8 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { CgSpinner } from "react-icons/cg"
 import { SMS_PROVIDER_ID } from "@/lib/sms/config"
+import { sendSms } from "@/lib/sms/functions"
+import { useUser } from "@/hooks/use-user"
 
 export const LoginViaSMS = () => {
   const formSchema = z.object({
@@ -44,17 +45,16 @@ export const LoginViaSMS = () => {
     watch,
     formState: { errors },
   } = form
+  const { user } = useUser()
 
   const { count, start, ticking } = useCountdown({ startValue: 60 })
-
-  const sendSms = api.sms.send.useMutation()
 
   const onRequestingVerifyCode = async (event) => {
     event.preventDefault() // 防止触发form的验证
     start()
 
     const phone = watch("phone")
-    const { success, message } = await sendSms.mutateAsync({ phone })
+    const { success, message } = await sendSms(phone, user?.id)
     if (success) {
       toast.success("验证码已发送！")
     } else toast.error(`验证码发送失败，原因：${message}`)
@@ -76,6 +76,7 @@ export const LoginViaSMS = () => {
       // callbackUrl: "/", // 感谢: https://github.com/sidebase/nuxt-auth/issues/469#issuecomment-1661909912
     })
     setSubmitting(false)
+    toast.success("手机号注册成功！")
     console.log("[IntroPage] sign in result: ", result)
   }
 

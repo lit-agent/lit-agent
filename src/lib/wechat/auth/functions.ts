@@ -9,6 +9,7 @@ import {
   WechatScopeType,
 } from "@/lib/wechat/auth/schema"
 import { WECHAT_AUTH_CALLBACK_URL } from "@/lib/wechat/auth/config"
+import { LOG_AUTH_ENABLED } from "@/lib/auth/config"
 
 /**
  * 只有该函数可以在客户端调用，用于拉起用户微信授权弹窗
@@ -38,7 +39,7 @@ const fetchWechatAuth = async <T>(
     WECHAT_API_URL + path + "?" + new URLSearchParams(params),
   )
   const data = await res.json()
-  console.log(`[wechat-auth] fetched ${name}: `, data)
+  if (LOG_AUTH_ENABLED) console.log(`[wechat-auth] fetched ${name}: `, data)
   if (isWechatError(data)) throw data.errmsg
   return data as T
 }

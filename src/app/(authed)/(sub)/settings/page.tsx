@@ -14,7 +14,7 @@ import { useBrowserEnvironment } from "@/hooks/use-browser-environment"
 import { WECHAT_PROVIDER_ID } from "@/lib/wechat/auth/config"
 
 export default function SettingsPage() {
-  const { wxid, phone } = useUser()
+  const { wechat, phone } = useUser()
   const { isWechat, isMobile } = useBrowserEnvironment()
 
   return (
@@ -24,13 +24,13 @@ export default function SettingsPage() {
       <GrayCard>
         <MenuButton
           name={"微信绑定"}
-          disabled={!!wxid}
+          disabled={!!wechat}
           onClick={async () => {
             if (!isWechat) return toast.info("请在微信浏览器内完成绑定操作！")
             await signIn(WECHAT_PROVIDER_ID)
           }}
         >
-          {wxid ?? "点击绑定"}
+          {wechat ?? "点击绑定"}
         </MenuButton>
 
         <MenuButton

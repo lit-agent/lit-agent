@@ -1,13 +1,12 @@
 import { withAuth } from "next-auth/middleware"
 import { NextResponse } from "next/server"
-import { LOG_AUTH_ENABLED } from "./config"
+
+import { LOG_AUTH_ENABLED } from "@/lib/auth/config"
 
 export default withAuth(
   async function middleware(req) {
     const redirect = (url: string) =>
       NextResponse.redirect(new URL(url, req.url))
-
-    console.log("[Next-Auth Middleware] >>> ")
 
     const nextPath = req.nextUrl.pathname
     const token = req.nextauth.token
@@ -16,19 +15,24 @@ export default withAuth(
     const isValidating = nextPath.startsWith("/validation")
     const isAuthing = isLoggingIn || isValidating
 
-    if (LOG_AUTH_ENABLED)
-      console.log(
-        "[Next-Auth Middleware] <<< ",
-        JSON.stringify({ id: token?.sub, url: req.url }),
-      )
+    // if (LOG_AUTH_ENABLED)
+    console.log(
+      "[Next-Auth Middleware]: ",
+      JSON.stringify({
+        id: token?.sub,
+        url: req.url,
+        nextPath,
+      }),
+    )
 
     // session 有问题，则重定向回登录页
     // 验证页pass
-    if (!isAuthing && !token) return redirect("/intro")
+    if (!isLoggingIn && !token) return redirect("/intro")
 
     // 非Auth页，但处于待答题状态，则重定向回答题页
     // 登录页 pass
-    if (!isAuthing && token?.validated === false) return redirect("/validation")
+    if (!isValidating && token?.validated === false)
+      return redirect("/validation")
 
     // 在Auth页，但处于已验证状态，则重定向回首页
     if (isAuthing && token?.validated) return redirect("/")

@@ -1,5 +1,4 @@
 import { createTRPCRouter } from "@/lib/trpc/trpc"
-import { smsRouter } from "@/routers/sms"
 import { userRouter } from "@/routers/user"
 import { messageRouter } from "@/routers/message"
 import { taskRouter } from "@/routers/task"
@@ -14,8 +13,6 @@ import { payRouter } from "@/routers/pay"
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  sms: smsRouter,
-
   user: userRouter,
   message: messageRouter,
   task: taskRouter,

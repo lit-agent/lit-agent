@@ -8,13 +8,13 @@ import { useUser } from "@/hooks/use-user"
 import { useEffect, useState } from "react"
 
 export default function LoginSheet() {
-  const { wxid, phone } = useUser()
+  const { wechat, phone } = useUser()
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
     // 有微信 id 的时候，默认为开；没有，则关
-    if (wxid) setOpen(true)
-  }, [wxid])
+    if (wechat) setOpen(true)
+  }, [wechat])
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>

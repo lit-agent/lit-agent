@@ -1,11 +1,11 @@
 import { NextAuthOptions } from "next-auth"
-import { LOG_AUTH_ENABLED } from "@/config"
 import { prisma } from "@/lib/db"
-import { userMainViewSchema } from "@/schema/user"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { SmsProvider } from "@/lib/sms/provider"
 import WechatProvider from "@/lib/wechat/auth/provider"
 import { WX_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
+
+export const LOG_AUTH_ENABLED = false
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
@@ -16,7 +16,7 @@ export const authOptions: NextAuthOptions = {
   debug: LOG_AUTH_ENABLED,
 
   pages: {
-    // signIn: "/intro",
+    signIn: "/intro",
   },
 
   session: {
@@ -26,22 +26,22 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     signIn: async ({ user, email, account, profile, credentials }) => {
-      /* on successful sign in */
-      console.debug("[auth.signIn]: ", {
-        user,
-        email,
-        account,
-        profile,
-        credentials,
-      })
+      if (LOG_AUTH_ENABLED)
+        console.debug("[auth.signIn]: ", {
+          user,
+          email,
+          account,
+          profile,
+          credentials,
+        })
 
       return true
     },
 
-    // redirect: async (params) => {
-    //   console.debug("[auth.redirect]: ", params)
-    //   return params.url // params.url
-    // },
+    redirect: async ({ url, baseUrl }) => {
+      console.debug("[auth.redirect]: ", { url, baseUrl })
+      return url
+    },
     /**
      * 【user --> token（JWT）】
      * signIn（首次登录）会触发 CredentialProvider.authorize()
@@ -83,7 +83,7 @@ export const authOptions: NextAuthOptions = {
             image: profile.image,
           },
         })
-        console.log("[auth.jwt] updated user: ", userNew)
+        if (LOG_AUTH_ENABLED) console.log("[auth.jwt] updated user: ", userNew)
       }
 
       if (LOG_AUTH_ENABLED)

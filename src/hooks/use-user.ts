@@ -14,7 +14,7 @@ export const useUser = () => {
 
   const accounts = mainUser?.accounts
 
-  const wxid = accounts?.find(
+  const wechat = accounts?.find(
     (a) => a.provider === WECHAT_PROVIDER_ID,
   )?.providerAccountId
 
@@ -22,5 +22,5 @@ export const useUser = () => {
     (a) => a.provider === SMS_PROVIDER_ID,
   )?.providerAccountId
 
-  return { id, wxid, phone, mainUser, user: mainUser }
+  return { id, wechat, phone, mainUser, user: mainUser }
 }

@@ -1,8 +1,8 @@
-import { LOG_AUTH_ENABLED } from "@/config"
 import { prisma } from "@/lib/db"
 import { SMS_PROVIDER_ID } from "@/lib/sms/config"
 import { userMainViewSchema } from "@/schema/user"
 import CredentialsProvider from "next-auth/providers/credentials"
+import { LOG_AUTH_ENABLED } from "@/lib/auth/config"
 
 export const SmsProvider = CredentialsProvider({
   id: SMS_PROVIDER_ID,
