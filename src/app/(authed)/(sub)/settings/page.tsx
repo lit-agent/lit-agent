@@ -2,10 +2,8 @@
 
 import { Button } from "@/components/ui/button"
 import { maskPhone } from "@/lib/utils"
-import { useUser } from "@/hooks/use-user"
 import { TODO } from "@/config"
 import { signOut, useSession } from "next-auth/react"
-import { Label } from "@/components/ui/label"
 import { BasicMutableUserInfo } from "@/components/user/basic"
 import { GrayCard } from "@/components/_universal/cards"
 import { MenuItem } from "@/components/_universal/line"
@@ -19,7 +17,11 @@ export default function SettingsPage() {
   const wxid = user?.wxid
 
   return (
-    <SubPage title={"用户中心"} className={"flex flex-col gap-4"}>
+    <SubPage
+      title={"用户中心"}
+      className={"flex flex-col gap-4"}
+      suppressHydrationWarning
+    >
       <BasicMutableUserInfo />
 
       <GrayCard>
@@ -35,6 +37,7 @@ export default function SettingsPage() {
             </Button>
           )}
         </MenuItem>
+
         <MenuItem name={"手机绑定"}>
           {phone ? (
             maskPhone(phone)
