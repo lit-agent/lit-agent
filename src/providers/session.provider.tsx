@@ -22,14 +22,7 @@ export default function SafeSessionProvider({ children }: PropsWithChildren) {
 const ValidSessionProvider = ({ children }: PropsWithChildren) => {
   const session = useSession()
 
-  if (!session.data)
-    return (
-      <div className={"w-screen h-screen flex items-center justify-center"}>
-        <LoaderIcon className={"animtate-spin"} />
-      </div>
-    )
-
-  if (session.data.user.valid === false)
+  if (session.data?.user.valid === false)
     return (
       <div className={"w-screen h-screen flex items-center justify-center"}>
         <Label>Your session has been expired, please re-login again!</Label>
