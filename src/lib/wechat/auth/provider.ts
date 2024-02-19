@@ -29,7 +29,7 @@ export default function WechatProvider<P extends IWechatAdaptedProfile>(
     authorization: {
       url: getWechatAuthorizationUrl(),
       params: {
-        forcePopup: true,
+        forcePopup: "true",
       },
     },
 
