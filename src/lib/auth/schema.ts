@@ -4,12 +4,14 @@ import { IUserMainView } from "@/schema/user"
 
 export type SessionErrorType = "NoUserInToken" | "NoUserInDB" | "NoPhone"
 
+interface Payload {
+  validated?: boolean
+}
+
 // ref: https://next-auth.js.org/getting-started/typescript#submodules
 declare module "next-auth/jwt" {
   /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
-  interface JWT extends DefaultJWT {
-    validated?: boolean
-  }
+  interface JWT extends DefaultJWT, Payload {}
 }
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -19,11 +21,9 @@ declare module "next-auth/jwt" {
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: DefaultSession["user"] & IUserMainView
+    user: DefaultSession["user"] & Payload & { id: string }
     error?: SessionErrorType
   }
 
-  interface User extends DefaultUser {
-    validated?: boolean
-  }
+  interface User extends DefaultUser, Payload {}
 }

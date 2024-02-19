@@ -6,9 +6,6 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { SmsProvider } from "@/lib/sms/provider"
 import WechatProvider from "@/lib/wechat/auth/provider"
 import { WX_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
-import { SMS_PROVIDER_ID } from "@/lib/sms/config"
-import { WECHAT_PROVIDER_ID } from "@/lib/wechat/auth/config"
-import token from "@/lib/wechat/auth-cyx/token"
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
@@ -68,8 +65,8 @@ export const authOptions: NextAuthOptions = {
         token = {
           sub: user.id,
           name: user.name,
-          email: user.email,
           picture: user.image,
+          email: user.email,
           validated: user.validated,
         }
 
@@ -117,9 +114,11 @@ export const authOptions: NextAuthOptions = {
         if (!userInDB) session.error = "NoUserInDB"
         else {
           session.user = {
-            ...userInDB,
-            // token 覆盖 userInDB
-            ...token,
+            id: token.sub!,
+            name: token.name,
+            image: token.picture,
+            email: token.email,
+            validated: token.validated,
           }
         }
       }

@@ -28,6 +28,26 @@ export const BasicMutableUserInfo = () => {
   const refName = useRef<HTMLInputElement>(null)
   const { user } = useUser()
 
+  const onAvatarChange = async (event) => {
+    const files = event.currentTarget.files
+    if (!files?.length) return
+    const { success, data } = await uploadFilesV2(files)
+    if (!success || !data?.length) return
+
+    const url = data![0]!
+    updateUser
+      .mutateAsync({ image: url })
+      .then((res) => {
+        console.log("[UpdateUser] res: ", res)
+        toast.success("更新头像成功！")
+        utils.user.getSelf.invalidate()
+      })
+      .catch((err) => {
+        console.error("[UpdateUser] err: ", err)
+        toast.error("更新头像失败！")
+      })
+  }
+
   return (
     <GrayCard>
       <MenuButton name={"头像"}>
@@ -38,25 +58,7 @@ export const BasicMutableUserInfo = () => {
             type={"file"}
             accept={"image/*"}
             hidden
-            onChange={async (event) => {
-              const files = event.currentTarget.files
-              if (!files?.length) return
-              const { success, data } = await uploadFilesV2(files)
-              if (!success || !data?.length) return
-
-              const url = data![0]!
-              updateUser
-                .mutateAsync({ image: url })
-                .then((res) => {
-                  console.log("[UpdateUser] res: ", res)
-                  toast.success("更新头像成功！")
-                  utils.user.getSelf.invalidate()
-                })
-                .catch((err) => {
-                  console.error("[UpdateUser] err: ", err)
-                  toast.error("更新头像失败！")
-                })
-            }}
+            onChange={onAvatarChange}
           />
         </Label>
       </MenuButton>
