@@ -17,11 +17,7 @@ export default function SettingsPage() {
   const wxid = user?.wxid
 
   return (
-    <SubPage
-      title={"用户中心"}
-      className={"flex flex-col gap-4"}
-      suppressHydrationWarning
-    >
+    <SubPage title={"用户中心"} className={"flex flex-col gap-4"}>
       <BasicMutableUserInfo />
 
       <GrayCard>

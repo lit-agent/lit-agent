@@ -20,7 +20,9 @@ export const MenuItem = forwardRef<HTMLButtonElement, ButtonProps>(
           "text-muted-foreground flex items-center gap-1 overflow-hidden"
         }
       >
-        <div className={"truncate"}>{children}</div>
+        <div className={"truncate"} suppressHydrationWarning>
+          {children}
+        </div>
 
         <ChevronRightIcon className={"w-5 h-5 shrink-0"} />
       </div>
