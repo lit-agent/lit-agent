@@ -3,14 +3,15 @@ import {
   adaptWechatToken,
   getWechatProfile,
   getWechatToken,
-} from "@/lib/wechat/auth/server-functions"
+} from "@/lib/wechat/auth/funcs/server"
 import {
   IWechatAdaptedProfile,
   IWechatAdaptedToken,
   IWechatProfile,
 } from "@/lib/wechat/auth/schema"
 import { WECHAT_PROVIDER_ID } from "@/lib/wechat/auth/config"
-import { getWechatAuthorizationUrl } from "@/lib/wechat/auth/client-funcs"
+import { getWechatAuthorizationUrl } from "@/lib/wechat/auth/funcs/client"
+import { User } from "next-auth"
 
 /**
  * ref:
@@ -49,7 +50,7 @@ export default function WechatProvider<P extends IWechatAdaptedProfile>(
      * @param profile
      */
     profile: async (profile: IWechatProfile) => {
-      const adaptedProfile = {
+      const user: User = {
         id: profile.openid,
 
         // 更新 user 的昵称和照片
@@ -62,9 +63,9 @@ export default function WechatProvider<P extends IWechatAdaptedProfile>(
       }
       console.log("[next-auth-wechat-provider] called profile: ", {
         profile,
-        adaptedProfile,
+        user,
       })
-      return adaptedProfile
+      return user
     },
 
     // style: { logo: "/facebook.svg", bg: "#006aff", text: "#fff" },

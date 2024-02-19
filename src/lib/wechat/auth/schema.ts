@@ -5,7 +5,7 @@ export enum WechatScopeType {
   info = "snsapi_userinfo",
 }
 
-export type IWechatTokenPayload = {
+export type IWechatToken = {
   openid: string
   access_token: string
   expires_in: number // 7200s
@@ -18,14 +18,14 @@ export type IWechatTokenPayload = {
 
 // refresh的时候少了两个
 export type IWechatRefreshedToken = Omit<
-  IWechatTokenPayload,
+  IWechatToken,
   "unionid" | "is_snapshotuser"
 >
 
 /**
  * prisma account create 的 时候 不能有 openid 等额外的自定义字段
  */
-export type IWechatAdaptedToken = Omit<IWechatTokenPayload, "openid"> & {
+export type IWechatAdaptedToken = Omit<IWechatToken, "openid"> & {
   id: string
 }
 

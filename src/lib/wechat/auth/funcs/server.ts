@@ -4,7 +4,7 @@ import {
   IWechatAdaptedToken,
   IWechatProfile,
   IWechatRefreshedToken,
-  IWechatTokenPayload,
+  IWechatToken,
 } from "@/lib/wechat/auth/schema"
 import { LOG_AUTH_ENABLED } from "@/lib/auth/config"
 
@@ -33,7 +33,7 @@ const fetchWechatAuth = async <T>(
  * @param code
  */
 export const getWechatToken = async (code: string) => {
-  return fetchWechatAuth<IWechatTokenPayload>(
+  return fetchWechatAuth<IWechatToken>(
     "get-token",
     `/sns/oauth2/access_token`,
     {
@@ -45,9 +45,7 @@ export const getWechatToken = async (code: string) => {
   )
 }
 
-export const adaptWechatToken = (
-  token: IWechatTokenPayload,
-): IWechatAdaptedToken => {
+export const adaptWechatToken = (token: IWechatToken): IWechatAdaptedToken => {
   const { openid, ...other } = token
   return { id: openid, ...other }
 }

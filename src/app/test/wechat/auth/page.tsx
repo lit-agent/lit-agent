@@ -10,7 +10,7 @@ import { BrowserEnvironmentComp } from "@/components/_universal/browser"
 import { WECHAT_AUTH_DOC_URL } from "@/lib/wechat/auth/config"
 import { WechatScopeType } from "@/lib/wechat/auth/schema"
 
-import { getWechatAuthorizationUrl } from "@/lib/wechat/auth/client-funcs"
+import { getWechatAuthorizationUrl } from "@/lib/wechat/auth/funcs/client"
 
 export default function TestWechatAuthPage() {
   const { id } = useUser()
