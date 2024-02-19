@@ -25,9 +25,15 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
-    signIn: async (message) => {
+    signIn: async ({ user, email, account, profile, credentials }) => {
       /* on successful sign in */
-      console.debug("[auth.signIn]: ", message)
+      console.debug("[auth.signIn]: ", {
+        user,
+        email,
+        account,
+        profile,
+        credentials,
+      })
       return Promise.resolve(true)
     },
 
@@ -64,7 +70,8 @@ export const authOptions: NextAuthOptions = {
       if (LOG_AUTH_ENABLED)
         console.debug(
           `[auth.jwt]: `,
-          JSON.stringify({
+          // JSON.stringify(
+          {
             token,
             user,
             isNewUser,
@@ -72,7 +79,8 @@ export const authOptions: NextAuthOptions = {
             trigger,
             account,
             session,
-          }),
+          },
+          // ),
         )
 
       return token
