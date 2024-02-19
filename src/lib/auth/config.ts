@@ -60,12 +60,11 @@ export const authOptions: NextAuthOptions = {
       profile,
       isNewUser,
     }) => {
-      const id = user.id ?? token.sub
-      let userInDB
-
       // 首次登录
       if (user) token.sub = user.id
+      const id = token.sub
 
+      let userInDB
       if (id) {
         userInDB = await prisma.user.findUnique({
           where: { id },
@@ -75,7 +74,7 @@ export const authOptions: NextAuthOptions = {
       }
 
       // 绑定额外登录
-      if (profile) {
+      if (id && profile) {
         const userNew = await prisma.user.update({
           where: { id },
           data: {
