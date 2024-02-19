@@ -35,7 +35,7 @@ export const authOptions: NextAuthOptions = {
         credentials,
       })
 
-      return Promise.resolve(true)
+      return true
     },
 
     // redirect: async (params) => {

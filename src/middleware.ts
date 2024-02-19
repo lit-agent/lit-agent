@@ -7,7 +7,7 @@ export default withAuth(
     const redirect = (url: string) =>
       NextResponse.redirect(new URL(url, req.url))
 
-    console.log("[Next-Auth Middleware]: >>>\n")
+    console.log("[Next-Auth Middleware] >>> ")
 
     const nextPath = req.nextUrl.pathname
     const token = req.nextauth.token
@@ -18,9 +18,8 @@ export default withAuth(
 
     if (LOG_AUTH_ENABLED)
       console.log(
-        "[Next-Auth Middleware]: ",
+        "[Next-Auth Middleware] <<< ",
         JSON.stringify({ id: token?.sub, url: req.url }),
-        "\n<<<\n\n",
       )
 
     // session 有问题，则重定向回登录页

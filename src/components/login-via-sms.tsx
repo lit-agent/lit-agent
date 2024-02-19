@@ -104,8 +104,18 @@ export const LoginViaSMS = () => {
             <FormLabel className={"text-primary"}>验证码</FormLabel>
             <div className={"flex gap-2"}>
               <FormControl>
-                <Input placeholder="000000" {...field} />
+                <Input
+                  placeholder="000000"
+                  type={"text"}
+                  // ref: https://dev.to/madsstoumann/using-a-single-input-for-one-time-code-352l
+                  autoComplete="one-time-code"
+                  inputMode="numeric"
+                  maxLength={6}
+                  pattern="\d{6}"
+                  {...field}
+                />
               </FormControl>
+
               <Button
                 onClick={onRequestingVerifyCode}
                 className={"w-32"}

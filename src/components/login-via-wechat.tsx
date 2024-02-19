@@ -12,7 +12,7 @@ export const LoginViaWechat = () => {
       className={"w-full"}
       disabled={continueWithPhone}
       onClick={(event) => {
-        signIn(WECHAT_PROVIDER_ID, { redirect: false })
+        signIn(WECHAT_PROVIDER_ID, { redirect: false, callbackUrl: "" })
       }}
     >
       {continueWithPhone ? "请先绑定手机号" : "直接微信登录"}

@@ -6,7 +6,8 @@ import { GiuguProfile } from "@/components/user/jiugu-profile"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { ShowUsers } from "@/components/show-users"
-import LoginComp from "@/components/login"
+import LoginComp from "@/components/login-form"
+import LoginSheet from "@/components/login-sheet"
 
 export default function IntroPage() {
   return (
@@ -30,15 +31,7 @@ export default function IntroPage() {
         <div className={"mt-auto flex flex-col items-center pb-8 gap-4"}>
           <ShowUsers />
 
-          <Sheet>
-            <SheetTrigger className={cn(buttonVariants(), "text-white")}>
-              成为姑的friend
-            </SheetTrigger>
-
-            <SheetContent side={"bottom"} className={"flex flex-col gap-4"}>
-              <LoginComp />
-            </SheetContent>
-          </Sheet>
+          <LoginSheet />
         </div>
       </div>
     </div>
