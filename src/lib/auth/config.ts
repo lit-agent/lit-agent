@@ -77,20 +77,15 @@ export const authOptions: NextAuthOptions = {
       }
 
       if (LOG_AUTH_ENABLED)
-        console.debug(
-          `[auth.jwt]: `,
-          // JSON.stringify(
-          {
-            token,
-            user,
-            isNewUser,
-            profile,
-            trigger,
-            account,
-            session,
-          },
-          // ),
-        )
+        console.debug(`[auth.jwt]: `, {
+          token,
+          user,
+          isNewUser,
+          profile,
+          trigger,
+          account,
+          session,
+        })
 
       return token
     },
@@ -103,18 +98,20 @@ export const authOptions: NextAuthOptions = {
      * 一旦出现问题，我们就强制用户在客户端退出登录
      */
     session: async ({ session, user, token, trigger, newSession }) => {
-      const userId = token.sub
-      if (!userId) {
+      const id = token.sub
+      if (!id) {
         session.error = "NoUserInToken"
+        session.expires = new Date().toISOString()
       } else {
         const userInDB = await prisma.user.findUnique({
-          where: { id: userId },
-          ...userMainViewSchema,
+          where: { id },
         })
-        if (!userInDB) session.error = "NoUserInDB"
-        else {
+        if (!userInDB) {
+          session.error = "NoUserInDB"
+          session.expires = new Date().toISOString()
+        } else {
           session.user = {
-            id: token.sub!,
+            id,
             name: token.name,
             image: token.picture,
             email: token.email,
@@ -125,7 +122,7 @@ export const authOptions: NextAuthOptions = {
 
       if (LOG_AUTH_ENABLED)
         console.debug(
-          `[auth.session] User(id=${userId}, validated=${session.user.validated}), trigger=${trigger}\n---`,
+          `[auth.session] User(id=${id}, validated=${session.user.validated}), trigger=${trigger}, expires=${session.expires}\n---`,
         )
 
       return session

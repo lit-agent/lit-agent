@@ -16,7 +16,7 @@ export const userListViewSchema = validator<UserDefaultArgs>()({
   select: {
     id: true,
     name: true,
-    nameUpdated: true,
+    // nameUpdated: true,
     image: true,
     type: true,
     validated: true,
@@ -38,8 +38,8 @@ export const userListViewSchema = validator<UserDefaultArgs>()({
 export type IUserListView = UserGetPayload<typeof userListViewSchema>
 
 export interface IUserAvatarBase {
-  image: string | null
-  name: string | null
+  image?: string | null
+  name?: string | null
 }
 
 export interface IUserAvatar extends IUserAvatarBase {

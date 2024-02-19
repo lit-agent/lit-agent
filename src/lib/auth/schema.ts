@@ -5,6 +5,7 @@ import { IUserMainView } from "@/schema/user"
 export type SessionErrorType = "NoUserInToken" | "NoUserInDB" | "NoPhone"
 
 interface Payload {
+  // 标识用户是否处于答题通过状态
   validated?: boolean
 }
 

@@ -13,7 +13,7 @@ import { TODO } from "@/config"
 
 export default function RankingPage() {
   const { data: users = [] } = api.user.list.useQuery()
-  const { user } = useUser()
+  const { mainUser: user } = useUser()
 
   users.sort((a, b) => b.totalEarnedFire - a.totalEarnedFire)
   const rank = users.findIndex((u) => u.id === user?.id) + 1

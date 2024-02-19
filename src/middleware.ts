@@ -1,7 +1,5 @@
-import { getToken } from "next-auth/jwt"
 import { withAuth } from "next-auth/middleware"
 import { NextResponse } from "next/server"
-import { getSession, signOut } from "next-auth/react"
 import { LOG_AUTH_ENABLED } from "./config"
 
 export default withAuth(
@@ -12,43 +10,28 @@ export default withAuth(
     console.log("[Next-Auth Middleware]: >>>\n")
 
     const nextPath = req.nextUrl.pathname
-    const token = await getToken({ req })
-
-    // ref: https://github.com/nextauthjs/next-auth/discussions/4265#discussioncomment-6490939
-    const requestForNextAuth = {
-      headers: {
-        cookie: req.headers.get("cookie") ?? undefined,
-      },
-    }
-    const session = await getSession({ req: requestForNextAuth })
+    const token = req.nextauth.token
 
     const isLoggingIn = nextPath.startsWith("/intro")
     const isValidating = nextPath.startsWith("/validation")
+    const isAuthing = isLoggingIn || isValidating
 
     if (LOG_AUTH_ENABLED)
       console.log(
         "[Next-Auth Middleware]: ",
-        JSON.stringify({ id: token?.sub, error: session?.error, url: req.url }),
+        JSON.stringify({ id: token?.sub, url: req.url }),
         "\n<<<\n\n",
       )
 
-    if (
-      // 1. session 有问题，比如数据库里的用户被删除了
-      !token ||
-      // 2. 没有 token 且不在登录页，重定向到登录页
-      session?.error
-    )
-      return isLoggingIn ? null : redirect("/intro")
+    // 非登录页，但session有问题，则重定向回登录页
+    if (!isLoggingIn && !token) return redirect("/intro")
 
-    // 兼容 token.validated = null | undefined
-    // token 还没置真，且在验证页，重定向到验证页
-    if (token?.validated === false && !isValidating)
+    // 非答题页，但处于待答题状态，则重定向回答题页
+    if (!isValidating && token?.validated === false)
       return redirect("/validation")
 
-    // 已经有token了，但在登录或者验证页，重定向到首页
-    if (token?.validated && (isLoggingIn || isValidating)) return redirect("/")
-
-    return null
+    // 在Auth页，但处于已验证状态，则重定向回首页
+    if (isAuthing && token?.validated) return redirect("/")
   },
   {
     callbacks: {

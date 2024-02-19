@@ -12,7 +12,7 @@ export const useUser = () => {
     enabled: !!user,
   })
 
-  const accounts = user?.accounts
+  const accounts = mainUser?.accounts
 
   const wxid = accounts?.find(
     (a) => a.provider === WECHAT_PROVIDER_ID,

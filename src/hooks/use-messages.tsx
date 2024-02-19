@@ -31,7 +31,7 @@ const useInitMessages = () => {
 
 const useBindChannels = () => {
   const { setMessages } = useAppData()
-  const { user } = useUser()
+  const { mainUser: user } = useUser()
   const { data: users = [] } = api.user.list.useQuery()
 
   useEffect(() => {
