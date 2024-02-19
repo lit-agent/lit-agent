@@ -70,6 +70,7 @@ export default function ValidateSuccess() {
               })
             } else {
               signInResult = await signIn(WECHAT_PROVIDER_ID, undefined, {
+                // 因为之前已经授权登录过了，这次就直接静默登录即可，只是为了刷新token
                 forcePopup: "false",
               })
             }

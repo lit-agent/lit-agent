@@ -22,6 +22,9 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { CgSpinner } from "react-icons/cg"
 import { SMS_EXPIRE_MINUTES, SMS_PROVIDER_ID } from "@/lib/sms/config"
+import { Separator } from "@/components/ui/separator"
+import { useBrowserEnvironment } from "@/hooks/use-browser-environment"
+import { WECHAT_PROVIDER_ID } from "@/lib/wechat/auth/config"
 
 export const LoginFormViaSMS = ({ open, setOpen }) => {
   const formSchema = z.object({
@@ -88,6 +91,8 @@ export const LoginFormViaSMS = ({ open, setOpen }) => {
     }
   }
 
+  const { isWechat } = useBrowserEnvironment()
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent side={"bottom"}>
@@ -102,7 +107,7 @@ export const LoginFormViaSMS = ({ open, setOpen }) => {
                   <FormControl>
                     <Input autoFocus placeholder={"+86"} {...field} />
                   </FormControl>
-                  <FormDescription>该号码将会是您的唯一ID标识</FormDescription>
+                  {/*<FormDescription>该号码将会是您的唯一ID标识</FormDescription>*/}
                   <FormMessage />
                 </FormItem>
               )}
@@ -137,9 +142,9 @@ export const LoginFormViaSMS = ({ open, setOpen }) => {
                       )}
                     </Button>
                   </div>
-                  <FormDescription>
-                    一次性验证码，{SMS_EXPIRE_MINUTES}分钟内有效
-                  </FormDescription>
+                  {/*<FormDescription>*/}
+                  {/*  一次性验证码，{SMS_EXPIRE_MINUTES}分钟内有效*/}
+                  {/*</FormDescription>*/}
                   <FormMessage />
                 </FormItem>
               )}
@@ -158,6 +163,20 @@ export const LoginFormViaSMS = ({ open, setOpen }) => {
             >
               注册/登录
             </Button>
+
+            {isWechat && (
+              <>
+                <Separator orientation={"horizontal"} />
+
+                <Button
+                  onClick={() => {
+                    signIn(WECHAT_PROVIDER_ID)
+                  }}
+                >
+                  直接微信登录
+                </Button>
+              </>
+            )}
           </div>
         </Form>
       </SheetContent>
