@@ -1,26 +1,17 @@
 "use client"
 
-import { SessionProvider, signOut, useSession } from "next-auth/react"
-import { PropsWithChildren, useEffect } from "react"
+import { SessionProvider } from "next-auth/react"
+import { PropsWithChildren } from "react"
 
 export default function SafeSessionProvider({ children }: PropsWithChildren) {
   return (
-    <SessionProvider>
-      <StableSessionProviderInner>{children}</StableSessionProviderInner>
+    <SessionProvider
+      refetchOnWindowFocus={
+        // todo: why next-auth refetchOnWindowFocus in SessionProvider would trigger the internet request once but the callbacks twice, is one of them for initialization?
+        false
+      }
+    >
+      {children}
     </SessionProvider>
   )
-}
-
-function StableSessionProviderInner({ children }: PropsWithChildren) {
-  const session = useSession()
-  const error = session.data?.user.error
-
-  useEffect(() => {
-    if (error) {
-      console.log("[SafeSession] signing out due to error: ", error)
-      signOut()
-    }
-  }, [error])
-
-  return children
 }

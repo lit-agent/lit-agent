@@ -13,11 +13,6 @@ import {
 import { WECHAT_PROVIDER_ID } from "@/lib/wechat/auth/config"
 import { WECHAT_API_URL } from "@/lib/wechat/config"
 
-if (!global.authorizationUrl) {
-  global.authorizationUrl = getWechatAuthorizationUrl()
-}
-const authorizationUrl = global.authorizationUrl
-
 /**
  * ref:
  * 1. https://github.com/nextauthjs/next-auth/issues/5937
@@ -31,7 +26,7 @@ export default function WechatProvider<P extends IWechatAdaptedProfile>(
     name: "wx-auth",
     type: "oauth", // fixed
 
-    authorization: authorizationUrl,
+    authorization: getWechatAuthorizationUrl(),
 
     token: {
       request: async ({ params: { code } }) => {

@@ -2,10 +2,9 @@ import type { CreateNextContextOptions } from "@trpc/server/adapters/next"
 import type { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws"
 import { getSession } from "next-auth/react"
 import { prisma } from "@/lib/db"
-import { getServerAuthSession } from "@/lib/auth" /**
- * todo: unify 2 createContext
- */
-/**
+
+import { getServerAuthSession } from "@/lib/auth/utils" /**
+ /**
  * todo: unify 2 createContext
  */
 
@@ -22,6 +21,7 @@ import { getServerAuthSession } from "@/lib/auth" /**
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
+  console.log("[trpc] createTRPCContext")
   const session = await getServerAuthSession()
 
   return {
@@ -38,6 +38,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
 export const createContext = async (
   opts: CreateNextContextOptions | CreateWSSContextFnOptions,
 ) => {
+  console.log("[trpc] createContext")
   const session = await getSession(opts)
 
   console.log(

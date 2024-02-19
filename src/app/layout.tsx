@@ -3,11 +3,11 @@ import "@/styles/globals.css"
 import { Inter } from "next/font/google"
 import MyThemeProvider from "@/providers/theme.provider"
 import { Toaster } from "sonner"
-import { TRPCReactProvider } from "@/providers/trpc.provider"
 import { Metadata, Viewport } from "next"
 import BgProvider from "@/providers/bg.provider"
-import StableSessionProvider from "@/providers/session.provider"
 import { Suspense } from "react"
+import SafeSessionProvider from "@/providers/session.provider"
+import { TRPCReactProvider } from "@/lib/trpc/provider"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -35,17 +35,17 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <StableSessionProvider>
-      <TRPCReactProvider>
-        <html lang="zh" suppressHydrationWarning>
-          <head>
-            {/* todo: 这个不能开，开了之后本地的服务资源就都挂了 */}
-            {/*<meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" />*/}
-          </head>
+    <html lang="zh" suppressHydrationWarning>
+      <head>
+        {/* todo: 这个不能开，开了之后本地的服务资源就都挂了 */}
+        {/*<meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" />*/}
+      </head>
 
-          <body className={`font-sans ${inter.variable}`}>
-            <main className={"relative w-screen"}>
-              <Suspense>
+      <body className={`font-sans ${inter.variable}`}>
+        <main className={"relative w-screen"}>
+          <Suspense>
+            <SafeSessionProvider>
+              <TRPCReactProvider>
                 <BgProvider>
                   <MyThemeProvider>
                     {children}
@@ -57,11 +57,11 @@ export default async function RootLayout({
                     />
                   </MyThemeProvider>
                 </BgProvider>
-              </Suspense>
-            </main>
-          </body>
-        </html>
-      </TRPCReactProvider>
-    </StableSessionProvider>
+              </TRPCReactProvider>
+            </SafeSessionProvider>
+          </Suspense>
+        </main>
+      </body>
+    </html>
   )
 }

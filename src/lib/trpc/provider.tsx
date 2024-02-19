@@ -7,7 +7,16 @@ import { loggerLink, unstable_httpBatchStreamLink } from "@trpc/client"
 import { api } from "@/lib/trpc/react"
 
 export function TRPCReactProvider(props: { children: React.ReactNode }) {
-  const [queryClient] = useState(() => new QueryClient())
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            refetchOnWindowFocus: false,
+          },
+        },
+      }),
+  )
 
   const [trpcClient] = useState(() =>
     api.createClient({

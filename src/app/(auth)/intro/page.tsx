@@ -3,7 +3,7 @@ import Image from "next/image"
 
 import { cn } from "@/lib/utils"
 import { GiuguProfile } from "@/components/user/jiugu-profile"
-import { Bottom } from "@/app/(auth)/intro/bottom"
+import { Bottom } from "./bottom"
 
 export default function IntroPage() {
   return (

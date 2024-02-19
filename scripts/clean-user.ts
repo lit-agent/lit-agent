@@ -8,6 +8,7 @@ if (phone?.toLowerCase() === "all") {
     .deleteMany({})
     .then((res) => {
       console.log("deleted: ", res)
+      initUser()
     })
     .catch((err) => {
       console.log("不存在")
@@ -22,8 +23,6 @@ if (phone?.toLowerCase() === "all") {
     })
     .then((res) => {
       console.log("deleted: ", res)
-
-      initUser()
     })
     .catch((err) => {
       console.log("不存在")

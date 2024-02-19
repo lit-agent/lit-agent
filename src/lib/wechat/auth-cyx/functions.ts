@@ -1,11 +1,11 @@
 import { prisma } from "../../db"
 import fetch from "node-fetch"
-import { getServerAuthSession } from "../../auth"
 import crypto from "crypto"
 import { WECHAT_API_URL, WX_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
 
 import singletonTokenInstance from "@/lib/wechat/auth-cyx/token"
 import { WECHAT_PROVIDER_ID } from "@/lib/wechat/auth/config"
+import { getServerAuthSession } from "@/lib/auth/utils"
 
 /**
  * 将微信openid关联至已存在的用户账号
