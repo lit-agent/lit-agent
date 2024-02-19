@@ -9,7 +9,7 @@ import {
 } from "@/lib/sms/config"
 import { smsClient } from "@/lib/sms/client"
 import { prisma } from "@/lib/db"
-import { User } from ".prisma/client"
+import { LOG_AUTH_ENABLED } from "@/lib/auth/config"
 
 /**
  * 1. 用户非登录态
@@ -20,14 +20,13 @@ import { User } from ".prisma/client"
  * 否则发送验证码，更新/创建 account 表，并绑定user
  */
 export const sendSms = async (phone: string, userId?: string) => {
-  let userInDB: User | null = null
-  if (userId) {
-    userInDB = await prisma.user.findUniqueOrThrow({
-      where: { id: userId },
-    })
-    if (userInDB.phoneVerified && userInDB.phone !== phone)
-      throw new Error("绑定的手机号不匹配")
-  }
+  const userInDB = await prisma.user.findUnique({ where: { id: userId ?? "" } })
+  const phoneInDB = await prisma.user.findUnique({ where: { phone } })
+  if (userInDB?.phoneVerified && userInDB?.phone !== phone)
+    throw new Error("绑定的手机号不匹配")
+  // userInDB 可以抢夺phoneInDB
+  const user =
+    userInDB ?? phoneInDB ?? (await prisma.user.create({ data: { phone } }))
 
   const code = Math.random().toString().slice(2, 8)
 
@@ -47,9 +46,8 @@ export const sendSms = async (phone: string, userId?: string) => {
   const success = message === "Ok"
 
   if (success) {
-    if (!userInDB) userInDB = await prisma.user.create({ data: { phone } })
-    userInDB = await prisma.user.update({
-      where: { id: userInDB!.id }, // phone 可能不存在
+    await prisma.user.update({
+      where: { id: user.id }, // phone 可能不存在
       data: { phone },
     })
 
@@ -65,10 +63,38 @@ export const sendSms = async (phone: string, userId?: string) => {
         providerAccountId: phone,
         type: "credentials",
         access_token: code,
-        userId: userInDB.id, // link new/old
+        userId: user.id, // link new/old
       },
       update: { access_token: code },
     })
   }
   return { success, message }
+}
+
+/**
+ * 更新 user 端的 verfied 参数统一在 signin callback 里写
+ *
+ * @param phone
+ * @param code
+ */
+export const validateSms = async (phone: string, code: string) => {
+  // 在发送验证码的时候，手机号与验证码等信息已经入表，此时只要验证账号是否存在即可
+  const account = await prisma.account.findUnique({
+    where: {
+      provider_providerAccountId: {
+        provider: SMS_PROVIDER_ID,
+        providerAccountId: phone,
+      },
+      access_token: code,
+    },
+    include: {
+      user: true,
+    },
+  })
+
+  if (LOG_AUTH_ENABLED) console.log("[sms] account: ", account)
+
+  if (!account) throw new Error("账号不存在或者验证码不对")
+
+  return account.user
 }

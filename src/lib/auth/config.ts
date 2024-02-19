@@ -4,8 +4,9 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { SmsProvider } from "@/lib/sms/provider"
 import WechatProvider from "@/lib/wechat/auth/provider"
 import { WX_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
+import { SMS_PROVIDER_ID } from "@/lib/sms/config"
 
-export const LOG_AUTH_ENABLED = false
+export const LOG_AUTH_ENABLED = true
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
@@ -35,13 +36,20 @@ export const authOptions: NextAuthOptions = {
           credentials,
         })
 
+      // if (account) {
+      //   const field =
+      //     account.provider === SMS_PROVIDER_ID
+      //       ? "phoneVerified"
+      //       : "wechatVerified"
+      //   await prisma.user.update({
+      //     where: { id: user.id },
+      //     data: { [field]: new Date() },
+      //   })
+      // }
+
       return true
     },
 
-    redirect: async ({ url, baseUrl }) => {
-      console.debug("[auth.redirect]: ", { url, baseUrl })
-      return url
-    },
     /**
      * 【user --> token（JWT）】
      * signIn（首次登录）会触发 CredentialProvider.authorize()

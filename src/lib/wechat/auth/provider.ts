@@ -9,9 +9,11 @@ import {
 import {
   IWechatAdaptedProfile,
   IWechatAdaptedToken,
+  IWechatProfile,
 } from "@/lib/wechat/auth/schema"
 import { WECHAT_PROVIDER_ID } from "@/lib/wechat/auth/config"
 import { WECHAT_API_URL } from "@/lib/wechat/config"
+import { prisma } from "@/lib/db"
 
 /**
  * ref:
@@ -38,18 +40,14 @@ export default function WechatProvider<P extends IWechatAdaptedProfile>(
     userinfo: {
       // 直接用 url 和 param 是不行的，access_token 等无法自动进去
       // todo: 调查微信与其他的OAuth平台到底有啥不同，需要这么繁琐
-      // url: WECHAT_API_URL + "/sns/userinfo",
-      // params: {
-      //   lang: "zh_CN",
-      // },
+      // @ts-ignore
       request: async ({ tokens, client }) => {
         const { id, access_token } = tokens as IWechatAdaptedToken
-        const wechatProfile = await getWechatProfile(access_token, id)
-        return adaptWechatProfile(wechatProfile)
+        return getWechatProfile(access_token, id)
       },
     },
 
-    profile: async (profile: IWechatAdaptedProfile) => {
+    profile: async (profile: IWechatProfile) => {
       const adaptedProfile = {
         id: profile.openid,
         name: profile.nickname,
