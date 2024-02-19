@@ -79,12 +79,12 @@ export const LoginViaSMS = () => {
       const { status, error, ok } = result
       if (!ok) toast.error(error)
       else {
-        setSubmitting(false)
         // toast.success("手机号注册/登录成功！")
         utils.user.getSelf.invalidate()
       }
     }
 
+    setSubmitting(false)
     console.log("[IntroPage] sign in result: ", result)
   }
 
