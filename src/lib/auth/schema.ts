@@ -36,5 +36,10 @@ declare module "next-auth" {
     user: DefaultSession["user"] & TokenPayload & { id: string }
   }
 
-  interface User extends DefaultUser, TokenPayload {}
+  interface User extends DefaultUser, TokenPayload {
+    wechat?: string | null
+    wechatVerified?: Date | null
+    phone?: string | null
+    phoneVerified?: Date | null
+  }
 }

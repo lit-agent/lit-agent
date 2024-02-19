@@ -1,28 +1,12 @@
 import { isWechatError } from "@/lib/wechat/schema"
 import { WECHAT_API_URL, WX_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
 import {
-  IWechatAdaptedProfile,
   IWechatAdaptedToken,
   IWechatProfile,
   IWechatRefreshedToken,
   IWechatTokenPayload,
-  WechatScopeType,
 } from "@/lib/wechat/auth/schema"
-import { WECHAT_AUTH_CALLBACK_URL } from "@/lib/wechat/auth/config"
 import { LOG_AUTH_ENABLED } from "@/lib/auth/config"
-
-/**
- * 只有该函数可以在客户端调用，用于拉起用户微信授权弹窗
- */
-export const getWechatAuthorizationUrl = (
-  scope: WechatScopeType = WechatScopeType.info,
-  userId?: string,
-  forcePopup: boolean = true,
-) => {
-  const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${WX_APP_ID}&redirect_uri=${encodeURIComponent(WECHAT_AUTH_CALLBACK_URL)}&response_type=code&scope=${scope}&state=${userId}&forcePopup=${forcePopup}#wechat_redirect`
-  // console.log("[wechat-auth] get-authorization-url: ", url)
-  return url
-}
 
 /**
  * wrapper 微信的各个 auth 接口
@@ -90,15 +74,6 @@ export const getWechatProfile = async (
     lang: "zh_CN",
   })
 }
-
-export const adaptWechatProfile = (
-  profile: IWechatProfile,
-): IWechatAdaptedProfile => ({
-  ...profile,
-  sub: profile.openid,
-  name: profile.nickname,
-  image: profile.headimgurl,
-})
 
 /**
  * 用于稳定地获取用户信息

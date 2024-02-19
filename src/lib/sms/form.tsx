@@ -22,6 +22,7 @@ import { CgSpinner } from "react-icons/cg"
 import { SMS_PROVIDER_ID } from "@/lib/sms/config"
 import { sendSms } from "@/lib/sms/functions"
 import { useUser } from "@/hooks/use-user"
+import { api } from "@/lib/trpc/react"
 
 export const LoginViaSMS = () => {
   const formSchema = z.object({
@@ -60,6 +61,7 @@ export const LoginViaSMS = () => {
     } else toast.error(`验证码发送失败，原因：${message}`)
   }
 
+  const utils = api.useUtils()
   const [submitting, setSubmitting] = useState(false)
 
   async function onSubmit() {
@@ -72,11 +74,11 @@ export const LoginViaSMS = () => {
       phone,
       code,
       redirect: false,
-      // todo: auth
-      // callbackUrl: "/", // 感谢: https://github.com/sidebase/nuxt-auth/issues/469#issuecomment-1661909912
     })
     setSubmitting(false)
-    toast.success("手机号注册成功！")
+    // toast.success("手机号注册/登录成功！")
+    utils.user.getSelf.invalidate()
+
     console.log("[IntroPage] sign in result: ", result)
   }
 

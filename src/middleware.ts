@@ -27,12 +27,14 @@ export default withAuth(
 
     // session 有问题，则重定向回登录页
     // 验证页pass
-    if (!isLoggingIn && !token) return redirect("/intro")
+    if ((!isLoggingIn && !token) || (!isAuthing && !token?.validated))
+      return redirect("/intro")
 
-    // 非Auth页，但处于待答题状态，则重定向回答题页
-    // 登录页 pass
-    if (!isValidating && token?.validated === false)
-      return redirect("/validation")
+    // 验证页的跳转在 intro 内完成
+    // // 非Auth页，但处于待答题状态，则重定向回答题页
+    // // 登录页 pass
+    // if (!isValidating && token?.validated === false)
+    //   return redirect("/validation")
 
     // 在Auth页，但处于已验证状态，则重定向回首页
     if (isAuthing && token?.validated) return redirect("/")

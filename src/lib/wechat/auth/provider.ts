@@ -1,19 +1,16 @@
 import { OAuthConfig, OAuthUserConfig } from "next-auth/providers"
 import {
-  adaptWechatProfile,
   adaptWechatToken,
-  getWechatAuthorizationUrl,
   getWechatProfile,
   getWechatToken,
-} from "@/lib/wechat/auth/functions"
+} from "@/lib/wechat/auth/server-functions"
 import {
   IWechatAdaptedProfile,
   IWechatAdaptedToken,
   IWechatProfile,
 } from "@/lib/wechat/auth/schema"
 import { WECHAT_PROVIDER_ID } from "@/lib/wechat/auth/config"
-import { WECHAT_API_URL } from "@/lib/wechat/config"
-import { prisma } from "@/lib/db"
+import { getWechatAuthorizationUrl } from "@/lib/wechat/auth/client-funcs"
 
 /**
  * ref:
@@ -47,11 +44,21 @@ export default function WechatProvider<P extends IWechatAdaptedProfile>(
       },
     },
 
+    /**
+     * 初始化会进 user 表
+     * @param profile
+     */
     profile: async (profile: IWechatProfile) => {
       const adaptedProfile = {
         id: profile.openid,
+
+        // 更新 user 的昵称和照片
         name: profile.nickname,
         image: profile.headimgurl,
+
+        // 更新额外的字段标识
+        wechat: profile.openid,
+        wechatVerified: new Date(),
       }
       console.log("[next-auth-wechat-provider] called profile: ", {
         profile,

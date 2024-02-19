@@ -3,10 +3,7 @@ import Image from "next/image"
 
 import { cn } from "@/lib/utils"
 import { GiuguProfile } from "@/components/user/jiugu-profile"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Button, buttonVariants } from "@/components/ui/button"
 import { ShowUsers } from "@/components/show-users"
-import LoginComp from "@/components/login-form"
 import LoginSheet from "@/components/login-sheet"
 
 export default function IntroPage() {

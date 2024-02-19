@@ -7,9 +7,10 @@ import { Label } from "@/components/ui/label"
 import SubPage from "@/components/sub-page"
 import { BrowserEnvironmentComp } from "@/components/_universal/browser"
 
-import { getWechatAuthorizationUrl } from "@/lib/wechat/auth/functions"
-import { WechatScopeType } from "@/lib/wechat/auth/schema"
 import { WECHAT_AUTH_DOC_URL } from "@/lib/wechat/auth/config"
+import { WechatScopeType } from "@/lib/wechat/auth/schema"
+
+import { getWechatAuthorizationUrl } from "@/lib/wechat/auth/client-funcs"
 
 export default function TestWechatAuthPage() {
   const { id } = useUser()

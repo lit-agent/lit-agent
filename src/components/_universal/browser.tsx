@@ -1,3 +1,4 @@
+"use client"
 import { useBrowserEnvironment } from "@/hooks/use-browser-environment"
 import { No, Yes } from "@/components/_universal/icons"
 

@@ -96,5 +96,11 @@ export const validateSms = async (phone: string, code: string) => {
 
   if (!account) throw new Error("账号不存在或者验证码不对")
 
+  // 更新验证日期
+  await prisma.user.update({
+    where: { id: account.user.id },
+    data: { phone, phoneVerified: new Date() },
+  })
+
   return account.user
 }

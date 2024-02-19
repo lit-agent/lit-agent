@@ -1,10 +1,10 @@
 import { NextAuthOptions } from "next-auth"
 import { prisma } from "@/lib/db"
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { SmsProvider } from "@/lib/sms/provider"
 import WechatProvider from "@/lib/wechat/auth/provider"
 import { WX_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
-import { SMS_PROVIDER_ID } from "@/lib/sms/config"
+import { myAdapter } from "@/lib/auth/adpater"
+import { PrismaAdapter } from "@next-auth/prisma-adapter"
 
 export const LOG_AUTH_ENABLED = true
 
@@ -80,18 +80,6 @@ export const authOptions: NextAuthOptions = {
         })
         token.valid = !!userInDB?.accounts.length
         token.validated = userInDB?.validated
-      }
-
-      // 绑定额外登录
-      if (id && profile) {
-        const userNew = await prisma.user.update({
-          where: { id },
-          data: {
-            name: profile.name,
-            image: profile.image,
-          },
-        })
-        if (LOG_AUTH_ENABLED) console.log("[auth.jwt] updated user: ", userNew)
       }
 
       if (LOG_AUTH_ENABLED)
