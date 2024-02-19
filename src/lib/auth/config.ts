@@ -6,6 +6,9 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { SmsProvider } from "@/lib/sms/provider"
 import WechatProvider from "@/lib/wechat/auth/provider"
 import { WX_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
+import { SMS_PROVIDER_ID } from "@/lib/sms/config"
+import { WECHAT_PROVIDER_ID } from "@/lib/wechat/auth/config"
+import token from "@/lib/wechat/auth-cyx/token"
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
@@ -34,6 +37,7 @@ export const authOptions: NextAuthOptions = {
         profile,
         credentials,
       })
+
       return Promise.resolve(true)
     },
 
@@ -59,6 +63,7 @@ export const authOptions: NextAuthOptions = {
     }) => {
       // token 是加解密可信安全的，不用担心被篡改！
 
+      // 首次登录
       if (user)
         token = {
           sub: user.id,
@@ -67,6 +72,13 @@ export const authOptions: NextAuthOptions = {
           picture: user.image,
           validated: user.validated,
         }
+
+      // 绑定额外登录
+      if (profile) {
+        token.name = profile.name
+        token.picture = profile.image
+      }
+
       if (LOG_AUTH_ENABLED)
         console.debug(
           `[auth.jwt]: `,
@@ -104,7 +116,11 @@ export const authOptions: NextAuthOptions = {
         })
         if (!userInDB) session.error = "NoUserInDB"
         else {
-          session.user = userInDB
+          session.user = {
+            ...userInDB,
+            // token 覆盖 userInDB
+            ...token,
+          }
         }
       }
 
