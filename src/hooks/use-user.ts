@@ -14,10 +14,11 @@ export const useMe = () => {
   const accounts = user?.accounts
 
   const wxid = accounts?.find(
-    (a) => a.provider === SMS_PROVIDER_ID,
-  )?.providerAccountId
-  const phone = accounts?.find(
     (a) => a.provider === WECHAT_PROVIDER_ID,
+  )?.providerAccountId
+
+  const phone = accounts?.find(
+    (a) => a.provider === SMS_PROVIDER_ID,
   )?.providerAccountId
 
   return { user, wxid, phone }
