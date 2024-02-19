@@ -22,31 +22,25 @@ export default function SettingsPage() {
 
       <GrayCard>
         <MenuItem name={"微信登录"}>
-          {wxid ?? (
-            <Button
-              variant={"ghost"}
-              onClick={() => {
-                toast.info(TODO)
-              }}
-            >
-              点击绑定
-            </Button>
-          )}
+          <Button
+            variant={"ghost"}
+            onClick={() => {
+              toast.info(TODO)
+            }}
+          >
+            {wxid ?? "点击绑定"}
+          </Button>
         </MenuItem>
 
         <MenuItem name={"手机绑定"}>
-          {phone ? (
-            maskPhone(phone)
-          ) : (
-            <Button
-              variant={"ghost"}
-              onClick={() => {
-                toast.info(TODO)
-              }}
-            >
-              点击绑定
-            </Button>
-          )}
+          <Button
+            variant={"ghost"}
+            onClick={() => {
+              toast.info(TODO)
+            }}
+          >
+            {phone ? maskPhone(phone) : "点击绑定"}
+          </Button>
         </MenuItem>
       </GrayCard>
 
