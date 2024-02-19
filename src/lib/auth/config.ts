@@ -48,6 +48,8 @@ export const authOptions: NextAuthOptions = {
      * 在那里，验证完用户信息（phone+sms）后返回 user 传到 jwt 函数里
      * 我们再把它传给 token
      * token 会持久化在浏览器里（基于某种编码）
+     *
+     * note: token 是加解密可信安全的，不用担心被篡改！
      */
     jwt: async ({
       token,
@@ -58,26 +60,35 @@ export const authOptions: NextAuthOptions = {
       profile,
       isNewUser,
     }) => {
-      // token 是加解密可信安全的，不用担心被篡改！
+      const id = user.id ?? token.sub
+      let userInDB
 
       // 首次登录
-      if (user)
-        token = {
-          sub: user.id,
-          name: user.name,
-          picture: user.image,
-          email: user.email,
-          validated: user.validated,
-        }
+      if (user) token.sub = user.id
+
+      if (id) {
+        userInDB = await prisma.user.findUnique({
+          where: { id },
+        })
+        token.valid = !!userInDB
+        token.validated = userInDB.validated
+      }
 
       // 绑定额外登录
       if (profile) {
-        token.name = profile.name
-        token.picture = profile.image
+        const userNew = await prisma.user.update({
+          where: { id },
+          data: {
+            name: profile.name,
+            image: profile.image,
+          },
+        })
+        console.log("[auth.jwt] updated user: ", userNew)
       }
 
       if (LOG_AUTH_ENABLED)
         console.debug(`[auth.jwt]: `, {
+          id,
           token,
           user,
           isNewUser,
@@ -98,31 +109,17 @@ export const authOptions: NextAuthOptions = {
      * 一旦出现问题，我们就强制用户在客户端退出登录
      */
     session: async ({ session, user, token, trigger, newSession }) => {
-      const id = token.sub
-      if (!id) {
-        session.error = "NoUserInToken"
-        session.expires = new Date().toISOString()
-      } else {
-        const userInDB = await prisma.user.findUnique({
-          where: { id },
-        })
-        if (!userInDB) {
-          session.error = "NoUserInDB"
-          session.expires = new Date().toISOString()
-        } else {
-          session.user = {
-            id,
-            name: userInDB.name,
-            image: userInDB.image,
-            email: userInDB.email,
-            validated: userInDB.validated,
-          }
+      const { sub: id, valid, validated } = token
+      if (id)
+        session.user = {
+          id,
+          valid,
+          validated,
         }
-      }
 
       if (LOG_AUTH_ENABLED)
         console.debug(
-          `[auth.session] User(id=${id}, validated=${session.user.validated}), trigger=${trigger}, expires=${session.expires}\n---`,
+          `[auth.session] User(${JSON.stringify(session.user)}), trigger=${trigger}, expires=${session.expires}\n---`,
         )
 
       return session

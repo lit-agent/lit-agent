@@ -1,9 +1,10 @@
 "use client"
 
-import { SessionProvider, useSession } from "next-auth/react"
-import { PropsWithChildren, useEffect } from "react"
-import { usePathname, useRouter } from "next/navigation"
-import { LOG_AUTH_ENABLED } from "@/config"
+import { SessionProvider, signIn, useSession } from "next-auth/react"
+import { PropsWithChildren } from "react"
+import { LoaderIcon } from "lucide-react"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
 
 export default function SafeSessionProvider({ children }: PropsWithChildren) {
   return (
@@ -13,43 +14,28 @@ export default function SafeSessionProvider({ children }: PropsWithChildren) {
         false
       }
     >
-      {children}
+      <ValidSessionProvider>{children}</ValidSessionProvider>
     </SessionProvider>
   )
 }
 
-const AuthProvider = ({ children }: PropsWithChildren) => {
-  const router = useRouter()
-  const path = usePathname()
-
-  const isLoggingIn = path.startsWith("/intro")
-  const isValidating = path.startsWith("/validation")
+const ValidSessionProvider = ({ children }: PropsWithChildren) => {
   const session = useSession()
 
-  if (LOG_AUTH_ENABLED)
-    console.log(
-      "[SessionProvider]: ",
-      JSON.stringify({
-        id: session.data?.user.id,
-        error: session?.data?.error,
-        path,
-      }),
-      "\n<<<\n\n",
+  if (!session.data)
+    return (
+      <div className={"w-screen h-screen flex items-center justify-center"}>
+        <LoaderIcon className={"animtate-spin"} />
+      </div>
     )
 
-  useEffect(() => {
-    // 非登录页，但session有问题，则重定向回登录页
-    if (!isLoggingIn && (!session || session.data?.error))
-      return router.push("/intro")
+  if (session.data.user.valid === false)
+    return (
+      <div className={"w-screen h-screen flex items-center justify-center"}>
+        <Label>Your session has been expired, please re-login again!</Label>
+        <Button onClick={() => signIn()}>重新登陆</Button>
+      </div>
+    )
 
-    // 非答题页，但处于待答题状态，则重定向回答题页
-    if (!isValidating && session && !session.data?.user.validated)
-      return router.push("/validation")
-
-    // 在Auth页，但处于已验证状态，则重定向回首页
-    if ((isLoggingIn || isValidating) && session.data?.user.validated)
-      return router.push("/")
-  }, [path])
-
-  return null
+  return children
 }
