@@ -19,7 +19,7 @@ import { UserAvatarWithName } from "@/components/user/user-avatar-with-name"
 import { BloggerContainer } from "@/components/user/blogger-container"
 
 export default function ChatDetailPage({ params: { id } }: { params: { id } }) {
-  const user = useUser()
+  const { user } = useUser()
   const { data: targetUser } = api.user.get.useQuery({ id })
 
   const refInput = useRef<HTMLInputElement>(null)

@@ -16,14 +16,13 @@ import { api } from "@/lib/trpc/react"
 import { orderBy, sum } from "lodash"
 import { useUser } from "@/hooks/use-user"
 import { toast } from "sonner"
-import { AspectRatio } from "@/components/ui/aspect-ratio"
 import Link from "next/link"
 import { MyTasks } from "@/components/task/tasks"
 import { MyProducts } from "@/components/product/products"
 import { UserTaskStatus } from "@prisma/client"
 import moment from "moment"
 import { UserAvatar } from "@/components/user/user-avatar"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 export default function HomePage() {
@@ -56,7 +55,7 @@ export default function HomePage() {
 }
 
 const TopProfile = () => {
-  const user = useUser()
+  const { user } = useUser()
 
   return (
     <div className={"flex justify-between items-center"}>
@@ -79,7 +78,7 @@ const TopProfile = () => {
 }
 
 const MainCard = () => {
-  const user = useUser()
+  const { user } = useUser()
 
   const { data: sensitiveUser } = api.user.getSelf.useQuery()
 
@@ -131,7 +130,7 @@ const MainCard = () => {
 }
 
 const WordRandingCard = () => {
-  const user = useUser()
+  const { user } = useUser()
 
   const { data: users = [] } = api.user.list.useQuery()
 

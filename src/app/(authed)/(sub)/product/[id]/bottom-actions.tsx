@@ -1,7 +1,6 @@
 import { IProductListView } from "@/schema/product"
 import { api } from "@/lib/trpc/react"
 import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io"
-import { useBrowserEnvironment } from "@/hooks/use-browser-environment"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { TODO } from "@/config"
@@ -35,14 +34,12 @@ export const BottomActions = ({
   const favor = api.product.favor.useMutation()
   const Favor = userProduct?.isFavored ? IoIosHeart : IoIosHeartEmpty
 
-  const { isWechat, isMobile } = useBrowserEnvironment()
-
   const createBill = api.bill.create.useMutation()
   const redeemBill = api.bill.redeem.useMutation()
   const router = useRouter()
   const [shouldCharge, setShouldCharge] = useState(false)
-  const user = useUser()
-  const diff = product.price - (user?.balance ?? 0)
+  const { mainUser } = useUser()
+  const diff = product.price - (mainUser?.balance ?? 0)
   const createPayment = useCreatePayment()
 
   const onRedeemProduct = async () => {

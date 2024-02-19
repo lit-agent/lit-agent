@@ -21,7 +21,7 @@ export default function MainLayout({ children }: PropsWithChildren) {
 }
 
 const ContentArea = ({ children }: PropsWithChildren) => {
-  const user = useUser()
+  const { user } = useUser()
   const isBlogger = user?.type === UserType.blogger
 
   return (

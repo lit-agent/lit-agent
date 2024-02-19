@@ -22,7 +22,7 @@ import { WECHAT_PROVIDER_ID } from "@/lib/wechat/auth/config"
 export default function ValidateSuccess() {
   const router = useRouter()
   const { data: users = [] } = api.user.list.useQuery()
-  const user = useUser()
+  const { user } = useUser()
   const getAuthData = api.user.getAuthData.useMutation()
 
   return (

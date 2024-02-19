@@ -11,7 +11,7 @@ import { JIUGU_ID } from "@/config"
 import { useUser } from "@/hooks/use-user"
 
 export default function ChatListPage() {
-  const user = useUser()
+  const { user } = useUser()
   const { messages } = useAppData()
 
   const [chats, setChats] = useState<IChatView[]>([])

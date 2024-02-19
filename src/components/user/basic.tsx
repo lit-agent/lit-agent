@@ -26,7 +26,7 @@ export const BasicMutableUserInfo = () => {
   const updateUser = api.user.safeUpdate.useMutation()
 
   const refName = useRef<HTMLInputElement>(null)
-  const user = useUser()
+  const { user } = useUser()
 
   return (
     <GrayCard>

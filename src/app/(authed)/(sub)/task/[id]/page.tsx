@@ -13,19 +13,9 @@ import { api } from "@/lib/trpc/react"
 import { cn } from "@/lib/utils"
 import { uploadFilesV2 } from "@/lib/oss/upload/client"
 import { useAppData } from "@/lib/store/use-app-data"
-import { UserTaskStatus } from "@prisma/client"
 import Message from "@/components/chat/message-item"
 import { useUser } from "@/hooks/use-user"
 import { useCopyToClipboard } from "@uidotdev/usehooks"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
 import {
   Dialog,
   DialogContent,
@@ -90,7 +80,7 @@ const MainArea = ({
   userTask?: IUserTaskView | null
   task?: ITaskView
 }) => {
-  const user = useUser()
+  const { user } = useUser()
 
   const { messages } = useAppData()
 

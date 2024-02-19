@@ -4,12 +4,13 @@ import { SMS_PROVIDER_ID } from "@/lib/sms/config"
 import { WECHAT_PROVIDER_ID } from "@/lib/wechat/auth/config"
 
 export const useUser = () => {
-  const { data: user } = api.user.getSelf.useQuery()
-  return user
-}
-
-export const useMe = () => {
   const user = useSession().data?.user
+
+  const id = user?.id
+
+  const { data: mainUser } = api.user.getSelf.useQuery(undefined, {
+    enabled: !!user,
+  })
 
   const accounts = user?.accounts
 
@@ -21,5 +22,5 @@ export const useMe = () => {
     (a) => a.provider === SMS_PROVIDER_ID,
   )?.providerAccountId
 
-  return { user, wxid, phone }
+  return { id, user, wxid, phone, mainUser }
 }

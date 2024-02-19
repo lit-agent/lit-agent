@@ -9,12 +9,12 @@ import { GrayCard } from "@/components/_universal/cards"
 import { MenuButton } from "@/components/_universal/line"
 import SubPage from "@/components/sub-page"
 import { toast } from "sonner"
-import { useMe } from "@/hooks/use-user"
+import { useUser } from "@/hooks/use-user"
 import { useBrowserEnvironment } from "@/hooks/use-browser-environment"
 import { WECHAT_PROVIDER_ID } from "@/lib/wechat/auth/config"
 
 export default function SettingsPage() {
-  const { wxid, phone } = useMe()
+  const { wxid, phone } = useUser()
   const { isWechat, isMobile } = useBrowserEnvironment()
 
   return (
@@ -27,7 +27,6 @@ export default function SettingsPage() {
           disabled={!!wxid}
           onClick={async () => {
             if (!isWechat) return toast.info("请在微信浏览器内完成绑定操作！")
-            toast.info(TODO)
             await signIn(WECHAT_PROVIDER_ID)
           }}
         >

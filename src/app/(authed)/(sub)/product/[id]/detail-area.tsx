@@ -18,7 +18,7 @@ import { Card2 } from "./card2"
 
 export const DetailArea = ({ product }: { product?: IProductListView }) => {
   const surplus = product ? product.total - product.sold : 0
-  const user = useUser()
+  const { user } = useUser()
   const deleteProduct = api.product.delete.useMutation()
   const utils = api.useUtils()
   const router = useRouter()

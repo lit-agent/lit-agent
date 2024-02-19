@@ -3,7 +3,7 @@
 import { api } from "@/lib/trpc/react"
 import { RankItem } from "@/components/user/rank-item"
 import { useUser } from "@/hooks/use-user"
-import { ChevronDownIcon, ChevronRight, ChevronRightIcon } from "lucide-react"
+import { ChevronRightIcon } from "lucide-react"
 import Image from "next/image"
 import { RankingImage } from "@/lib/assets"
 import SubPage from "@/components/sub-page"
@@ -13,7 +13,7 @@ import { TODO } from "@/config"
 
 export default function RankingPage() {
   const { data: users = [] } = api.user.list.useQuery()
-  const user = useUser()
+  const { user } = useUser()
 
   users.sort((a, b) => b.totalEarnedFire - a.totalEarnedFire)
   const rank = users.findIndex((u) => u.id === user?.id) + 1

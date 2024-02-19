@@ -12,8 +12,7 @@ import { WechatScopeType } from "@/lib/wechat/auth/schema"
 import { WECHAT_AUTH_DOC_URL } from "@/lib/wechat/auth/config"
 
 export default function TestWechatAuthPage() {
-  const user = useUser()
-  const userId = user?.id
+  const { id } = useUser()
 
   return (
     <SubPage title={"微信登录授权测试"}>
@@ -24,8 +23,8 @@ export default function TestWechatAuthPage() {
           不弹出授权页面，直接跳转，只能获取用户openid
         </Label>
         <ButtonLink
-          href={getWechatAuthorizationUrl(WechatScopeType.base, userId)}
-          disabled={!userId}
+          href={getWechatAuthorizationUrl(WechatScopeType.base, id)}
+          disabled={!id}
         >
           {WechatScopeType.base} 授权
         </ButtonLink>
@@ -35,8 +34,8 @@ export default function TestWechatAuthPage() {
           即使在未关注的情况下，只要用户授权，也能获取其信息
         </Label>
         <ButtonLink
-          href={getWechatAuthorizationUrl(WechatScopeType.info, userId)}
-          disabled={!userId}
+          href={getWechatAuthorizationUrl(WechatScopeType.info, id)}
+          disabled={!id}
         >
           {WechatScopeType.info} 授权
         </ButtonLink>

@@ -6,8 +6,7 @@ import { Input } from "../ui/input"
 import { UserAvatar } from "@/components/user/user-avatar"
 
 export default function ChatList({ chats }: { chats: IChatView[] }) {
-  const user = useUser()
-  if (!user) return "loading user"
+  const { user } = useUser()
 
   return (
     <div
@@ -16,7 +15,7 @@ export default function ChatList({ chats }: { chats: IChatView[] }) {
       <div className={"flex items-center gap-2"}>
         <UserAvatar user={user} />
         <Label className={"text-2xl font-medium tracking-wider"}>
-          {user.name}
+          {user?.name}
         </Label>
       </div>
 

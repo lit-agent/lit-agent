@@ -5,14 +5,11 @@ import { useEffect, useState } from "react"
 import { IChatView } from "@/schema/message"
 import { getChatId } from "@/lib/socket/helpers"
 import { useUser } from "@/hooks/use-user"
-import { Label } from "@/components/ui/label"
 import ChatListItem from "@/components/chat/chat-list-item"
 import { Input } from "@/components/ui/input"
-import Link from "next/link"
-import { UserAvatar } from "@/components/user/user-avatar"
 
 export default function ChatListPage() {
-  const user = useUser()
+  const { user } = useUser()
 
   const { messages } = useAppData()
 
