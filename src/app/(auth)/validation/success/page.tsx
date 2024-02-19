@@ -69,7 +69,9 @@ export default function ValidateSuccess() {
                 // callbackUrl: "/", // 感谢: https://github.com/sidebase/nuxt-auth/issues/469#issuecomment-1661909912
               })
             } else {
-              signInResult = await signIn(WECHAT_PROVIDER_ID)
+              signInResult = await signIn(WECHAT_PROVIDER_ID, undefined, {
+                forcePopup: "false",
+              })
             }
             console.log({ signInResult })
 

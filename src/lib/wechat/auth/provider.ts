@@ -26,7 +26,12 @@ export default function WechatProvider<P extends IWechatAdaptedProfile>(
     name: "wx-auth",
     type: "oauth", // fixed
 
-    authorization: getWechatAuthorizationUrl(),
+    authorization: {
+      url: getWechatAuthorizationUrl(),
+      params: {
+        forcePopup: true,
+      },
+    },
 
     token: {
       request: async ({ params: { code } }) => {
