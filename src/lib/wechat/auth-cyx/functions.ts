@@ -4,7 +4,7 @@ import crypto from "crypto"
 import {
   WECHAT_API_URL,
   WECHAT_APP_ID,
-  WX_APP_SECRET,
+  WECHAT_APP_SECRET,
 } from "@/lib/wechat/config"
 
 import singletonTokenInstance from "@/lib/wechat/auth-cyx/token"
@@ -63,7 +63,7 @@ export const bindWxOpenIdToUser = async (openId: string) => {
  * @returns 用户微信openid
  */
 export const getOpenId = async (code: string) => {
-  const requestUrl = `${WECHAT_API_URL}/sns/oauth2/access_token?appid=${WECHAT_APP_ID}&secret=${WX_APP_SECRET}&code=${code}&grant_type=authorization_code`
+  const requestUrl = `${WECHAT_API_URL}/sns/oauth2/access_token?appid=${WECHAT_APP_ID}&secret=${WECHAT_APP_SECRET}&code=${code}&grant_type=authorization_code`
 
   const response = await fetch(requestUrl)
   if (!response.ok) {

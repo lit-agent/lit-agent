@@ -2,7 +2,7 @@
 import {
   WECHAT_API_URL,
   WECHAT_APP_ID,
-  WX_APP_SECRET,
+  WECHAT_APP_SECRET,
 } from "@/lib/wechat/config"
 
 import { GetAccessTokenResponse } from "@/lib/wechat/auth-cyx/schema"
@@ -87,7 +87,7 @@ export class SingletonToken {
 
   // 获取微信access token
   async getWxAccessToken() {
-    const url = `${WECHAT_API_URL}/cgi-bin/token?grant_type=client_credential&appid=${WECHAT_APP_ID}&secret=${WX_APP_SECRET}`
+    const url = `${WECHAT_API_URL}/cgi-bin/token?grant_type=client_credential&appid=${WECHAT_APP_ID}&secret=${WECHAT_APP_SECRET}`
     const response = await fetch(url)
     if (!response.ok) {
       throw new Error(`HTTP error: ${response.status} ${response.statusText}`)

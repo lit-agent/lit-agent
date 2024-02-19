@@ -1,8 +1,8 @@
 import { OAuthConfig, OAuthUserConfig } from "next-auth/providers"
 import {
-  adaptWechatToken,
-  getProfile,
-  getWechatToken,
+  adaptWechatAuthToken,
+  getWechatUserProfile,
+  getWechatAuthToken,
 } from "@/lib/wechat/auth/funcs/server"
 import {
   IWechatAdaptedProfile,
@@ -30,8 +30,8 @@ export default function WechatProvider<P extends IWechatAdaptedProfile>(
 
     token: {
       request: async ({ params: { code } }) => {
-        const wechatToken = await getWechatToken(code!)
-        return { tokens: adaptWechatToken(wechatToken) }
+        const wechatToken = await getWechatAuthToken(code!)
+        return { tokens: adaptWechatAuthToken(wechatToken) }
       },
     },
 
@@ -41,7 +41,7 @@ export default function WechatProvider<P extends IWechatAdaptedProfile>(
       // @ts-ignore
       request: async ({ tokens, client }) => {
         const { id, access_token } = tokens as IWechatAdaptedToken
-        return getProfile(access_token, id)
+        return getWechatUserProfile(access_token, id)
       },
     },
 

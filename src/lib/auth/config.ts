@@ -2,11 +2,11 @@ import { NextAuthOptions } from "next-auth"
 import { prisma } from "@/lib/db"
 import { SmsProvider } from "@/lib/sms/provider"
 import WechatProvider from "@/lib/wechat/auth/provider"
-import { WECHAT_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
+import { WECHAT_APP_ID, WECHAT_APP_SECRET } from "@/lib/wechat/config"
 import { myAdapter } from "@/lib/auth/adpater"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 
-export const LOG_AUTH_ENABLED = true
+export const LOG_AUTH_ENABLED = false
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
@@ -138,7 +138,7 @@ export const authOptions: NextAuthOptions = {
 
     WechatProvider({
       clientId: WECHAT_APP_ID,
-      clientSecret: WX_APP_SECRET,
+      clientSecret: WECHAT_APP_SECRET,
     }),
     // DiscordProvider({
     //   clientId: env.DISCORD_CLIENT_ID!,
