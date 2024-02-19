@@ -2,7 +2,7 @@ import { NextAuthOptions } from "next-auth"
 import { prisma } from "@/lib/db"
 import { SmsProvider } from "@/lib/sms/provider"
 import WechatProvider from "@/lib/wechat/auth/provider"
-import { WX_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
+import { WECHAT_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
 import { myAdapter } from "@/lib/auth/adpater"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 
@@ -137,7 +137,7 @@ export const authOptions: NextAuthOptions = {
     SmsProvider,
 
     WechatProvider({
-      clientId: WX_APP_ID,
+      clientId: WECHAT_APP_ID,
       clientSecret: WX_APP_SECRET,
     }),
     // DiscordProvider({

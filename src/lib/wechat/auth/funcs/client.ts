@@ -1,5 +1,5 @@
 import { WechatScopeType } from "@/lib/wechat/auth/schema"
-import { WX_APP_ID } from "@/lib/wechat/config"
+import { WECHAT_APP_ID } from "@/lib/wechat/config"
 import { WECHAT_AUTH_CALLBACK_URL } from "@/lib/wechat/auth/config"
 
 /**
@@ -10,7 +10,7 @@ export const getWechatAuthorizationUrl = (
   userId?: string,
   forcePopup: boolean = true,
 ) => {
-  const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${WX_APP_ID}&redirect_uri=${encodeURIComponent(WECHAT_AUTH_CALLBACK_URL)}&response_type=code&scope=${scope}&state=${userId}&forcePopup=${forcePopup}#wechat_redirect`
+  const url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${WECHAT_APP_ID}&redirect_uri=${encodeURIComponent(WECHAT_AUTH_CALLBACK_URL)}&response_type=code&scope=${scope}&state=${userId}&forcePopup=${forcePopup}#wechat_redirect`
   // console.log("[wechat-auth] get-authorization-url: ", url)
   return url
 }

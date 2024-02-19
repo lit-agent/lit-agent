@@ -7,6 +7,8 @@ import { api } from "@/lib/trpc/react"
 import SubPage from "@/components/sub-page"
 import { BrowserEnvironmentComp } from "@/components/_universal/browser"
 import { commentNotify } from "@/lib/wechat/notify-cyx/config"
+import { Separator } from "@/components/ui/separator"
+import { Label } from "@/components/ui/label"
 
 export default function TestWechatPusherPage() {
   const [showSubscribe, setShowSubscribe] = useState(false)
@@ -21,6 +23,21 @@ export default function TestWechatPusherPage() {
     <SubPage title={"微信消息推送测试"}>
       <VerticalContainer>
         <BrowserEnvironmentComp />
+
+        {/*// @ts-ignore*/}
+        <wx-open-subscribe
+          template="TenvU22BA1jCp4YHfYEpRuESXYReQyDuhs4vbdWA99I"
+          id="subscribe-btn"
+        >
+          <script type="text/wxtag-template">
+            <Button>一次性模版消息订阅</Button>
+          </script>
+          {/*// @ts-ignore*/}
+        </wx-open-subscribe>
+
+        <Separator orientation={"horizontal"} />
+
+        <Label>TODO</Label>
 
         <Button
           onClick={async () => {

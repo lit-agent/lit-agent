@@ -1,5 +1,9 @@
 import { isWechatError } from "@/lib/wechat/schema"
-import { WECHAT_API_URL, WX_APP_ID, WX_APP_SECRET } from "@/lib/wechat/config"
+import {
+  WECHAT_API_URL,
+  WECHAT_APP_ID,
+  WX_APP_SECRET,
+} from "@/lib/wechat/config"
 import {
   IWechatAdaptedToken,
   IWechatProfile,
@@ -7,6 +11,8 @@ import {
   IWechatToken,
 } from "@/lib/wechat/auth/schema"
 import { LOG_AUTH_ENABLED } from "@/lib/auth/config"
+import { WECHAT_NONCE_STR, WECHAT_TIMESTAMP } from "@/lib/wechat/notify/config"
+import { sha1 } from "js-sha1"
 
 /**
  * wrapper 微信的各个 auth 接口
@@ -14,7 +20,7 @@ import { LOG_AUTH_ENABLED } from "@/lib/auth/config"
  * @param path
  * @param params
  */
-const fetchWechatAuth = async <T>(
+const fetchWechatApi = async <T>(
   name: string,
   path: string,
   params: Record<string, string>,
@@ -33,16 +39,12 @@ const fetchWechatAuth = async <T>(
  * @param code
  */
 export const getWechatToken = async (code: string) => {
-  return fetchWechatAuth<IWechatToken>(
-    "get-token",
-    `/sns/oauth2/access_token`,
-    {
-      appid: WX_APP_ID,
-      secret: WX_APP_SECRET,
-      code,
-      grant_type: "authorization_code",
-    },
-  )
+  return fetchWechatApi<IWechatToken>("get-token", `/sns/oauth2/access_token`, {
+    appid: WECHAT_APP_ID,
+    secret: WX_APP_SECRET,
+    code,
+    grant_type: "authorization_code",
+  })
 }
 
 export const adaptWechatToken = (token: IWechatToken): IWechatAdaptedToken => {
@@ -51,52 +53,49 @@ export const adaptWechatToken = (token: IWechatToken): IWechatAdaptedToken => {
 }
 
 export const refreshWechatToken = async (refresh_token: string) => {
-  return fetchWechatAuth<IWechatRefreshedToken>(
+  return fetchWechatApi<IWechatRefreshedToken>(
     "refresh-token",
     `/sns/oauth2/refresh_token`,
     {
-      appid: WX_APP_ID,
+      appid: WECHAT_APP_ID,
       grant_type: "refresh_token",
       refresh_token,
     },
   )
 }
 
-export const getWechatProfile = async (
-  access_token: string,
-  openid: string,
-) => {
-  return fetchWechatAuth<IWechatProfile>("get-profile", `/sns/userinfo`, {
+export const getProfile = async (access_token: string, openid: string) => {
+  return fetchWechatApi<IWechatProfile>("get-profile", `/sns/userinfo`, {
     access_token,
     openid,
     lang: "zh_CN",
   })
 }
 
-/**
- * 用于稳定地获取用户信息
- */
-export class WxServerAuth {
-  private code: string
-  private token?: IWechatRefreshedToken
+export const getJsapiTicket = async (access_token: string) => {
+  return fetchWechatApi<{
+    ticket: string
+    expires_in: number
+    errcode: number
+    errmsg: string
+  }>("get-jsapi-ticket", "/cgi-bin/ticket/getticket", {
+    access_token,
+    type: "jsapi",
+  })
+}
 
-  constructor(code: string) {
-    this.code = code
+export const getJssdkSignature = async (ticket: string, url: string) => {
+  const params = {
+    noncestr: WECHAT_NONCE_STR,
+    jsapi_ticket: ticket,
+    timestamp: WECHAT_TIMESTAMP,
+    url,
   }
-
-  public async getUserInfo(): Promise<IWechatProfile> {
-    if (!this.token) {
-      // init token
-      this.token = await getWechatToken(this.code)
-      return this.getUserInfo() // again since the token not initialized
-    }
-
-    try {
-      return getWechatProfile(this.token.access_token, this.token.openid)
-    } catch (e) {
-      // refresh token
-      this.token = await refreshWechatToken(this.token.refresh_token)
-      return this.getUserInfo() // again since the token refreshed
-    }
-  }
+  const str = Object.keys(params)
+    .toSorted()
+    .map((k) => `${k}=${params[k]}`)
+    .join("&")
+  const signature = sha1(str)
+  console.log("[wx] getSignature: ", { str, signature })
+  return signature
 }
