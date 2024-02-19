@@ -112,10 +112,10 @@ export const authOptions: NextAuthOptions = {
         } else {
           session.user = {
             id,
-            name: token.name,
-            image: token.picture,
-            email: token.email,
-            validated: token.validated,
+            name: userInDB.name,
+            image: userInDB.image,
+            email: userInDB.email,
+            validated: userInDB.validated,
           }
         }
       }

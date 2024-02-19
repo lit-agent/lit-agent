@@ -22,5 +22,5 @@ export const useUser = () => {
     (a) => a.provider === SMS_PROVIDER_ID,
   )?.providerAccountId
 
-  return { id, user, wxid, phone, mainUser }
+  return { id, wxid, phone, mainUser, user: mainUser }
 }
