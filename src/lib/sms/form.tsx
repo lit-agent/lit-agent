@@ -75,9 +75,15 @@ export const LoginViaSMS = () => {
       code,
       redirect: false,
     })
-    setSubmitting(false)
-    // toast.success("手机号注册/登录成功！")
-    utils.user.getSelf.invalidate()
+    if (result) {
+      const { status, error, ok } = result
+      if (!ok) toast.error(error)
+      else {
+        setSubmitting(false)
+        // toast.success("手机号注册/登录成功！")
+        utils.user.getSelf.invalidate()
+      }
+    }
 
     console.log("[IntroPage] sign in result: ", result)
   }
