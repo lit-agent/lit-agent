@@ -23,12 +23,13 @@ export default withAuth(
         "\n<<<\n\n",
       )
 
-    // 非登录页，但session有问题，则重定向回登录页
-    if (!isLoggingIn && !token) return redirect("/intro")
+    // session 有问题，则重定向回登录页
+    // 验证页pass
+    if (!isAuthing && !token) return redirect("/intro")
 
-    // 非答题页，但处于待答题状态，则重定向回答题页
-    if (!isValidating && token?.validated === false)
-      return redirect("/validation")
+    // 非Auth页，但处于待答题状态，则重定向回答题页
+    // 登录页 pass
+    if (!isAuthing && token?.validated === false) return redirect("/validation")
 
     // 在Auth页，但处于已验证状态，则重定向回首页
     if (isAuthing && token?.validated) return redirect("/")

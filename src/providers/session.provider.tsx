@@ -1,6 +1,6 @@
 "use client"
 
-import { SessionProvider, signIn, useSession } from "next-auth/react"
+import { SessionProvider, signIn, signOut, useSession } from "next-auth/react"
 import { PropsWithChildren } from "react"
 import { LoaderIcon } from "lucide-react"
 import { Label } from "@/components/ui/label"
@@ -24,9 +24,13 @@ const ValidSessionProvider = ({ children }: PropsWithChildren) => {
 
   if (session.data?.user.valid === false)
     return (
-      <div className={"w-screen h-screen flex items-center justify-center"}>
+      <div
+        className={
+          "w-screen h-screen flex flex-col items-center justify-center gap-4"
+        }
+      >
         <Label>Your session has been expired, please re-login again!</Label>
-        <Button onClick={() => signIn()}>重新登陆</Button>
+        <Button onClick={() => signOut()}>退出登陆</Button>
       </div>
     )
 

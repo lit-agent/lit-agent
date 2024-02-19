@@ -38,10 +38,10 @@ export const authOptions: NextAuthOptions = {
       return Promise.resolve(true)
     },
 
-    redirect: async (params) => {
-      // console.debug("[auth.redirect]: ", params)
-      return params.url
-    },
+    // redirect: async (params) => {
+    //   console.debug("[auth.redirect]: ", params)
+    //   return params.url // params.url
+    // },
     /**
      * 【user --> token（JWT）】
      * signIn（首次登录）会触发 CredentialProvider.authorize()
@@ -68,9 +68,10 @@ export const authOptions: NextAuthOptions = {
       if (id) {
         userInDB = await prisma.user.findUnique({
           where: { id },
+          include: { accounts: true },
         })
-        token.valid = !!userInDB
-        token.validated = userInDB.validated
+        token.valid = !!userInDB?.accounts.length
+        token.validated = userInDB?.validated
       }
 
       // 绑定额外登录
