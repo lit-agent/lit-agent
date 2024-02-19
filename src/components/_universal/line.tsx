@@ -3,7 +3,7 @@ import { Button, ButtonProps } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { ChevronRightIcon } from "lucide-react"
 
-export const MenuItem = forwardRef<HTMLButtonElement, ButtonProps>(
+export const MenuButton = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ name, className, children, ...props }, ref) => (
     <Button
       className={cn(
@@ -27,4 +27,4 @@ export const MenuItem = forwardRef<HTMLButtonElement, ButtonProps>(
     </Button>
   ),
 )
-MenuItem.displayName = "MenuItem"
+MenuButton.displayName = "MenuItem"

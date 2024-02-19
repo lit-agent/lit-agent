@@ -19,7 +19,7 @@ import {
 import { DEFAULT_USERNAME, MSG_RENAME_LIMITATION } from "@/config"
 import { Input } from "@/components/ui/input"
 import { GrayCard } from "../_universal/cards"
-import { MenuItem } from "../_universal/line"
+import { MenuButton } from "../_universal/line"
 
 export const BasicMutableUserInfo = () => {
   const utils = api.useUtils()
@@ -30,7 +30,7 @@ export const BasicMutableUserInfo = () => {
 
   return (
     <GrayCard>
-      <MenuItem name={"头像"}>
+      <MenuButton name={"头像"}>
         <UserAvatar user={user} />
         <Label className={"w-full h-full absolute inset-0"}>
           <input
@@ -59,11 +59,13 @@ export const BasicMutableUserInfo = () => {
             }}
           />
         </Label>
-      </MenuItem>
+      </MenuButton>
 
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <MenuItem name={"昵称"}>{user?.name ?? DEFAULT_USERNAME}</MenuItem>
+          <MenuButton name={"昵称"}>
+            {user?.name ?? DEFAULT_USERNAME}
+          </MenuButton>
         </AlertDialogTrigger>
 
         <AlertDialogContent>

@@ -6,7 +6,7 @@ import { TODO } from "@/config"
 import { signOut, useSession } from "next-auth/react"
 import { BasicMutableUserInfo } from "@/components/user/basic"
 import { GrayCard } from "@/components/_universal/cards"
-import { MenuItem } from "@/components/_universal/line"
+import { MenuButton } from "@/components/_universal/line"
 import SubPage from "@/components/sub-page"
 import { toast } from "sonner"
 
@@ -21,31 +21,27 @@ export default function SettingsPage() {
       <BasicMutableUserInfo />
 
       <GrayCard>
-        <MenuItem name={"微信登录"}>
-          <Button
-            variant={"ghost"}
-            onClick={() => {
-              toast.info(TODO)
-            }}
-          >
-            {wxid ?? "点击绑定"}
-          </Button>
-        </MenuItem>
+        <MenuButton
+          name={"微信登录"}
+          onClick={() => {
+            toast.info(TODO)
+          }}
+        >
+          {wxid ?? "点击绑定"}
+        </MenuButton>
 
-        <MenuItem name={"手机绑定"}>
-          <Button
-            variant={"ghost"}
-            onClick={() => {
-              toast.info(TODO)
-            }}
-          >
-            {phone ? maskPhone(phone) : "点击绑定"}
-          </Button>
-        </MenuItem>
+        <MenuButton
+          name={"手机绑定"}
+          onClick={() => {
+            toast.info(TODO)
+          }}
+        >
+          {phone ? maskPhone(phone) : "点击绑定"}
+        </MenuButton>
       </GrayCard>
 
       <GrayCard>
-        <MenuItem name={"私域管理中心"}>{TODO}</MenuItem>
+        <MenuButton name={"私域管理中心"}>{TODO}</MenuButton>
       </GrayCard>
 
       <Button onClick={() => signOut()}>退出登录</Button>
