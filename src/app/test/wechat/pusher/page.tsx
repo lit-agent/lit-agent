@@ -8,6 +8,7 @@ import { useUser } from "@/hooks/use-user"
 import { getOrder } from "@/lib/wechat/notify/functions"
 import moment, { WECHAT_DATETIME_FORMAT } from "@/lib/datetime"
 import { useSendWechatTemplate } from "@/lib/wechat/notify/hooks"
+import { toast } from "sonner"
 
 export default function TestWechatPusherPage() {
   const { wechat, user, phone } = useUser()
@@ -21,7 +22,7 @@ export default function TestWechatPusherPage() {
         <Button
           disabled={!wechat}
           onClick={async () => {
-            sendWechatTemplate({
+            await sendWechatTemplate({
               template_id: "Vts-Ak-cdb4ZC96mx-o_S-IeZkrhsAnY95-J2eMa3og",
               data: {
                 thing3: { value: user?.name ?? "" },
@@ -30,6 +31,7 @@ export default function TestWechatPusherPage() {
                 character_string2: { value: await getOrder() },
               },
             })
+            toast.success("服务号「超级创易」的消息已发送，请注意查收！")
           }}
         >
           发送模板消息
