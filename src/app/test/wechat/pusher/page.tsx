@@ -4,13 +4,14 @@ import { VerticalContainer } from "@/components/containers/vertical"
 import { Button } from "@/components/ui/button"
 import SubPage from "@/components/sub-page"
 import { BrowserEnvironmentComp } from "@/components/_universal/browser"
-import { sendMessage } from "@/app/test/wechat/pusher/actions"
 import { useUser } from "@/hooks/use-user"
-import { toast } from "sonner"
-import { WECHAT_TEMPLATE_1 } from "@/lib/wechat/notify/config"
+import { getOrder } from "@/lib/wechat/notify/functions"
+import moment, { WECHAT_DATETIME_FORMAT } from "@/lib/datetime"
+import { useSendWechatTemplate } from "@/lib/wechat/notify/hooks"
 
 export default function TestWechatPusherPage() {
-  const { wechat } = useUser()
+  const { wechat, user, phone } = useUser()
+  const sendWechatTemplate = useSendWechatTemplate()
 
   return (
     <SubPage title={"微信消息推送测试"}>
@@ -18,9 +19,17 @@ export default function TestWechatPusherPage() {
         <BrowserEnvironmentComp />
 
         <Button
+          disabled={!wechat}
           onClick={async () => {
-            if (!wechat) return toast.error("no wechat openid")
-            await sendMessage(wechat, WECHAT_TEMPLATE_1, location.href)
+            sendWechatTemplate({
+              template_id: "Vts-Ak-cdb4ZC96mx-o_S-IeZkrhsAnY95-J2eMa3og",
+              data: {
+                thing3: { value: user?.name ?? "" },
+                phone_number4: { value: phone! },
+                time5: { value: moment().format(WECHAT_DATETIME_FORMAT) },
+                character_string2: { value: await getOrder() },
+              },
+            })
           }}
         >
           发送模板消息

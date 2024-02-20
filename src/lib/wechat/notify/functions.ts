@@ -1,14 +1,17 @@
+"use server"
+
 import { fetchWechatApi } from "@/lib/wechat/functions"
 import { WECHAT_NONCE_STR, WECHAT_TIMESTAMP } from "@/lib/wechat/notify/config"
 import { sha1 } from "js-sha1"
 import { WECHAT_APP_ID, WECHAT_APP_SECRET } from "@/lib/wechat/config"
-
-export type IWechatSDKToken = { access_token: string; expires_in: number }
+import { IWechatSDKToken } from "@/lib/wechat/schema"
+import moment, { WECHAT_DATETIME_FORMAT } from "@/lib/datetime"
+import { zip, zipObject } from "lodash"
 
 /**
  * ref: https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Get_access_token.html
  */
-export const getWechatSDKToken = async () => {
+export const getWechatToken = async () => {
   return fetchWechatApi<IWechatSDKToken>(
     "get-wechat-sdk-token",
     "/cgi-bin/token",
@@ -20,7 +23,7 @@ export const getWechatSDKToken = async () => {
   )
 }
 
-export const getWechatJsapiTicket = async (access_token: string) => {
+export const getWechatTicket = async (access_token: string) => {
   return fetchWechatApi<{
     ticket: string
     expires_in: number
@@ -32,7 +35,7 @@ export const getWechatJsapiTicket = async (access_token: string) => {
   })
 }
 
-export const getWechatJssdkSignature = async (ticket: string, url: string) => {
+export const getWechatSignature = async (ticket: string, url: string) => {
   const params = {
     noncestr: WECHAT_NONCE_STR,
     jsapi_ticket: ticket,
@@ -46,4 +49,39 @@ export const getWechatJssdkSignature = async (ticket: string, url: string) => {
   const signature = sha1(str)
   console.log("[wx] getSignature: ", { str, signature })
   return signature
+}
+
+export interface ITemplate {
+  template_id: string
+  data: Record<string, { value: string | number }>
+}
+
+export async function sendWechatNotification(
+  access_token: string,
+  openid: string,
+  template: ITemplate,
+  url: string,
+) {
+  const targetUrl = `https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=${access_token}`
+
+  const payload = {
+    touser: openid,
+    url,
+    ...template,
+  }
+  const body = JSON.stringify(payload)
+  console.log("[wx-sdk] notification req: ", { targetUrl, body })
+
+  const res = await fetch(targetUrl, {
+    method: "POST",
+    body,
+  })
+  const resData = await res.json()
+  console.log("[wx-sdk] notification res: ", resData)
+  return resData
+}
+
+let number = 0
+export const getOrder = async () => {
+  return ++number
 }

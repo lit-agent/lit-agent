@@ -1,5 +1,4 @@
 import { WECHAT_API_URL } from "@/lib/wechat/config"
-import { LOG_AUTH_ENABLED } from "@/lib/auth/config"
 import { isWechatError } from "@/lib/wechat/schema"
 
 /**
@@ -17,7 +16,7 @@ export const fetchWechatApi = async <T>(
     WECHAT_API_URL + path + "?" + new URLSearchParams(params),
   )
   const data = await res.json()
-  if (LOG_AUTH_ENABLED) console.log(`[wechat-auth] fetched ${name}: `, data)
+  console.log(`[wechat-api] fetched ${name}: `, data)
   if (isWechatError(data)) throw data.errmsg
   return data as T
 }
